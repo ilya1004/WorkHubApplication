@@ -15,7 +15,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole<Guid
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 
-    public DbSet<AppUser> Users { get; set; }
+    public DbSet<AppUser> AppUsers { get; set; }
     public DbSet<FreelancerProfile> FreelancerProfiles { get; set; }
     public DbSet<FreelancerSkill> FreelancerSkills { get; set; }
     public DbSet<EmployerProfile> EmployerProfiles { get; set; }
