@@ -1,4 +1,6 @@
-﻿using IdentityService.DAL.Data;
+﻿using IdentityService.DAL.Abstractions.Data;
+using IdentityService.DAL.Data;
+using IdentityService.DAL.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,9 +11,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddDAL(this IServiceCollection services, IConfiguration configuration)
     {
-        var q = configuration.GetConnectionString("PostgresConnection");
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("PostgresConnection")));
+
+        services.AddScoped<IUnitOfWork, AppUnitOfWork>();
 
         return services;
     }
