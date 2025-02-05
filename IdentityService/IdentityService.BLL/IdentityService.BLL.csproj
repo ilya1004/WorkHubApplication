@@ -10,4 +10,10 @@
     <ProjectReference Include="..\IdentityService.DAL\IdentityService.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UseCases\" />
+    <Folder Include="DTOs\" />
+    <Folder Include="Mapping\" />
+  </ItemGroup>
+
 </Project>
