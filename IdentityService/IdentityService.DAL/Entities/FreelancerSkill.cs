@@ -6,5 +6,6 @@ public class FreelancerSkill : Entity
 {
     public string Name { get; set; }
     public string NormalizedName { get; set; }
-    public Guid FreelancerProfileId { get; set; }
+    public int Level { get; set; }
+    public ICollection<FreelancerProfile> FreelancerProfiles { get; set; }
 }
