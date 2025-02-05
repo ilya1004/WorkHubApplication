@@ -17,12 +17,12 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Login(LoginUserRequest request)
     {
-
+        return Ok();
     }
 
     [HttpPost]
-    public async Task<IActionResult> Register(RegisterUserRequest request)
+    public async Task<IActionResult> Register(RegisterFreelancerRequest request)
     {
-
+        return Ok();
     }
 }
