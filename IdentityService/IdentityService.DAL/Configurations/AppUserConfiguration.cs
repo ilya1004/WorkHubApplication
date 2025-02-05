@@ -11,7 +11,6 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
         builder.ToTable("Users");
 
         builder.Property(u => u.RegisteredAt)
-            .HasDefaultValueSql("GETDATE()")
             .IsRequired();
 
         builder.Property(u => u.ImageUrl)
