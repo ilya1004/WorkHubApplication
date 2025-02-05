@@ -15,13 +15,22 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
+    [Route("login")]
     public async Task<IActionResult> Login(LoginUserRequest request)
     {
         return Ok();
     }
 
     [HttpPost]
+    [Route("register-freelancer")]
     public async Task<IActionResult> Register(RegisterFreelancerRequest request)
+    {
+        return Ok();
+    }
+
+    [HttpPost]
+    [Route("register-employer")]
+    public async Task<IActionResult> RegisterEmployer(RegisterEmployerRequest request)
     {
         return Ok();
     }

@@ -11,9 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UseCases\" />
     <Folder Include="DTOs\" />
     <Folder Include="Mapping\" />
+    <Folder Include="UseCases\UserUseCases\Queries\" />
   </ItemGroup>
 
   <ItemGroup>

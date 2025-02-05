@@ -1,10 +1,13 @@
+using IdentityService.API;
 using IdentityService.API.Middlewares;
 using IdentityService.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
-services.AddDataAccessLayer(builder.Configuration);
+services.AddAPI();
+
+services.AddDAL(builder.Configuration);
 
 var app = builder.Build();
 
