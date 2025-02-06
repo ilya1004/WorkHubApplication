@@ -16,6 +16,9 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
         builder.Property(u => u.ImageUrl)
             .HasMaxLength(500);
 
+        builder.Property(u => u.RefreshToken)
+            .HasMaxLength(200);
+
         builder.HasOne(u => u.FreelancerProfile)
             .WithOne()
             .HasForeignKey<AppUser>(u => u.FreelancerProfileId)

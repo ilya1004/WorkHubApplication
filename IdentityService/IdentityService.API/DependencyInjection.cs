@@ -8,7 +8,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddAPI(this IServiceCollection services)
     {
-
         services.AddIdentityCore<AppUser>(options =>
         {
             options.Password.RequireDigit = true;
@@ -17,9 +16,10 @@ public static class DependencyInjection
             options.Password.RequireNonAlphanumeric = true;
             options.Password.RequireUppercase = true;
         })
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
+            .AddEntityFrameworkStores<ApplicationDbContext>();
 
+        services.AddHttpContextAccessor();
+        services.AddScoped<SignInManager<AppUser>>();
 
         return services;
     }

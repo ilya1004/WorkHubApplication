@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using IdentityService.BLL.Services.TokenProvider;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace IdentityService.BLL;
@@ -13,6 +14,8 @@ public static class DependencyInjection
         });
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+        services.AddScoped<ITokenProvider, TokenProvider>();
 
         return services;
     }

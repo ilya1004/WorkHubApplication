@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using IdentityService.API.Contracts;
+using IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterFreelancer;
 using MediatR;
@@ -10,21 +11,23 @@ namespace IdentityService.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController : ControllerBase
+public class AuthController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
 
-    public UsersController(IMediator mediator)
+    public AuthController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
     [HttpPost]
     [Route("login")]
-    public async Task<IActionResult> Login(LoginUserRequest request)
+    public async Task<IActionResult> Login(LoginUserRequest request, CancellationToken cancellationToken)
     {
-        return Ok();
+        var authResponse = await _mediator.Send(_mapper.Map<LoginUserCommand>(request), cancellationToken);
+
+        return Ok(authResponse);
     }
 
     [HttpPost]
@@ -43,5 +46,12 @@ public class UsersController : ControllerBase
         await _mediator.Send(_mapper.Map<RegisterEmployerCommand>(request), cancellationToken);
 
         return Ok();
+    }
+
+    [HttpPost]
+    [Route("refresh-token")]
+    public async Task<IActionResult> RefreshToken(RefreshTokenRequest request, CancellationToken cancellationToken)
+    {
+
     }
 }

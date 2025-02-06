@@ -1,5 +1,4 @@
 ﻿using IdentityService.BLL.Constants;
-using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
@@ -25,7 +24,7 @@ public class RegisterEmployerCommandHandler : IRequestHandler<RegisterEmployerCo
         {
             throw new AlreadyExistsException($"A user with the email '{request.Email}' already exists.");
         }
-
+        
         var user = _mapper.Map<AppUser>(request);
 
         var result1 = await _userManager.CreateAsync(user, request.Password);

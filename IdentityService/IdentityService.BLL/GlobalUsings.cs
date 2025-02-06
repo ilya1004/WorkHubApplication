@@ -3,3 +3,4 @@ global using AutoMapper;
 global using IdentityService.DAL.Entities;
 global using IdentityService.BLL.Exceptions;
 global using IdentityService.DAL.Abstractions.Data;
+global using Microsoft.AspNetCore.Identity;

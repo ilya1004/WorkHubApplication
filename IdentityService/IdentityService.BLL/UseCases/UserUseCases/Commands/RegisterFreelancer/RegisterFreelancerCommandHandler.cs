@@ -1,5 +1,4 @@
 ﻿using IdentityService.BLL.Constants;
-using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterFreelancer;
