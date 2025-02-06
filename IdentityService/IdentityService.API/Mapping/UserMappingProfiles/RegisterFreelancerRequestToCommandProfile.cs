@@ -4,9 +4,9 @@ using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterFreelancer;
 
 namespace IdentityService.API.Mapping.UserMappingProfiles;
 
-public class RegisterFreelancerRequestMappingProfile : Profile
+public class RegisterFreelancerRequestToCommandProfile : Profile
 {
-    public RegisterFreelancerRequestMappingProfile()
+    public RegisterFreelancerRequestToCommandProfile()
     {
         CreateMap<RegisterFreelancerRequest, RegisterFreelancerCommand>();
     }

@@ -43,18 +43,6 @@ public class RegisterFreelancerCommandHandler : IRequestHandler<RegisterFreelanc
             throw new BadRequestException($"User is not successfully registered. Errors: {errors}");
         }
 
-        var result3 = await _userManager.AddClaimsAsync(user, [
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email!),
-            new Claim(ClaimTypes.Role, AppRoles.FreelancerRole),
-        ]);
-
-        if (!result3.Succeeded)
-        {
-            var errors = string.Join("; ", result3.Errors);
-            throw new BadRequestException($"User is not successfully registered. Errors: {errors}");
-        }
-
         var freelancerProfile = _mapper.Map<FreelancerProfile>(request);
 
         freelancerProfile.UserId = user.Id;

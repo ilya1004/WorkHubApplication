@@ -27,6 +27,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 
+app.UseHttpsRedirection();
+
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseAuthentication();

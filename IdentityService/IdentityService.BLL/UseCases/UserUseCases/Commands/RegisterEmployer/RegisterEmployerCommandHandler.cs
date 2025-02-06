@@ -43,18 +43,6 @@ public class RegisterEmployerCommandHandler : IRequestHandler<RegisterEmployerCo
             throw new BadRequestException($"User is not successfully registered. Errors: {errors}");
         }
 
-        var result3 = await _userManager.AddClaimsAsync(user, [
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email!),
-            new Claim(ClaimTypes.Role, AppRoles.EmployerRole),
-            ]);
-
-        if (!result3.Succeeded)
-        {
-            var errors = string.Join("; ", result2.Errors);
-            throw new BadRequestException($"User is not successfully registered. Errors: {errors}");
-        }
-
         var employerProfile = new EmployerProfile
         {
             UserId = user.Id,
