@@ -1,9 +1,4 @@
-﻿using AutoMapper;
-using IdentityService.BLL.Constants;
-using IdentityService.BLL.Exceptions;
-using IdentityService.DAL.Abstractions.Data;
-using IdentityService.DAL.Entities;
-using MediatR;
+﻿using IdentityService.BLL.Constants;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 

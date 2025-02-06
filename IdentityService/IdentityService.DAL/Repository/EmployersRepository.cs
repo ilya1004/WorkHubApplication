@@ -10,8 +10,4 @@ public class EmployersRepository : AppRepository<EmployerProfile>, IEmployersRep
 {
     public EmployersRepository(ApplicationDbContext context) : base(context) { }
 
-    //public async Task CreateProfile(EmployerProfile employerProfile, CancellationToken cancellationToken)
-    //{
-    //    await _entities.AddAsync(employerProfile, cancellationToken);
-    //}
 }
