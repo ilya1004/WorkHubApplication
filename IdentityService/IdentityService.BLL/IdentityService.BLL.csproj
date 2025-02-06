@@ -12,11 +12,11 @@
 
   <ItemGroup>
     <Folder Include="DTOs\" />
-    <Folder Include="Mapping\" />
     <Folder Include="UseCases\UserUseCases\Queries\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="MediatR" Version="12.4.1" />
   </ItemGroup>
 

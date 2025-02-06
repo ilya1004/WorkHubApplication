@@ -1,6 +1,7 @@
 ﻿using IdentityService.DAL.Abstractions.Data;
 using IdentityService.DAL.Data;
 using IdentityService.DAL.Primitives;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
