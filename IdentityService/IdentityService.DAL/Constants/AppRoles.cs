@@ -1,4 +1,4 @@
-﻿namespace IdentityService.BLL.Constants;
+﻿namespace IdentityService.DAL.Constants;
 
 public static class AppRoles
 {

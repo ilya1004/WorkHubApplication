@@ -1,4 +1,4 @@
-﻿using IdentityService.BLL.Constants;
+﻿using IdentityService.DAL.Constants;
 using System.Security.Claims;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;

@@ -2,6 +2,7 @@ using IdentityService.API;
 using IdentityService.API.Middlewares;
 using IdentityService.BLL;
 using IdentityService.DAL;
+using IdentityService.DAL.Services.DbInitializer;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -23,6 +24,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+    await dbInitializer.InitializeDb();
 }
 
 app.UseRouting();
