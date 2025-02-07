@@ -1,6 +1,7 @@
 ﻿using IdentityService.DAL.Data;
 using IdentityService.DAL.Entities;
 using Microsoft.AspNetCore.Identity;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using System.Reflection;
 
 namespace IdentityService.API;
@@ -18,6 +19,13 @@ public static class DependencyInjection
             options.Password.RequireUppercase = true;
         })
             .AddEntityFrameworkStores<ApplicationDbContext>();
+
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddFluentValidationAutoValidation(config =>
+        {
+            config.EnableFormBindingSourceAutomaticValidation = true;
+            config.EnableBodyBindingSourceAutomaticValidation = true;
+        });
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

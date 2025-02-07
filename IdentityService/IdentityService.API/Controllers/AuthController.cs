@@ -1,10 +1,6 @@
-﻿using AutoMapper;
-using IdentityService.API.Contracts;
+﻿using IdentityService.API.Contracts;
 using IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 using IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
-using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
-using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterFreelancer;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityService.API.Controllers;

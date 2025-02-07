@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using IdentityService.API.Contracts;
+﻿using IdentityService.API.Contracts;
 using IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 
 namespace IdentityService.API.Mapping.UserMappingProfiles;

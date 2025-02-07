@@ -1,8 +1,7 @@
-﻿using AutoMapper;
-using IdentityService.API.Contracts;
+﻿using IdentityService.API.Contracts;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterFreelancer;
-using MediatR;
+using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUsersByRole;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityService.API.Controllers;
@@ -36,5 +35,14 @@ public class UsersController : ControllerBase
         await _mediator.Send(_mapper.Map<RegisterEmployerCommand>(request), cancellationToken);
 
         return Ok();
+    }
+
+    [HttpGet]
+    [Route("by-role")]
+    public async Task<IActionResult> GetUsersByRole([FromQuery] GetUsersByRoleRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(_mapper.Map<GetUsersByRoleQuery>(request), cancellationToken);
+
+        return Ok(result);
     }
 }

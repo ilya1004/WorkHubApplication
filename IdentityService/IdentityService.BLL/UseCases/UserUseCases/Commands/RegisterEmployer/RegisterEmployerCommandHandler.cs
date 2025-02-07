@@ -31,7 +31,7 @@ public class RegisterEmployerCommandHandler : IRequestHandler<RegisterEmployerCo
 
         if (!result1.Succeeded)
         {
-            var errors = string.Join("; ", result1.Errors);
+            var errors = string.Join("; ", result1.Errors.Select(e => e.Description));
             throw new BadRequestException($"User is not successfully registered. Errors: {errors}");
         }
 
@@ -39,7 +39,7 @@ public class RegisterEmployerCommandHandler : IRequestHandler<RegisterEmployerCo
 
         if (!result2.Succeeded)
         {
-            var errors = string.Join("; ", result2.Errors);
+            var errors = string.Join("; ", result2.Errors.Select(e => e.Description));
             throw new BadRequestException($"User is not successfully registered. Errors: {errors}");
         }
 

@@ -15,9 +15,9 @@ public class AppUnitOfWork : IUnitOfWork
         _employersRepository = new Lazy<IEmployersRepository>(() => new EmployersRepository(context));
         _freelancersRepository = new Lazy<IFreelancersRepository>(() => new FreelancersRepository(context));
     }
-
+    
     public IEmployersRepository EmployersRepository => _employersRepository.Value;
-    public IFreelancersRepository FreelancersRepository => throw new NotImplementedException();
+    public IFreelancersRepository FreelancersRepository => _freelancersRepository.Value;
 
     public async Task SaveAllAsync(CancellationToken cancellationToken)
     {
