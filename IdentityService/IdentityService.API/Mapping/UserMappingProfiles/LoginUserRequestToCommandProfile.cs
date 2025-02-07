@@ -1,4 +1,4 @@
-﻿using IdentityService.API.Contracts;
+﻿using IdentityService.API.Contracts.AuthContracts;
 using IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 
 namespace IdentityService.API.Mapping.UserMappingProfiles;

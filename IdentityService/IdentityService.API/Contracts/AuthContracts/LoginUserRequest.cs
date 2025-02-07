@@ -1,3 +1,3 @@
-﻿namespace IdentityService.API.Contracts;
+﻿namespace IdentityService.API.Contracts.AuthContracts;
 
 public sealed record LoginUserRequest(string Email, string Password);

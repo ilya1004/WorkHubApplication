@@ -1,4 +1,4 @@
-﻿using IdentityService.API.Contracts;
+﻿using IdentityService.API.Contracts.AuthContracts;
 using IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
 
 namespace IdentityService.API.Mapping.AuthMappingProfiles;

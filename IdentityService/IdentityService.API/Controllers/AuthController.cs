@@ -1,4 +1,4 @@
-﻿using IdentityService.API.Contracts;
+﻿using IdentityService.API.Contracts.AuthContracts;
 using IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 using IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
 using Microsoft.AspNetCore.Mvc;
@@ -34,5 +34,12 @@ public class AuthController : ControllerBase
         var authResponse = await _mediator.Send(_mapper.Map<RefreshTokenCommand>(request), cancellationToken);
 
         return Ok(authResponse);
+    }
+
+    [HttpPost]
+    [Route("confirm-email")]
+    public async Task<IActionResult> ConfirmEmail()
+    {
+        return Ok();
     }
 }

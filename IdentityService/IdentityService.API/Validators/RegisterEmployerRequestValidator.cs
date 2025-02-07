@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using IdentityService.API.Contracts;
+using IdentityService.API.Contracts.UserContracts;
 
 namespace IdentityService.API.Validators;
 

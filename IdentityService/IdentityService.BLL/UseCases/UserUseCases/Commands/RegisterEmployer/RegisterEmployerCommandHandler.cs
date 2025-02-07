@@ -43,13 +43,14 @@ public class RegisterEmployerCommandHandler : IRequestHandler<RegisterEmployerCo
             throw new BadRequestException($"User is not successfully registered. Errors: {errors}");
         }
 
-        var employerProfile = new EmployerProfile
-        {
-            UserId = user.Id,
-            CompanyName = request.CompanyName
-        };
+        var employerProfile = _mapper.Map<EmployerProfile>(request);
+
+        employerProfile.UserId = user.Id;
 
         await _unitOfWork.EmployersRepository.AddAsync(employerProfile, cancellationToken);
         await _unitOfWork.SaveAllAsync(cancellationToken);
+
+        var token = _userManager.GenerateEmailConfirmationTokenAsync(user);
+
     }
 }

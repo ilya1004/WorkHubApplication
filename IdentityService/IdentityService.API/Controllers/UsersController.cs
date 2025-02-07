@@ -1,4 +1,4 @@
-﻿using IdentityService.API.Contracts;
+﻿using IdentityService.API.Contracts.UserContracts;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterFreelancer;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUsersByRole;

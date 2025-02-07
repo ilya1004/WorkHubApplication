@@ -1,4 +1,4 @@
-﻿using IdentityService.API.Contracts;
+﻿using IdentityService.API.Contracts.UserContracts;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUsersByRole;
 
 namespace IdentityService.API.Mapping.UserMappingProfiles;
