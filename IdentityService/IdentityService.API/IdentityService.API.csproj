@@ -22,8 +22,4 @@
     <ProjectReference Include="..\IdentityService.BLL\IdentityService.BLL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Validators\" />
-  </ItemGroup>
-
 </Project>

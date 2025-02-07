@@ -10,6 +10,10 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
     {
         builder.ToTable("Users");
 
+        builder.Property(u => u.UserName)
+            .IsRequired()
+            .HasMaxLength(200);
+
         builder.Property(u => u.RegisteredAt)
             .IsRequired();
 

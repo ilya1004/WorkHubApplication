@@ -1,4 +1,5 @@
-﻿using IdentityService.DAL.Data;
+﻿using FluentValidation;
+using IdentityService.DAL.Data;
 using IdentityService.DAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
@@ -12,19 +13,20 @@ public static class DependencyInjection
     {
         services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
         {
-            options.Password.RequireDigit = true;
             options.Password.RequiredLength = 8;
             options.Password.RequireLowercase = true;
-            options.Password.RequireNonAlphanumeric = true;
             options.Password.RequireUppercase = true;
+            options.Password.RequireDigit = true;
+            options.Password.RequireNonAlphanumeric = true;
         })
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        services.AddFluentValidationAutoValidation(config =>
+        services.AddFluentValidationAutoValidation(configuration =>
         {
-            config.EnableFormBindingSourceAutomaticValidation = true;
-            config.EnableBodyBindingSourceAutomaticValidation = true;
+            configuration.EnableFormBindingSourceAutomaticValidation = true;
+            configuration.EnableBodyBindingSourceAutomaticValidation = true;
+            configuration.EnableQueryBindingSourceAutomaticValidation = true;
         });
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
