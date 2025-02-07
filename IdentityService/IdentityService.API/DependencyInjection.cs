@@ -19,7 +19,8 @@ public static class DependencyInjection
             options.Password.RequireDigit = true;
             options.Password.RequireNonAlphanumeric = true;
         })
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddFluentValidationAutoValidation(configuration =>

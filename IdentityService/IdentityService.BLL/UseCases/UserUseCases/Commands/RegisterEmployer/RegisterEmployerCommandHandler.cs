@@ -1,33 +1,32 @@
-﻿using IdentityService.DAL.Constants;
+﻿using IdentityService.BLL.Services.EmailSender;
+using IdentityService.BLL.Services.EmailVerificationCodeService;
+using IdentityService.DAL.Constants;
+using IdentityService.DAL.Models;
+using IdentityService.DAL.Services.TokenCacheService;
 using System.Security.Claims;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
 
-public class RegisterEmployerCommandHandler : IRequestHandler<RegisterEmployerCommand>
+public class RegisterEmployerCommandHandler(
+    UserManager<AppUser> userManager,
+    IUnitOfWork unitOfWork,
+    IMapper mapper,
+    IEmailSender emailSender,
+    ITokenCacheService tokenCacheService,
+    IEmailVerificationCodeProvider emailVerificationCodeProvider) : IRequestHandler<RegisterEmployerCommand>
 {
-    private readonly UserManager<AppUser> _userManager;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
-
-    public RegisterEmployerCommandHandler(UserManager<AppUser> userManager, IUnitOfWork unitOfWork, IMapper mapper)
-    {
-        _userManager = userManager;
-        _unitOfWork = unitOfWork;
-        _mapper = mapper;
-    }
-
     public async Task Handle(RegisterEmployerCommand request, CancellationToken cancellationToken)
     {
-        var userByEmail = await _userManager.FindByEmailAsync(request.Email);
+        var userByEmail = await userManager.FindByEmailAsync(request.Email);
 
         if (userByEmail is not null)
         {
             throw new AlreadyExistsException($"A user with the email '{request.Email}' already exists.");
         }
         
-        var user = _mapper.Map<AppUser>(request);
+        var user = mapper.Map<AppUser>(request);
 
-        var result1 = await _userManager.CreateAsync(user, request.Password);
+        var result1 = await userManager.CreateAsync(user, request.Password);
 
         if (!result1.Succeeded)
         {
@@ -35,7 +34,7 @@ public class RegisterEmployerCommandHandler : IRequestHandler<RegisterEmployerCo
             throw new BadRequestException($"User is not successfully registered. Errors: {errors}");
         }
 
-        var result2 = await _userManager.AddToRoleAsync(user, AppRoles.EmployerRole);
+        var result2 = await userManager.AddToRoleAsync(user, AppRoles.EmployerRole);
 
         if (!result2.Succeeded)
         {
@@ -43,14 +42,25 @@ public class RegisterEmployerCommandHandler : IRequestHandler<RegisterEmployerCo
             throw new BadRequestException($"User is not successfully registered. Errors: {errors}");
         }
 
-        var employerProfile = _mapper.Map<EmployerProfile>(request);
+        var employerProfile = mapper.Map<EmployerProfile>(request);
 
         employerProfile.UserId = user.Id;
 
-        await _unitOfWork.EmployersRepository.AddAsync(employerProfile, cancellationToken);
-        await _unitOfWork.SaveAllAsync(cancellationToken);
+        await unitOfWork.EmployersRepository.AddAsync(employerProfile, cancellationToken);
+        await unitOfWork.SaveAllAsync(cancellationToken);
 
-        var token = _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
+        var emailVerificationToken = new EmailVerificationToken
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            Code = code,
+            CreatedAt = DateTime.UtcNow,
+        };
+
+        await tokenCacheService.SaveTokenAsync(emailVerificationToken);
+
+        await emailSender.SendEmailConfirmation(user.Email!, code, cancellationToken);
     }
 }

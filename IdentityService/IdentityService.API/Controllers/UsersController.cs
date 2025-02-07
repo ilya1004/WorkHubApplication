@@ -33,7 +33,7 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> RegisterEmployer(RegisterEmployerRequest request, CancellationToken cancellationToken)
     {
         await _mediator.Send(_mapper.Map<RegisterEmployerCommand>(request), cancellationToken);
-
+        
         return Ok();
     }
 

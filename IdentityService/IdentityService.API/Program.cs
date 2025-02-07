@@ -11,8 +11,10 @@ services.AddControllers();
 
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
+services.AddHttpContextAccessor();
+
 services.AddAPI();
-services.AddBLL();
+services.AddBLL(builder.Configuration);
 services.AddDAL(builder.Configuration);
 
 services.AddEndpointsApiExplorer()
