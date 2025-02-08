@@ -4,7 +4,7 @@ using IdentityService.DAL.Entities;
 
 namespace IdentityService.DAL.Repository;
 
-public class FreelancersRepository : AppRepository<FreelancerProfile>, IFreelancersRepository
+public class FreelancersRepository(ApplicationDbContext context) : AppRepository<FreelancerProfile>(context), IFreelancersRepository
 {
-    public FreelancersRepository(ApplicationDbContext context) : base(context) { }
+
 }

@@ -17,8 +17,5 @@ public class FreelancerSkillConfiguration : IEntityTypeConfiguration<FreelancerS
         builder.Property(s => s.NormalizedName)
             .IsRequired()
             .HasMaxLength(200);
-
-        builder.Property(s => s.Level)
-            .IsRequired();
     }
 }

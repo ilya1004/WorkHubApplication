@@ -6,8 +6,7 @@ using System.Threading;
 
 namespace IdentityService.DAL.Repository;
 
-public class EmployersRepository : AppRepository<EmployerProfile>, IEmployersRepository
+public class EmployersRepository(ApplicationDbContext context) : AppRepository<EmployerProfile>(context), IEmployersRepository
 {
-    public EmployersRepository(ApplicationDbContext context) : base(context) { }
 
 }

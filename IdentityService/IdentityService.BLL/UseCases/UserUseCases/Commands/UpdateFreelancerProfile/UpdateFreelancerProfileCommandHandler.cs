@@ -16,7 +16,9 @@ public class UpdateFreelancerProfileCommandHandler(
         }
 
         var freelancerProfile = mapper.Map<FreelancerProfile>(request.FreelancerProfile);
-        
+
+        freelancerProfile.Skills = [.. (await unitOfWork.FreelancerSkillsRepository.ListAsync(s => request.FreelancerProfile.SkillIds.Contains(s.Id), cancellationToken))];
+
         // saving image
 
         await unitOfWork.FreelancersRepository.UpdateAsync(freelancerProfile, cancellationToken);

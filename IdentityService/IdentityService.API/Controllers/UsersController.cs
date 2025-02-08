@@ -56,7 +56,8 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     public async Task<IActionResult> UpdateFreelancerProfile([FromForm] UpdateFreelancerProfileRequest request, CancellationToken cancellationToken)
     {
         await mediator.Send(new UpdateFreelancerProfileCommand(
-            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            //Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            Guid.Parse("0194e62f-92b7-7c37-a740-959f3bfe1c70"),
             request.FreelancerProfile, 
             request.ImageFile?.OpenReadStream(), 
             request.ImageFile?.ContentType), cancellationToken);

@@ -7,16 +7,10 @@ using System.Linq.Expressions;
 
 namespace IdentityService.DAL.Repository;
 
-public class AppRepository<TEntity> : IRepository<TEntity> where TEntity : Entity
+public class AppRepository<TEntity>(ApplicationDbContext context) : IRepository<TEntity> where TEntity : Entity
 {
-    protected readonly ApplicationDbContext _context;
-    protected readonly DbSet<TEntity> _entities;
-
-    public AppRepository(ApplicationDbContext context)
-    {
-        _context = context;
-        _entities = context.Set<TEntity>();
-    }
+    protected readonly ApplicationDbContext _context = context;
+    protected readonly DbSet<TEntity> _entities = context.Set<TEntity>();
 
     public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
