@@ -2,4 +2,4 @@
 
 namespace IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 
-public sealed record LoginUserCommand(string Email, string Password) : IRequest<AuthResponse>;
+public sealed record LoginUserCommand(string Email, string Password) : IRequest<AuthTokensDTO>;

@@ -1,4 +1,5 @@
 ﻿using IdentityService.API.Contracts.AuthContracts;
+using IdentityService.BLL.UseCases.AuthUseCases.ConfirmEmail;
 using IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 using IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
 using Microsoft.AspNetCore.Mvc;
@@ -38,8 +39,10 @@ public class AuthController : ControllerBase
 
     [HttpPost]
     [Route("confirm-email")]
-    public async Task<IActionResult> ConfirmEmail()
+    public async Task<IActionResult> ConfirmEmail(ConfirmEmailRequest request, CancellationToken cancellationToken)
     {
+        await _mediator.Send(_mapper.Map<ConfirmEmailCommand>(request), cancellationToken);
+
         return Ok();
     }
 }

@@ -6,7 +6,7 @@ using System.Security.Claims;
 
 namespace IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
 
-public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, AuthResponse>
+public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, AuthTokensDTO>
 {
     private readonly ITokenProvider _tokenProvider;
     private readonly UserManager<AppUser> _userManager;
@@ -19,7 +19,7 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, A
         _configuration = configuration;
     }
 
-    public async Task<AuthResponse> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+    public async Task<AuthTokensDTO> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
         var principal = _tokenProvider.GetPrincipalFromExpiredToken(request.AccessToken);
         var user = await _userManager.FindByIdAsync(principal.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -40,6 +40,6 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, A
 
         await _userManager.UpdateAsync(user);
 
-        return new AuthResponse(newAccessToken, newRefreshToken);
+        return new AuthTokensDTO(newAccessToken, newRefreshToken);
     }
 }

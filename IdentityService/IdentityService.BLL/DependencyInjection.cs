@@ -1,5 +1,4 @@
 ﻿using IdentityService.BLL.Services.EmailSender;
-using IdentityService.BLL.Services.EmailVerificationCodeService;
 using IdentityService.BLL.Services.TokenProvider;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

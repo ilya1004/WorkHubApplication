@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 
-public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, AuthResponse>
+public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, AuthTokensDTO>
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
@@ -19,7 +19,7 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, AuthRes
         _configuration = configuration;
     }
 
-    public async Task<AuthResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+    public async Task<AuthTokensDTO> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
 
@@ -35,17 +35,22 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, AuthRes
             throw new UnauthorizedException("Invalid credentials.");
         }
 
+        if (!user.EmailConfirmed)
+        {
+            throw new UnauthorizedException("You need to confirm your email.");
+        }
+
         var userRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault("");
 
         var accessToken = _tokenProvider.GenerateAccessToken(user, userRole);
         var refreshToken = _tokenProvider.GenerateRefreshToken();
 
         user.RefreshToken = refreshToken;
-        var expiryDays = Convert.ToInt32(_configuration["Jwt:RefreshTokenExpiryDays"]);
+        var expiryDays = int.Parse(_configuration["Jwt:RefreshTokenExpiryDays"]!);
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(expiryDays);
 
         await _userManager.UpdateAsync(user);
 
-        return new AuthResponse(accessToken, refreshToken);
+        return new AuthTokensDTO(accessToken, refreshToken);
     }
 }

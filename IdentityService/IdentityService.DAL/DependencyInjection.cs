@@ -2,7 +2,6 @@
 using IdentityService.DAL.Data;
 using IdentityService.DAL.Repository;
 using IdentityService.DAL.Services.DbInitializer;
-using IdentityService.DAL.Services.TokenCacheService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +20,7 @@ public static class DependencyInjection
         
         services.AddScoped<IUnitOfWork, AppUnitOfWork>();
         services.AddScoped<IDbInitializer, DbInitializer>();
-        services.AddScoped<ITokenCacheService, TokenCacheService>();
+        //services.AddScoped<ITokenCacheService, TokenCacheService>();
 
         return services;
     }

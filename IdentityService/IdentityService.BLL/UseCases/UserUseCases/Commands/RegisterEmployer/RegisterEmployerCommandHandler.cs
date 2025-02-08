@@ -1,5 +1,4 @@
 ﻿using IdentityService.BLL.Services.EmailSender;
-using IdentityService.BLL.Services.EmailVerificationCodeService;
 using IdentityService.DAL.Constants;
 using IdentityService.DAL.Models;
 using IdentityService.DAL.Services.TokenCacheService;
@@ -11,9 +10,7 @@ public class RegisterEmployerCommandHandler(
     UserManager<AppUser> userManager,
     IUnitOfWork unitOfWork,
     IMapper mapper,
-    IEmailSender emailSender,
-    ITokenCacheService tokenCacheService,
-    IEmailVerificationCodeProvider emailVerificationCodeProvider) : IRequestHandler<RegisterEmployerCommand>
+    IEmailSender emailSender) : IRequestHandler<RegisterEmployerCommand>
 {
     public async Task Handle(RegisterEmployerCommand request, CancellationToken cancellationToken)
     {
@@ -58,8 +55,6 @@ public class RegisterEmployerCommandHandler(
             Code = code,
             CreatedAt = DateTime.UtcNow,
         };
-
-        await tokenCacheService.SaveTokenAsync(emailVerificationToken);
 
         await emailSender.SendEmailConfirmation(user.Email!, code, cancellationToken);
     }
