@@ -2,6 +2,7 @@
 using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterFreelancer;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUsersByRole;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityService.API.Controllers;
@@ -44,5 +45,11 @@ public class UsersController : ControllerBase
         var result = await _mediator.Send(_mapper.Map<GetUsersByRoleQuery>(request), cancellationToken);
 
         return Ok(result);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateFreelancerProfile([FromBody] UpdateFreelancerRequest)
+    {
+
     }
 }

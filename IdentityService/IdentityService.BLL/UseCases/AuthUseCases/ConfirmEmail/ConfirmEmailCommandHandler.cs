@@ -12,7 +12,7 @@ public class ConfirmEmailCommandHandler(UserManager<AppUser> userManager) : IReq
             throw new BadRequestException($"A user with the email '{request.Email}' not exist.");
         }
 
-        var result = await userManager.ConfirmEmailAsync(user, request.Code);
+        var result = await userManager.ConfirmEmailAsync(user, request.Token);
 
         if (!result.Succeeded)
         {

@@ -1,12 +1,13 @@
-﻿using IdentityService.DAL.Constants;
-using System.Security.Claims;
+﻿using IdentityService.BLL.Services.EmailSender;
+using IdentityService.DAL.Constants;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterFreelancer;
 
 public class RegisterFreelancerCommandHandler(
     UserManager<AppUser> userManager, 
     IUnitOfWork unitOfWork, 
-    IMapper mapper) : IRequestHandler<RegisterFreelancerCommand>
+    IMapper mapper,
+    IEmailSender emailSender) : IRequestHandler<RegisterFreelancerCommand>
 {
     public async Task Handle(RegisterFreelancerCommand request, CancellationToken cancellationToken)
     {
@@ -36,10 +37,22 @@ public class RegisterFreelancerCommandHandler(
         }
 
         var freelancerProfile = mapper.Map<FreelancerProfile>(request);
-
+        
         freelancerProfile.UserId = user.Id;
 
         await unitOfWork.FreelancersRepository.AddAsync(freelancerProfile, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
+
+        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+
+        //var emailVerificationToken = new EmailVerificationToken
+        //{
+        //    Id = Guid.NewGuid(),
+        //    UserId = user.Id,
+        //    Code = code,
+        //    CreatedAt = DateTime.UtcNow,
+        //};
+
+        await emailSender.SendEmailConfirmation(user.Email!, code, cancellationToken);
     }
 }

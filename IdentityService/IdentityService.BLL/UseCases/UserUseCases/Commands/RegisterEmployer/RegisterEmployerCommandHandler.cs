@@ -1,8 +1,5 @@
 ﻿using IdentityService.BLL.Services.EmailSender;
 using IdentityService.DAL.Constants;
-using IdentityService.DAL.Models;
-using IdentityService.DAL.Services.TokenCacheService;
-using System.Security.Claims;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
 
@@ -48,13 +45,13 @@ public class RegisterEmployerCommandHandler(
 
         var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
-        var emailVerificationToken = new EmailVerificationToken
-        {
-            Id = Guid.NewGuid(),
-            UserId = user.Id,
-            Code = code,
-            CreatedAt = DateTime.UtcNow,
-        };
+        //var emailVerificationToken = new EmailVerificationToken
+        //{
+        //    Id = Guid.NewGuid(),
+        //    UserId = user.Id,
+        //    Code = code,
+        //    CreatedAt = DateTime.UtcNow,
+        //};
 
         await emailSender.SendEmailConfirmation(user.Email!, code, cancellationToken);
     }
