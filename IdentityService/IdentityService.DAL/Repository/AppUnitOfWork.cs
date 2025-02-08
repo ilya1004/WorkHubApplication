@@ -19,10 +19,14 @@ public class AppUnitOfWork(ApplicationDbContext context) : IUnitOfWork
     private readonly Lazy<IRepository<EmployerIndustry>> _employerIndustriesRepository = 
         new(() => new AppRepository<EmployerIndustry>(context));
 
+    private readonly Lazy<IUsersRepository> _usersRepository = 
+        new(() => new UsersRepository(context));
+
     public IEmployersRepository EmployersRepository => _employersRepository.Value;
     public IFreelancersRepository FreelancersRepository => _freelancersRepository.Value;
     public IRepository<FreelancerSkill> FreelancerSkillsRepository => _freelancerSkillsRepository.Value;
     public IRepository<EmployerIndustry> EmployerIndustriesRepository => _employerIndustriesRepository.Value;
+    public IUsersRepository UsersRepository => _usersRepository.Value;
 
     public async Task SaveAllAsync(CancellationToken cancellationToken = default)
     {

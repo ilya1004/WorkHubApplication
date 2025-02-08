@@ -1,4 +1,4 @@
-﻿using IdentityService.DAL.Abstractions.Data;
+﻿using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Data;
 using IdentityService.DAL.Primitives;
 using Microsoft.AspNetCore.Identity;

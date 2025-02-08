@@ -3,11 +3,16 @@ using IdentityService.API.Middlewares;
 using IdentityService.BLL;
 using IdentityService.DAL;
 using IdentityService.DAL.Services.DbInitializer;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
-services.AddControllers();
+services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
 

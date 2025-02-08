@@ -1,7 +1,7 @@
 ﻿using IdentityService.DAL.Primitives;
 using System.Linq.Expressions;
 
-namespace IdentityService.DAL.Abstractions.Data;
+namespace IdentityService.DAL.Abstractions.Repositories;
 
 public interface IRepository<TEntity> where TEntity : Entity
 {

@@ -11,5 +11,5 @@ public class AppUser : IdentityUser<Guid>
     public Guid? FreelancerProfileId { get; set; }
     public FreelancerProfile? FreelancerProfile { get; set; }
     public Guid? EmployerProfileId { get; set; }
-    public FreelancerProfile? EmployerProfile { get; set; }
+    public EmployerProfile? EmployerProfile { get; set; }
 }
