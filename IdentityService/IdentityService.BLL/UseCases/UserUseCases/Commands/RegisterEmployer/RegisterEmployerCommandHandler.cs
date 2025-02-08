@@ -45,14 +45,6 @@ public class RegisterEmployerCommandHandler(
 
         var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
-        //var emailVerificationToken = new EmailVerificationToken
-        //{
-        //    Id = Guid.NewGuid(),
-        //    UserId = user.Id,
-        //    Code = code,
-        //    CreatedAt = DateTime.UtcNow,
-        //};
-
         await emailSender.SendEmailConfirmation(user.Email!, code, cancellationToken);
     }
 }
