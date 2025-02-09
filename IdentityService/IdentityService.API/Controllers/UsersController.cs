@@ -57,8 +57,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     public async Task<IActionResult> UpdateFreelancerProfile([FromForm] UpdateFreelancerProfileRequest request, CancellationToken cancellationToken)
     {
         await mediator.Send(new UpdateFreelancerProfileCommand(
-            //Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-            Guid.Parse("0194e7e1-3a39-7dc8-ad84-b3a22400751b"),
+            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
             request.FreelancerProfile, 
             request.ImageFile?.OpenReadStream(), 
             request.ImageFile?.ContentType), cancellationToken);
@@ -71,7 +70,8 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     public async Task<IActionResult> UpdateEmployerProfile([FromForm] UpdateEmployerProfileRequest request, CancellationToken cancellationToken)
     {
         await mediator.Send(new UpdateEmployerProfileCommand(
-            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            //Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            Guid.Parse("0194ec90-9be1-7c12-87d0-41bac3123b60"),
             request.EmployerProfile,
             request.ImageFile?.OpenReadStream(),
             request.ImageFile?.ContentType), cancellationToken);

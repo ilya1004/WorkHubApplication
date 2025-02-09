@@ -1,6 +1,7 @@
 ﻿using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Data;
 using IdentityService.DAL.Entities;
+using IdentityService.DAL.Primitives;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -26,7 +27,12 @@ public class UsersRepository(ApplicationDbContext context) : IUsersRepository
     public Task UpdateAsync(AppUser entity, CancellationToken cancellationToken = default)
     {
         context.AppUsers.Update(entity);
+        return Task.CompletedTask;
+    }
 
+    public Task DeleteAsync(AppUser entity, CancellationToken cancellationToken = default)
+    {
+        context.AppUsers.Remove(entity);
         return Task.CompletedTask;
     }
 }

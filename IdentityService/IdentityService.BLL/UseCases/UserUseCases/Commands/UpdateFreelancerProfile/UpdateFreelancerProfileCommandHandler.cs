@@ -25,6 +25,11 @@ public class UpdateFreelancerProfileCommandHandler(
 
         user.FreelancerProfile!.Skills = skills.ToList();
 
+        if (request.FreelancerProfile.ResetImage)
+        {
+            user.ImageUrl = null;
+        }
+
         if (request.FileStream is not null)
         {
             if (!string.IsNullOrEmpty(user.ImageUrl) && Guid.TryParse(user.ImageUrl, out Guid imageId))

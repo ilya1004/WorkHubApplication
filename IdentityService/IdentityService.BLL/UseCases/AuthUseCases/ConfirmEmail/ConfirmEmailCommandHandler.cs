@@ -1,5 +1,4 @@
-﻿
-namespace IdentityService.BLL.UseCases.AuthUseCases.ConfirmEmail;
+﻿namespace IdentityService.BLL.UseCases.AuthUseCases.ConfirmEmail;
 
 public class ConfirmEmailCommandHandler(UserManager<AppUser> userManager) : IRequestHandler<ConfirmEmailCommand>
 {
@@ -10,6 +9,11 @@ public class ConfirmEmailCommandHandler(UserManager<AppUser> userManager) : IReq
         if (user is null)
         {
             throw new BadRequestException($"A user with the email '{request.Email}' not exist.");
+        }
+
+        if (user.EmailConfirmed)
+        {
+            throw new BadRequestException($"Your email is already confirmed.");
         }
 
         var result = await userManager.ConfirmEmailAsync(user, request.Token);

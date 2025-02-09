@@ -1,5 +1,4 @@
 ﻿using IdentityService.API.Contracts.AuthContracts;
-using IdentityService.API.Contracts.UserContracts;
 using IdentityService.BLL.UseCases.AuthUseCases.ConfirmEmail;
 using IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 using IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;

@@ -23,6 +23,7 @@ public class AppRepository<TEntity>(ApplicationDbContext context) : IRepository<
 
         return Task.CompletedTask;
     }
+
     public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
     {
         return await _entities.AsNoTracking().FirstOrDefaultAsync(filter, cancellationToken);

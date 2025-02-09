@@ -24,13 +24,13 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
             .HasMaxLength(200);
 
         builder.HasOne(u => u.FreelancerProfile)
-            .WithOne()
-            .HasForeignKey<AppUser>(u => u.FreelancerProfileId)
+            .WithOne(f => f.User)
+            .HasForeignKey<FreelancerProfile>(f => f.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(u => u.EmployerProfile)
-            .WithOne()
-            .HasForeignKey<AppUser>(u => u.EmployerProfileId)
+            .WithOne(e => e.User)
+            .HasForeignKey<EmployerProfile>(e => e.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using IdentityService.BLL.DTOs;
 using Microsoft.Extensions.Configuration;
 
 namespace IdentityService.BLL.Services.BlobService;
@@ -39,7 +40,7 @@ public class BlobService : IBlobService
         }
     }
 
-    public async Task<FileResponse> DownloadAsync(Guid fileId, CancellationToken cancellationToken = default)
+    public async Task<FileResponseDTO> DownloadAsync(Guid fileId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -49,7 +50,7 @@ public class BlobService : IBlobService
 
             Response<BlobDownloadResult> fileResponse = await blobClient.DownloadContentAsync(cancellationToken);
 
-            return new FileResponse(fileResponse.Value.Content.ToStream(), fileResponse.Value.Details.ContentType);
+            return new FileResponseDTO(fileResponse.Value.Content.ToStream(), fileResponse.Value.Details.ContentType);
         }
         catch (RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.BlobNotFound)
         {

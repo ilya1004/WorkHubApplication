@@ -19,6 +19,11 @@ public class UpdateEmployerProfileCommandHandler(
 
         mapper.Map(request.EmployerProfile, user.EmployerProfile);
 
+        if (request.EmployerProfile.ResetImage)
+        {
+            user.ImageUrl = null;
+        }
+
         if (request.FileStream is not null)
         {
             if (!string.IsNullOrEmpty(user.ImageUrl) && Guid.TryParse(user.ImageUrl, out Guid imageId))

@@ -4,4 +4,5 @@ public record FreelancerProfileDTO(
     string FirstName,
     string LastName,
     string About,
-    IEnumerable<Guid> SkillIds);
+    IEnumerable<Guid> SkillIds,
+    bool ResetImage);
