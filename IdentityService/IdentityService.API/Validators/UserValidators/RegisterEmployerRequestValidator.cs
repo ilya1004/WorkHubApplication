@@ -1,23 +1,15 @@
 ﻿using FluentValidation;
 using IdentityService.API.Contracts.UserContracts;
 
-namespace IdentityService.API.Validators;
+namespace IdentityService.API.Validators.UserValidators;
 
-public class RegisterFreelancerRequestValidator : AbstractValidator<RegisterFreelancerRequest>
+public class RegisterEmployerRequestValidator : AbstractValidator<RegisterEmployerRequest>
 {
-    public RegisterFreelancerRequestValidator()
+    public RegisterEmployerRequestValidator()
     {
-        RuleFor(x => x.UserName)
-            .NotEmpty().WithMessage("Username is required")
-            .MaximumLength(200).WithMessage("Username must be at most 200 characters long");
-
-        RuleFor(x => x.FirstName)
-            .NotEmpty().WithMessage("First name is required")
-            .MaximumLength(100).WithMessage("First name must be at most 100 characters long");
-
-        RuleFor(x => x.LastName)
-            .NotEmpty().WithMessage("Last name is required")
-            .MaximumLength(100).WithMessage("Last name must be at most 100 characters long");
+        RuleFor(x => x.CompanyName)
+            .NotEmpty().WithMessage("Company name is required")
+            .MaximumLength(200).WithMessage("Company name must not be longer than 200 characters.");
 
         RuleFor(x => x.Email)
            .NotEmpty().WithMessage("Email is required.")

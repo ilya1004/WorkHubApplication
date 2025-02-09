@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using IdentityService.API.Contracts.AuthContracts;
 
-namespace IdentityService.API.Validators;
+namespace IdentityService.API.Validators.AuthValidators;
 
 public class RefreshTokenRequestValidator : AbstractValidator<RefreshTokenRequest>
 {

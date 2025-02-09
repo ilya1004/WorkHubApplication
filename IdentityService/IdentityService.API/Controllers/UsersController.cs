@@ -1,5 +1,6 @@
 ﻿using IdentityService.API.Contracts.UserContracts;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.ChangePassword;
+using IdentityService.BLL.UseCases.UserUseCases.Commands.DeleteUserCommand;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterFreelancer;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateEmployerProfile;
@@ -78,7 +79,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
         return Ok();
     }
 
-    [HttpPut]
+    [HttpPost]
     [Route("change-password")]
     public async Task<IActionResult> ChangePassword(ChangePasswordRequest request, CancellationToken cancellationToken)
     {
@@ -86,11 +87,11 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
         return Ok();
     }
 
-    //[HttpDelete]
-    //[Route("{userId:guid}")]
-    //public async Task<IActionResult> DeleteUser([FromRoute] Guid userId, CancellationToken cancellationToken)
-    //{
-    //    await mediator.Send(new DeleteUserCommand(userId), cancellationToken);
-    //    return NoContent();
-    //}
+    [HttpDelete]
+    [Route("{userId:guid}")]
+    public async Task<IActionResult> DeleteUser([FromRoute] Guid userId, CancellationToken cancellationToken)
+    {
+        await mediator.Send(new DeleteUserCommand(userId), cancellationToken);
+        return NoContent();
+    }
 }

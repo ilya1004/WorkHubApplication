@@ -2,12 +2,13 @@
 using IdentityService.API.Contracts.UserContracts;
 using IdentityService.DAL.Constants;
 
-namespace IdentityService.API.Validators;
+namespace IdentityService.API.Validators.UserValidators;
 
 public class GetUsersByRoleRequestValidator : AbstractValidator<GetUsersByRoleRequest>
 {
-    private readonly List<string> appRoles = 
-        [ AppRoles.AdminRole, AppRoles.EmployerRole, AppRoles.FreelancerRole ];
+    private readonly List<string> appRoles =
+        [AppRoles.AdminRole, AppRoles.EmployerRole, AppRoles.FreelancerRole];
+    
     public GetUsersByRoleRequestValidator()
     {
         RuleFor(x => x.UserRole)
