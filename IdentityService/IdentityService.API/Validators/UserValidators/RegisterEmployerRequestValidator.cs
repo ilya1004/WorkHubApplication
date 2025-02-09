@@ -7,6 +7,10 @@ public class RegisterEmployerRequestValidator : AbstractValidator<RegisterEmploy
 {
     public RegisterEmployerRequestValidator()
     {
+        RuleFor(x => x.UserName)
+            .NotEmpty().WithMessage("UserName is required")
+            .MaximumLength(200).WithMessage("UserName must not be longer than 200 characters.");
+
         RuleFor(x => x.CompanyName)
             .NotEmpty().WithMessage("Company name is required")
             .MaximumLength(200).WithMessage("Company name must not be longer than 200 characters.");

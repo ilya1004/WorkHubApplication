@@ -1,9 +1,12 @@
-﻿namespace IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateEmployerProfile;
+﻿using IdentityService.BLL.Services.BlobService;
+
+namespace IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateEmployerProfile;
 
 public class UpdateEmployerProfileCommandHandler(
     UserManager<AppUser> userManager, 
     IUnitOfWork unitOfWork, 
-    IMapper mapper) : IRequestHandler<UpdateEmployerProfileCommand>
+    IMapper mapper,
+    IBlobService blobService) : IRequestHandler<UpdateEmployerProfileCommand>
 {
     public async Task Handle(UpdateEmployerProfileCommand request, CancellationToken cancellationToken)
     {
@@ -14,11 +17,24 @@ public class UpdateEmployerProfileCommandHandler(
             throw new NotFoundException($"User with ID '{request.Id}' not found");
         }
 
-        var employerProfile = mapper.Map<EmployerProfile>(request.EmployerProfile);
+        mapper.Map(request.EmployerProfile, user.EmployerProfile);
 
-        // saving image
+        if (request.FileStream is not null)
+        {
+            if (!string.IsNullOrEmpty(user.ImageUrl) && Guid.TryParse(user.ImageUrl, out Guid imageId))
+            {
+                await blobService.DeleteAsync(imageId, cancellationToken);
+            }
 
-        await unitOfWork.EmployersRepository.UpdateAsync(employerProfile, cancellationToken);
+            var imageFileId = await blobService.UploadAsync(
+                request.FileStream,
+                request.ContentType!,
+                cancellationToken);
+
+            user.ImageUrl = imageFileId.ToString();
+        }
+
+        await unitOfWork.UsersRepository.UpdateAsync(user, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
     }
 }

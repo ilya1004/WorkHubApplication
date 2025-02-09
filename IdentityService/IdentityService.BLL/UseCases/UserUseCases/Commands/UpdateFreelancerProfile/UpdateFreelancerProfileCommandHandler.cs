@@ -1,8 +1,11 @@
-﻿namespace IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateFreelancerProfile;
+﻿using IdentityService.BLL.Services.BlobService;
+
+namespace IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateFreelancerProfile;
 
 public class UpdateFreelancerProfileCommandHandler( 
     IUnitOfWork unitOfWork,
-    IMapper mapper) : IRequestHandler<UpdateFreelancerProfileCommand>
+    IMapper mapper,
+    IBlobService blobService) : IRequestHandler<UpdateFreelancerProfileCommand>
 {
     public async Task Handle(UpdateFreelancerProfileCommand request, CancellationToken cancellationToken)
     {
@@ -21,6 +24,21 @@ public class UpdateFreelancerProfileCommandHandler(
             s => request.FreelancerProfile.SkillIds.Contains(s.Id), cancellationToken);
 
         user.FreelancerProfile!.Skills = skills.ToList();
+
+        if (request.FileStream is not null)
+        {
+            if (!string.IsNullOrEmpty(user.ImageUrl) && Guid.TryParse(user.ImageUrl, out Guid imageId))
+            {
+                await blobService.DeleteAsync(imageId, cancellationToken);
+            }
+
+            var imageFileId = await blobService.UploadAsync(
+                request.FileStream,
+                request.ContentType!,
+                cancellationToken);
+
+            user.ImageUrl = imageFileId.ToString();
+        }
 
         await unitOfWork.UsersRepository.UpdateAsync(user, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
