@@ -70,8 +70,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     public async Task<IActionResult> UpdateEmployerProfile([FromForm] UpdateEmployerProfileRequest request, CancellationToken cancellationToken)
     {
         await mediator.Send(new UpdateEmployerProfileCommand(
-            //Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-            Guid.Parse("0194ec90-9be1-7c12-87d0-41bac3123b60"),
+            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
             request.EmployerProfile,
             request.ImageFile?.OpenReadStream(),
             request.ImageFile?.ContentType), cancellationToken);

@@ -4,31 +4,18 @@ using Microsoft.Extensions.Configuration;
 
 namespace IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 
-public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, AuthTokensDTO>
+public class LoginUserCommandHandler(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenProvider tokenService, IConfiguration configuration) : IRequestHandler<LoginUserCommand, AuthTokensDTO>
 {
-    private readonly UserManager<AppUser> _userManager;
-    private readonly SignInManager<AppUser> _signInManager;
-    private readonly ITokenProvider _tokenProvider;
-    private readonly IConfiguration _configuration;
-
-    public LoginUserCommandHandler(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenProvider tokenService, IConfiguration configuration)
-    {
-        _userManager = userManager;
-        _signInManager = signInManager;
-        _tokenProvider = tokenService;
-        _configuration = configuration;
-    }
-
     public async Task<AuthTokensDTO> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
+        var user = await userManager.FindByEmailAsync(request.Email);
 
         if (user == null)
         {
             throw new UnauthorizedException("Invalid credentials.");
         }
 
-        var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+        var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
         if (!result.Succeeded)
         {
@@ -40,16 +27,16 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, AuthTok
             throw new UnauthorizedException("You need to confirm your email.");
         }
 
-        var userRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault("");
+        var userRole = (await userManager.GetRolesAsync(user)).FirstOrDefault("");
 
-        var accessToken = _tokenProvider.GenerateAccessToken(user, userRole);
-        var refreshToken = _tokenProvider.GenerateRefreshToken();
+        var accessToken = tokenService.GenerateAccessToken(user, userRole);
+        var refreshToken = tokenService.GenerateRefreshToken();
 
         user.RefreshToken = refreshToken;
-        var expiryDays = int.Parse(_configuration["Jwt:RefreshTokenExpiryDays"]!);
+        var expiryDays = int.Parse(configuration["Jwt:RefreshTokenExpiryDays"]!);
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(expiryDays);
 
-        await _userManager.UpdateAsync(user);
+        await userManager.UpdateAsync(user);
 
         return new AuthTokensDTO(accessToken, refreshToken);
     }

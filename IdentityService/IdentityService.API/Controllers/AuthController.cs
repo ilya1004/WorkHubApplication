@@ -1,7 +1,9 @@
 ﻿using IdentityService.API.Contracts.AuthContracts;
 using IdentityService.BLL.UseCases.AuthUseCases.ConfirmEmail;
 using IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
+using IdentityService.BLL.UseCases.AuthUseCases.LogoutUser;
 using IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
+using IdentityService.BLL.UseCases.AuthUseCases.ResendEmailConfirmation;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -25,9 +27,9 @@ public class AuthController(IMediator mediator, IMapper mapper) : ControllerBase
     public async Task<IActionResult> Logout(CancellationToken cancellationToken)
     {
         await mediator.Send(new LogoutUserCommand(Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!)), cancellationToken);
+        
         return Ok();
     }
-
 
     [HttpPost]
     [Route("refresh-token")]
@@ -44,6 +46,15 @@ public class AuthController(IMediator mediator, IMapper mapper) : ControllerBase
     {
         await mediator.Send(mapper.Map<ConfirmEmailCommand>(request), cancellationToken);
 
+        return Ok();
+    }
+
+    [HttpPost]
+    [Route("resend-email-confirmation")]
+    public async Task<IActionResult> ResendConfirmationEmail(ResendEmailConfirmationRequest request, CancellationToken cancellationToken)
+    {
+        await mediator.Send(mapper.Map<ResendEmailConfirmationCommand>(request), cancellationToken);
+        
         return Ok();
     }
 }
