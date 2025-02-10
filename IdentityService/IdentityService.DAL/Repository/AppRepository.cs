@@ -114,4 +114,9 @@ public class AppRepository<TEntity>(ApplicationDbContext context) : IRepository<
     {
         return await _entities.AnyAsync(filter, cancellationToken);
     }
+
+    public async Task<int> CountAllAsync(CancellationToken cancellationToken = default)
+    {
+        return await _entities.CountAsync(cancellationToken);
+    }
 }

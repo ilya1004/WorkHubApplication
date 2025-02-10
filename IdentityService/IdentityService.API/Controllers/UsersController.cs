@@ -22,7 +22,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     {
         await mediator.Send(mapper.Map<RegisterFreelancerCommand>(request), cancellationToken);
 
-        return Ok();
+        return Created();
     }
 
     [HttpPost]
@@ -30,8 +30,8 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     public async Task<IActionResult> RegisterEmployer(RegisterEmployerRequest request, CancellationToken cancellationToken)
     {
         await mediator.Send(mapper.Map<RegisterEmployerCommand>(request), cancellationToken);
-        
-        return Ok();
+
+        return Created();
     }
 
     [HttpGet]
@@ -61,8 +61,8 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
             request.FreelancerProfile, 
             request.ImageFile?.OpenReadStream(), 
             request.ImageFile?.ContentType), cancellationToken);
-        
-        return Ok();
+
+        return NoContent();
     }
 
     [HttpPut]
@@ -75,7 +75,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
             request.ImageFile?.OpenReadStream(),
             request.ImageFile?.ContentType), cancellationToken);
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost]
@@ -83,13 +83,15 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     public async Task<IActionResult> ChangePassword(ChangePasswordRequest request, CancellationToken cancellationToken)
     {
         await mediator.Send(mapper.Map<ChangePasswordCommand>(request), cancellationToken);
-        return Ok();
+
+        return NoContent();
     }
 
     [HttpDelete]
     [Route("{userId:guid}")]
     public async Task<IActionResult> DeleteUser([FromRoute] Guid userId, CancellationToken cancellationToken)
     {
+        
         await mediator.Send(new DeleteUserCommand(userId), cancellationToken);
         return NoContent();
     }
