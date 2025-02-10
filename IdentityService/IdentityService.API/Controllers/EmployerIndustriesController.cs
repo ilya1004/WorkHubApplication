@@ -1,9 +1,9 @@
-﻿using IdentityService.API.Contracts.EmployerIndustryContracts;
+﻿using IdentityService.API.DTOs;
 using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.CreateEmployerIndustry;
 using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.DeleteEmployerIndustry;
 using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.UpdateEmployerIndustry;
-using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetAllEmployerIndustriesQuery;
-using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetEmployerIndustryByIdQuery;
+using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetAllEmployerIndustries;
+using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetEmployerIndustryById;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityService.API.Controllers;
@@ -13,9 +13,9 @@ namespace IdentityService.API.Controllers;
 public class EmployerIndustriesController(IMediator mediator, IMapper mapper) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateEmployerIndustryRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] EmployerIndustryDTO industryDTO, CancellationToken cancellationToken)
     {
-        await mediator.Send(mapper.Map<CreateEmployerIndustryCommand>(request), cancellationToken);
+        await mediator.Send(new CreateEmployerIndustryCommand(industryDTO.Name), cancellationToken);
 
         return Created();
     }
@@ -29,17 +29,18 @@ public class EmployerIndustriesController(IMediator mediator, IMapper mapper) : 
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] int pageNo = 1, [FromQuery] int pageSize = 10, CancellationToken cancellationToken = default)
     {
-        var industries = await mediator.Send(new GetAllEmployerIndustriesQuery(), cancellationToken);
-        
+        var industries = await mediator.Send(new GetAllEmployerIndustriesQuery(pageNo, pageSize), cancellationToken);
+
         return Ok(industries);
     }
 
+
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateEmployerIndustryRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(Guid id, [FromBody] EmployerIndustryDTO industryDTO, CancellationToken cancellationToken)
     {
-        await mediator.Send(new UpdateEmployerIndustryCommand(id, request.Name), cancellationToken);
+        await mediator.Send(new UpdateEmployerIndustryCommand(id, industryDTO.Name), cancellationToken);
         
         return NoContent();
     }

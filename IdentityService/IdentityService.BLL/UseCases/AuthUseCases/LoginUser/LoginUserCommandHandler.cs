@@ -4,11 +4,16 @@ using Microsoft.Extensions.Configuration;
 
 namespace IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 
-public class LoginUserCommandHandler(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenProvider tokenService, IConfiguration configuration) : IRequestHandler<LoginUserCommand, AuthTokensDTO>
+public class LoginUserCommandHandler(
+    UserManager<AppUser> userManager, 
+    SignInManager<AppUser> signInManager,
+    IUnitOfWork unitOfWork,
+    ITokenProvider tokenService, 
+    IConfiguration configuration) : IRequestHandler<LoginUserCommand, AuthTokensDTO>
 {
     public async Task<AuthTokensDTO> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await userManager.FindByEmailAsync(request.Email);
+        var user = await unitOfWork.UsersRepository.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken, u => u.Role);
 
         if (user == null)
         {
@@ -27,16 +32,15 @@ public class LoginUserCommandHandler(UserManager<AppUser> userManager, SignInMan
             throw new UnauthorizedException("You need to confirm your email.");
         }
 
-        var userRole = (await userManager.GetRolesAsync(user)).FirstOrDefault("");
-
-        var accessToken = tokenService.GenerateAccessToken(user, userRole);
+        var accessToken = tokenService.GenerateAccessToken(user);
         var refreshToken = tokenService.GenerateRefreshToken();
 
         user.RefreshToken = refreshToken;
         var expiryDays = int.Parse(configuration["Jwt:RefreshTokenExpiryDays"]!);
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(expiryDays);
 
-        await userManager.UpdateAsync(user);
+        await unitOfWork.UsersRepository.UpdateAsync(user, cancellationToken);
+        await unitOfWork.SaveAllAsync(cancellationToken);
 
         return new AuthTokensDTO(accessToken, refreshToken);
     }

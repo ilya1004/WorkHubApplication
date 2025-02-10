@@ -32,5 +32,10 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
             .WithOne(e => e.User)
             .HasForeignKey<EmployerProfile>(e => e.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(u => u.Role)
+            .WithMany()
+            .HasForeignKey(u => u.RoleId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

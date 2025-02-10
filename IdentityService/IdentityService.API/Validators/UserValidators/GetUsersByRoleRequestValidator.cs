@@ -11,7 +11,7 @@ public class GetUsersByRoleRequestValidator : AbstractValidator<GetUsersByRoleRe
     
     public GetUsersByRoleRequestValidator()
     {
-        RuleFor(x => x.UserRole)
+        RuleFor(x => x.RoleName)
             .NotEmpty().WithMessage("UserRole is required.")
             .Must(appRoles.Contains);
 

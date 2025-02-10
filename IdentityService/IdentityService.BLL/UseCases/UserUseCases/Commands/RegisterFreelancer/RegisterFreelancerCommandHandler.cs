@@ -1,10 +1,12 @@
 ﻿using IdentityService.BLL.Services.EmailSender;
 using IdentityService.DAL.Constants;
+using Microsoft.AspNetCore.Identity;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterFreelancer;
 
 public class RegisterFreelancerCommandHandler(
-    UserManager<AppUser> userManager, 
+    UserManager<AppUser> userManager,
+    RoleManager<IdentityRole<Guid>> roleManager,
     IUnitOfWork unitOfWork, 
     IMapper mapper,
     IEmailSender emailSender) : IRequestHandler<RegisterFreelancerCommand>
@@ -20,19 +22,20 @@ public class RegisterFreelancerCommandHandler(
 
         var user = mapper.Map<AppUser>(request);
 
-        var result1 = await userManager.CreateAsync(user, request.Password);
+        var role = await roleManager.FindByNameAsync(AppRoles.EmployerRole);
 
-        if (!result1.Succeeded)
+        if (role == null)
         {
-            var errors = string.Join("; ", result1.Errors.Select(e => e.Description));
-            throw new BadRequestException($"User is not successfully registered. Errors: {errors}");
+            throw new BadRequestException($"User is not successfully registered. User Role is not successfully find");
         }
 
-        var result2 = await userManager.AddToRoleAsync(user, AppRoles.FreelancerRole);
-        
-        if (!result2.Succeeded)
+        user.RoleId = role.Id;
+
+        var result = await userManager.CreateAsync(user, request.Password);
+
+        if (!result.Succeeded)
         {
-            var errors = string.Join("; ", result2.Errors.Select(e => e.Description));
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
             throw new BadRequestException($"User is not successfully registered. Errors: {errors}");
         }
 

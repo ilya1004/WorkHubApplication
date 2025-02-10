@@ -1,6 +1,6 @@
 ﻿using IdentityService.BLL.Models;
 
-namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetAllEmployerIndustriesQuery;
+namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetAllEmployerIndustries;
 
 public class GetAllEmployerIndustriesQueryHandler(
     IUnitOfWork unitOfWork) : IRequestHandler<GetAllEmployerIndustriesQuery, PaginatedResultModel<EmployerIndustry>>

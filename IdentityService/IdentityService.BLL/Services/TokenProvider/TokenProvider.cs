@@ -16,13 +16,13 @@ public class TokenProvider : ITokenProvider
         _configuration = configuration;
     }
 
-    public string GenerateAccessToken(AppUser user, string roleName)
+    public string GenerateAccessToken(AppUser user)
     {
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email!),
-            new Claim(ClaimTypes.Role, roleName)
+            new Claim(ClaimTypes.Role, user.Role.Name!)
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));

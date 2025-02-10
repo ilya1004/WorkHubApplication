@@ -3,6 +3,7 @@ using System;
 using IdentityService.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IdentityService.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250210152057_Added_access_to_roles_in_AppUser")]
+    partial class Added_access_to_roles_in_AppUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,9 +97,6 @@ namespace IdentityService.DAL.Migrations
                     b.Property<DateTime>("RegisteredAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
@@ -116,8 +116,6 @@ namespace IdentityService.DAL.Migrations
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
-
-                    b.HasIndex("RoleId");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -234,6 +232,9 @@ namespace IdentityService.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("AppUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -247,6 +248,8 @@ namespace IdentityService.DAL.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
@@ -373,17 +376,6 @@ namespace IdentityService.DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("IdentityService.DAL.Entities.AppUser", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-                });
-
             modelBuilder.Entity("IdentityService.DAL.Entities.EmployerProfile", b =>
                 {
                     b.HasOne("IdentityService.DAL.Entities.EmployerIndustry", "Industry")
@@ -411,6 +403,13 @@ namespace IdentityService.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
+                {
+                    b.HasOne("IdentityService.DAL.Entities.AppUser", null)
+                        .WithMany("Roles")
+                        .HasForeignKey("AppUserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -469,6 +468,8 @@ namespace IdentityService.DAL.Migrations
                     b.Navigation("EmployerProfile");
 
                     b.Navigation("FreelancerProfile");
+
+                    b.Navigation("Roles");
                 });
 
             modelBuilder.Entity("IdentityService.DAL.Entities.EmployerIndustry", b =>

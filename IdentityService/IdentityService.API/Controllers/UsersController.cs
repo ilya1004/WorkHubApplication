@@ -5,6 +5,7 @@ using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterFreelancer;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateEmployerProfile;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateFreelancerProfile;
+using IdentityService.BLL.UseCases.UserUseCases.Queries.GetAllUsers;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUserById;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUsersByRole;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +36,14 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     }
 
     [HttpGet]
+    public async Task<IActionResult> GetAllUsers([FromQuery] int pageNo = 1, [FromQuery] int pageSize = 10, CancellationToken cancellationToken = default)
+    {
+        var result = await mediator.Send(new GetAllUsersQuery(pageNo, pageSize), cancellationToken);
+
+        return Ok(result);
+    }
+
+    [HttpGet]
     [Route("by-role")]
     public async Task<IActionResult> GetUsersByRole([FromQuery] GetUsersByRoleRequest request, CancellationToken cancellationToken)
     {
@@ -48,6 +57,15 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     public async Task<IActionResult> GetUserById([FromRoute] Guid userId, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new GetUserByIdQuery(userId), cancellationToken);
+
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [Route("my-info")]
+    public async Task<IActionResult> GetCurrentUserInfo(CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetUserByIdQuery(Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!)), cancellationToken);
 
         return Ok(result);
     }

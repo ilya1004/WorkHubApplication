@@ -1,9 +1,7 @@
-﻿
-namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetEmployerIndustryByIdQuery;
+﻿namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetEmployerIndustryById;
 
 public class GetEmployerIndustryByIdQueryHandler(
-    IUnitOfWork unitOfWork,
-    IMapper mapper) : IRequestHandler<GetEmployerIndustryByIdQuery, EmployerIndustry>
+    IUnitOfWork unitOfWork) : IRequestHandler<GetEmployerIndustryByIdQuery, EmployerIndustry>
 {
     public async Task<EmployerIndustry> Handle(GetEmployerIndustryByIdQuery request, CancellationToken cancellationToken)
     {

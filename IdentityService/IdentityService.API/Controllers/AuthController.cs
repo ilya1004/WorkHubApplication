@@ -28,7 +28,7 @@ public class AuthController(IMediator mediator, IMapper mapper) : ControllerBase
     {
         await mediator.Send(new LogoutUserCommand(Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!)), cancellationToken);
         
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost]
@@ -46,7 +46,7 @@ public class AuthController(IMediator mediator, IMapper mapper) : ControllerBase
     {
         await mediator.Send(mapper.Map<ConfirmEmailCommand>(request), cancellationToken);
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost]
@@ -55,6 +55,6 @@ public class AuthController(IMediator mediator, IMapper mapper) : ControllerBase
     {
         await mediator.Send(mapper.Map<ResendEmailConfirmationCommand>(request), cancellationToken);
         
-        return Ok();
+        return NoContent();
     }
 }

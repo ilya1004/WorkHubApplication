@@ -10,5 +10,6 @@ public class AppUser : IdentityUser<Guid>
     public DateTime? RefreshTokenExpiryTime { get; set; }
     public FreelancerProfile? FreelancerProfile { get; set; }
     public EmployerProfile? EmployerProfile { get; set; }
-    public ICollection<IdentityRole<Guid>> Roles { get; set; }
+    public Guid RoleId { get; set; }
+    public IdentityRole<Guid> Role { get; set; }
 }
