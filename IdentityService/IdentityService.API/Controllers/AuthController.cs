@@ -3,6 +3,7 @@ using IdentityService.BLL.UseCases.AuthUseCases.ConfirmEmail;
 using IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 using IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace IdentityService.API.Controllers;
 
@@ -18,6 +19,15 @@ public class AuthController(IMediator mediator, IMapper mapper) : ControllerBase
 
         return Ok(authResponse);
     }
+
+    [HttpPost]
+    [Route("logout")]
+    public async Task<IActionResult> Logout(CancellationToken cancellationToken)
+    {
+        await mediator.Send(new LogoutUserCommand(Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!)), cancellationToken);
+        return Ok();
+    }
+
 
     [HttpPost]
     [Route("refresh-token")]
@@ -36,6 +46,4 @@ public class AuthController(IMediator mediator, IMapper mapper) : ControllerBase
 
         return Ok();
     }
-
-    
 }
