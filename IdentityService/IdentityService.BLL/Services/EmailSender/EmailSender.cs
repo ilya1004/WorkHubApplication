@@ -10,12 +10,21 @@ public class EmailSender : IEmailSender
         _fluentEmail = fluentEmail;
     }
 
-    public async Task SendEmailConfirmation(string userEmail, string code, CancellationToken cancellationToken)
+    public async Task SendEmailConfirmation(string userEmail, string token, CancellationToken cancellationToken)
     {
         await _fluentEmail
             .To(userEmail)
             .Subject("Email verification from WorkHubApplication")
-            .Body($"Your verification code is <div>{code}</div>", true)
+            .Body($"Your verification code is <div>{token}</div>", true)
+            .SendAsync(cancellationToken);
+    }
+
+    public async Task SendPasswordReset(string userEmail, string resetUrl, CancellationToken cancellationToken)
+    {
+        await _fluentEmail
+            .To(userEmail)
+            .Subject("Reset password from WorkHubApplication")
+            .Body($"Click the link to reset your password: <a href='{resetUrl}'>Reset</a>", true)
             .SendAsync(cancellationToken);
     }
 }

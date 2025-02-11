@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 namespace IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 
 public class LoginUserCommandHandler(
-    UserManager<AppUser> userManager, 
     SignInManager<AppUser> signInManager,
     IUnitOfWork unitOfWork,
     ITokenProvider tokenService, 
