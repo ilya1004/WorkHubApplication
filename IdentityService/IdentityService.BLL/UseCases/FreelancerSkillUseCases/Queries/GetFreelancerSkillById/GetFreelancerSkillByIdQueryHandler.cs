@@ -1,4 +1,6 @@
-﻿namespace IdentityService.BLL.UseCases.FreelancerSkillUseCases.Queries.GetFreelancerSkillById;
+﻿using IdentityService.DAL.Abstractions.Repositories;
+
+namespace IdentityService.BLL.UseCases.FreelancerSkillUseCases.Queries.GetFreelancerSkillById;
 
 public class GetFreelancerSkillByIdQueryHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetFreelancerSkillByIdQuery, FreelancerSkill>
 {
@@ -8,7 +10,7 @@ public class GetFreelancerSkillByIdQueryHandler(IUnitOfWork unitOfWork) : IReque
             request.Id,
             cancellationToken);
 
-        if (freelancerSkill == null)
+        if (freelancerSkill is null)
         {
             throw new NotFoundException($"Freelancer Skill with ID '{request.Id}' not found");
         }

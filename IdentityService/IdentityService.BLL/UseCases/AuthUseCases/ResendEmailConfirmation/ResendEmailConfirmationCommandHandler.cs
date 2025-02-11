@@ -7,7 +7,7 @@ public class ResendEmailConfirmationCommandHandler(UserManager<AppUser> userMana
     public async Task Handle(ResendEmailConfirmationCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByEmailAsync(request.Email);
-        
+
         if (user is null)
         {
             throw new BadRequestException($"A user with the email '{request.Email}' not exist.");

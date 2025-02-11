@@ -1,17 +1,17 @@
 ﻿using IdentityService.BLL.DTOs;
 using IdentityService.BLL.Services.BlobService;
 
-namespace IdentityService.BLL.UseCases.UserUseCases.Queries.GetImageByUserId;
+namespace IdentityService.BLL.UseCases.FileUseCases.Queries.GetImageByUserId;
 
 public class GetImageByUserIdQueryHandler(
-    UserManager<AppUser> userManager, 
+    UserManager<AppUser> userManager,
     IBlobService blobService) : IRequestHandler<GetImageByUserIdQuery, FileResponseDTO>
 {
     public async Task<FileResponseDTO> Handle(GetImageByUserIdQuery request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.UserId.ToString());
 
-        if (user == null)
+        if (user is null)
         {
             throw new NotFoundException($"User with ID '{request.UserId}' not found");
         }

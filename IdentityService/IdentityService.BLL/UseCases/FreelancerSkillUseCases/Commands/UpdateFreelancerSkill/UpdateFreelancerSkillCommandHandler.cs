@@ -1,4 +1,6 @@
-﻿namespace IdentityService.BLL.UseCases.FreelancerSkillUseCases.Commands.UpdateFreelancerSkill;
+﻿using IdentityService.DAL.Abstractions.Repositories;
+
+namespace IdentityService.BLL.UseCases.FreelancerSkillUseCases.Commands.UpdateFreelancerSkill;
 
 public class UpdateFreelancerSkillCommandHandler(
     IUnitOfWork unitOfWork,
@@ -8,7 +10,7 @@ public class UpdateFreelancerSkillCommandHandler(
     {
         var freelancerSkill = await unitOfWork.FreelancerSkillsRepository.GetByIdAsync(request.Id);
 
-        if (freelancerSkill == null)
+        if (freelancerSkill is null)
         {
             throw new NotFoundException($"Freelancer skill with ID '{request.Id}' not found");
         }

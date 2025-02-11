@@ -1,4 +1,5 @@
 ﻿using IdentityService.BLL.Services.EmailSender;
+using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Constants;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
@@ -18,12 +19,12 @@ public class RegisterEmployerCommandHandler(
         {
             throw new AlreadyExistsException($"A user with the email '{request.Email}' already exists.");
         }
-        
+
         var user = mapper.Map<AppUser>(request);
 
         var role = await roleManager.FindByNameAsync(AppRoles.EmployerRole);
 
-        if (role == null)
+        if (role is null)
         {
             throw new BadRequestException($"User is not successfully registered. User Role is not successfully find");
         }

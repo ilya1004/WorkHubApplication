@@ -1,10 +1,11 @@
 ﻿using IdentityService.BLL.Services.BlobService;
+using IdentityService.DAL.Abstractions.Repositories;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateEmployerProfile;
 
 public class UpdateEmployerProfileCommandHandler(
-    UserManager<AppUser> userManager, 
-    IUnitOfWork unitOfWork, 
+    UserManager<AppUser> userManager,
+    IUnitOfWork unitOfWork,
     IMapper mapper,
     IBlobService blobService) : IRequestHandler<UpdateEmployerProfileCommand>
 {
@@ -12,7 +13,7 @@ public class UpdateEmployerProfileCommandHandler(
     {
         var user = await userManager.FindByIdAsync(request.Id.ToString());
 
-        if (user == null)
+        if (user is null)
         {
             throw new NotFoundException($"User with ID '{request.Id}' not found");
         }

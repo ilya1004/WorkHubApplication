@@ -7,7 +7,7 @@ public class LogoutUserCommandHandler(UserManager<AppUser> userManager) : IReque
     {
         var user = await userManager.FindByIdAsync(request.UserId.ToString());
 
-        if (user == null)
+        if (user is null)
         {
             throw new NotFoundException($"User with ID '{request.UserId}' not found");
         }

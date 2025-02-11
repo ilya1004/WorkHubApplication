@@ -1,4 +1,4 @@
-﻿using IdentityService.DAL.Abstractions.Data;
+﻿using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Constants;
 using IdentityService.DAL.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +11,7 @@ public class DbInitializer(
 {
     public async Task InitializeDb()
     {
-        if (await roleManager.FindByNameAsync(AppRoles.AdminRole) == null)
+        if (await roleManager.FindByNameAsync(AppRoles.AdminRole) is null)
         {
             await roleManager.CreateAsync(new IdentityRole<Guid>(AppRoles.AdminRole));
             await roleManager.CreateAsync(new IdentityRole<Guid>(AppRoles.EmployerRole));

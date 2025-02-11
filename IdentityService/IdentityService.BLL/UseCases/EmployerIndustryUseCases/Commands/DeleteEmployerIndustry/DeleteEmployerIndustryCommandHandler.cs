@@ -1,4 +1,6 @@
 ﻿
+using IdentityService.DAL.Abstractions.Repositories;
+
 namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.DeleteEmployerIndustry;
 
 public class DeleteEmployerIndustryCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<DeleteEmployerIndustryCommand>
@@ -7,7 +9,7 @@ public class DeleteEmployerIndustryCommandHandler(IUnitOfWork unitOfWork) : IReq
     {
         var industry = await unitOfWork.EmployerIndustriesRepository.GetByIdAsync(request.Id, cancellationToken);
 
-        if (industry == null)
+        if (industry is null)
         {
             throw new NotFoundException($"Employer Industry with ID '{request.Id}' not found");
         }

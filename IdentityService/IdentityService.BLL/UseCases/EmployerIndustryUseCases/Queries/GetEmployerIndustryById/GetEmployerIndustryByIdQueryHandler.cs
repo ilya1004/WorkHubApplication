@@ -1,4 +1,6 @@
-﻿namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetEmployerIndustryById;
+﻿using IdentityService.DAL.Abstractions.Repositories;
+
+namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetEmployerIndustryById;
 
 public class GetEmployerIndustryByIdQueryHandler(
     IUnitOfWork unitOfWork) : IRequestHandler<GetEmployerIndustryByIdQuery, EmployerIndustry>
@@ -7,7 +9,7 @@ public class GetEmployerIndustryByIdQueryHandler(
     {
         var industry = await unitOfWork.EmployerIndustriesRepository.GetByIdAsync(request.Id);
 
-        if (industry == null)
+        if (industry is null)
         {
             throw new NotFoundException($"Employer Industry with ID '{request.Id}' not found");
         }

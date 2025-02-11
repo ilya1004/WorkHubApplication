@@ -1,5 +1,4 @@
 ﻿using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
-using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterFreelancer;
 
 namespace IdentityService.BLL.Mapping.UserMappingProfiles;
 

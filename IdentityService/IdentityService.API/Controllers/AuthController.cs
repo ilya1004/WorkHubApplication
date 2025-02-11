@@ -6,6 +6,7 @@ using IdentityService.BLL.UseCases.AuthUseCases.LogoutUser;
 using IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
 using IdentityService.BLL.UseCases.AuthUseCases.ResendEmailConfirmation;
 using IdentityService.BLL.UseCases.AuthUseCases.ResetPassword;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -26,6 +27,7 @@ public class AuthController(IMediator mediator, IMapper mapper) : ControllerBase
 
     [HttpPost]
     [Route("logout")]
+    [Authorize]
     public async Task<IActionResult> Logout(CancellationToken cancellationToken)
     {
         await mediator.Send(new LogoutUserCommand(Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!)), cancellationToken);
@@ -35,6 +37,7 @@ public class AuthController(IMediator mediator, IMapper mapper) : ControllerBase
 
     [HttpPost]
     [Route("refresh-token")]
+    [Authorize]
     public async Task<IActionResult> RefreshToken(RefreshTokenRequest request, CancellationToken cancellationToken)
     {
         var authResponse = await mediator.Send(mapper.Map<RefreshTokenCommand>(request), cancellationToken);
@@ -60,7 +63,8 @@ public class AuthController(IMediator mediator, IMapper mapper) : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("forgot-password")]
+    [HttpPost]
+    [Route("forgot-password")]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request, CancellationToken cancellationToken)
     {
         await mediator.Send(mapper.Map<ForgotPasswordCommand>(request), cancellationToken);
@@ -68,7 +72,8 @@ public class AuthController(IMediator mediator, IMapper mapper) : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("reset-password")]
+    [HttpPost]
+    [Route("reset-password")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken)
     {
         await mediator.Send(mapper.Map<ResetPasswordCommand>(request), cancellationToken);

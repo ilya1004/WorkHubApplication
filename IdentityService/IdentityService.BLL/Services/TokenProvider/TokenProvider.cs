@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using IdentityService.BLL.Settings;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -7,15 +8,8 @@ using System.Text;
 
 namespace IdentityService.BLL.Services.TokenProvider;
 
-public class TokenProvider : ITokenProvider
+public class TokenProvider(IOptions<JwtSettings> options) : ITokenProvider
 {
-    private readonly IConfiguration _configuration;
-
-    public TokenProvider(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
     public string GenerateAccessToken(AppUser user)
     {
         var claims = new[]
@@ -25,12 +19,12 @@ public class TokenProvider : ITokenProvider
             new Claim(ClaimTypes.Role, user.Role.Name!)
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Value.SecretKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
+            issuer: options.Value.Issuer,
+            audience: options.Value.Audience,
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(30),
             signingCredentials: creds);
@@ -42,7 +36,7 @@ public class TokenProvider : ITokenProvider
     {
         var randomNumber = new byte[64];
         using var rng = RandomNumberGenerator.Create();
-        
+
         rng.GetBytes(randomNumber);
         return Convert.ToBase64String(randomNumber);
     }
@@ -54,9 +48,9 @@ public class TokenProvider : ITokenProvider
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = _configuration["Jwt:Issuer"],
-            ValidAudience = _configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)),
+            ValidIssuer = options.Value.Issuer,
+            ValidAudience = options.Value.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Value.SecretKey)),
             ValidateLifetime = false
         };
 
@@ -64,7 +58,7 @@ public class TokenProvider : ITokenProvider
         var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
         var jwtSecurityToken = securityToken as JwtSecurityToken;
 
-        if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+        if (jwtSecurityToken is null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
         {
             throw new UnauthorizedException("Invalid token");
         }

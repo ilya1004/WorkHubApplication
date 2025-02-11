@@ -1,4 +1,6 @@
-﻿namespace IdentityService.BLL.UseCases.FreelancerSkillUseCases.Commands.CreateFreelancerSkill;
+﻿using IdentityService.DAL.Abstractions.Repositories;
+
+namespace IdentityService.BLL.UseCases.FreelancerSkillUseCases.Commands.CreateFreelancerSkill;
 
 public class CreateFreelancerSkillCommandHandler(
     IUnitOfWork unitOfWork,

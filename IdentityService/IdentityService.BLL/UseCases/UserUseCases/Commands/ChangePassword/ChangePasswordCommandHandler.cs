@@ -1,16 +1,12 @@
-﻿
-using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
-
-namespace IdentityService.BLL.UseCases.UserUseCases.Commands.ChangePassword;
+﻿namespace IdentityService.BLL.UseCases.UserUseCases.Commands.ChangePassword;
 
 public class ChangePasswordCommandHandler(UserManager<AppUser> userManager) : IRequestHandler<ChangePasswordCommand>
 {
     public async Task Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByEmailAsync(request.Email);
-        
-        if (user == null)
+
+        if (user is null)
         {
             throw new NotFoundException($"User with email '{request.Email}' not found");
         }

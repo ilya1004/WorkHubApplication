@@ -20,6 +20,7 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
                 AlreadyExistsException => StatusCodes.Status400BadRequest,
                 NotFoundException => StatusCodes.Status404NotFound,
                 UnauthorizedException => StatusCodes.Status401Unauthorized,
+                ForbiddenException => StatusCodes.Status403Forbidden,
                 _ => StatusCodes.Status500InternalServerError
             };
 

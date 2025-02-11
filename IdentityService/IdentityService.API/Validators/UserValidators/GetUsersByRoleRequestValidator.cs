@@ -8,7 +8,7 @@ public class GetUsersByRoleRequestValidator : AbstractValidator<GetUsersByRoleRe
 {
     private readonly List<string> appRoles =
         [AppRoles.AdminRole, AppRoles.EmployerRole, AppRoles.FreelancerRole];
-    
+
     public GetUsersByRoleRequestValidator()
     {
         RuleFor(x => x.RoleName)

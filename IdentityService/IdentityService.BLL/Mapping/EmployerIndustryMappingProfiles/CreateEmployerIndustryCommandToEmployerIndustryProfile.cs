@@ -7,7 +7,7 @@ public class CreateEmployerIndustryCommandToEmployerIndustryProfile : Profile
     public CreateEmployerIndustryCommandToEmployerIndustryProfile()
     {
         CreateMap<CreateEmployerIndustryCommand, EmployerIndustry>()
-            .ForMember(dest => dest.NormalizedName, opt 
+            .ForMember(dest => dest.NormalizedName, opt
                 => opt.MapFrom(src => src.Name.ToUpperInvariant().Replace(' ', '_')));
     }
 }

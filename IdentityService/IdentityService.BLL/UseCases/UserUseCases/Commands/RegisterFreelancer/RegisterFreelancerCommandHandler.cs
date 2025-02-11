@@ -1,13 +1,13 @@
 ﻿using IdentityService.BLL.Services.EmailSender;
+using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Constants;
-using Microsoft.AspNetCore.Identity;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterFreelancer;
 
 public class RegisterFreelancerCommandHandler(
     UserManager<AppUser> userManager,
     RoleManager<IdentityRole<Guid>> roleManager,
-    IUnitOfWork unitOfWork, 
+    IUnitOfWork unitOfWork,
     IMapper mapper,
     IEmailSender emailSender) : IRequestHandler<RegisterFreelancerCommand>
 {
@@ -24,7 +24,7 @@ public class RegisterFreelancerCommandHandler(
 
         var role = await roleManager.FindByNameAsync(AppRoles.EmployerRole);
 
-        if (role == null)
+        if (role is null)
         {
             throw new BadRequestException($"User is not successfully registered. User Role is not successfully find");
         }
@@ -40,7 +40,7 @@ public class RegisterFreelancerCommandHandler(
         }
 
         var freelancerProfile = mapper.Map<FreelancerProfile>(request);
-        
+
         freelancerProfile.UserId = user.Id;
 
         await unitOfWork.FreelancersRepository.AddAsync(freelancerProfile, cancellationToken);

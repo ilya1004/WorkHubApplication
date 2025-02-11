@@ -1,8 +1,9 @@
 ﻿using IdentityService.BLL.Services.BlobService;
+using IdentityService.DAL.Abstractions.Repositories;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateFreelancerProfile;
 
-public class UpdateFreelancerProfileCommandHandler( 
+public class UpdateFreelancerProfileCommandHandler(
     IUnitOfWork unitOfWork,
     IMapper mapper,
     IBlobService blobService) : IRequestHandler<UpdateFreelancerProfileCommand>
@@ -13,13 +14,13 @@ public class UpdateFreelancerProfileCommandHandler(
             request.Id, cancellationToken,
             u => u.FreelancerProfile!, u => u.FreelancerProfile!.Skills);
 
-        if (user == null)
+        if (user is null)
         {
             throw new NotFoundException($"User with ID '{request.Id}' not found");
         }
 
         mapper.Map(request.FreelancerProfile, user.FreelancerProfile);
-        
+
         var skills = await unitOfWork.FreelancerSkillsRepository.ListAsync(
             s => request.FreelancerProfile.SkillIds.Contains(s.Id), cancellationToken);
 

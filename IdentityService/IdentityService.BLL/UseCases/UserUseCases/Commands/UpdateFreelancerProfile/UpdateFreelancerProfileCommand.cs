@@ -1,5 +1,4 @@
 ﻿using IdentityService.BLL.DTOs;
-using Microsoft.AspNetCore.Http;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateFreelancerProfile;
 

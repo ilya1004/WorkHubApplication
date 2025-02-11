@@ -1,5 +1,4 @@
 ﻿using IdentityService.DAL.Entities;
-using IdentityService.DAL.Primitives;
 using System.Linq.Expressions;
 
 namespace IdentityService.DAL.Abstractions.Repositories;

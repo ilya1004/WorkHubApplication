@@ -1,20 +1,22 @@
 ﻿using IdentityService.BLL.DTOs;
 using IdentityService.BLL.Services.TokenProvider;
-using Microsoft.Extensions.Configuration;
+using IdentityService.BLL.Settings;
+using IdentityService.DAL.Abstractions.Repositories;
+using Microsoft.Extensions.Options;
 
 namespace IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 
 public class LoginUserCommandHandler(
     SignInManager<AppUser> signInManager,
     IUnitOfWork unitOfWork,
-    ITokenProvider tokenService, 
-    IConfiguration configuration) : IRequestHandler<LoginUserCommand, AuthTokensDTO>
+    ITokenProvider tokenService,
+    IOptions<JwtSettings> options) : IRequestHandler<LoginUserCommand, AuthTokensDTO>
 {
     public async Task<AuthTokensDTO> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         var user = await unitOfWork.UsersRepository.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken, u => u.Role);
 
-        if (user == null)
+        if (user is null)
         {
             throw new UnauthorizedException("Invalid credentials.");
         }
@@ -35,7 +37,7 @@ public class LoginUserCommandHandler(
         var refreshToken = tokenService.GenerateRefreshToken();
 
         user.RefreshToken = refreshToken;
-        var expiryDays = int.Parse(configuration["Jwt:RefreshTokenExpiryDays"]!);
+        var expiryDays = options.Value.RefreshTokenExpiryDays;
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(expiryDays);
 
         await unitOfWork.UsersRepository.UpdateAsync(user, cancellationToken);

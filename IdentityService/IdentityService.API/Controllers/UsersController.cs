@@ -1,4 +1,5 @@
-﻿using IdentityService.API.Contracts.UserContracts;
+﻿using IdentityService.API.Constants;
+using IdentityService.API.Contracts.UserContracts;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.ChangePassword;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.DeleteUserCommand;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
@@ -8,6 +9,7 @@ using IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateFreelancerProfile
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetAllUsers;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUserById;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUsersByRole;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -36,6 +38,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     }
 
     [HttpGet]
+    [Authorize(Policy = AuthPolicies.AdminPolicy)]
     public async Task<IActionResult> GetAllUsers([FromQuery] int pageNo = 1, [FromQuery] int pageSize = 10, CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(new GetAllUsersQuery(pageNo, pageSize), cancellationToken);
@@ -45,6 +48,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
 
     [HttpGet]
     [Route("by-role")]
+    [Authorize(Policy = AuthPolicies.AdminPolicy)]
     public async Task<IActionResult> GetUsersByRole([FromQuery] GetUsersByRoleRequest request, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(mapper.Map<GetUsersByRoleQuery>(request), cancellationToken);
@@ -54,6 +58,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
 
     [HttpGet]
     [Route("{userId:guid}")]
+    [Authorize(Policy = AuthPolicies.AdminPolicy)]
     public async Task<IActionResult> GetUserById([FromRoute] Guid userId, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new GetUserByIdQuery(userId), cancellationToken);
@@ -63,21 +68,24 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
 
     [HttpGet]
     [Route("my-info")]
+    [Authorize]
     public async Task<IActionResult> GetCurrentUserInfo(CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetUserByIdQuery(Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!)), cancellationToken);
+        var result = await mediator.Send(new GetUserByIdQuery(
+            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!)), cancellationToken);
 
         return Ok(result);
     }
 
     [HttpPut]
     [Route("update-freelancer")]
+    [Authorize(Policy = AuthPolicies.FreelancerPolicy)]
     public async Task<IActionResult> UpdateFreelancerProfile([FromForm] UpdateFreelancerProfileRequest request, CancellationToken cancellationToken)
     {
         await mediator.Send(new UpdateFreelancerProfileCommand(
             Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-            request.FreelancerProfile, 
-            request.ImageFile?.OpenReadStream(), 
+            request.FreelancerProfile,
+            request.ImageFile?.OpenReadStream(),
             request.ImageFile?.ContentType), cancellationToken);
 
         return NoContent();
@@ -85,6 +93,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
 
     [HttpPut]
     [Route("update-employer")]
+    [Authorize(Policy = AuthPolicies.EmployerPolicy)]
     public async Task<IActionResult> UpdateEmployerProfile([FromForm] UpdateEmployerProfileRequest request, CancellationToken cancellationToken)
     {
         await mediator.Send(new UpdateEmployerProfileCommand(
@@ -98,6 +107,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
 
     [HttpPost]
     [Route("change-password")]
+    [Authorize]
     public async Task<IActionResult> ChangePassword(ChangePasswordRequest request, CancellationToken cancellationToken)
     {
         await mediator.Send(mapper.Map<ChangePasswordCommand>(request), cancellationToken);
@@ -107,10 +117,11 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
 
     [HttpDelete]
     [Route("{userId:guid}")]
+    [Authorize(Policy = AuthPolicies.AdminOrSelfPolicy)]
     public async Task<IActionResult> DeleteUser([FromRoute] Guid userId, CancellationToken cancellationToken)
     {
-        
         await mediator.Send(new DeleteUserCommand(userId), cancellationToken);
+
         return NoContent();
     }
 }

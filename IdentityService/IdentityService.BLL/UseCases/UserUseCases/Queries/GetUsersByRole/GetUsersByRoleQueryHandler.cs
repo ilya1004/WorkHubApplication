@@ -1,4 +1,5 @@
 ﻿using IdentityService.BLL.Models;
+using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Constants;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Queries.GetUsersByRole;
@@ -18,10 +19,10 @@ public class GetUsersByRoleQueryHandler(IUnitOfWork unitOfWork) : IRequestHandle
         int offset = (request.PageNo - 1) * request.PageSize;
 
         var users = await unitOfWork.UsersRepository.PaginatedListAsync(
-            u => u.Role.Name == request.RoleName, 
-            offset, 
-            request.PageSize, 
-            cancellationToken, 
+            u => u.Role.Name == request.RoleName,
+            offset,
+            request.PageSize,
+            cancellationToken,
             u => u.Role);
 
         var usersCount = await unitOfWork.UsersRepository.CountAsync(u => u.Role.Name == request.RoleName, cancellationToken);

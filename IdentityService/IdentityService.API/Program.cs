@@ -9,16 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
 services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    });
+    .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
-
 services.AddHttpContextAccessor();
 
-services.AddAPI();
+services.AddAPI(builder.Configuration);
 services.AddBLL(builder.Configuration);
 services.AddDAL(builder.Configuration);
 

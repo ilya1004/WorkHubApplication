@@ -1,4 +1,5 @@
 ﻿using IdentityService.BLL.Services.BlobService;
+using IdentityService.DAL.Abstractions.Repositories;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.DeleteUserCommand;
 
@@ -14,7 +15,7 @@ public class DeleteUserCommandHandler(
             u => u.FreelancerProfile!,
             u => u.EmployerProfile!);
 
-        if (user == null)
+        if (user is null)
         {
             throw new NotFoundException($"User with ID '{request.UserId}' not found");
         }

@@ -1,4 +1,5 @@
 ﻿using IdentityService.BLL.Models;
+using IdentityService.DAL.Abstractions.Repositories;
 
 namespace IdentityService.BLL.UseCases.FreelancerSkillUseCases.Queries.GetAllFreelancerSkills;
 
