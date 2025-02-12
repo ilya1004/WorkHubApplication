@@ -42,7 +42,6 @@ public class EmployerIndustriesController(IMediator mediator) : ControllerBase
         return Ok(industries);
     }
 
-
     [HttpPut]
     [Route("{id:guid}")]
     [Authorize(Policy = AuthPolicies.AdminPolicy)]
@@ -63,4 +62,3 @@ public class EmployerIndustriesController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 }
-

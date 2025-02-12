@@ -22,7 +22,7 @@ public class RegisterFreelancerCommandHandler(
 
         var user = mapper.Map<AppUser>(request);
 
-        var role = await roleManager.FindByNameAsync(AppRoles.EmployerRole);
+        var role = await roleManager.FindByNameAsync(AppRoles.FreelancerRole);
 
         if (role is null)
         {

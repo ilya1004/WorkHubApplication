@@ -7,7 +7,8 @@ namespace IdentityService.DAL.Services.DbInitializer;
 
 public class DbInitializer(
     RoleManager<IdentityRole<Guid>> roleManager,
-    IUnitOfWork unitOfWork) : IDbInitializer
+    IUnitOfWork unitOfWork,
+    UserManager<AppUser> userManager) : IDbInitializer
 {
     public async Task InitializeDb()
     {
@@ -21,6 +22,22 @@ public class DbInitializer(
         {
             return;
         }
+
+        var adminRole = await roleManager.FindByNameAsync(AppRoles.AdminRole);
+
+        var admin = new AppUser
+        {
+            Id = Guid.NewGuid(),
+            RegisteredAt = DateTime.UtcNow,
+            UserName = "Admin",
+            NormalizedUserName = "ADMIN",
+            Email = "admin@gmail.com",
+            NormalizedEmail = "ADMIN@GMAIL.COM",
+            EmailConfirmed = true,
+            RoleId = adminRole!.Id,
+        };
+
+        await userManager.CreateAsync(admin, "Admin_123");
 
         var freelancerSkills = new List<FreelancerSkill>
         {
@@ -57,4 +74,4 @@ public class DbInitializer(
         await unitOfWork.SaveAllAsync();
     }
 }
-// This is only a test data, which initialization will be moved to HasData method lately
+// This is only a test data, which initialization will be moved to HasData() method lately

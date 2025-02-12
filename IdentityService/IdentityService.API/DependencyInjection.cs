@@ -30,11 +30,17 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
+        services.AddScoped<IAuthorizationHandler, AdminOrSelfHandler>();
+
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
         var jwtSettings = configuration.GetRequiredSection("JwtSettings").Get<JwtSettings>();
 
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
             .AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
@@ -81,8 +87,6 @@ public static class DependencyInjection
             configuration.EnableBodyBindingSourceAutomaticValidation = true;
             configuration.EnableQueryBindingSourceAutomaticValidation = true;
         });
-
-        services.AddSingleton<IAuthorizationHandler, AdminOrSelfHandler>();
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

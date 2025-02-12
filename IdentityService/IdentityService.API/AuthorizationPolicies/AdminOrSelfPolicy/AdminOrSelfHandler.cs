@@ -4,7 +4,8 @@ using System.Security.Claims;
 
 namespace IdentityService.API.AuthorizationPolicies.AdminOrSelfPolicy;
 
-public class AdminOrSelfHandler : AuthorizationHandler<AdminOrSelfRequirement>
+public class AdminOrSelfHandler(
+    IHttpContextAccessor httpContextAccessor) : AuthorizationHandler<AdminOrSelfRequirement>
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, AdminOrSelfRequirement requirement)
     {
@@ -12,12 +13,14 @@ public class AdminOrSelfHandler : AuthorizationHandler<AdminOrSelfRequirement>
 
         if (!user.Identity?.IsAuthenticated ?? true)
         {
+            context.Fail();
             return Task.CompletedTask;
         }
 
         var userIdClaim = user.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userIdClaim is null)
         {
+            context.Fail();
             return Task.CompletedTask;
         }
 
@@ -28,12 +31,20 @@ public class AdminOrSelfHandler : AuthorizationHandler<AdminOrSelfRequirement>
             return Task.CompletedTask;
         }
 
-        var routeData = context.Resource as Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext;
-        var routeUserId = routeData?.HttpContext.Request.RouteValues["userId"]?.ToString();
-
-        if (routeUserId == userIdClaim)
+        if (httpContextAccessor.HttpContext!.Request.RouteValues.TryGetValue("userId", out object? routeUserId))
         {
-            context.Succeed(requirement);
+            if (routeUserId is null)
+            {
+                context.Fail();
+                return Task.CompletedTask;
+            }
+
+            var userId = routeUserId.ToString();
+
+            if (userId == userIdClaim)
+            {
+                context.Succeed(requirement);
+            }
         }
 
         return Task.CompletedTask;
