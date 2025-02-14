@@ -44,7 +44,7 @@ x64/
 *.log
 *.svclog
 *.scc
-
+*.idea
 
 # Visual Studio profiler
 *.psess
