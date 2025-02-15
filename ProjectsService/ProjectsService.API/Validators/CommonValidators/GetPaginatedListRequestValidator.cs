@@ -1,7 +1,7 @@
 using FluentValidation;
-using ProjectsService.API.Contracts;
+using ProjectsService.API.Contracts.CommonContracts;
 
-namespace ProjectsService.API.Validators.CategoryValidators;
+namespace ProjectsService.API.Validators.CommonValidators;
 
 public class GetPaginatedListRequestValidator : AbstractValidator<GetPaginatedListRequest>
 {

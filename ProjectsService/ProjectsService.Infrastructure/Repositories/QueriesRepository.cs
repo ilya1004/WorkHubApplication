@@ -16,10 +16,20 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
         return await _entities.AsNoTracking().ToListAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<TEntity>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<TEntity>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default, 
+        params Expression<Func<TEntity, object>>[]? includesProperties)
     {
-        return await _entities
-            .AsNoTracking()
+        IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
+        
+        if (includesProperties is not null)
+        {
+            foreach (var includeProperty in includesProperties)
+            {
+                query = query.Include(includeProperty);
+            }
+        }
+
+        return await query
             .OrderBy(x => x.Id)
             .Skip(offset)
             .Take(limit)

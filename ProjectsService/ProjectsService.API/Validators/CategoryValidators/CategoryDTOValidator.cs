@@ -8,6 +8,6 @@ public class CategoryDtoValidator : AbstractValidator<CategoryDto>
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Name cannot be empty")
-            .MaximumLength(200).WithMessage("Name cannot be more than 200 characters");
+            .MaximumLength(200).WithMessage("Name must not exceed 200 characters.");
     }
 }

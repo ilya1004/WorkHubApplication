@@ -15,10 +15,10 @@ public class AppUnitOfWork(
         new(() => new CommandsRepository<FreelancerApplication>(commandsDbContext));
     private readonly Lazy<IQueriesRepository<FreelancerApplication>> _freelancerApplicationQueriesRepository =
         new(() => new QueriesRepository<FreelancerApplication>(queriesDbContext));
-    private readonly Lazy<ICommandsRepository<Project>> _lifecycleCommandsRepository =
-        new(() => new CommandsRepository<Project>(commandsDbContext));
-    private readonly Lazy<IQueriesRepository<Project>> _lifecycleQueriesRepository =
-        new(() => new QueriesRepository<Project>(queriesDbContext));
+    private readonly Lazy<ICommandsRepository<Lifecycle>> _lifecycleCommandsRepository =
+        new(() => new CommandsRepository<Lifecycle>(commandsDbContext));
+    private readonly Lazy<IQueriesRepository<Lifecycle>> _lifecycleQueriesRepository =
+        new(() => new QueriesRepository<Lifecycle>(queriesDbContext));
     private readonly Lazy<ICommandsRepository<Project>> _projectCommandsRepository =
         new(() => new CommandsRepository<Project>(commandsDbContext));
     private readonly Lazy<IQueriesRepository<Project>> _projectQueriesRepository =
@@ -30,8 +30,8 @@ public class AppUnitOfWork(
         => _freelancerApplicationCommandsRepository.Value;
     public IQueriesRepository<FreelancerApplication> FreelancerApplicationQueriesRepository 
         => _freelancerApplicationQueriesRepository.Value;
-    public ICommandsRepository<Project> LifecycleCommandsRepository => _lifecycleCommandsRepository.Value;
-    public IQueriesRepository<Project> LifecycleQueriesRepository => _lifecycleQueriesRepository.Value;
+    public ICommandsRepository<Lifecycle> LifecycleCommandsRepository => _lifecycleCommandsRepository.Value;
+    public IQueriesRepository<Lifecycle> LifecycleQueriesRepository => _lifecycleQueriesRepository.Value;
     public ICommandsRepository<Project> ProjectCommandsRepository => _projectCommandsRepository.Value;
     public IQueriesRepository<Project> ProjectQueriesRepository => _projectQueriesRepository.Value;
 

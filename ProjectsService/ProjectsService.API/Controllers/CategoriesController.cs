@@ -1,4 +1,5 @@
 using ProjectsService.API.Contracts;
+using ProjectsService.API.Contracts.CommonContracts;
 using ProjectsService.Application.UseCases.Commands.CategoryUseCases.CreateCategory;
 using ProjectsService.Application.UseCases.Commands.CategoryUseCases.DeleteCategory;
 using ProjectsService.Application.UseCases.Commands.CategoryUseCases.UpdateCategory;
@@ -12,7 +13,7 @@ namespace ProjectsService.API.Controllers;
 public class CategoriesController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> CreateCategory([FromBody] CategoryDto categoryDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateCategory([FromBody] CategoryDto categoryDto, CancellationToken cancellationToken = default)
     {
         await mediator.Send(new CreateCategoryCommand(categoryDto.Name), cancellationToken);
 
@@ -21,7 +22,7 @@ public class CategoriesController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Route("{categoryId:guid}")]
-    public async Task<IActionResult> GetCategoryById([FromRoute] Guid categoryId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetCategoryById([FromRoute] Guid categoryId, CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(new GetCategoryByIdQuery(categoryId), cancellationToken);
 
@@ -38,7 +39,7 @@ public class CategoriesController(IMediator mediator) : ControllerBase
 
     [HttpPut]
     [Route("{categoryId:guid}")]
-    public async Task<IActionResult> UpdateCategory([FromRoute] Guid categoryId, [FromBody] CategoryDto categoryDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateCategory([FromRoute] Guid categoryId, [FromBody] CategoryDto categoryDto, CancellationToken cancellationToken = default)
     {
         await mediator.Send(new UpdateCategoryCommand(categoryId, categoryDto.Name), cancellationToken);
 
@@ -47,7 +48,7 @@ public class CategoriesController(IMediator mediator) : ControllerBase
 
     [HttpDelete]
     [Route("{categoryId:guid}")]
-    public async Task<IActionResult> DeleteCategory([FromRoute] Guid categoryId, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteCategory([FromRoute] Guid categoryId, CancellationToken cancellationToken = default)
     {
         await mediator.Send(new DeleteCategoryCommand(categoryId), cancellationToken);
         

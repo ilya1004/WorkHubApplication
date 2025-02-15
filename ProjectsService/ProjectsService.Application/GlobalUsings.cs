@@ -3,3 +3,4 @@ global using MediatR;
 global using ProjectsService.Domain.Abstractions.Data;
 global using ProjectsService.Domain.Entities;
 global using AutoMapper;
+global using ProjectsService.Application.DTOs;

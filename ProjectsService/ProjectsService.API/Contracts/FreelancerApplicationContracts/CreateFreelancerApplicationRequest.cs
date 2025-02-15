@@ -1,0 +1,4 @@
+namespace ProjectsService.API.Contracts.FreelancerApplicationContracts;
+
+public sealed record CreateFreelancerApplicationRequest(
+    );

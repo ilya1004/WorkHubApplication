@@ -10,7 +10,7 @@ public class CreateCategoryCommandHandler(
 
         if (category is not null)
         {
-            throw new BadRequestException($"Category with name '{request.Name}' already exists.");
+            throw new AlreadyExistsException($"Category with name '{request.Name}' already exists.");
         }
         
         var newCategory = mapper.Map<Category>(request);
