@@ -1,5 +1,6 @@
 using ProjectsService.API;
 using ProjectsService.API.Middlewares;
+using ProjectsService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -9,6 +10,8 @@ services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 services.AddAPI(builder.Configuration);
 
+services.AddInfrastructure(builder.Configuration);
+    
 services.AddEndpointsApiExplorer()
     .AddSwaggerGen();
 

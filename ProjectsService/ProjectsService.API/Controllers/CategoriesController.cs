@@ -12,7 +12,7 @@ public class CategoriesController(IMediator mediator, IMapper mapper) : Controll
     [HttpPost]
     public async Task<IActionResult> CreateCategory([FromBody] CategoryDTO categoryDto, CancellationToken cancellationToken)
     {
-        await mediator.Send();
+        // await mediator.Send();
 
         return Created();
     }
