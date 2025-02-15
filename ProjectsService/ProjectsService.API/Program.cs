@@ -1,5 +1,6 @@
 using ProjectsService.API;
 using ProjectsService.API.Middlewares;
+using ProjectsService.Application;
 using ProjectsService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,7 @@ services.AddControllers();
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 services.AddAPI(builder.Configuration);
-
+services.AddApplication(builder.Configuration);
 services.AddInfrastructure(builder.Configuration);
     
 services.AddEndpointsApiExplorer()
@@ -26,8 +27,6 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
-
-
 
 app.MapControllers();
 

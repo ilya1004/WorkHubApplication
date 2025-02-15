@@ -1,3 +1,3 @@
 namespace ProjectsService.API.DTOs;
 
-public record CategoryDTO(string Name);
+public record CategoryDto(string Name);

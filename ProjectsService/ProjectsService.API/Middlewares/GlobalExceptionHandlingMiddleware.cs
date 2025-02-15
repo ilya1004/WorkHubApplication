@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ProjectsService.Application.Exceptions;
+﻿using ProjectsService.Application.Exceptions;
 using System.Text.Json;
 
 namespace ProjectsService.API.Middlewares;
