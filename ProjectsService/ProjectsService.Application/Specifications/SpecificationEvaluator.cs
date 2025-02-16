@@ -6,7 +6,7 @@ namespace ProjectsService.Application.Specifications;
 
 public static class SpecificationEvaluator<TEntity> where TEntity : Entity
 {
-    public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, ISpecification<TEntity> specification)
+    public static IQueryable<TEntity> ToGetQuery(IQueryable<TEntity> inputQuery, ISpecification<TEntity> specification)
     {
         var query = inputQuery;
 
@@ -40,6 +40,18 @@ public static class SpecificationEvaluator<TEntity> where TEntity : Entity
             }
         }
 
+        return query;
+    }
+    
+    public static IQueryable<TEntity> ToCountQuery(IQueryable<TEntity> inputQuery, ISpecification<TEntity> specification)
+    {
+        var query = inputQuery;
+
+        if (specification.Criteria is not null)
+        {
+            query = query.Where(specification.Criteria);
+        }
+        
         return query;
     }
 }

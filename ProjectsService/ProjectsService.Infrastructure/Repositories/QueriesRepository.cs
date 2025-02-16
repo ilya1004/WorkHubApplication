@@ -1,6 +1,8 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using ProjectsService.Application.Specifications;
 using ProjectsService.Domain.Abstractions.Data;
+using ProjectsService.Domain.Abstractions.Specification;
 using ProjectsService.Domain.Primitives;
 using ProjectsService.Infrastructure.Data;
 
@@ -110,5 +112,24 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
     public async Task<int> CountAllAsync(CancellationToken cancellationToken = default)
     {
         return await _entities.CountAsync(cancellationToken);
+    }
+
+    public async Task<int> CountAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
+    {
+        return await _entities.CountAsync(filter, cancellationToken);
+    }
+
+    public async Task<int> CountByFilterAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default)
+    {
+        var query = SpecificationEvaluator<TEntity>.ToCountQuery(_entities.AsQueryable(), specification);
+        
+        return await query.CountAsync(cancellationToken);
+    }
+    
+    public async Task<IReadOnlyList<TEntity>> GetByFilterAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default)
+    {
+        var query = SpecificationEvaluator<TEntity>.ToGetQuery(_entities.AsQueryable(), specification);
+        
+        return await query.ToListAsync(cancellationToken);
     }
 }

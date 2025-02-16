@@ -1,3 +1,5 @@
+using ProjectsService.Domain.Enums;
+
 namespace ProjectsService.Application.UseCases.Commands.ProjectUseCases.UpdateProject;
 
 public class UpdateProjectCommandHandler(IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<UpdateProjectCommand>
@@ -17,7 +19,12 @@ public class UpdateProjectCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
             throw new NotFoundException($"Project lifecycle with ProjectId '{project.Id}' not found");
         }
-        
+
+        if (lifecycle.Status != ProjectStatus.Published)
+        {
+            throw new BadRequestException("You cannot edit this project after the start of accepting applications");
+        }
+
         mapper.Map(project, request.Project);
         mapper.Map(lifecycle, request.Lifecycle);
         
