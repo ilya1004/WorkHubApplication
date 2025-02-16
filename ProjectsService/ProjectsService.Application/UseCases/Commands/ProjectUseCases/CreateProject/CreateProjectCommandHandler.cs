@@ -16,7 +16,7 @@ public class CreateProjectCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         
         await unitOfWork.ProjectCommandsRepository.AddAsync(project, cancellationToken);
         
-        var lifecycle = mapper.Map<Lifecycle>(request.Lifecycle);
+        var lifecycle = mapper.Map<Lifecycle>(request);
         lifecycle.ProjectId = project.Id;
 
         await unitOfWork.LifecycleCommandsRepository.AddAsync(lifecycle, cancellationToken);

@@ -2,6 +2,7 @@ using ProjectsService.API.Contracts;
 using ProjectsService.API.Contracts.CommonContracts;
 using ProjectsService.API.Contracts.ProjectContracts;
 using ProjectsService.Application.UseCases.Commands.ProjectUseCases.CreateProject;
+using ProjectsService.Application.UseCases.Commands.ProjectUseCases.UpdateProject;
 using ProjectsService.Application.UseCases.Queries.ProjectUseCases.GetAllProjects;
 using ProjectsService.Application.UseCases.Queries.ProjectUseCases.GetProjectById;
 
@@ -38,9 +39,11 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
     }
 
     [HttpPut]
-    [Route("/{projectId:guid}")]
-    public Task<IActionResult> UpdateProjectStatus()
+    [Route("{projectId:guid}")]
+    public async Task<IActionResult> UpdateProjectData([FromRoute] Guid projectId, [FromBody] UpdateProjectRequest request, CancellationToken cancellationToken = default)
     {
-        
+        await mediator.Send(new UpdateProjectCommand(projectId, request.Project, request.Lifecycle), cancellationToken);
+
+        return NoContent();
     }
 }
