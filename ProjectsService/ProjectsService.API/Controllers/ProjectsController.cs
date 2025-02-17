@@ -1,4 +1,4 @@
-using ProjectsService.API.Contracts;
+using System.Security.Claims;
 using ProjectsService.API.Contracts.CommonContracts;
 using ProjectsService.API.Contracts.ProjectContracts;
 using ProjectsService.Application.UseCases.Commands.ProjectUseCases.CreateProject;
@@ -43,10 +43,17 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
     }
     
     [HttpGet]
-    [Route("by-freelancer-filter")]
-    public async Task<IActionResult> GetProjectsByFreelancerFilter([FromQuery] GetProjectsByFreelancerFilterRequest request, CancellationToken cancellationToken = default)
+    [Route("by-freelancer/{freelancerId:guid}")]
+    public async Task<IActionResult> GetProjectsByFreelancerFilter([FromRoute] Guid freelancerId, [FromQuery] GetProjectsByFreelancerFilterRequest request, 
+        CancellationToken cancellationToken = default)
     {
-        var result = await mediator.Send(mapper.Map<GetProjectsByFreelancerFilterQuery>(request), cancellationToken);
+        var result = await mediator.Send(new GetProjectsByFreelancerFilterQuery(
+            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            request.ProjectStatus, 
+            request.EmployerId,
+            request.PageNo, 
+            request.PageSize), 
+            cancellationToken);
         
         return Ok(result);
     }
@@ -61,13 +68,14 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
 
     [HttpPut]
     [Route("{projectId:guid}")]
-    public async Task<IActionResult> UpdateProjectData([FromRoute] Guid projectId, [FromBody] UpdateProjectRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> UpdateProjectData([FromRoute] Guid projectId, [FromBody] UpdateProjectRequest request, 
+        CancellationToken cancellationToken = default)
     {
         await mediator.Send(new UpdateProjectCommand(projectId, request.Project, request.Lifecycle), cancellationToken);
 
         return NoContent();
     }
-
+    
     [HttpDelete]
     [Route("{projectId:guid}")]
     public async Task<IActionResult> DeleteProject([FromRoute] Guid projectId, CancellationToken cancellationToken = default)

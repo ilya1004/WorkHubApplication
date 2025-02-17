@@ -29,9 +29,6 @@ public class LifecycleConfiguration : IEntityTypeConfiguration<Lifecycle>
         builder.Property(l => l.WorkDeadline)
             .IsRequired();
 
-        builder.Property(l => l.AutoCloseDate)
-            .IsRequired();
-
         builder.Property(l => l.Status)
             .IsRequired();
 

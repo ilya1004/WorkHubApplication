@@ -1,4 +1,3 @@
-using ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases;
 using ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.CreateFreelancerApplication;
 using ProjectsService.Domain.Enums;
 

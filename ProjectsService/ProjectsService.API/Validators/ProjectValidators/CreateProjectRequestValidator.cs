@@ -39,7 +39,7 @@ public class CreateProjectRequestValidator : AbstractValidator<CreateProjectRequ
             .NotEmpty().WithMessage("Applications deadline is required.")
             .GreaterThan(x => x.Lifecycle.ApplicationsStartDate)
             .WithMessage("Applications deadline must be after the applications start date.");
-
+        
         RuleFor(x => x.Lifecycle.WorkStartDate)
             .NotEmpty().WithMessage("Work start date is required.")
             .GreaterThan(x => x.Lifecycle.ApplicationsDeadline)
@@ -49,9 +49,5 @@ public class CreateProjectRequestValidator : AbstractValidator<CreateProjectRequ
             .NotEmpty().WithMessage("Work deadline is required.")
             .GreaterThan(x => x.Lifecycle.WorkStartDate)
             .WithMessage("Work deadline must be after the work start date.");
-
-        RuleFor(x => x.Lifecycle.AutoCloseDate)
-            .NotEmpty().WithMessage("Auto close date is required.")
-            .GreaterThan(DateTime.UtcNow).WithMessage("Auto close date must be in the future.");
     }
 }

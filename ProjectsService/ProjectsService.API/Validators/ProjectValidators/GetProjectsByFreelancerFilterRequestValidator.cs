@@ -7,9 +7,6 @@ public class GetProjectsByFreelancerFilterRequestValidator : AbstractValidator<G
 {
     public GetProjectsByFreelancerFilterRequestValidator()
     {
-        RuleFor(x => x.FreelancerId)
-            .NotEmpty().WithMessage("FreelancerId is required.");
-        
         RuleFor(x => x.ProjectStatus)
             .IsInEnum().When(x => x.ProjectStatus.HasValue)
             .WithMessage("ProjectStatus must be a valid Enum value.");

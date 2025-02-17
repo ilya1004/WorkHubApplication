@@ -22,8 +22,6 @@ public class CreateProjectCommandToLifecycle : Profile
                 opt.MapFrom(src => src.Lifecycle.WorkStartDate))
             .ForMember(dest => dest.WorkDeadline, opt =>
                 opt.MapFrom(src => src.Lifecycle.WorkDeadline))
-            .ForMember(dest => dest.AutoCloseDate, opt =>
-                opt.MapFrom(src => src.Lifecycle.AutoCloseDate))
             .ForMember(dest => dest.Status, opt =>
                 opt.MapFrom(_ => ProjectStatus.Published));
     }
