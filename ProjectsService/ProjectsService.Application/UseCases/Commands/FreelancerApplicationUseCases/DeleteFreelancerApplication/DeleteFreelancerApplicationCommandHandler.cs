@@ -1,24 +1,21 @@
-using ProjectsService.Domain.Enums;
-
 namespace ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.DeleteFreelancerApplication;
 
 public class DeleteFreelancerApplicationCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<DeleteFreelancerApplicationCommand>
 {
     public async Task Handle(DeleteFreelancerApplicationCommand request, CancellationToken cancellationToken)
     {
-        var freelancerApplication = await unitOfWork.FreelancerApplicationQueriesRepository.FirstOrDefaultAsync(
-            fa => fa.FreelancerId == request.FreelancerId && fa.ProjectId == request.ProjectId,
+        var freelancerApplication = await unitOfWork.FreelancerApplicationQueriesRepository.GetByIdAsync(
+            request.Id,
             cancellationToken);
-
+        
         if (freelancerApplication is null)
         {
-            throw new NotFoundException($"Freelancer Application with freelancer ID '{request.FreelancerId}' " +
-                                        $"and project ID '{request.ProjectId}' not found");
+            throw new NotFoundException($"Freelancer Application with ID '{request.Id}' not found");
         }
 
-        if (freelancerApplication.Status != ApplicationStatus.Pending)
+        if (freelancerApplication.FreelancerId != request.FreelancerId)
         {
-            throw new BadRequestException("You can not remove Freelancer Application when its not pending.");
+            throw new ForbiddenException($"You cannot delete this Freelancer Application with ID '{request.Id}'");
         }
         
         await unitOfWork.FreelancerApplicationCommandsRepository.DeleteAsync(freelancerApplication, cancellationToken);

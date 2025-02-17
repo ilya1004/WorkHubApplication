@@ -35,7 +35,8 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
 
     [HttpGet]
     [Route("by-filter")]
-    public async Task<IActionResult> GetProjectsByFilter([FromQuery] GetProjectsByFilterRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetProjectsByFilter([FromQuery] GetProjectsByFilterRequest request, 
+        CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(mapper.Map<GetProjectsByFilterQuery>(request), cancellationToken);
         
@@ -43,23 +44,23 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
     }
     
     [HttpGet]
-    [Route("by-freelancer/{freelancerId:guid}")]
-    public async Task<IActionResult> GetProjectsByFreelancerFilter([FromRoute] Guid freelancerId, [FromQuery] GetProjectsByFreelancerFilterRequest request, 
+    [Route("my-projects-filter")]
+    public async Task<IActionResult> GetProjectsByFreelancerFilter([FromQuery] GetProjectsByFreelancerFilterRequest request, 
         CancellationToken cancellationToken = default)
     {
-        var result = await mediator.Send(new GetProjectsByFreelancerFilterQuery(
-            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-            request.ProjectStatus, 
-            request.EmployerId,
-            request.PageNo, 
-            request.PageSize), 
-            cancellationToken);
+        var query = mapper.Map<GetProjectsByFreelancerFilterQuery>(request) with
+        {
+            FreelancerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!)
+        };
+        
+        var result = await mediator.Send(query, cancellationToken);
         
         return Ok(result);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllProjects([FromQuery] GetPaginatedListRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAllProjects([FromQuery] GetPaginatedListRequest request, 
+        CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(new GetAllProjectsQuery(request.PageNo, request.PageSize), cancellationToken);
 

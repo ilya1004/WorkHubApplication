@@ -1,3 +1,3 @@
 namespace ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.DeleteFreelancerApplication;
 
-public record DeleteFreelancerApplicationCommand(Guid FreelancerId, Guid ProjectId) : IRequest;
+public record DeleteFreelancerApplicationCommand(Guid FreelancerId, Guid Id) : IRequest;
