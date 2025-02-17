@@ -7,13 +7,18 @@ public class DeleteProjectCommandHandler(IUnitOfWork unitOfWork): IRequestHandle
     public async Task Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
     {
         var project = await unitOfWork.ProjectQueriesRepository.GetByIdAsync(
-            request.Id, 
+            request.ProjectId, 
             cancellationToken,
             p => p.Lifecycle);
         
         if (project is null)
         {
-            throw new NotFoundException($"Project with ID '{request.Id}' not found");
+            throw new NotFoundException($"Project with ID '{request.ProjectId}' not found");
+        }
+
+        if (project.EmployerId != request.EmployerId)
+        {
+            throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }
 
         if (project.Lifecycle.Status != ProjectStatus.Cancelled)

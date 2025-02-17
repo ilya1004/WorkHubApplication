@@ -4,10 +4,12 @@ using ProjectsService.API.Contracts.ProjectContracts;
 using ProjectsService.Application.UseCases.Commands.ProjectUseCases.CreateProject;
 using ProjectsService.Application.UseCases.Commands.ProjectUseCases.DeleteProject;
 using ProjectsService.Application.UseCases.Commands.ProjectUseCases.UpdateProject;
+using ProjectsService.Application.UseCases.Commands.ProjectUseCases.UpdateProjectStatus;
 using ProjectsService.Application.UseCases.Queries.ProjectUseCases.GetAllProjects;
 using ProjectsService.Application.UseCases.Queries.ProjectUseCases.GetProjectById;
 using ProjectsService.Application.UseCases.Queries.ProjectUseCases.GetProjectsByFilter;
 using ProjectsService.Application.UseCases.Queries.ProjectUseCases.GetProjectsByFreelancerFilter;
+using ProjectsService.Domain.Enums;
 
 namespace ProjectsService.API.Controllers;
 
@@ -72,7 +74,26 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
     public async Task<IActionResult> UpdateProjectData([FromRoute] Guid projectId, [FromBody] UpdateProjectRequest request, 
         CancellationToken cancellationToken = default)
     {
-        await mediator.Send(new UpdateProjectCommand(projectId, request.Project, request.Lifecycle), cancellationToken);
+        await mediator.Send(new UpdateProjectCommand(
+            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!), 
+            projectId,
+            request.Project, 
+            request.Lifecycle), 
+            cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpPut]
+    [Route("{projectId:guid}/update-status")]
+    public async Task<IActionResult> UpdateProjectStatus([FromRoute] Guid projectId, [FromQuery] ProjectStatus status, 
+        CancellationToken cancellationToken = default)
+    {
+        await mediator.Send(new UpdateProjectStatusCommand(
+            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            projectId,
+            status), 
+            cancellationToken);
 
         return NoContent();
     }
@@ -81,7 +102,10 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
     [Route("{projectId:guid}")]
     public async Task<IActionResult> DeleteProject([FromRoute] Guid projectId, CancellationToken cancellationToken = default)
     {
-        await mediator.Send(new DeleteProjectCommand(projectId), cancellationToken);
+        await mediator.Send(new DeleteProjectCommand(
+            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            projectId),
+            cancellationToken);
 
         return NoContent();
     }

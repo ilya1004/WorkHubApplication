@@ -5,17 +5,17 @@ public class DeleteFreelancerApplicationCommandHandler(IUnitOfWork unitOfWork) :
     public async Task Handle(DeleteFreelancerApplicationCommand request, CancellationToken cancellationToken)
     {
         var freelancerApplication = await unitOfWork.FreelancerApplicationQueriesRepository.GetByIdAsync(
-            request.Id,
+            request.ApplicationId,
             cancellationToken);
         
         if (freelancerApplication is null)
         {
-            throw new NotFoundException($"Freelancer Application with ID '{request.Id}' not found");
+            throw new NotFoundException($"Freelancer Application with ID '{request.ApplicationId}' not found");
         }
 
         if (freelancerApplication.FreelancerId != request.FreelancerId)
         {
-            throw new ForbiddenException($"You cannot delete this Freelancer Application with ID '{request.Id}'");
+            throw new ForbiddenException($"You do not have access to Freelancer Application with ID '{request.ApplicationId}'");
         }
         
         await unitOfWork.FreelancerApplicationCommandsRepository.DeleteAsync(freelancerApplication, cancellationToken);

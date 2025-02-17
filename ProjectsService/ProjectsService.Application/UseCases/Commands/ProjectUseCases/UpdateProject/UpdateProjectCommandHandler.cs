@@ -6,11 +6,16 @@ public class UpdateProjectCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
 {
     public async Task Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
     {
-        var project = await unitOfWork.ProjectQueriesRepository.GetByIdAsync(request.Id, cancellationToken);
+        var project = await unitOfWork.ProjectQueriesRepository.GetByIdAsync(request.ProjectId, cancellationToken);
 
         if (project is null)
         {
-            throw new NotFoundException($"Project with ID '{request.Id}' not found");
+            throw new NotFoundException($"Project with ID '{request.ProjectId}' not found");
+        }
+        
+        if (project.EmployerId != request.EmployerId)
+        {
+            throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }
         
         var lifecycle = await unitOfWork.LifecycleQueriesRepository.FirstOrDefaultAsync(l => l.ProjectId == project.Id, cancellationToken);

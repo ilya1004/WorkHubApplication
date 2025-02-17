@@ -18,7 +18,7 @@ public class RejectFreelancerApplicationCommandHandler(IUnitOfWork unitOfWork) :
 
         if (project.EmployerId != request.EmployerId)
         {
-            throw new ForbiddenException($"You cannot manage project with ID '{request.ProjectId}'");
+            throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }
 
         if (project.Lifecycle.Status != ProjectStatus.AcceptingApplications)
