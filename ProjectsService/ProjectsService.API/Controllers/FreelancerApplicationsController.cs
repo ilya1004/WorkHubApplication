@@ -2,11 +2,13 @@ using System.Security.Claims;
 using ProjectsService.API.Contracts.CommonContracts;
 using ProjectsService.API.Contracts.FreelancerApplicationContracts;
 using ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.AcceptFreelancerApplication;
+using ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.CancelFreelancerApplication;
 using ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.CreateFreelancerApplication;
 using ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.DeleteFreelancerApplication;
 using ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.RejectFreelancerApplication;
 using ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetAllFreelancerApplications;
 using ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationsByFilter;
+using ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationsByProjectId;
 
 namespace ProjectsService.API.Controllers;
 
@@ -37,6 +39,29 @@ public class FreelancerApplicationsController(IMediator mediator, IMapper mapper
     }
     
     [HttpGet]
+    [Route("{applicationId:guid}")]
+    public async Task<IActionResult> GetFreelancerApplicationById([FromRoute] Guid applicationId, 
+        CancellationToken cancellationToken = default)
+    {
+        var result = await mediator.Send(, cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    [Route("by-project/{projectId:guid}")]
+    public async Task<IActionResult> GetFreelancerApplicationsByProjectId([FromQuery] GetPaginatedListRequest request, 
+        Guid projectId, CancellationToken cancellationToken = default)
+    {
+        var result = await mediator.Send(new GetFreelancerApplicationsByProjectIdQuery(
+            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!), 
+            projectId, request.PageNo, request.PageSize), 
+            cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
     [Route("my-applications-filter")]
     public async Task<IActionResult> GetFreelancerApplications([FromQuery] GetFreelancerApplicationsByFilterRequest request,
         CancellationToken cancellationToken = default)
@@ -58,8 +83,7 @@ public class FreelancerApplicationsController(IMediator mediator, IMapper mapper
     {
         await mediator.Send(new AcceptFreelancerApplicationCommand(
                 Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!), 
-                projectId,
-                applicationId), 
+                projectId, applicationId), 
                 cancellationToken);
 
         return NoContent();
@@ -72,10 +96,21 @@ public class FreelancerApplicationsController(IMediator mediator, IMapper mapper
     {
         await mediator.Send(new RejectFreelancerApplicationCommand(
                 Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-                projectId,
-                applicationId), 
+                projectId, applicationId), 
                 cancellationToken);
 
+        return NoContent();
+    }
+
+    [HttpPut]
+    [Route("{applicationId:guid}/cancel-application")]
+    public async Task<IActionResult> CancelApplication([FromRoute] Guid applicationId,
+        CancellationToken cancellationToken = default)
+    {
+        await mediator.Send(new CancelFreelancerApplicationCommand(
+            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            applicationId), cancellationToken);
+        
         return NoContent();
     }
 

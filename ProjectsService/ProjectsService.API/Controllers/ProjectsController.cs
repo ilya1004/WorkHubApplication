@@ -76,9 +76,7 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
     {
         await mediator.Send(new UpdateProjectCommand(
             Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!), 
-            projectId,
-            request.Project, 
-            request.Lifecycle), 
+            projectId, request.Project, request.Lifecycle), 
             cancellationToken);
 
         return NoContent();
@@ -91,8 +89,7 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
     {
         await mediator.Send(new UpdateProjectStatusCommand(
             Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-            projectId,
-            status), 
+            projectId, status), 
             cancellationToken);
 
         return NoContent();

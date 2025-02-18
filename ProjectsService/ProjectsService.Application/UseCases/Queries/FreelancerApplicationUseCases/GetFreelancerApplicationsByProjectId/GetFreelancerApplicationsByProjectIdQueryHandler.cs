@@ -1,0 +1,42 @@
+using ProjectsService.Application.Models;
+
+namespace ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationsByProjectId;
+
+public class GetFreelancerApplicationsByProjectIdQueryHandler(
+    IUnitOfWork unitOfWork) : IRequestHandler<GetFreelancerApplicationsByProjectIdQuery, PaginatedResultModel<FreelancerApplication>>
+{
+    public async Task<PaginatedResultModel<FreelancerApplication>> Handle(GetFreelancerApplicationsByProjectIdQuery request, CancellationToken cancellationToken)
+    {
+        var project = await unitOfWork.ProjectQueriesRepository.GetByIdAsync(request.ProjectId, cancellationToken);
+        
+        if (project is null)
+        {
+            throw new NotFoundException($"Project with ID '{request.ProjectId}' not found");
+        }
+        
+        if (project.EmployerId != request.EmployerId)
+        {
+            throw new ForbiddenException($"You do not have access to Project with ID '{request.ProjectId}'");
+        }
+        
+        var offset = (request.PageNo - 1) * request.PageSize;
+        
+        var applications = await unitOfWork.FreelancerApplicationQueriesRepository.PaginatedListAsync(
+            fa => fa.ProjectId == request.ProjectId,
+            offset,
+            request.PageSize,
+            cancellationToken);
+        
+        var applicationsCount = await unitOfWork.FreelancerApplicationQueriesRepository.CountAsync(
+            fa => fa.ProjectId == request.ProjectId, 
+            cancellationToken);
+
+        return new PaginatedResultModel<FreelancerApplication>
+        {
+            Items = applications.ToList(),
+            TotalCount = applicationsCount,
+            PageNo = request.PageNo,
+            PageSize = request.PageSize
+        };
+    }
+}

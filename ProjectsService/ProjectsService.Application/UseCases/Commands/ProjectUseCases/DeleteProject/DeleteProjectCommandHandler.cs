@@ -23,7 +23,7 @@ public class DeleteProjectCommandHandler(IUnitOfWork unitOfWork): IRequestHandle
 
         if (project.Lifecycle.Status != ProjectStatus.Cancelled)
         {
-            throw new BadRequestException("You need to cancel the project before deletion");
+            throw new BadRequestException("You need to cancel the project before its removing");
         }
         
         await unitOfWork.ProjectCommandsRepository.DeleteAsync(project, cancellationToken);
