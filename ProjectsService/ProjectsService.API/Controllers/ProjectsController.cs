@@ -3,6 +3,8 @@ using ProjectsService.API.Contracts.CommonContracts;
 using ProjectsService.API.Contracts.ProjectContracts;
 using ProjectsService.Application.UseCases.Commands.ProjectUseCases.CreateProject;
 using ProjectsService.Application.UseCases.Commands.ProjectUseCases.DeleteProject;
+using ProjectsService.Application.UseCases.Commands.ProjectUseCases.UpdateAcceptanceRequest;
+using ProjectsService.Application.UseCases.Commands.ProjectUseCases.UpdateAcceptanceStatus;
 using ProjectsService.Application.UseCases.Commands.ProjectUseCases.UpdateProject;
 using ProjectsService.Application.UseCases.Commands.ProjectUseCases.UpdateProjectStatus;
 using ProjectsService.Application.UseCases.Queries.ProjectUseCases.GetAllProjects;
@@ -19,7 +21,8 @@ namespace ProjectsService.API.Controllers;
 public class ProjectsController(IMediator mediator, IMapper mapper) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequest request, 
+        CancellationToken cancellationToken = default)
     {
         await mediator.Send(mapper.Map<CreateProjectCommand>(request), cancellationToken);
 
@@ -90,6 +93,32 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
         await mediator.Send(new UpdateProjectStatusCommand(
             Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
             projectId, status), 
+            cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpPut]
+    [Route("{projectId:guid}/send-acceptance-request")]
+    public async Task<IActionResult> UpdateAcceptanceRequest([FromRoute] Guid projectId, 
+        CancellationToken cancellationToken = default)
+    {
+        await mediator.Send(new UpdateAcceptanceRequestCommand(
+            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            projectId), 
+            cancellationToken);
+
+        return NoContent();
+    }
+    
+    [HttpPut]
+    [Route("{projectId:guid}/set-acceptance-status/{status:bool}")]
+    public async Task<IActionResult> UpdateAcceptanceStatus([FromRoute] Guid projectId, [FromRoute] bool status, 
+        CancellationToken cancellationToken = default)
+    {
+        await mediator.Send(new UpdateAcceptanceStatusCommand(
+            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            projectId, status),
             cancellationToken);
 
         return NoContent();

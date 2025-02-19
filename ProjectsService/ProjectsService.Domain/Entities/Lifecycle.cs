@@ -11,6 +11,8 @@ public class Lifecycle : Entity
     public DateTime ApplicationsDeadline { get; set; }
     public DateTime WorkStartDate { get; set; }
     public DateTime WorkDeadline { get; set; }
+    public bool AcceptanceRequested { get; set; }
+    public bool AcceptanceConfirmed { get; set; }
     public ProjectStatus Status { get; set; }
     public Guid ProjectId { get; set; }
     public Project Project { get; set; }

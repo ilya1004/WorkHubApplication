@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Validators\" />
+    <Folder Include="Abstractions\" />
   </ItemGroup>
 
 </Project>

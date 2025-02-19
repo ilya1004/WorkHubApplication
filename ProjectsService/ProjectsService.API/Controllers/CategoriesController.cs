@@ -13,7 +13,8 @@ namespace ProjectsService.API.Controllers;
 public class CategoriesController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> CreateCategory([FromBody] CategoryDto categoryDto, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> CreateCategory([FromBody] CategoryDto categoryDto, 
+        CancellationToken cancellationToken = default)
     {
         await mediator.Send(new CreateCategoryCommand(categoryDto.Name), cancellationToken);
 
@@ -22,7 +23,8 @@ public class CategoriesController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Route("{categoryId:guid}")]
-    public async Task<IActionResult> GetCategoryById([FromRoute] Guid categoryId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetCategoryById([FromRoute] Guid categoryId, 
+        CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(new GetCategoryByIdQuery(categoryId), cancellationToken);
 
@@ -30,7 +32,8 @@ public class CategoriesController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllCategories([FromQuery] GetPaginatedListRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAllCategories([FromQuery] GetPaginatedListRequest request, 
+        CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(new GetAllCategoriesQuery(request.PageNo, request.PageSize), cancellationToken);
 
@@ -39,7 +42,8 @@ public class CategoriesController(IMediator mediator) : ControllerBase
 
     [HttpPut]
     [Route("{categoryId:guid}")]
-    public async Task<IActionResult> UpdateCategory([FromRoute] Guid categoryId, [FromBody] CategoryDto categoryDto, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> UpdateCategory([FromRoute] Guid categoryId, [FromBody] CategoryDto categoryDto, 
+        CancellationToken cancellationToken = default)
     {
         await mediator.Send(new UpdateCategoryCommand(categoryId, categoryDto.Name), cancellationToken);
 
@@ -48,7 +52,8 @@ public class CategoriesController(IMediator mediator) : ControllerBase
 
     [HttpDelete]
     [Route("{categoryId:guid}")]
-    public async Task<IActionResult> DeleteCategory([FromRoute] Guid categoryId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> DeleteCategory([FromRoute] Guid categoryId, 
+        CancellationToken cancellationToken = default)
     {
         await mediator.Send(new DeleteCategoryCommand(categoryId), cancellationToken);
         

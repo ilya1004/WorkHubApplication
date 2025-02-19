@@ -1,5 +1,6 @@
 using System.Reflection;
 using FluentValidation;
+using ProjectsService.Application.Settings;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 namespace ProjectsService.API;
@@ -18,6 +19,8 @@ public static class DependencyInjection
         });
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+        services.Configure<ProjectsSettings>(configuration.GetSection("ProjectsSettings"));
 
         return services;
     }

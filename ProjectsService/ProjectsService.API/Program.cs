@@ -1,6 +1,8 @@
+using Hangfire;
 using ProjectsService.API;
 using ProjectsService.API.Middlewares;
 using ProjectsService.Application;
+using ProjectsService.Domain.Abstractions.StartupServices;
 using ProjectsService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +24,14 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    app.UseHangfireDashboard();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var jobInitializer = scope.ServiceProvider.GetRequiredService<IBackgroundJobsInitializer>();
+    jobInitializer.StartBackgroundJobs();
 }
 
 app.UseRouting();

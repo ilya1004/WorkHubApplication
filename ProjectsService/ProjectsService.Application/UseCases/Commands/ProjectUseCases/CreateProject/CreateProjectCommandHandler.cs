@@ -1,6 +1,8 @@
 namespace ProjectsService.Application.UseCases.Commands.ProjectUseCases.CreateProject;
 
-public class CreateProjectCommandHandler(IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<CreateProjectCommand>
+public class CreateProjectCommandHandler(
+    IUnitOfWork unitOfWork, 
+    IMapper mapper) : IRequestHandler<CreateProjectCommand>
 {
     public async Task Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
