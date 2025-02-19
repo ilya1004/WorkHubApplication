@@ -48,10 +48,5 @@ public class UpdateProjectRequestValidator : AbstractValidator<UpdateProjectRequ
             .NotEmpty().WithMessage("Work deadline is required.")
             .GreaterThan(x => x.Lifecycle.WorkStartDate)
             .WithMessage("Work deadline must be after the work start date.");
-
-        RuleFor(x => x.Lifecycle.AutoCloseDate)
-            .NotEmpty().WithMessage("Auto close date is required.")
-            .GreaterThan(DateTime.UtcNow)
-            .WithMessage("Auto close date must be in the future.");
     }
 }

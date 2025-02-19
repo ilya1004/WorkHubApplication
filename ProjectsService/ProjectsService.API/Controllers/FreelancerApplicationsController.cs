@@ -7,6 +7,7 @@ using ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCase
 using ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.DeleteFreelancerApplication;
 using ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.RejectFreelancerApplication;
 using ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetAllFreelancerApplications;
+using ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationById;
 using ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationsByFilter;
 using ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationsByProjectId;
 
@@ -43,7 +44,9 @@ public class FreelancerApplicationsController(IMediator mediator, IMapper mapper
     public async Task<IActionResult> GetFreelancerApplicationById([FromRoute] Guid applicationId, 
         CancellationToken cancellationToken = default)
     {
-        var result = await mediator.Send(, cancellationToken);
+        var result = await mediator.Send(new GetFreelancerApplicationByIdQuery(
+            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            applicationId), cancellationToken);
 
         return Ok(result);
     }
