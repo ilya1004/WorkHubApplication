@@ -24,9 +24,6 @@ public class CreateProjectRequestValidator : AbstractValidator<CreateProjectRequ
             .GreaterThan(0).WithMessage("Budget must be greater than zero.")
             .PrecisionScale(18, 2, true).WithMessage("Budget must have up to 18 digits and 2 decimal places.");
 
-        RuleFor(x => x.Project.EmployerId)
-            .NotEmpty().WithMessage("EmployerId is required.");
-
         RuleFor(x => x.Project.CategoryId)
             .NotEmpty().WithMessage("CategoryId is required.")
             .When(x => x.Project.CategoryId.HasValue);

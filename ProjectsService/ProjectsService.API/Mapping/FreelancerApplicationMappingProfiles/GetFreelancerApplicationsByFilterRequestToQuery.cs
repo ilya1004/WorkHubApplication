@@ -7,6 +7,8 @@ public class GetFreelancerApplicationsByFilterRequestToQuery : Profile
 {
     public GetFreelancerApplicationsByFilterRequestToQuery()
     {
-        CreateMap<GetFreelancerApplicationsByFilterRequest, GetFreelancerApplicationsByFilterQuery>();
+        CreateMap<GetFreelancerApplicationsByFilterRequest, GetFreelancerApplicationsByFilterQuery>()
+            .ConstructUsing(src => new GetFreelancerApplicationsByFilterQuery(
+                Guid.Empty, src.StartDate, src.EndDate, src.ApplicationStatus, src.PageNo, src.PageSize));
     }
 }

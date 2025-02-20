@@ -5,9 +5,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectsService.Application.Abstractions.BackgroundJobs;
 using ProjectsService.Domain.Abstractions.Data;
+using ProjectsService.Domain.Abstractions.StartupServices;
 using ProjectsService.Infrastructure.Data;
 using ProjectsService.Infrastructure.Repositories;
 using ProjectsService.Infrastructure.Services;
+using ProjectsService.Infrastructure.Services.HangfireJobsInitializer;
 using ProjectsService.Infrastructure.Services.HangfireScheduler;
 
 namespace ProjectsService.Infrastructure;
@@ -31,6 +33,7 @@ public static class DependencyInjection
         services.AddHangfireServer(options => options.SchedulePollingInterval = TimeSpan.FromSeconds(10));
 
         services.AddScoped<IBackgroundJobScheduler, HangfireScheduler>();
+        services.AddScoped<IBackgroundJobsInitializer, HangfireJobsInitializer>();
         
         return services;
     }

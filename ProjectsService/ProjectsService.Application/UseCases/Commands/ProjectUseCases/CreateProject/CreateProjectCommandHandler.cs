@@ -7,7 +7,7 @@ public class CreateProjectCommandHandler(
     public async Task Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
         var existingProject = await unitOfWork.ProjectQueriesRepository.FirstOrDefaultAsync(
-            p => p.Title == request.Project.Title && p.EmployerId == request.Project.EmployerId, cancellationToken);
+            p => p.Title == request.Project.Title && p.EmployerId == request.EmployerId, cancellationToken);
 
         if (existingProject is not null)
         {

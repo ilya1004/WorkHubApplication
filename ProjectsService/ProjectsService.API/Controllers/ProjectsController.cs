@@ -24,8 +24,11 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
     public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequest request, 
         CancellationToken cancellationToken = default)
     {
-        await mediator.Send(mapper.Map<CreateProjectCommand>(request), cancellationToken);
-
+        await mediator.Send(new CreateProjectCommand(
+            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            request.Project, request.Lifecycle), 
+            cancellationToken);
+        
         return Created();
     }
 

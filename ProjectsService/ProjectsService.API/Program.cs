@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Hangfire;
 using ProjectsService.API;
 using ProjectsService.API.Middlewares;
@@ -8,7 +9,9 @@ using ProjectsService.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
-services.AddControllers();
+services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 services.AddAPI(builder.Configuration);

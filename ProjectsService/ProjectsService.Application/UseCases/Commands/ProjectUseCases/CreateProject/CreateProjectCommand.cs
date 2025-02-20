@@ -1,3 +1,3 @@
 namespace ProjectsService.Application.UseCases.Commands.ProjectUseCases.CreateProject;
 
-public sealed record CreateProjectCommand(ProjectDto Project, LifecycleDto Lifecycle) : IRequest;
+public sealed record CreateProjectCommand(Guid EmployerId, ProjectDto Project, LifecycleDto Lifecycle) : IRequest;
