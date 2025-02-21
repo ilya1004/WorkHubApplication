@@ -1,13 +1,18 @@
+using ProjectsService.Domain.Abstractions.UserContext;
+
 namespace ProjectsService.Application.UseCases.Commands.ProjectUseCases.CreateProject;
 
 public class CreateProjectCommandHandler(
     IUnitOfWork unitOfWork, 
-    IMapper mapper) : IRequestHandler<CreateProjectCommand>
+    IMapper mapper,
+    IUserContext userContext) : IRequestHandler<CreateProjectCommand>
 {
     public async Task Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
+        var userId = userContext.GetUserId();
+            
         var existingProject = await unitOfWork.ProjectQueriesRepository.FirstOrDefaultAsync(
-            p => p.Title == request.Project.Title && p.EmployerId == request.EmployerId, cancellationToken);
+            p => p.Title == request.Project.Title && p.EmployerId == userId, cancellationToken);
 
         if (existingProject is not null)
         {

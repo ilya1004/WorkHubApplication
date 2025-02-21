@@ -1,8 +1,12 @@
+using ProjectsService.Domain.Abstractions.UserContext;
 using ProjectsService.Domain.Enums;
 
 namespace ProjectsService.Application.UseCases.Commands.ProjectUseCases.UpdateProject;
 
-public class UpdateProjectCommandHandler(IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<UpdateProjectCommand>
+public class UpdateProjectCommandHandler(
+    IUnitOfWork unitOfWork, 
+    IMapper mapper,
+    IUserContext userContext) : IRequestHandler<UpdateProjectCommand>
 {
     public async Task Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
     {
@@ -13,7 +17,9 @@ public class UpdateProjectCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
             throw new NotFoundException($"Project with ID '{request.ProjectId}' not found");
         }
         
-        if (project.EmployerId != request.EmployerId)
+        var userId = userContext.GetUserId();
+        
+        if (project.EmployerId != userId)
         {
             throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }

@@ -1,7 +1,10 @@
+using ProjectsService.Domain.Abstractions.UserContext;
+
 namespace ProjectsService.Application.UseCases.Commands.ProjectUseCases.UpdateAcceptanceStatus;
 
 public class UpdateAcceptanceStatusCommandHandler(
-    IUnitOfWork unitOfWork) : IRequestHandler<UpdateAcceptanceStatusCommand>
+    IUnitOfWork unitOfWork,
+    IUserContext userContext) : IRequestHandler<UpdateAcceptanceStatusCommand>
 {
     public async Task Handle(UpdateAcceptanceStatusCommand request, CancellationToken cancellationToken)
     {
@@ -14,8 +17,10 @@ public class UpdateAcceptanceStatusCommandHandler(
         {
             throw new NotFoundException($"Project with ID '{request.ProjectId}' not found");
         }
+        
+        var userId = userContext.GetUserId();
 
-        if (project.EmployerId != request.EmployerId)
+        if (project.EmployerId != userId)
         {
             throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }

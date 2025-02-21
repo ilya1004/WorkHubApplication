@@ -1,7 +1,10 @@
+using ProjectsService.Domain.Abstractions.UserContext;
+
 namespace ProjectsService.Application.UseCases.Commands.ProjectUseCases.UpdateAcceptanceRequest;
 
 public class UpdateAcceptanceRequestCommandHandler(
-    IUnitOfWork unitOfWork) : IRequestHandler<UpdateAcceptanceRequestCommand>
+    IUnitOfWork unitOfWork,
+    IUserContext userContext) : IRequestHandler<UpdateAcceptanceRequestCommand>
 {
     public async Task Handle(UpdateAcceptanceRequestCommand request, CancellationToken cancellationToken)
     {
@@ -15,7 +18,9 @@ public class UpdateAcceptanceRequestCommandHandler(
             throw new NotFoundException($"Project with ID '{request.ProjectId}' not found");
         }
         
-        if (project.FreelancerId != request.FreelancerId)
+        var userId = userContext.GetUserId();
+        
+        if (project.FreelancerId != userId)
         {
             throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }

@@ -1,8 +1,12 @@
+using ProjectsService.Application.Constants;
+using ProjectsService.Domain.Abstractions.UserContext;
 using ProjectsService.Domain.Enums;
 
 namespace ProjectsService.Application.UseCases.Commands.ProjectUseCases.DeleteProject;
 
-public class DeleteProjectCommandHandler(IUnitOfWork unitOfWork): IRequestHandler<DeleteProjectCommand>
+public class DeleteProjectCommandHandler(
+    IUnitOfWork unitOfWork,
+    IUserContext userContext): IRequestHandler<DeleteProjectCommand>
 {
     public async Task Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
     {
@@ -15,8 +19,11 @@ public class DeleteProjectCommandHandler(IUnitOfWork unitOfWork): IRequestHandle
         {
             throw new NotFoundException($"Project with ID '{request.ProjectId}' not found");
         }
+        
+        var isResourceOwned = userContext.GetUserId() == project.FreelancerId;
+        var isAdmin = userContext.GetUserRole() == AppRoles.AdminRole;
 
-        if (project.EmployerId != request.EmployerId)
+        if (!isResourceOwned && !isAdmin)
         {
             throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }

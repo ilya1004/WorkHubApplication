@@ -1,9 +1,12 @@
+using ProjectsService.Application.Constants;
 using ProjectsService.Application.Models;
+using ProjectsService.Domain.Abstractions.UserContext;
 
 namespace ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationsByProjectId;
 
 public class GetFreelancerApplicationsByProjectIdQueryHandler(
-    IUnitOfWork unitOfWork) : IRequestHandler<GetFreelancerApplicationsByProjectIdQuery, PaginatedResultModel<FreelancerApplication>>
+    IUnitOfWork unitOfWork,
+    IUserContext userContext) : IRequestHandler<GetFreelancerApplicationsByProjectIdQuery, PaginatedResultModel<FreelancerApplication>>
 {
     public async Task<PaginatedResultModel<FreelancerApplication>> Handle(GetFreelancerApplicationsByProjectIdQuery request, CancellationToken cancellationToken)
     {
@@ -13,8 +16,11 @@ public class GetFreelancerApplicationsByProjectIdQueryHandler(
         {
             throw new NotFoundException($"Project with ID '{request.ProjectId}' not found");
         }
+
+        var isResourceOwner = userContext.GetUserId() == project.EmployerId;
+        var isAdmin = userContext.GetUserRole() == AppRoles.AdminRole;
         
-        if (project.EmployerId != request.EmployerId)
+        if (!isResourceOwner && !isAdmin)
         {
             throw new ForbiddenException($"You do not have access to Project with ID '{request.ProjectId}'");
         }

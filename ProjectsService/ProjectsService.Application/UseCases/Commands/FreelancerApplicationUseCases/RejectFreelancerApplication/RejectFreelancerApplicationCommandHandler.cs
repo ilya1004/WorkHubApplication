@@ -1,8 +1,11 @@
+using ProjectsService.Domain.Abstractions.UserContext;
 using ProjectsService.Domain.Enums;
 
 namespace ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.RejectFreelancerApplication;
 
-public class RejectFreelancerApplicationCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<RejectFreelancerApplicationCommand>
+public class RejectFreelancerApplicationCommandHandler(
+    IUnitOfWork unitOfWork,
+    IUserContext userContext) : IRequestHandler<RejectFreelancerApplicationCommand>
 {
     public async Task Handle(RejectFreelancerApplicationCommand request, CancellationToken cancellationToken)
     {
@@ -15,8 +18,10 @@ public class RejectFreelancerApplicationCommandHandler(IUnitOfWork unitOfWork) :
         {
             throw new NotFoundException($"Project with ID '{request.ProjectId}' not found");
         }
+        
+        var userId = userContext.GetUserId();
 
-        if (project.EmployerId != request.EmployerId)
+        if (project.EmployerId != userId)
         {
             throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }

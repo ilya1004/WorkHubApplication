@@ -17,12 +17,11 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
             {
                 BadRequestException => StatusCodes.Status400BadRequest,
                 AlreadyExistsException => StatusCodes.Status400BadRequest,
-                NotFoundException => StatusCodes.Status404NotFound,
                 UnauthorizedException => StatusCodes.Status401Unauthorized,
                 ForbiddenException => StatusCodes.Status403Forbidden,
+                NotFoundException => StatusCodes.Status404NotFound,
                 _ => StatusCodes.Status500InternalServerError
             };
-
             var details = new ProblemDetails
             {
                 Title = statusCode == StatusCodes.Status500InternalServerError ? "Internal Server Error" : "Error",

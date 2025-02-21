@@ -14,10 +14,12 @@ services.AddControllers()
 
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
+services.AddHttpContextAccessor();
+
 services.AddAPI(builder.Configuration);
 services.AddApplication(builder.Configuration);
 services.AddInfrastructure(builder.Configuration);
-    
+
 services.AddEndpointsApiExplorer()
     .AddSwaggerGen();
 
@@ -40,6 +42,9 @@ using (var scope = app.Services.CreateScope())
 app.UseRouting();
 
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

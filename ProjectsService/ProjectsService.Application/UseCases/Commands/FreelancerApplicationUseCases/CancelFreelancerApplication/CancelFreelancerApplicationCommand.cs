@@ -1,3 +1,0 @@
-namespace ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.CancelFreelancerApplication;
-
-public sealed record CancelFreelancerApplicationCommand(Guid FreelancerId, Guid ApplicationId) : IRequest;

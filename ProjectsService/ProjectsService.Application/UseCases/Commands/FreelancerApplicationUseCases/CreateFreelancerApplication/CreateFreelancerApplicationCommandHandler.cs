@@ -1,13 +1,18 @@
+using ProjectsService.Domain.Abstractions.UserContext;
+
 namespace ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.CreateFreelancerApplication;
 
 public class CreateFreelancerApplicationCommandHandler(
     IUnitOfWork unitOfWork,
-    IMapper mapper) : IRequestHandler<CreateFreelancerApplicationCommand>
+    IMapper mapper,
+    IUserContext userContext) : IRequestHandler<CreateFreelancerApplicationCommand>
 {
     public async Task Handle(CreateFreelancerApplicationCommand request, CancellationToken cancellationToken)
     {
+        var userId = userContext.GetUserId();
+        
         var freelancerApplication = await unitOfWork.FreelancerApplicationQueriesRepository.FirstOrDefaultAsync(
-            fa => fa.ProjectId == request.ProjectId && fa.FreelancerId == request.FreelancerId,
+            fa => fa.ProjectId == request.ProjectId && fa.FreelancerId == userId,
             cancellationToken);
 
         if (freelancerApplication is not null)

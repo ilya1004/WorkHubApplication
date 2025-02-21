@@ -21,6 +21,8 @@ public class GetProjectsByFilterSpecification : Specification<Project>
             (!employerId.HasValue || p.EmployerId == employerId.Value) &&
             (!projectStatus.HasValue || p.Lifecycle.Status == projectStatus.Value))
     {
+        AddInclude(p => p.Lifecycle);
+        AddInclude(p => p.Category!);
         AddOrderByDescending(p => p.Lifecycle.CreatedAt);
         AddPagination(offset, limit);
     }

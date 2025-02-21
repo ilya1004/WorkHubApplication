@@ -1,17 +1,20 @@
 using ProjectsService.Application.Models;
 using ProjectsService.Application.Specifications.FreelancerApplicationSpecifications;
+using ProjectsService.Domain.Abstractions.UserContext;
 
 namespace ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationsByFilter;
 
 public class GetFreelancerApplicationsByFilterQueryHandler(
-    IUnitOfWork unitOfWork) : IRequestHandler<GetFreelancerApplicationsByFilterQuery, PaginatedResultModel<FreelancerApplication>>
+    IUnitOfWork unitOfWork,
+    IUserContext userContext) : IRequestHandler<GetFreelancerApplicationsByFilterQuery, PaginatedResultModel<FreelancerApplication>>
 {
     public async Task<PaginatedResultModel<FreelancerApplication>> Handle(GetFreelancerApplicationsByFilterQuery request, CancellationToken cancellationToken)
     {
         var offset = (request.PageNo - 1) * request.PageSize;
+        var userId = userContext.GetUserId();
 
         var specification = new GetFreelancerApplicationsByFilterSpecification(
-            request.FreelancerId,
+            userId,
             request.StartDate,
             request.EndDate,
             request.ApplicationStatus,

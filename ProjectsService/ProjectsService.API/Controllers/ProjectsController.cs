@@ -1,4 +1,5 @@
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using ProjectsService.API.Constants;
 using ProjectsService.API.Contracts.CommonContracts;
 using ProjectsService.API.Contracts.ProjectContracts;
 using ProjectsService.Application.UseCases.Commands.ProjectUseCases.CreateProject;
@@ -21,19 +22,18 @@ namespace ProjectsService.API.Controllers;
 public class ProjectsController(IMediator mediator, IMapper mapper) : ControllerBase
 {
     [HttpPost]
+    [Authorize(Policy = AuthPolicies.EmployerPolicy)]
     public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequest request, 
         CancellationToken cancellationToken = default)
     {
-        await mediator.Send(new CreateProjectCommand(
-            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-            request.Project, request.Lifecycle), 
-            cancellationToken);
+        await mediator.Send(new CreateProjectCommand(request.Project, request.Lifecycle), cancellationToken);
         
         return Created();
     }
 
     [HttpGet]
     [Route("{projectId:guid}")]
+    [Authorize]
     public async Task<IActionResult> GetProjectById([FromRoute] Guid projectId, CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(new GetProjectByIdQuery(projectId), cancellationToken);
@@ -43,6 +43,7 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
 
     [HttpGet]
     [Route("by-filter")]
+    [Authorize]
     public async Task<IActionResult> GetProjectsByFilter([FromQuery] GetProjectsByFilterRequest request, 
         CancellationToken cancellationToken = default)
     {
@@ -53,20 +54,17 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
     
     [HttpGet]
     [Route("my-projects-filter")]
+    [Authorize(Policy = AuthPolicies.FreelancerPolicy)]
     public async Task<IActionResult> GetProjectsByFreelancerFilter([FromQuery] GetProjectsByFreelancerFilterRequest request, 
         CancellationToken cancellationToken = default)
     {
-        var query = mapper.Map<GetProjectsByFreelancerFilterQuery>(request) with
-        {
-            FreelancerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!)
-        };
-        
-        var result = await mediator.Send(query, cancellationToken);
+        var result = await mediator.Send(mapper.Map<GetProjectsByFreelancerFilterQuery>(request), cancellationToken);
         
         return Ok(result);
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetAllProjects([FromQuery] GetPaginatedListRequest request, 
         CancellationToken cancellationToken = default)
     {
@@ -77,64 +75,54 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
 
     [HttpPut]
     [Route("{projectId:guid}")]
+    [Authorize(Policy = AuthPolicies.EmployerPolicy)]
     public async Task<IActionResult> UpdateProjectData([FromRoute] Guid projectId, [FromBody] UpdateProjectRequest request, 
         CancellationToken cancellationToken = default)
     {
-        await mediator.Send(new UpdateProjectCommand(
-            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!), 
-            projectId, request.Project, request.Lifecycle), 
-            cancellationToken);
+        await mediator.Send(new UpdateProjectCommand(projectId, request.Project, request.Lifecycle), cancellationToken);
 
         return NoContent();
     }
 
     [HttpPut]
     [Route("{projectId:guid}/update-status")]
+    [Authorize(Policy = AuthPolicies.EmployerPolicy)]
     public async Task<IActionResult> UpdateProjectStatus([FromRoute] Guid projectId, [FromQuery] ProjectStatus status, 
         CancellationToken cancellationToken = default)
     {
-        await mediator.Send(new UpdateProjectStatusCommand(
-            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-            projectId, status), 
-            cancellationToken);
+        await mediator.Send(new UpdateProjectStatusCommand(projectId, status), cancellationToken);
 
         return NoContent();
     }
 
     [HttpPut]
     [Route("{projectId:guid}/send-acceptance-request")]
+    [Authorize(Policy = AuthPolicies.FreelancerPolicy)]
     public async Task<IActionResult> UpdateAcceptanceRequest([FromRoute] Guid projectId, 
         CancellationToken cancellationToken = default)
     {
-        await mediator.Send(new UpdateAcceptanceRequestCommand(
-            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-            projectId), 
-            cancellationToken);
+        await mediator.Send(new UpdateAcceptanceRequestCommand(projectId), cancellationToken);
 
         return NoContent();
     }
     
     [HttpPut]
     [Route("{projectId:guid}/set-acceptance-status/{status:bool}")]
+    [Authorize(Policy = AuthPolicies.EmployerPolicy)]
     public async Task<IActionResult> UpdateAcceptanceStatus([FromRoute] Guid projectId, [FromRoute] bool status, 
         CancellationToken cancellationToken = default)
     {
-        await mediator.Send(new UpdateAcceptanceStatusCommand(
-            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-            projectId, status),
-            cancellationToken);
+        await mediator.Send(new UpdateAcceptanceStatusCommand(projectId, status), cancellationToken);
 
         return NoContent();
     }
     
     [HttpDelete]
     [Route("{projectId:guid}")]
+    [Authorize(Policy = AuthPolicies.AdminOrEmployerPolicy)]
     public async Task<IActionResult> DeleteProject([FromRoute] Guid projectId, CancellationToken cancellationToken = default)
     {
-        await mediator.Send(new DeleteProjectCommand(
-            Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
-            projectId),
-            cancellationToken);
+        await mediator.Send(new DeleteProjectCommand(projectId), cancellationToken);
 
         return NoContent();
     }

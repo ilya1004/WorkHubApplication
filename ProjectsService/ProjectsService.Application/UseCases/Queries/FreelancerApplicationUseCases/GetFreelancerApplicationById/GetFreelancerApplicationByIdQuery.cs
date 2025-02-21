@@ -1,3 +1,3 @@
 namespace ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationById;
 
-public sealed record GetFreelancerApplicationByIdQuery(Guid FreelancerId, Guid ApplicationId) : IRequest<FreelancerApplication>;
+public sealed record GetFreelancerApplicationByIdQuery(Guid ApplicationId) : IRequest<FreelancerApplication>;
