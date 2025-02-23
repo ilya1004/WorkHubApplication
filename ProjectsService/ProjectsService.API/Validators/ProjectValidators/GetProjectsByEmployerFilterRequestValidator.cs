@@ -8,7 +8,7 @@ public class GetProjectsByEmployerFilterRequestValidator : AbstractValidator<Get
     public GetProjectsByEmployerFilterRequestValidator()
     {
         RuleFor(x => x.UpdatedAtStartDate)
-            .LessThan(System.DateTime.UtcNow).WithMessage("UpdatedAtStartDate must be in the past.")
+            .LessThan(DateTime.UtcNow).WithMessage("UpdatedAtStartDate must be in the past.")
             .When(x => x.UpdatedAtStartDate.HasValue);
         
         RuleFor(x => x.UpdatedAtEndDate)

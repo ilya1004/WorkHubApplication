@@ -8,7 +8,6 @@ using ProjectsService.Domain.Abstractions.Data;
 using ProjectsService.Domain.Abstractions.StartupServices;
 using ProjectsService.Infrastructure.Data;
 using ProjectsService.Infrastructure.Repositories;
-using ProjectsService.Infrastructure.Services;
 using ProjectsService.Infrastructure.Services.HangfireJobsInitializer;
 using ProjectsService.Infrastructure.Services.HangfireScheduler;
 

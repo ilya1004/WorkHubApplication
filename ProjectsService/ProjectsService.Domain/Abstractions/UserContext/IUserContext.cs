@@ -4,5 +4,4 @@ public interface IUserContext
 {
     Guid GetUserId();
     string GetUserRole();
-    bool IsInRole(string role);
 }

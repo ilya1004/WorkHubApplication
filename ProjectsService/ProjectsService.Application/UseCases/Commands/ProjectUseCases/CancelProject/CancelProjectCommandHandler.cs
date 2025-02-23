@@ -1,7 +1,6 @@
-using ProjectsService.Application.UseCases.Commands.ProjectUseCases.CancelProject;
 using ProjectsService.Domain.Abstractions.UserContext;
 
-namespace ProjectsService.Application.UseCases.Commands.ProjectUseCases.UpdateProjectStatus;
+namespace ProjectsService.Application.UseCases.Commands.ProjectUseCases.CancelProject;
 
 public class CancelProjectCommandHandler(
     IUnitOfWork unitOfWork,

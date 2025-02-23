@@ -1,12 +1,11 @@
 using System.Reflection;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ProjectsService.Application;
 
 public static class DependencyInjection 
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddMediatR(config =>
         {

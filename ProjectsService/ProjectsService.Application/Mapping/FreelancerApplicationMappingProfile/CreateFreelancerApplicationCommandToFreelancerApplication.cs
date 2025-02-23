@@ -1,5 +1,4 @@
 using ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.CreateFreelancerApplication;
-using ProjectsService.Domain.Enums;
 
 namespace ProjectsService.Application.Mapping.FreelancerApplicationMappingProfile;
 

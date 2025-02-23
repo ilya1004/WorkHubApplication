@@ -1,3 +1,0 @@
-namespace ProjectsService.API.Contracts.FreelancerApplicationContracts;
-
-public sealed record DeleteFreelancerApplicationRequest(Guid ProjectId);

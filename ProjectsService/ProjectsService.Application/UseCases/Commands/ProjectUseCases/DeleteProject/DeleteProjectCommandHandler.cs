@@ -1,6 +1,5 @@
 using ProjectsService.Application.Constants;
 using ProjectsService.Domain.Abstractions.UserContext;
-using ProjectsService.Domain.Enums;
 
 namespace ProjectsService.Application.UseCases.Commands.ProjectUseCases.DeleteProject;
 

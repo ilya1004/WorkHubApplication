@@ -1,5 +1,4 @@
 using ProjectsService.Application.Models;
-using ProjectsService.Domain.Enums;
 
 namespace ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationsByFilter;
 

@@ -1,5 +1,3 @@
-using ProjectsService.Domain.Enums;
-
 namespace ProjectsService.Application.Specifications.ProjectSpecifications;
 
 public class GetProjectsByFilterSpecification : Specification<Project>

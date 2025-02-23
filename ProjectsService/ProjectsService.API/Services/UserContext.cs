@@ -1,4 +1,3 @@
-using System.Security.Authentication;
 using System.Security.Claims;
 using ProjectsService.Application.Exceptions;
 using ProjectsService.Domain.Abstractions.UserContext;
@@ -18,7 +17,6 @@ public class UserContext(IHttpContextAccessor httpContextAccessor) : IUserContex
 
         return Guid.Parse(userId);
     }
-    
     public string GetUserRole()
     {
         var userRole = httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Role);
@@ -29,10 +27,5 @@ public class UserContext(IHttpContextAccessor httpContextAccessor) : IUserContex
         }
 
         return userRole;
-    }
-
-    public bool IsInRole(string role)
-    {
-        return httpContextAccessor.HttpContext?.User.IsInRole(role) ?? false;
     }
 }

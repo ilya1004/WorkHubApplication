@@ -1,6 +1,5 @@
 using FluentValidation;
 using ProjectsService.API.Contracts.ProjectContracts;
-using ProjectsService.Domain.Enums;
 
 namespace ProjectsService.API.Validators.ProjectValidators;
 

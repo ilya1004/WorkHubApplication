@@ -10,7 +10,6 @@ namespace ProjectsService.Infrastructure.Repositories;
 
 public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepository<TEntity> where TEntity : Entity
 {
-    protected readonly QueriesDbContext _context = context;
     protected readonly DbSet<TEntity> _entities = context.Set<TEntity>();
     
     public async Task<IReadOnlyList<TEntity>> ListAllAsync(CancellationToken cancellationToken = default)

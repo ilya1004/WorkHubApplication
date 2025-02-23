@@ -2,6 +2,6 @@ namespace ProjectsService.Application.Settings;
 
 public class ProjectsSettings
 {
-    public int MaxWorkDeadlineExpirationTimeInDays { get; set; }
-    public int MaxWorkStartExpirationTimeInDays { get; set; }
+    public int MaxWorkDeadlineExpirationTimeInDays { get; init; }
+    public int MaxWorkStartExpirationTimeInDays { get; init; }
 }

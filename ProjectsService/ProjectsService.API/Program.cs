@@ -17,7 +17,7 @@ services.AddTransient<GlobalExceptionHandlingMiddleware>();
 services.AddHttpContextAccessor();
 
 services.AddAPI(builder.Configuration);
-services.AddApplication(builder.Configuration);
+services.AddApplication();
 services.AddInfrastructure(builder.Configuration);
 
 services.AddEndpointsApiExplorer()

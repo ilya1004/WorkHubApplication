@@ -7,7 +7,6 @@ namespace ProjectsService.Infrastructure.Repositories;
 
 public class CommandsRepository<TEntity>(CommandsDbContext context) : ICommandsRepository<TEntity> where TEntity : Entity
 {
-    protected readonly CommandsDbContext _context = context;
     protected readonly DbSet<TEntity> _entities = context.Set<TEntity>();
 
     public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
