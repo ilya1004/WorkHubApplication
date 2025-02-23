@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ChatService.Infrastructure\ChatService.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
