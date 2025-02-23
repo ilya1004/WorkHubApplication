@@ -19,8 +19,9 @@ public class CreateFreelancerApplicationCommandHandler(
         {
             throw new AlreadyExistsException($"Freelancer application to the project with ID '{request.ProjectId}' already exists.");
         }
-        
+
         var newFreelancerApplication = mapper.Map<FreelancerApplication>(request);
+        newFreelancerApplication.FreelancerId = userId;
         
         await unitOfWork.FreelancerApplicationCommandsRepository.AddAsync(newFreelancerApplication, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);

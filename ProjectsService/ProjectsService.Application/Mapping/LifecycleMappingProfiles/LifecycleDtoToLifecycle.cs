@@ -4,6 +4,8 @@ public class LifecycleDtoToLifecycle : Profile
 {
     public LifecycleDtoToLifecycle()
     {
-        CreateMap<LifecycleDto, Lifecycle>();
+        CreateMap<LifecycleDto, Lifecycle>()
+            .ForMember(dest => dest.UpdatedAt, opt => 
+                opt.MapFrom(src => DateTime.UtcNow));
     }
 }

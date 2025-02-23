@@ -1,5 +1,4 @@
 using ProjectsService.Application.UseCases.Commands.ProjectUseCases.CreateProject;
-using ProjectsService.Domain.Enums;
 
 namespace ProjectsService.Application.Mapping.LifecycleMappingProfiles;
 
@@ -22,6 +21,8 @@ public class CreateProjectCommandToLifecycle : Profile
                 opt.MapFrom(src => src.Lifecycle.WorkStartDate))
             .ForMember(dest => dest.WorkDeadline, opt =>
                 opt.MapFrom(src => src.Lifecycle.WorkDeadline))
+            .ForMember(dest => dest.Project, opt =>
+                opt.Ignore())
             .ForMember(dest => dest.Status, opt =>
                 opt.MapFrom(_ => ProjectStatus.Published));
     }

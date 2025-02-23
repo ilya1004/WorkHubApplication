@@ -20,7 +20,7 @@ public class DeleteProjectCommandHandler(
             throw new NotFoundException($"Project with ID '{request.ProjectId}' not found");
         }
         
-        var isResourceOwned = userContext.GetUserId() == project.FreelancerId;
+        var isResourceOwned = userContext.GetUserId() == project.EmployerId;
         var isAdmin = userContext.GetUserRole() == AppRoles.AdminRole;
 
         if (!isResourceOwned && !isAdmin)

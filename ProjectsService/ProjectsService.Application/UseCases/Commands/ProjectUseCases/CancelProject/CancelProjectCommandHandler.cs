@@ -1,12 +1,13 @@
+using ProjectsService.Application.UseCases.Commands.ProjectUseCases.CancelProject;
 using ProjectsService.Domain.Abstractions.UserContext;
 
 namespace ProjectsService.Application.UseCases.Commands.ProjectUseCases.UpdateProjectStatus;
 
-public class UpdateProjectStatusCommandHandler(
+public class CancelProjectCommandHandler(
     IUnitOfWork unitOfWork,
-    IUserContext userContext) : IRequestHandler<UpdateProjectStatusCommand>
+    IUserContext userContext) : IRequestHandler<CancelProjectCommand>
 {
-    public async Task Handle(UpdateProjectStatusCommand request, CancellationToken cancellationToken)
+    public async Task Handle(CancelProjectCommand request, CancellationToken cancellationToken)
     {
         var project = await unitOfWork.ProjectQueriesRepository.GetByIdAsync(
             request.ProjectId, 
@@ -25,7 +26,7 @@ public class UpdateProjectStatusCommandHandler(
             throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }
         
-        project.Lifecycle.Status = request.Status;
+        project.Lifecycle.Status = ProjectStatus.Cancelled;
         await unitOfWork.ProjectCommandsRepository.UpdateAsync(project, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
     }

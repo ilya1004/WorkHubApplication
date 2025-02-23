@@ -25,6 +25,12 @@ public class UpdateAcceptanceRequestCommandHandler(
             throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }
         
+        if (project.Lifecycle.Status != ProjectStatus.InProgress && 
+            project.Lifecycle.Status != ProjectStatus.Expired)
+        {
+            throw new BadRequestException("Current project status do not allow you to send acceptance request");
+        }
+        
         project.Lifecycle.AcceptanceRequested = true;
         
         await unitOfWork.ProjectCommandsRepository.UpdateAsync(project, cancellationToken);

@@ -73,7 +73,7 @@ public class FreelancerApplicationsController(IMediator mediator, IMapper mapper
         return Ok(result);
     }
     
-    [HttpPut]
+    [HttpPatch]
     [Route("{applicationId:guid}/accept-application/{projectId:guid}")]
     [Authorize(Policy = AuthPolicies.EmployerPolicy)]
     public async Task<IActionResult> AcceptApplication([FromRoute] Guid applicationId, [FromRoute] Guid projectId, 
@@ -84,7 +84,7 @@ public class FreelancerApplicationsController(IMediator mediator, IMapper mapper
         return NoContent();
     }
     
-    [HttpPut]
+    [HttpPatch]
     [Route("{applicationId:guid}/reject-application/{projectId:guid}")]
     [Authorize(Policy = AuthPolicies.EmployerPolicy)]
     public async Task<IActionResult> RejectApplication([FromRoute] Guid applicationId, [FromRoute] Guid projectId, 

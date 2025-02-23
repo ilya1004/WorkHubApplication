@@ -25,6 +25,17 @@ public class UpdateAcceptanceStatusCommandHandler(
             throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }
 
+        if (!project.Lifecycle.AcceptanceRequested)
+        {
+            throw new BadRequestException("Project acceptance is not requested yet");
+        }
+
+        if (project.Lifecycle.Status != ProjectStatus.InProgress && 
+            project.Lifecycle.Status != ProjectStatus.Expired)
+        {
+            throw new BadRequestException("Current project status do not allow you to update acceptance status");
+        }
+        
         if (request.IsAcceptanceConfirmed)
         {
             project.Lifecycle.AcceptanceConfirmed = true;

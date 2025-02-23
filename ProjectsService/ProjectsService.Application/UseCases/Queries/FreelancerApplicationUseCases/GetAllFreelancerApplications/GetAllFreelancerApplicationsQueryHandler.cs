@@ -10,9 +10,7 @@ public class GetAllFreelancerApplicationsQueryHandler(
         var offset = (request.PageNo - 1) * request.PageSize;
 
         var applications = await unitOfWork.FreelancerApplicationQueriesRepository.PaginatedListAllAsync(
-            offset,
-            request.PageSize,
-            cancellationToken);
+            offset, request.PageSize, cancellationToken, fa => fa.Project);
         
         var applicationsCount = await unitOfWork.FreelancerApplicationQueriesRepository.CountAllAsync(cancellationToken);
 

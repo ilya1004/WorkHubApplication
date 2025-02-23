@@ -10,7 +10,7 @@ public class GetFreelancerApplicationByIdQueryHandler(
     public async Task<FreelancerApplication> Handle(GetFreelancerApplicationByIdQuery request, CancellationToken cancellationToken)
     {
         var application = await unitOfWork.FreelancerApplicationQueriesRepository.GetByIdAsync(
-            request.ApplicationId, cancellationToken);
+            request.ApplicationId, cancellationToken, fa => fa.Project);
         
         if (application is null)
         {

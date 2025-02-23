@@ -12,9 +12,10 @@ public class UpdateProjectStatusesCommandHandler(
         var projects = await unitOfWork.ProjectQueriesRepository.ListAsync(
             p => 
                 p.Lifecycle.Status != ProjectStatus.Completed && 
-                p.Lifecycle.Status != ProjectStatus.Cancelled,
+                p.Lifecycle.Status != ProjectStatus.Cancelled, 
             cancellationToken, 
-            p => p.Lifecycle);
+            p => p.Lifecycle,
+            p => p.FreelancerApplications);
 
         foreach (var project in projects)
         {
@@ -42,10 +43,12 @@ public class UpdateProjectStatusesCommandHandler(
             {
                 lifecycle.Status = ProjectStatus.Cancelled;
             }
-            else if (now > lifecycle.WorkStartDate && 
-                     project.FreelancerId is not null)
+            else if (now > lifecycle.WorkStartDate &&
+                     IsProjectHasAcceptedFreelancerApplications(project))
             {
                 lifecycle.Status = ProjectStatus.InProgress;
+                
+                UpdateProjectWhenInProgressAsync(project);
             }
             else if (now > lifecycle.ApplicationsDeadline)
             {
@@ -61,8 +64,33 @@ public class UpdateProjectStatusesCommandHandler(
                 lifecycle.UpdatedAt = now;
                 await unitOfWork.LifecycleCommandsRepository.UpdateAsync(lifecycle, cancellationToken);
             }
+            
+            if (lifecycle.Status == ProjectStatus.InProgress)
+            {
+                await unitOfWork.ProjectCommandsRepository.UpdateAsync(project, cancellationToken);
+            }
         }
 
         await unitOfWork.SaveAllAsync(cancellationToken);
+    }
+
+    private static bool IsProjectHasAcceptedFreelancerApplications(Project project)
+    {
+        return project.FreelancerApplications.Any(a => a.Status == ApplicationStatus.Accepted);
+    }
+
+    private static void UpdateProjectWhenInProgressAsync(Project project)
+    {
+        foreach (var application in project.FreelancerApplications)
+        {
+            if (application.Status != ApplicationStatus.Accepted)
+            {
+                application.Status = ApplicationStatus.Rejected;
+            }
+            else
+            {
+                project.FreelancerId = application.FreelancerId; 
+            }
+        }
     }
 }

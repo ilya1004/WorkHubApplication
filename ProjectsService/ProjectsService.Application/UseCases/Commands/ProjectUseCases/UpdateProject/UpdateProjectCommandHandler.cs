@@ -24,7 +24,19 @@ public class UpdateProjectCommandHandler(
             throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }
         
-        var lifecycle = await unitOfWork.LifecycleQueriesRepository.FirstOrDefaultAsync(l => l.ProjectId == project.Id, cancellationToken);
+        if (request.Project.CategoryId.HasValue)
+        {
+            var isCategoryExists = await unitOfWork.CategoryQueriesRepository.AnyAsync(
+                c => c.Id == request.Project.CategoryId, cancellationToken);
+
+            if (!isCategoryExists)
+            {
+                throw new NotFoundException($"Category with ID '{request.Project.CategoryId}' not found");
+            }
+        }
+        
+        var lifecycle = await unitOfWork.LifecycleQueriesRepository.FirstOrDefaultAsync(
+            l => l.ProjectId == project.Id, cancellationToken);
         
         if (lifecycle is null)
         {
@@ -36,8 +48,8 @@ public class UpdateProjectCommandHandler(
             throw new BadRequestException("You cannot edit this project after the start of accepting applications");
         }
 
-        mapper.Map(project, request.Project);
-        mapper.Map(lifecycle, request.Lifecycle);
+        mapper.Map(request.Project, project);
+        mapper.Map(request.Lifecycle, lifecycle);
         
         await unitOfWork.ProjectCommandsRepository.UpdateAsync(project, cancellationToken);
         await unitOfWork.LifecycleCommandsRepository.UpdateAsync(lifecycle, cancellationToken);

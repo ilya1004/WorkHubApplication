@@ -1,6 +1,3 @@
-using System.Linq.Expressions;
-using ProjectsService.Domain.Enums;
-
 namespace ProjectsService.Application.Specifications.FreelancerApplicationSpecifications;
 
 public class GetFreelancerApplicationsByFilterSpecification : Specification<FreelancerApplication>
@@ -13,13 +10,13 @@ public class GetFreelancerApplicationsByFilterSpecification : Specification<Free
         int offset, 
         int limit) 
         : base(fa => 
-            fa.FreelancerId == freelancerId &&
-            (!startDate.HasValue || !endDate.HasValue || 
-             startDate.Value <= fa.CreatedAt && fa.CreatedAt <= endDate.Value.AddDays(1)) &&
+            fa.FreelancerId == freelancerId && 
+            (!startDate.HasValue || startDate.Value <= fa.CreatedAt) && 
+            (!endDate.HasValue || fa.CreatedAt <= endDate.Value.AddDays(1)) && 
             (!applicationStatus.HasValue || fa.Status == applicationStatus))
     {
+        AddInclude(fa => fa.Project);
         AddOrderByDescending(fa => fa.CreatedAt);
         AddPagination(offset, limit);
-        AddInclude(fa => fa.Project);
     }
 }
