@@ -9,5 +9,4 @@ public class Chat : Entity
     public Guid ProjectId { get; set; }
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; }
-    public ICollection<Message> Messages { get; set; }
 }

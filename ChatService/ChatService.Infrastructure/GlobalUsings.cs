@@ -1,0 +1,1 @@
+global using ChatService.Domain.Entities;
