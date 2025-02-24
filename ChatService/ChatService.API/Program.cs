@@ -1,3 +1,4 @@
+using ChatService.API;
 using ChatService.API.Hubs;
 using ChatService.API.Middlewares;
 
@@ -6,6 +7,10 @@ var services = builder.Services;
 
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
 services.AddSignalR();
+services.AddHttpContextAccessor();
+
+services.AddAPI();
+
 
 var app = builder.Build();
 
