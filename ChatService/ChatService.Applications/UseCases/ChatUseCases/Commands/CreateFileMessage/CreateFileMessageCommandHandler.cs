@@ -6,9 +6,9 @@ public class CreateFileMessageCommandHandler(
     IUnitOfWork unitOfWork,
     IMapper mapper,
     IUserContext userContext,
-    IBlobService blobService) : IRequestHandler<CreateFileMessageCommand>
+    IBlobService blobService) : IRequestHandler<CreateFileMessageCommand, Guid>
 {
-    public async Task Handle(CreateFileMessageCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateFileMessageCommand request, CancellationToken cancellationToken)
     {
         var chat = await unitOfWork.ChatRepository.GetByIdAsync(request.ChatId, cancellationToken);
 
@@ -31,5 +31,7 @@ public class CreateFileMessageCommandHandler(
         message.FileId = fileId;
 
         await unitOfWork.MessagesRepository.InsertAsync(message, cancellationToken);
+
+        return fileId;
     }
 }

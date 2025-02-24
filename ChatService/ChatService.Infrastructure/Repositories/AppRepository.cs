@@ -29,13 +29,19 @@ public class AppRepository<TEntity>(IMongoDatabase database, string collectionNa
     {
         return (int)await _collection.CountDocumentsAsync(FilterDefinition<TEntity>.Empty, cancellationToken: cancellationToken);
     }
+
+    public async Task<int> CountAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
+    {
+        return (int)await _collection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
+    }
     
     public async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _collection.Find(e => e.Id == id).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
+    public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter, 
+        CancellationToken cancellationToken = default)
     {
         return await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken);
     }
@@ -45,12 +51,14 @@ public class AppRepository<TEntity>(IMongoDatabase database, string collectionNa
         return await _collection.Find(FilterDefinition<TEntity>.Empty).ToListAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<TEntity>> ListAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<TEntity>> ListAsync(Expression<Func<TEntity, bool>> filter, 
+        CancellationToken cancellationToken = default)
     {
         return await _collection.Find(filter).ToListAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<TEntity>> PaginatedListAsync(Expression<Func<TEntity, bool>> filter, int offset, int limit, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<TEntity>> PaginatedListAsync(Expression<Func<TEntity, bool>> filter, int offset, int limit, 
+        CancellationToken cancellationToken = default)
     {
         return await _collection.Find(filter)
             .Skip(offset)
