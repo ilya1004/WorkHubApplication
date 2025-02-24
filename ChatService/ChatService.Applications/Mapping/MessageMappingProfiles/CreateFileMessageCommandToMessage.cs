@@ -1,17 +1,17 @@
-using ChatService.Applications.UseCases.ChatUseCases.Commands.CreateTextMessage;
+using ChatService.Applications.UseCases.ChatUseCases.Commands.CreateFileMessage;
 using ChatService.Domain.Enums;
 
 namespace ChatService.Applications.Mapping.MessageMappingProfiles;
 
-public class CreateTextMessageCommandToMessage : Profile
+public class CreateFileMessageCommandToMessage : Profile
 {
-    public CreateTextMessageCommandToMessage()
+    public CreateFileMessageCommandToMessage()
     {
-        CreateMap<CreateTextMessageCommand, Message>()
+        CreateMap<CreateFileMessageCommand, Message>()
             .ForMember(dest => dest.CreatedAt, opt => 
                 opt.MapFrom(_ => DateTime.UtcNow))
             .ForMember(dest => dest.Type, opt =>
-                opt.MapFrom(_ => MessageType.Text))
+                opt.MapFrom(_ => MessageType.File))
             .ForMember(dest => dest.SenderId, opt =>
                 opt.Ignore());
     }

@@ -1,9 +1,12 @@
+using ChatService.Domain.Abstractions.BlobService;
+
 namespace ChatService.Applications.UseCases.ChatUseCases.Commands.CreateFileMessage;
 
 public class CreateFileMessageCommandHandler(
     IUnitOfWork unitOfWork,
     IMapper mapper,
-    IUserContext userContext) : IRequestHandler<CreateFileMessageCommand>
+    IUserContext userContext,
+    IBlobService blobService) : IRequestHandler<CreateFileMessageCommand>
 {
     public async Task Handle(CreateFileMessageCommand request, CancellationToken cancellationToken)
     {
@@ -20,5 +23,13 @@ public class CreateFileMessageCommandHandler(
         {
             throw new ForbiddenException($"You do not have access to chat with ID '{request.ChatId}'");
         }
+
+        var message = mapper.Map<Message>(request);
+        message.SenderId = userId;
+
+        var fileId = await blobService.UploadAsync(request.FileStream, request.ContentType, cancellationToken);
+        message.FileId = fileId;
+
+        await unitOfWork.MessagesRepository.InsertAsync(message, cancellationToken);
     }
 }
