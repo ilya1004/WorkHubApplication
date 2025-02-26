@@ -1,8 +1,12 @@
+using ChatService.Domain.Abstractions.BlobService;
+using ChatService.Domain.Enums;
+
 namespace ChatService.Applications.UseCases.ChatUseCases.Commands.DeleteMessage;
 
 public class DeleteMessageCommandHandler(
     IUnitOfWork unitOfWork,
-    IUserContext userContext) : IRequestHandler<DeleteMessageCommand>
+    IUserContext userContext,
+    IBlobService blobService) : IRequestHandler<DeleteMessageCommand>
 {
     public async Task Handle(DeleteMessageCommand request, CancellationToken cancellationToken)
     {
@@ -18,6 +22,11 @@ public class DeleteMessageCommandHandler(
         if (message.SenderId != userId)
         {
             throw new ForbiddenException($"You cannot delete message with ID '{request.MessageId}' which is not yours");
+        }
+
+        if (message.Type is MessageType.File && message.FileId is not null)
+        {
+            await blobService.DeleteAsync(message.FileId.Value, cancellationToken);
         }
 
         await unitOfWork.MessagesRepository.DeleteAsync(request.MessageId, cancellationToken);

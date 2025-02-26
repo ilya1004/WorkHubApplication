@@ -13,9 +13,8 @@ public interface IRepository<TEntity> where TEntity : Entity
     Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter, 
         CancellationToken cancellationToken = default);
-    Task<IReadOnlyList<TEntity>> ListAllAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<TEntity>> ListAsync(Expression<Func<TEntity, bool>> filter, 
         CancellationToken cancellationToken = default);
-    Task<IReadOnlyList<TEntity>> PaginatedListAsync(Expression<Func<TEntity, bool>> filter, int offset, int limit, 
+    Task<IReadOnlyList<TEntity>> PaginatedListAllAsync(int offset, int limit,
         CancellationToken cancellationToken = default);
 }

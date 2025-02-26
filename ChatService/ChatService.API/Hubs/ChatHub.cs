@@ -4,6 +4,7 @@ using ChatService.Applications.Models;
 using ChatService.Applications.UseCases.ChatUseCases.Commands.CreateFileMessage;
 using ChatService.Applications.UseCases.ChatUseCases.Commands.CreateTextMessage;
 using ChatService.Applications.UseCases.ChatUseCases.Commands.DeleteMessage;
+using ChatService.Applications.UseCases.ChatUseCases.Queries.GetAllChats;
 using ChatService.Applications.UseCases.ChatUseCases.Queries.GetChatMessages;
 using ChatService.Domain.Entities;
 using Microsoft.AspNetCore.SignalR;
@@ -49,6 +50,13 @@ public class ChatHub(IMediator mediator, IMapper mapper) : Hub<IChatClient>
         await Clients.Caller.ReceiveChatMessages(result);
     }
 
+    public async Task GetAllChats(GetAllChatsRequest request, CancellationToken cancellationToken = default)
+    {
+        var result = await mediator.Send(mapper.Map<GetAllChatsQuery>(request), cancellationToken);
+
+        await Clients.Caller.ReceiveAllChats(result);
+    }
+    
     public async Task DeleteMessage(DeleteMessageRequest request, CancellationToken cancellationToken = default)
     {
         await mediator.Send(new DeleteMessageCommand(request.MessageId), cancellationToken);

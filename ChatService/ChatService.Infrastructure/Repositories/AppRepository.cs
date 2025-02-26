@@ -46,21 +46,16 @@ public class AppRepository<TEntity>(IMongoDatabase database, string collectionNa
         return await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<TEntity>> ListAllAsync(CancellationToken cancellationToken = default)
-    {
-        return await _collection.Find(FilterDefinition<TEntity>.Empty).ToListAsync(cancellationToken);
-    }
-
     public async Task<IReadOnlyList<TEntity>> ListAsync(Expression<Func<TEntity, bool>> filter, 
         CancellationToken cancellationToken = default)
     {
         return await _collection.Find(filter).ToListAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<TEntity>> PaginatedListAsync(Expression<Func<TEntity, bool>> filter, int offset, int limit, 
+    public async Task<IReadOnlyList<TEntity>> PaginatedListAllAsync(int offset, int limit, 
         CancellationToken cancellationToken = default)
     {
-        return await _collection.Find(filter)
+        return await _collection.Find(FilterDefinition<TEntity>.Empty)
             .Skip(offset)
             .Limit(limit)
             .ToListAsync(cancellationToken);
