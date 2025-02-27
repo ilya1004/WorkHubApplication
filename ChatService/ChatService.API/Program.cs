@@ -2,11 +2,13 @@ using ChatService.API;
 using ChatService.API.Hubs;
 using ChatService.API.Middlewares;
 using ChatService.Applications;
+using ChatService.Domain.Abstractions.DbInitializer;
 using ChatService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
+services.AddControllers();
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
 services.AddSignalR();
 services.AddHttpContextAccessor();
@@ -29,6 +31,12 @@ services.AddCors(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+    await dbInitializer.InitializeDbAsync(builder.Configuration);
+}
+
 app.UseRouting();
 
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
@@ -38,6 +46,7 @@ app.UseAuthorization();
 
 app.UseCors();
 
+app.MapControllers();
 app.MapHub<ChatHub>("hubs/chat");
 
 app.Run();

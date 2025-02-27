@@ -1,9 +1,11 @@
 using Azure.Storage.Blobs;
 using ChatService.Domain.Abstractions.BlobService;
+using ChatService.Domain.Abstractions.DbInitializer;
 using ChatService.Domain.Abstractions.Repositories;
 using ChatService.Infrastructure.Configurations;
 using ChatService.Infrastructure.Repositories;
 using ChatService.Infrastructure.Services.BlobService;
+using ChatService.Infrastructure.Services.DbInitializer;
 using ChatService.Infrastructure.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,11 +33,12 @@ public static class DependencyInjection
         ChatConfiguration.Configure();
         MessageConfiguration.Configure();
 
-        services.AddScoped<IUnitOfWork, AppUnitOfWork>();
-        
         services.AddSingleton<IBlobService, BlobService>();
         services.AddSingleton(_ => new BlobServiceClient(azuriteSettings.ConnectionString));
-
+        
+        services.AddScoped<IUnitOfWork, AppUnitOfWork>();
+        services.AddScoped<IDbInitializer, DbInitializer>();
+        
         return services;
     }
 }

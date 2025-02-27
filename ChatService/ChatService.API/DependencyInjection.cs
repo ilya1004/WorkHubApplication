@@ -1,10 +1,12 @@
 using System.Reflection;
+using System.Text;
 using ChatService.API.Constants;
 using ChatService.API.Services;
 using ChatService.API.Settings;
 using ChatService.Applications.Constants;
 using ChatService.Domain.Abstractions.UserContext;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ChatService.API;
 
@@ -23,18 +25,28 @@ public static class DependencyInjection
         })
             .AddJwtBearer(options => 
             {
-                options.Authority = "https://localhost:7080";
                 options.RequireHttpsMetadata = false;
-                options.Audience = jwtSettings!.Audience;
-                
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings!.Issuer,
+                    ValidAudience = jwtSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
+                    ClockSkew = TimeSpan.Zero
+                };
+
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>
                     {
                         var accessToken = context.Request.Query["access_token"];
-
                         var path = context.HttpContext.Request.Path;
-                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/chat"))
+                        
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
                         {
                             context.Token = accessToken;
                         }
