@@ -3,10 +3,10 @@ using ChatService.Applications.UseCases.ChatUseCases.Commands.CreateTextMessage;
 
 namespace ChatService.API.Mapping.MessageMappingProfiles;
 
-public class SendTextMessageRequestToCommand : Profile
+public class CreateTextMessageRequestToCommand : Profile
 {
-    public SendTextMessageRequestToCommand()
+    public CreateTextMessageRequestToCommand()
     {
-        CreateMap<SendTextMessageRequest, CreateTextMessageCommand>();
+        CreateMap<CreateTextMessageRequest, CreateTextMessageCommand>();
     }
 }

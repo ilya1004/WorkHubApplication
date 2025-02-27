@@ -15,6 +15,8 @@ public static class ChatConfiguration
             {
                 cm.AutoMap();
                 cm.SetIgnoreExtraElements(true);
+                
+                cm.SetDiscriminator(nameof(Chat));
 
                 cm.MapIdMember(c => c.Id)
                     .SetIdGenerator(GuidGenerator.Instance)

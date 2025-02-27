@@ -1,8 +1,6 @@
-using ChatService.Domain.Primitives;
-
 namespace ChatService.Applications.Models;
 
-public record PaginatedResultModel<TEntity> where TEntity : Entity
+public record PaginatedResultModel<TEntity>
 {
     public List<TEntity> Items { get; set; } = [];
     public int TotalCount { get; set; }

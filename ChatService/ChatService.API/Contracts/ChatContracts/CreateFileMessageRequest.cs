@@ -1,6 +1,6 @@
 namespace ChatService.API.Contracts.ChatContracts;
 
-public sealed record SendTextMessageRequest(
+public sealed record CreateFileMessageRequest(
     Guid ChatId,
     Guid ReceiverId,
-    string Text);
+    IFormFile File);

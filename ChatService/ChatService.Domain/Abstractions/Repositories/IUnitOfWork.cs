@@ -5,5 +5,5 @@ namespace ChatService.Domain.Abstractions.Repositories;
 public interface IUnitOfWork
 {
     IMessagesRepository MessagesRepository { get; }
-    IRepository<Chat> ChatRepository { get; }
+    IChatsRepository ChatRepository { get; }
 }

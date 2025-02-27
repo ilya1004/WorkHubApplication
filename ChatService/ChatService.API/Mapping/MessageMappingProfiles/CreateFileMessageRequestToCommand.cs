@@ -3,11 +3,11 @@ using ChatService.Applications.UseCases.ChatUseCases.Commands.CreateFileMessage;
 
 namespace ChatService.API.Mapping.MessageMappingProfiles;
 
-public class SendFileMessageRequestToCommand : Profile
+public class CreateFileMessageRequestToCommand : Profile
 {
-    public SendFileMessageRequestToCommand()
+    public CreateFileMessageRequestToCommand()
     {
-        CreateMap<SendFileMessageRequest, CreateFileMessageCommand>()
+        CreateMap<CreateFileMessageRequest, CreateFileMessageCommand>()
             .ForMember(dest => dest.FileStream, opt =>
                 opt.MapFrom(src => src.File.OpenReadStream()))
             .ForMember(dest => dest.ContentType, opt =>

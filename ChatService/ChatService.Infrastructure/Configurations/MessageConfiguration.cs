@@ -16,6 +16,8 @@ public static class MessageConfiguration
                 cm.AutoMap();
                 cm.SetIgnoreExtraElements(true);
                 
+                cm.SetDiscriminator(nameof(Message));
+                
                 cm.MapIdMember(m => m.Id)
                     .SetIdGenerator(GuidGenerator.Instance)
                     .SetSerializer(new GuidSerializer(BsonType.String));

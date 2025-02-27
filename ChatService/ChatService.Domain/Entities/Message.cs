@@ -1,10 +1,10 @@
 using ChatService.Domain.Enums;
-using ChatService.Domain.Primitives;
 
 namespace ChatService.Domain.Entities;
 
-public class Message : Entity
+public class Message
 {
+    public Guid Id { get; set; }
     public string? Text { get; set; }
     public Guid? FileId { get; set; }
     public DateTime CreatedAt { get; set; }
