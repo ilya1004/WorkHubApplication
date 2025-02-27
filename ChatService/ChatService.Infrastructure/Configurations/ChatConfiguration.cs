@@ -16,11 +16,9 @@ public static class ChatConfiguration
                 cm.AutoMap();
                 cm.SetIgnoreExtraElements(true);
                 
-                cm.SetDiscriminator(nameof(Chat));
-
                 cm.MapIdMember(c => c.Id)
                     .SetIdGenerator(GuidGenerator.Instance)
-                    .SetSerializer(new GuidSerializer(BsonType.String));
+                    .SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
                 cm.MapMember(c => c.CreatedAt)
                     .SetDefaultValue(() => DateTime.UtcNow)

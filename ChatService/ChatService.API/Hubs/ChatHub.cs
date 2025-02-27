@@ -2,12 +2,11 @@ using ChatService.API.Constants;
 using ChatService.API.Contracts.ChatContracts;
 using ChatService.API.HubInterfaces;
 using ChatService.Applications.UseCases.ChatUseCases.Commands.CreateChat;
-using ChatService.Applications.UseCases.ChatUseCases.Commands.CreateFileMessage;
-using ChatService.Applications.UseCases.ChatUseCases.Commands.CreateTextMessage;
-using ChatService.Applications.UseCases.ChatUseCases.Commands.DeleteMessage;
 using ChatService.Applications.UseCases.ChatUseCases.Commands.SetChatInactive;
 using ChatService.Applications.UseCases.ChatUseCases.Queries.GetAllChats;
-using ChatService.Applications.UseCases.ChatUseCases.Queries.GetChatMessages;
+using ChatService.Applications.UseCases.MessageUseCases.CreateTextMessage;
+using ChatService.Applications.UseCases.MessageUseCases.DeleteMessage;
+using ChatService.Applications.UseCases.MessageUseCases.GetChatMessages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 

@@ -8,7 +8,7 @@ public class CreateChatCommandToChat : Profile
     {
         CreateMap<CreateChatCommand, Chat>()
             .ForMember(dest => dest.Id, opt => 
-                opt.Ignore())
+                opt.MapFrom(_ => Guid.NewGuid()))
             .ForMember(dest => dest.IsActive, opt => 
                 opt.MapFrom(_ => true))
             .ForMember(dest => dest.CreatedAt, opt => 

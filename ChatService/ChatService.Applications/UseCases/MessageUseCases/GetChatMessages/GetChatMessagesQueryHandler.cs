@@ -1,6 +1,6 @@
 using ChatService.Applications.Models;
 
-namespace ChatService.Applications.UseCases.ChatUseCases.Queries.GetChatMessages;
+namespace ChatService.Applications.UseCases.MessageUseCases.GetChatMessages;
 
 public class GetChatMessagesQueryHandler(
     IUnitOfWork unitOfWork,

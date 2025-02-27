@@ -1,14 +1,14 @@
 using ChatService.API.Contracts.ChatContracts;
 using ChatService.API.HubInterfaces;
 using ChatService.API.Hubs;
-using ChatService.Applications.UseCases.ChatUseCases.Commands.CreateFileMessage;
+using ChatService.Applications.UseCases.MessageUseCases.CreateFileMessage;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ChatService.API.Controllers;
 
 [ApiController]
-[Route("api/files")]
+[Route("api/[controller]")]
 public class FileController(
     IHubContext<ChatHub, IChatClient> hubContext, 
     IMediator mediator,

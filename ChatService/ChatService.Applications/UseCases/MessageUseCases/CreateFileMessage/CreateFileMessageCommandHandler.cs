@@ -1,6 +1,6 @@
 using ChatService.Domain.Abstractions.BlobService;
 
-namespace ChatService.Applications.UseCases.ChatUseCases.Commands.CreateFileMessage;
+namespace ChatService.Applications.UseCases.MessageUseCases.CreateFileMessage;
 
 public class CreateFileMessageCommandHandler(
     IUnitOfWork unitOfWork,

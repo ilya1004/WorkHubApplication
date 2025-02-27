@@ -9,6 +9,9 @@ using ChatService.Infrastructure.Services.DbInitializer;
 using ChatService.Infrastructure.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 
 namespace ChatService.Infrastructure;
@@ -22,16 +25,18 @@ public static class DependencyInjection
         
         var mongoSettings = configuration.GetRequiredSection("MongoDbSettings").Get<MongoDbSettings>()!;
         var azuriteSettings = configuration.GetRequiredSection("AzuriteSettings").Get<AzuriteSettings>()!;
-        
+        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+
         services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoSettings.ConnectionString));
         services.AddSingleton<IMongoDatabase>(sp =>
         {
             var client = sp.GetRequiredService<IMongoClient>();
             return client.GetDatabase(mongoSettings.DatabaseName);
         });
-        
+
         ChatConfiguration.Configure();
         MessageConfiguration.Configure();
+
 
         services.AddSingleton<IBlobService, BlobService>();
         services.AddSingleton(_ => new BlobServiceClient(azuriteSettings.ConnectionString));

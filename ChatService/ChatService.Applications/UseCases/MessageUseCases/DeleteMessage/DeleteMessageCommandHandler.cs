@@ -1,7 +1,7 @@
 using ChatService.Domain.Abstractions.BlobService;
 using ChatService.Domain.Enums;
 
-namespace ChatService.Applications.UseCases.ChatUseCases.Commands.DeleteMessage;
+namespace ChatService.Applications.UseCases.MessageUseCases.DeleteMessage;
 
 public class DeleteMessageCommandHandler(
     IUnitOfWork unitOfWork,

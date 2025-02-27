@@ -1,6 +1,4 @@
-
-
-namespace ChatService.Applications.UseCases.ChatUseCases.Commands.CreateTextMessage;
+namespace ChatService.Applications.UseCases.MessageUseCases.CreateTextMessage;
 
 public class CreateTextMessageCommandHandler(
     IUnitOfWork unitOfWork,

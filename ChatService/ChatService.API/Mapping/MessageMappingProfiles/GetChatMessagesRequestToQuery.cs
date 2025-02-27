@@ -1,5 +1,5 @@
 using ChatService.API.Contracts.ChatContracts;
-using ChatService.Applications.UseCases.ChatUseCases.Queries.GetChatMessages;
+using ChatService.Applications.UseCases.MessageUseCases.GetChatMessages;
 
 namespace ChatService.API.Mapping.MessageMappingProfiles;
 
