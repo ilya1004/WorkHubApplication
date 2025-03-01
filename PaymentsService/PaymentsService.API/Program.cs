@@ -1,6 +1,10 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using PaymentsService.Infrastructure;
 
-app.MapGet("/", () => "Hello World!");
+var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
+
+services.AddInfrastructure(builder.Configuration);
+
+var app = builder.Build();
 
 app.Run();
