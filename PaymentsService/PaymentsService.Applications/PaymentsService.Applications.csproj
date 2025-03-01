@@ -16,7 +16,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="UseCases\" />
+      <Folder Include="DTOs\" />
+      <Folder Include="UseCases\AccountUseCases\Commands\" />
     </ItemGroup>
 
 </Project>
