@@ -24,5 +24,8 @@ public class EmployerProfileConfiguration : IEntityTypeConfiguration<EmployerPro
             .WithMany(i => i.EmployerProfiles)
             .HasForeignKey(e => e.IndustryId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Property(e => e.StripeCustomerId)
+            .HasMaxLength(50);
     }
 }
