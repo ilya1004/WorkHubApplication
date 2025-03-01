@@ -1,9 +1,6 @@
 using ChatService.Domain.Abstractions.Repositories;
-using ChatService.Infrastructure.Constants;
 using ChatService.Infrastructure.Settings;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using MongoDB.Driver;
 
 namespace ChatService.Infrastructure.Repositories;
 

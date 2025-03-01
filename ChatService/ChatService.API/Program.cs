@@ -26,18 +26,6 @@ services.AddAPI(builder.Configuration);
 services.AddApplication(builder.Configuration);
 services.AddInfrastructure(builder.Configuration);
 
-services.AddCors(options =>
-{
-    options.AddDefaultPolicy(
-        builder =>
-        {
-            builder.WithOrigins("http://localhost:3000", "https://localhost:3000")
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
-        });
-});
-
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -52,8 +40,6 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors();
 
 app.MapControllers();
 app.MapHub<ChatHub>("hubs/chat");

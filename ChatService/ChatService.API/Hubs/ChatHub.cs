@@ -12,21 +12,8 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace ChatService.API.Hubs;
 
-public record TestConnectionRequest
-{
-    public int Qwe { get; set; }
-}
-
-
 public class ChatHub(IMediator mediator, IMapper mapper) : Hub<IChatClient>
 {
-    [Authorize]
-    public async Task TestConnection(TestConnectionRequest request)
-    {
-        await Console.Out.WriteLineAsync("Testing connection");
-        Console.WriteLine(Context.ConnectionId);
-    }
-
     [Authorize]
     public async Task CreateChat(CreateChatRequest request)
     {

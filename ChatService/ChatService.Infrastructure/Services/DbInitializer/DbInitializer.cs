@@ -1,19 +1,16 @@
 using ChatService.Domain.Abstractions.DbInitializer;
 using ChatService.Infrastructure.Settings;
 using Microsoft.Extensions.Configuration;
-using MongoDB.Bson;
-using MongoDB.Driver;
+using Microsoft.Extensions.Options;
 
 namespace ChatService.Infrastructure.Services.DbInitializer;
 
-public class DbInitializer : IDbInitializer
+public class DbInitializer(IOptions<MongoDbSettings> options) : IDbInitializer
 {
     public async Task InitializeDbAsync(IConfiguration configuration)
     {
-        var mongoDbSettings = configuration.GetSection("MongoDbSettings").Get<MongoDbSettings>()!;
-
-        var client = new MongoClient(mongoDbSettings.ConnectionString);
-        var database = client.GetDatabase(mongoDbSettings.DatabaseName);
+        var client = new MongoClient(options.Value.ConnectionString);
+        var database = client.GetDatabase(options.Value.DatabaseName);
         
         var collections = (await database.ListCollectionNamesAsync()).ToList();
         

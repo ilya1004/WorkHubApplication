@@ -3,15 +3,16 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using ChatService.Applications.Exceptions;
 using ChatService.Domain.Abstractions.BlobService;
-using Microsoft.Extensions.Configuration;
+using ChatService.Infrastructure.Settings;
+using Microsoft.Extensions.Options;
 
 namespace ChatService.Infrastructure.Services.BlobService;
 
 public class BlobService(
     BlobServiceClient blobServiceClient, 
-    IConfiguration configuration) : IBlobService
+    IOptions<AzuriteSettings> options) : IBlobService
 {
-    private readonly string _containerName = configuration["Azurite:FilesContainerName"]!;
+    private readonly string _containerName = options.Value.FilesContainerName;
 
     public async Task<Guid> UploadAsync(Stream stream, string contentType, CancellationToken cancellationToken = default)
     {

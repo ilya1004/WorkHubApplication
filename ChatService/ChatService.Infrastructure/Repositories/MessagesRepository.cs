@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
 using ChatService.Domain.Abstractions.Repositories;
 using ChatService.Infrastructure.Constants;
-using MongoDB.Driver;
 
 namespace ChatService.Infrastructure.Repositories;
 
