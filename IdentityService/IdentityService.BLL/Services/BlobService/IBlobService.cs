@@ -1,0 +1,10 @@
+﻿using IdentityService.BLL.DTOs;
+
+namespace IdentityService.BLL.Services.BlobService;
+
+public interface IBlobService
+{
+    Task<Guid> UploadAsync(Stream stream, string contentType, CancellationToken cancellationToken = default);
+    Task<FileResponseDTO> DownloadAsync(Guid fileId, CancellationToken cancellationToken = default);
+    Task DeleteAsync(Guid fileId, CancellationToken cancellationToken = default);
+}
