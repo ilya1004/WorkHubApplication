@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using PaymentsService.Domain.Abstractions.Repositories;
 using PaymentsService.Infrastructure.Data;
 using PaymentsService.Infrastructure.Repositories;
-using Stripe;
 
 namespace PaymentsService.Infrastructure;
 
