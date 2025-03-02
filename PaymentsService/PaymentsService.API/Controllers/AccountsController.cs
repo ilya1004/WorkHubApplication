@@ -1,52 +1,26 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc;
-using Stripe;
+using PaymentsService.Applications.UseCases.AccountUseCases.Queries.GetEmployerAccount;
+using PaymentsService.Applications.UseCases.AccountUseCases.Queries.GetFreelancerAccount;
 
 namespace PaymentsService.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AccountsController(AccountService accountService) : ControllerBase
+public class AccountsController(IMediator mediator) : ControllerBase
 {
-    /// <summary>
-    /// Получить информацию о счете работодателя
-    /// </summary>
-    [HttpGet("employer")]
-    public async Task<IActionResult> GetEmployerAccount()
+    [HttpGet]
+    [Route("employer")]
+    public async Task<IActionResult> GetEmployerAccount(CancellationToken cancellationToken = default)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId))
-        {
-            return Unauthorized("Не удалось определить пользователя.");
-        }
+        var result = await mediator.Send(new GetEmployerAccountQuery(), cancellationToken);
 
-        var accountInfo = await accountService.GetEmployerAccountAsync(Guid.Parse(userId));
-        if (accountInfo == null)
-        {
-            return NotFound("У работодателя нет привязанного счета.");
-        }
-
-        return Ok(accountInfo);
+        return Ok(result);
     }
 
-    /// <summary>
-    /// Получить информацию о счете фрилансера
-    /// </summary>
     [HttpGet("freelancer")]
-    public async Task<IActionResult> GetFreelancerAccount()
+    public async Task<IActionResult> GetFreelancerAccount(CancellationToken cancellationToken = default)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId))
-        {
-            return Unauthorized("Не удалось определить пользователя.");
-        }
+        var result = await mediator.Send(new GetFreelancerAccountQuery(), cancellationToken);
 
-        var accountInfo = await accountService.GetFreelancerAccountAsync(Guid.Parse(userId));
-        if (accountInfo == null)
-        {
-            return NotFound("У фрилансера нет привязанного счета.");
-        }
-
-        return Ok(accountInfo);
+        return Ok(result);
     }
 }
