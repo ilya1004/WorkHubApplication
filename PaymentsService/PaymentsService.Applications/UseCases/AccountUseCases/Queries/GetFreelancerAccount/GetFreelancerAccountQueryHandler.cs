@@ -11,7 +11,7 @@ public class GetFreelancerAccountQueryHandler(
     {
         var userId = userContext.GetUserId();
         
-        var freelancerAccount = await freelancerAccountsService.GetFreelancerAccountAsync(userId);
+        var freelancerAccount = await freelancerAccountsService.GetFreelancerAccountAsync(userId, cancellationToken);
 
         if (freelancerAccount is null)
         {

@@ -6,7 +6,7 @@ namespace PaymentsService.Infrastructure.Services.StripeAccountsServices;
 public class StripeEmployerAccountsService : IEmployerAccountsService
 {
     private readonly CustomerService _customerService = new();
-    public async Task<string?> CreateEmployerAccountAsync(Guid userId, string email)
+    public async Task<string?> CreateEmployerAccountAsync(Guid userId, string email, CancellationToken cancellationToken)
     {
         var options = new CustomerCreateOptions
         {
@@ -20,7 +20,7 @@ public class StripeEmployerAccountsService : IEmployerAccountsService
 
         try
         {
-            var customer = await _customerService.CreateAsync(options);
+            var customer = await _customerService.CreateAsync(options, cancellationToken: cancellationToken);
             return customer.Id;
         }
         catch (Exception)
@@ -29,7 +29,7 @@ public class StripeEmployerAccountsService : IEmployerAccountsService
         }
     }
     
-    public async Task<EmployerAccountDto?> GetEmployerAccountAsync(Guid userId)
+    public async Task<EmployerAccountDto?> GetEmployerAccountAsync(Guid userId, CancellationToken cancellationToken)
     {
         var stripeAccountId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
         
@@ -40,7 +40,7 @@ public class StripeEmployerAccountsService : IEmployerAccountsService
 
         try
         {
-            var customer = await _customerService.GetAsync(stripeAccountId);
+            var customer = await _customerService.GetAsync(stripeAccountId, cancellationToken: cancellationToken);
 
             return new EmployerAccountDto
             {

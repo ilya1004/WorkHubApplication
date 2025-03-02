@@ -12,7 +12,8 @@ public class CreateEmployerAccountCommandHandler(
         var userId = userContext.GetUserId();
         var userEmail = userContext.GetUserEmail();
         
-        var employerAccountId =  await employerAccountsService.CreateEmployerAccountAsync(userId, userEmail);
+        var employerAccountId =  await employerAccountsService.CreateEmployerAccountAsync(
+            userId, userEmail, cancellationToken);
         // This data will be saved to Identity Service via gRPC
         
     }

@@ -1,4 +1,5 @@
 using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.SetupPaymentMethod;
+using PaymentsService.Applications.UseCases.PaymentsUseCases.Queries.GetMyPaymentMethods;
 
 namespace PaymentsService.API.Controllers;
 
@@ -13,6 +14,15 @@ public class PaymentsController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new SetupPaymentMethodCommand(), cancellationToken);
         
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [Route("my-payment-methods")]
+    public async Task<IActionResult> GetMyPaymentMethods(CancellationToken cancellationToken = default)
+    {
+        var result = await mediator.Send(new GetMyPaymentMethodsQuery(), cancellationToken);
+
         return Ok(result);
     }
 }

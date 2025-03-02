@@ -11,7 +11,7 @@ public class GetEmployerAccountQueryHandler(
     {
         var userId = userContext.GetUserId();
         
-        var employerAccount = await employerAccountsService.GetEmployerAccountAsync(userId);
+        var employerAccount = await employerAccountsService.GetEmployerAccountAsync(userId, cancellationToken);
 
         if (employerAccount is null)
         {

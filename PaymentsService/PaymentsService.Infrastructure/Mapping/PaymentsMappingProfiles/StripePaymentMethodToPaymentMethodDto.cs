@@ -1,0 +1,23 @@
+namespace PaymentsService.Infrastructure.Mapping.PaymentsMappingProfiles;
+
+public class StripePaymentMethodToPaymentMethodDto : Profile
+{
+    public StripePaymentMethodToPaymentMethodDto()
+    {
+        CreateMap<PaymentMethod, PaymentMethodDto>()
+            .ForMember(dest => dest.Type, opt =>
+                opt.MapFrom(src => src.Type.ToString()))
+            .ForMember(dest => dest.Card, opt =>
+                opt.MapFrom(src => src.CardPresent != null ? new CardDto
+                {
+                    Brand = src.CardPresent.Brand,
+                    CardholderName = src.CardPresent.CardholderName,
+                    Country = src.CardPresent.Country,
+                    ExpMonth = src.CardPresent.ExpMonth,
+                    ExpYear = src.CardPresent.ExpYear,
+                    Last4Digits = src.CardPresent.Last4,
+                } : null))
+            .ForMember(dest => dest.CreatedAt, opt =>
+                opt.MapFrom(src => src.Created));
+    }
+}

@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PaymentsService.Domain.Abstractions.AccountsServices;
@@ -24,6 +25,8 @@ public static class DependencyInjection
         var stripeSettings = configuration.GetSection("StripeSettings").Get<StripeSettings>()!;
         
         StripeConfiguration.ApiKey = stripeSettings.SecretKey;
+
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         services.AddScoped<IEmployerAccountsService, StripeEmployerAccountsService>();
         services.AddScoped<IFreelancerAccountsService, StripeFreelancerAccountsService>();

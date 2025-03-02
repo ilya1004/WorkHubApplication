@@ -11,7 +11,7 @@ public class SetupPaymentMethodCommandHandler(
     {
         var userId = userContext.GetUserId();
         
-        var clientSecret = await employerPaymentsService.SetupPaymentMethodAsync(userId);
+        var clientSecret = await employerPaymentsService.SetupPaymentMethodAsync(userId, cancellationToken);
 
         return clientSecret;
     }

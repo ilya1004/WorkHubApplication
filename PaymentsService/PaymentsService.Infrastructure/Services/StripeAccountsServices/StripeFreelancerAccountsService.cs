@@ -7,7 +7,7 @@ public class StripeFreelancerAccountsService : IFreelancerAccountsService
 {
     private readonly AccountService _accountService = new();
     private readonly BalanceService _balanceService = new();
-    public async Task<string?> CreateFreelancerAccountAsync(Guid userId, string email)
+    public async Task<string?> CreateFreelancerAccountAsync(Guid userId, string email, CancellationToken cancellationToken)
     {
         var accountOptions = new AccountCreateOptions
         {
@@ -27,7 +27,7 @@ public class StripeFreelancerAccountsService : IFreelancerAccountsService
 
         try
         {
-            var account = await _accountService.CreateAsync(accountOptions);
+            var account = await _accountService.CreateAsync(accountOptions, cancellationToken: cancellationToken);
             return account.Id;
         }
         catch
@@ -36,7 +36,7 @@ public class StripeFreelancerAccountsService : IFreelancerAccountsService
         }
     }
     
-    public async Task<FreelancerAccountDto?> GetFreelancerAccountAsync(Guid userId)
+    public async Task<FreelancerAccountDto?> GetFreelancerAccountAsync(Guid userId, CancellationToken cancellationToken)
     {
         var stripeAccountId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
         
@@ -47,10 +47,11 @@ public class StripeFreelancerAccountsService : IFreelancerAccountsService
 
         try
         {
-            var account = await _accountService.GetAsync(stripeAccountId);
+            var account = await _accountService.GetAsync(stripeAccountId, cancellationToken: cancellationToken);
             var balance = await _balanceService.GetAsync(
                 new BalanceGetOptions(), 
-                new RequestOptions { StripeAccount = stripeAccountId });
+                new RequestOptions { StripeAccount = stripeAccountId },
+                cancellationToken: cancellationToken);
 
             return new FreelancerAccountDto
             {

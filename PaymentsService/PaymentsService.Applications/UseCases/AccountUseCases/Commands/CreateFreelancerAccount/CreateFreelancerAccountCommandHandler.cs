@@ -12,7 +12,8 @@ public class CreateFreelancerAccountCommandHandler(
         var userId = userContext.GetUserId();
         var userEmail = userContext.GetUserEmail();
         
-        var freelancerAccountId = await freelancerAccountsService.CreateFreelancerAccountAsync(userId, userEmail);
+        var freelancerAccountId = await freelancerAccountsService.CreateFreelancerAccountAsync(
+            userId, userEmail, cancellationToken);
         // This data will be saved to Identity Service via gRPC
         
     }
