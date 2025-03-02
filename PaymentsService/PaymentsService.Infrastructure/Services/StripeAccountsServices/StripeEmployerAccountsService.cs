@@ -31,20 +31,20 @@ public class StripeEmployerAccountsService : IEmployerAccountsService
     
     public async Task<EmployerAccountDto?> GetEmployerAccountAsync(Guid userId, CancellationToken cancellationToken)
     {
-        var stripeAccountId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
+        var employerCustomerId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
         
-        if (stripeAccountId is null || string.IsNullOrEmpty(stripeAccountId))
+        if (employerCustomerId is null || string.IsNullOrEmpty(employerCustomerId))
         {
-            throw new NotFoundException($"Stripe account with ID '{stripeAccountId}' not found.");
+            throw new NotFoundException($"Stripe account with ID '{employerCustomerId}' not found.");
         }
 
         try
         {
-            var customer = await _customerService.GetAsync(stripeAccountId, cancellationToken: cancellationToken);
+            var customer = await _customerService.GetAsync(employerCustomerId, cancellationToken: cancellationToken);
 
             return new EmployerAccountDto
             {
-                Id = stripeAccountId,
+                Id = employerCustomerId,
                 OwnerEmail = customer.Email,
                 Currency = customer.Currency,
                 Balance = customer.Balance,
@@ -52,7 +52,7 @@ public class StripeEmployerAccountsService : IEmployerAccountsService
         }
         catch
         {
-            throw new BadRequestException($"Stripe customer with ID '{stripeAccountId}' not found.");
+            throw new BadRequestException($"Stripe customer with ID '{employerCustomerId}' not found.");
         }
     }
 }
