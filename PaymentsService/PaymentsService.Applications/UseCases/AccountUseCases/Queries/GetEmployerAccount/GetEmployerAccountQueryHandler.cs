@@ -1,17 +1,17 @@
-using PaymentsService.Domain.Abstractions.EmployerService;
+using PaymentsService.Domain.Abstractions.AccountsServices;
 using PaymentsService.Domain.Abstractions.UserContext;
 
 namespace PaymentsService.Applications.UseCases.AccountUseCases.Queries.GetEmployerAccount;
 
 public class GetEmployerAccountQueryHandler(
-    IEmployerService employerService,
+    IEmployerAccountsService employerAccountsService,
     IUserContext userContext) : IRequestHandler<GetEmployerAccountQuery, EmployerAccountDto>
 {
     public async Task<EmployerAccountDto> Handle(GetEmployerAccountQuery request, CancellationToken cancellationToken)
     {
         var userId = userContext.GetUserId();
         
-        var employerAccount = await employerService.GetEmployerAccountAsync(userId);
+        var employerAccount = await employerAccountsService.GetEmployerAccountAsync(userId);
 
         if (employerAccount is null)
         {

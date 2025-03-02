@@ -4,4 +4,5 @@ public interface IUserContext
 {
     Guid GetUserId();
     string GetUserRole();
+    string GetUserEmail();
 }

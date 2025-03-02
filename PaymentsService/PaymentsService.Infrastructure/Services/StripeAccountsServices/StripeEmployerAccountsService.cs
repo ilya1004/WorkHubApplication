@@ -1,21 +1,16 @@
 using PaymentsService.Applications.Constants;
-using PaymentsService.Applications.Exceptions;
-using PaymentsService.Domain.Abstractions.EmployerService;
-using PaymentsService.Domain.DTOs;
+using PaymentsService.Domain.Abstractions.AccountsServices;
 
+namespace PaymentsService.Infrastructure.Services.StripeAccountsServices;
 
-namespace PaymentsService.Infrastructure.Services.StripeServices;
-
-public class StripeEmployerService : IEmployerService
+public class StripeEmployerAccountsService : IEmployerAccountsService
 {
     private readonly CustomerService _customerService = new();
-
-    public async Task<string?> CreateEmployerAccountAsync(Guid userId, string companyName, string email) // This will be requested from identity service via gRPC
+    public async Task<string?> CreateEmployerAccountAsync(Guid userId, string email)
     {
         var options = new CustomerCreateOptions
         {
             Email = email,
-            Name = companyName,
             Metadata = new Dictionary<string, string>
             {
                 { "UserId", userId.ToString() },
@@ -36,7 +31,7 @@ public class StripeEmployerService : IEmployerService
     
     public async Task<EmployerAccountDto?> GetEmployerAccountAsync(Guid userId)
     {
-        var stripeAccountId = Guid.NewGuid().ToString(); // It will be requested from identity service via gRPC
+        var stripeAccountId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
         
         if (stripeAccountId is null || string.IsNullOrEmpty(stripeAccountId))
         {

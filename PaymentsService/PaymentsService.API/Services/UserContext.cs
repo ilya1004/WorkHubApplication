@@ -17,6 +17,7 @@ public class UserContext(IHttpContextAccessor httpContextAccessor) : IUserContex
 
         return Guid.Parse(userId);
     }
+    
     public string GetUserRole()
     {
         var userRole = httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Role);
@@ -27,5 +28,17 @@ public class UserContext(IHttpContextAccessor httpContextAccessor) : IUserContex
         }
 
         return userRole;
+    }
+
+    public string GetUserEmail()
+    {
+        var userEmail = httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email);
+        
+        if (userEmail is null)
+        {
+            throw new UnauthorizedException("You are not authorized to access this resource.");    
+        }
+
+        return userEmail;
     }
 }

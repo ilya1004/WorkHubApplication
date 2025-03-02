@@ -1,12 +1,13 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using PaymentsService.Domain.Abstractions.EmployerService;
+using PaymentsService.Domain.Abstractions.AccountsServices;
+using PaymentsService.Domain.Abstractions.PaymentsServices;
 using PaymentsService.Domain.Abstractions.Repositories;
 using PaymentsService.Infrastructure.Data;
 using PaymentsService.Infrastructure.Repositories;
-using PaymentsService.Infrastructure.Services.StripeServices;
+using PaymentsService.Infrastructure.Services.StripeAccountsServices;
+using PaymentsService.Infrastructure.Services.StripePaymentsServices;
 using PaymentsService.Infrastructure.Settings;
-using Stripe;
 
 namespace PaymentsService.Infrastructure;
 
@@ -20,12 +21,13 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, AppUnitOfWork>();
         
         services.Configure<StripeSettings>(configuration.GetSection("Stripe"));
-        var stripeSettings = configuration.GetSection("Stripe").Get<StripeSettings>()!;
+        var stripeSettings = configuration.GetSection("StripeSettings").Get<StripeSettings>()!;
         
         StripeConfiguration.ApiKey = stripeSettings.SecretKey;
 
-        services.AddScoped<IEmployerService, StripeEmployerService>();
-        services.AddScoped<IFreelancerService, StripeFreelancerService>();
+        services.AddScoped<IEmployerAccountsService, StripeEmployerAccountsService>();
+        services.AddScoped<IFreelancerAccountsService, StripeFreelancerAccountsService>();
+        services.AddScoped<IEmployerPaymentsService, StripeEmployerPaymentsService>();
         
         return services;
     }

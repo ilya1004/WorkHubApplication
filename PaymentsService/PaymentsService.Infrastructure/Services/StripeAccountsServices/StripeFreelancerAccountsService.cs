@@ -1,15 +1,13 @@
 using PaymentsService.Applications.Constants;
-using PaymentsService.Applications.Exceptions;
-using PaymentsService.Domain.Abstractions.EmployerService;
-using PaymentsService.Domain.DTOs;
+using PaymentsService.Domain.Abstractions.AccountsServices;
 
-namespace PaymentsService.Infrastructure.Services.StripeServices;
+namespace PaymentsService.Infrastructure.Services.StripeAccountsServices;
 
-public class StripeFreelancerService : IFreelancerService
+public class StripeFreelancerAccountsService : IFreelancerAccountsService
 {
     private readonly AccountService _accountService = new();
     private readonly BalanceService _balanceService = new();
-    public async Task<string?> CreateConnectedAccountAsync(Guid userId, string email) // This data will be requested from identity service via gRPC
+    public async Task<string?> CreateFreelancerAccountAsync(Guid userId, string email)
     {
         var accountOptions = new AccountCreateOptions
         {
@@ -40,7 +38,7 @@ public class StripeFreelancerService : IFreelancerService
     
     public async Task<FreelancerAccountDto?> GetFreelancerAccountAsync(Guid userId)
     {
-        var stripeAccountId = Guid.NewGuid().ToString(); // It will be requested from identity service via gRPC
+        var stripeAccountId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
         
         if (stripeAccountId is null || string.IsNullOrEmpty(stripeAccountId))
         {
@@ -59,6 +57,7 @@ public class StripeFreelancerService : IFreelancerService
                 Id = stripeAccountId,
                 OwnerEmail = account.Email,
                 AccountType = account.Type,
+                Country = account.Country,
                 Balance = balance.Available.Select(b => 
                     new BalanceAmountDto
                     {
