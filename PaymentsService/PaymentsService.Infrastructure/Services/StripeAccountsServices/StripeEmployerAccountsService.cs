@@ -1,5 +1,6 @@
 using PaymentsService.Applications.Constants;
 using PaymentsService.Domain.Abstractions.AccountsServices;
+using PaymentsService.Domain.Models;
 
 namespace PaymentsService.Infrastructure.Services.StripeAccountsServices;
 
@@ -29,7 +30,7 @@ public class StripeEmployerAccountsService : IEmployerAccountsService
         }
     }
     
-    public async Task<EmployerAccountDto?> GetEmployerAccountAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<EmployerAccountModel?> GetEmployerAccountAsync(Guid userId, CancellationToken cancellationToken)
     {
         var employerCustomerId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
         
@@ -42,7 +43,7 @@ public class StripeEmployerAccountsService : IEmployerAccountsService
         {
             var customer = await _customerService.GetAsync(employerCustomerId, cancellationToken: cancellationToken);
 
-            return new EmployerAccountDto
+            return new EmployerAccountModel
             {
                 Id = employerCustomerId,
                 OwnerEmail = customer.Email,

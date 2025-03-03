@@ -1,13 +1,14 @@
 using PaymentsService.Domain.Abstractions.AccountsServices;
 using PaymentsService.Domain.Abstractions.UserContext;
+using PaymentsService.Domain.Models;
 
 namespace PaymentsService.Applications.UseCases.AccountUseCases.Queries.GetFreelancerAccount;
 
 public class GetFreelancerAccountQueryHandler(
     IFreelancerAccountsService freelancerAccountsService,
-    IUserContext userContext) : IRequestHandler<GetFreelancerAccountQuery, FreelancerAccountDto>
+    IUserContext userContext) : IRequestHandler<GetFreelancerAccountQuery, FreelancerAccountModel>
 {
-    public async Task<FreelancerAccountDto> Handle(GetFreelancerAccountQuery request, CancellationToken cancellationToken)
+    public async Task<FreelancerAccountModel> Handle(GetFreelancerAccountQuery request, CancellationToken cancellationToken)
     {
         var userId = userContext.GetUserId();
         

@@ -1,7 +1,6 @@
+using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.ConfirmPaymentForProject;
 using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.PayForProjectWithSavedMethod;
-using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.SavePaymentMethod;
 using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.SetupPaymentMethod;
-using PaymentsService.Applications.UseCases.PaymentsUseCases.Queries.GetMyPaymentMethods;
 
 namespace PaymentsService.API.Controllers;
 
@@ -20,29 +19,19 @@ public class PaymentsController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost]
-    [Route("save-payment-method/{paymentMethodId:guid}")]
-    public async Task<IActionResult> SavePaymentMethod(Guid paymentMethodId, CancellationToken cancellationToken = default)
+    [Route("pay-for-project/{projectId:guid}/with-saved-method")]
+    public async Task<IActionResult> CreatePaymentByProject([FromRoute] Guid projectId, CancellationToken cancellationToken = default)
     {
-        await mediator.Send(new SavePaymentMethodCommand(paymentMethodId), cancellationToken);
+        await mediator.Send(new PayForProjectWithSavedMethodCommand(projectId), cancellationToken);
 
         return NoContent();
     }
 
-    [HttpGet]
-    [Route("my-payment-methods")]
-    public async Task<IActionResult> GetMyPaymentMethods(CancellationToken cancellationToken = default)
+    [HttpPost("confirm-payment-for-project/{projectId:guid}")]
+    public async Task<IActionResult> ConfirmPayment([FromRoute] Guid projectId, CancellationToken cancellationToken = default)
     {
-        var result = await mediator.Send(new GetMyPaymentMethodsQuery(), cancellationToken);
-
-        return Ok(result);
-    }
-
-    [HttpPost]
-    [Route("pay-for-project/{projectId:guid}/with-saved-method")]
-    public async Task<IActionResult> CreatePaymentByProject(Guid projectId, CancellationToken cancellationToken = default)
-    {
-        await mediator.Send(new PayForProjectWithSavedMethodCommand(projectId), cancellationToken);
-
+        await mediator.Send(new ConfirmPaymentForProjectCommand(projectId), cancellationToken);
+        
         return NoContent();
     }
 }

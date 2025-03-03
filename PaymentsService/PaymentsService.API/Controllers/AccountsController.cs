@@ -28,7 +28,7 @@ public class AccountsController(IMediator mediator) : ControllerBase
     }
     
     [HttpGet]
-    [Route("employer/my")]
+    [Route("employer/my-account")]
     public async Task<IActionResult> GetEmployerAccount(CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(new GetEmployerAccountQuery(), cancellationToken);
@@ -36,7 +36,7 @@ public class AccountsController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("freelancer/my")]
+    [HttpGet("freelancer/my-account")]
     public async Task<IActionResult> GetFreelancerAccount(CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(new GetFreelancerAccountQuery(), cancellationToken);

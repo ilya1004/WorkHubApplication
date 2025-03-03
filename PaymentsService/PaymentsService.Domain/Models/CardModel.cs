@@ -1,6 +1,6 @@
-namespace PaymentsService.Domain.DTOs;
+namespace PaymentsService.Domain.Models;
 
-public record CardDto
+public record CardModel
 {
     public string Brand { get; init; }
     public string CardholderName { get; init; }

@@ -1,5 +1,6 @@
 using PaymentsService.Applications.Constants;
 using PaymentsService.Domain.Abstractions.AccountsServices;
+using PaymentsService.Domain.Models;
 
 namespace PaymentsService.Infrastructure.Services.StripeAccountsServices;
 
@@ -36,7 +37,7 @@ public class StripeFreelancerAccountsService : IFreelancerAccountsService
         }
     }
     
-    public async Task<FreelancerAccountDto?> GetFreelancerAccountAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<FreelancerAccountModel?> GetFreelancerAccountAsync(Guid userId, CancellationToken cancellationToken)
     {
         var stripeAccountId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
         
@@ -53,14 +54,14 @@ public class StripeFreelancerAccountsService : IFreelancerAccountsService
                 new RequestOptions { StripeAccount = stripeAccountId },
                 cancellationToken: cancellationToken);
 
-            return new FreelancerAccountDto
+            return new FreelancerAccountModel
             {
                 Id = stripeAccountId,
                 OwnerEmail = account.Email,
                 AccountType = account.Type,
                 Country = account.Country,
                 Balance = balance.Available.Select(b => 
-                    new BalanceAmountDto
+                    new BalanceAmountModel
                     {
                         Amount = b.Amount, 
                         Currency = b.Currency

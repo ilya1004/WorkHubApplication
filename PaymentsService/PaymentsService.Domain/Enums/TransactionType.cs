@@ -2,8 +2,7 @@ namespace PaymentsService.Domain.Enums;
 
 public enum TransactionType
 {
-    Capture,
-    Refund,
-    Fee,
-    Deposit
+    Capture = 0,
+    Refund = 1,
+    Deposit = 2
 }

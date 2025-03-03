@@ -1,14 +1,16 @@
+using PaymentsService.Domain.Models;
+
 namespace PaymentsService.Infrastructure.Mapping.PaymentsMappingProfiles;
 
-public class StripePaymentMethodToPaymentMethodDto : Profile
+public class StripePaymentMethodToPaymentMethodModel : Profile
 {
-    public StripePaymentMethodToPaymentMethodDto()
+    public StripePaymentMethodToPaymentMethodModel()
     {
-        CreateMap<PaymentMethod, PaymentMethodDto>()
+        CreateMap<PaymentMethod, PaymentMethodModel>()
             .ForMember(dest => dest.Type, opt =>
                 opt.MapFrom(src => src.Type.ToString()))
             .ForMember(dest => dest.Card, opt =>
-                opt.MapFrom(src => src.CardPresent != null ? new CardDto
+                opt.MapFrom(src => src.CardPresent != null ? new CardModel
                 {
                     Brand = src.CardPresent.Brand,
                     CardholderName = src.CardPresent.CardholderName,

@@ -1,6 +1,6 @@
-namespace PaymentsService.Domain.DTOs;
+namespace PaymentsService.Domain.Models;
 
-public record EmployerAccountDto
+public record EmployerAccountModel
 {
     public string Id { get; init; }
     public string OwnerEmail { get; init; }

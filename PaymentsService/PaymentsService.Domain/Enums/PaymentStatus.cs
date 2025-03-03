@@ -2,9 +2,9 @@ namespace PaymentsService.Domain.Enums;
 
 public enum PaymentStatus
 {
-    Pending,
-    Authorized,
-    Captured,
-    Failed,
-    Refunded
+    Pending = 0,
+    Authorized = 1,
+    Captured = 2,
+    Failed = 3,
+    Refunded = 4
 }
