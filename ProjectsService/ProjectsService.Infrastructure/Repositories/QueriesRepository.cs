@@ -5,6 +5,7 @@ using ProjectsService.Domain.Abstractions.Data;
 using ProjectsService.Domain.Abstractions.Specification;
 using ProjectsService.Domain.Primitives;
 using ProjectsService.Infrastructure.Data;
+using ProjectsService.Infrastructure.Extensions;
 
 namespace ProjectsService.Infrastructure.Repositories;
 
@@ -21,14 +22,8 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
         params Expression<Func<TEntity, object>>[]? includesProperties)
     {
         IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
-        
-        if (includesProperties is not null)
-        {
-            foreach (var includeProperty in includesProperties)
-            {
-                query = query.Include(includeProperty);
-            }
-        }
+
+        query.AddIncludes(includesProperties);
 
         return await query
             .OrderBy(x => x.Id)
@@ -47,13 +42,7 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
             query = query.Where(filter);
         }
 
-        if (includesProperties is not null)
-        {
-            foreach (var includeProperty in includesProperties)
-            {
-                query = query.Include(includeProperty);
-            }
-        }
+        query.AddIncludes(includesProperties);
 
         return await query.ToListAsync(cancellationToken);
     }
@@ -68,13 +57,7 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
             query = query.Where(filter);
         }
 
-        if (includesProperties is not null)
-        {
-            foreach (var includeProperty in includesProperties)
-            {
-                query = query.Include(includeProperty);
-            }
-        }
+        query.AddIncludes(includesProperties);
 
         return await query
             .OrderBy(x => x.Id)
@@ -87,13 +70,7 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
     {
         IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
 
-        if (includesProperties is not null)
-        {
-            foreach (var includeProperty in includesProperties)
-            {
-                query = query.Include(includeProperty);
-            }
-        }
+        query.AddIncludes(includesProperties);
 
         return await query.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
     }
