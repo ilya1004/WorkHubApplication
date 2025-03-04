@@ -6,7 +6,7 @@ using PaymentsService.Applications.UseCases.AccountUseCases.Queries.GetFreelance
 namespace PaymentsService.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/accounts")]
 public class AccountsController(IMediator mediator) : ControllerBase
 {
     [HttpPost]

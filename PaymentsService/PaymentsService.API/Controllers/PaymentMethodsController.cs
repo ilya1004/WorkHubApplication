@@ -5,7 +5,7 @@ namespace PaymentsService.API.Controllers;
 
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/payment-methods")]
 public class PaymentMethodsController(IMediator mediator) : ControllerBase
 {
     [HttpPost]

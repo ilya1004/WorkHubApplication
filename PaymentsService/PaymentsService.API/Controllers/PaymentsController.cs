@@ -1,13 +1,18 @@
+using AutoMapper;
+using PaymentsService.API.Contracts.PaymentContracts;
 using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.ConfirmPaymentForProject;
 using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.PayForProjectWithSavedMethod;
 using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.SetupPaymentMethod;
+using PaymentsService.Applications.UseCases.PaymentsUseCases.Queries;
 
 namespace PaymentsService.API.Controllers;
 
 
 [ApiController]
-[Route("api/[controller]")]
-public class PaymentsController(IMediator mediator) : ControllerBase
+[Route("api/payments")]
+public class PaymentsController(
+    IMediator mediator,
+    IMapper mapper) : ControllerBase
 {
     [HttpPost]
     [Route("create-setup-intent")]
@@ -20,7 +25,8 @@ public class PaymentsController(IMediator mediator) : ControllerBase
 
     [HttpPost]
     [Route("pay-for-project/{projectId:guid}/with-saved-method")]
-    public async Task<IActionResult> CreatePaymentByProject([FromRoute] Guid projectId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> CreatePaymentByProject([FromRoute] Guid projectId, 
+        CancellationToken cancellationToken = default)
     {
         await mediator.Send(new PayForProjectWithSavedMethodCommand(projectId), cancellationToken);
 
@@ -28,10 +34,21 @@ public class PaymentsController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost("confirm-payment-for-project/{projectId:guid}")]
-    public async Task<IActionResult> ConfirmPayment([FromRoute] Guid projectId, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> ConfirmPayment([FromRoute] Guid projectId, 
+        CancellationToken cancellationToken = default)
     {
         await mediator.Send(new ConfirmPaymentForProjectCommand(projectId), cancellationToken);
         
         return NoContent();
+    }
+
+    [HttpGet]
+    [Route("employer/my-payments")]
+    public async Task<IActionResult> GetEmployerPayments([FromQuery] GetEmployerPaymentsRequest request, 
+        CancellationToken cancellationToken = default)
+    {
+        var result = await mediator.Send(mapper.Map<GetEmployerPaymentsQuery>(request), cancellationToken);
+
+        return Ok(result);
     }
 }
