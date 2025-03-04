@@ -17,7 +17,7 @@ public class StripeEmployerPaymentsService(
     {
         var employerCustomerId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
 
-        if (string.IsNullOrEmpty(employerCustomerId))
+        if (employerCustomerId is null)
         {
             throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
         }
@@ -37,7 +37,7 @@ public class StripeEmployerPaymentsService(
     {
         var employerCustomerId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
         
-        if (string.IsNullOrEmpty(employerCustomerId))
+        if (employerCustomerId is null)
         {
             throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
         }
@@ -78,16 +78,11 @@ public class StripeEmployerPaymentsService(
 
         if (project.PaymentIntentId is null)
         {
-            throw new NotFoundException("This project does not have an attached payment intent.");
+            throw new NotFoundException("This project does not have an attached Payment Intent.");
         }
 
         var freelancer = new FreelancerDto(); // This data will be requested from Identity Service via gRPC
         
-        if (freelancer is null)
-        {
-            throw new NotFoundException($"Freelancer to project with ID '{projectId}' not found.");
-        }
-
         if (freelancer.StripeAccountId is null)
         {
             throw new NotFoundException($"Freelancer's Stripe Account to project with ID '{projectId}' not found.");
@@ -95,7 +90,7 @@ public class StripeEmployerPaymentsService(
         
         var paymentIntent = await _paymentIntentService.GetAsync(project.PaymentIntentId, cancellationToken: cancellationToken);
 
-        if (paymentIntent == null)
+        if (paymentIntent is null)
         {
             throw new NotFoundException($"Payment Intent with ID '{project.PaymentIntentId}' not found for this project.");
         }
@@ -111,5 +106,24 @@ public class StripeEmployerPaymentsService(
         await transfersService.TransferFundsToFreelancer(
             mapper.Map<PaymentIntentModel>(capturedPaymentIntent), freelancer.StripeAccountId, cancellationToken);
     }
-    
+
+    // This method will be called from Projects Service only via gRPC
+    public async Task CancelPaymentForProjectAsync(Guid userId, Guid projectId, CancellationToken cancellationToken)
+    {
+        var project = new ProjectDto(); // This data will be requested from Projects Service via gRPC
+        
+        if (project.PaymentIntentId is null)
+        {
+            throw new NotFoundException("This project does not have an attached Payment Intent.");
+        }
+        
+        var paymentIntent = await _paymentIntentService.GetAsync(project.PaymentIntentId, cancellationToken: cancellationToken);
+
+        if (paymentIntent is null)
+        {
+            throw new NotFoundException($"Payment Intent with ID '{project.PaymentIntentId}' not found.");
+        }
+        
+        await _paymentIntentService.CancelAsync(project.PaymentIntentId, cancellationToken: cancellationToken);
+    }
 }
