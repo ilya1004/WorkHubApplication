@@ -1,6 +1,6 @@
 namespace PaymentsService.API.Contracts.PaymentContracts;
 
-public sealed record GetEmployerPaymentsRequest(
+public sealed record GetOperationsRequest(
     Guid? ProjectId,
     int PageNo = 1,
     int PageSize = 10);

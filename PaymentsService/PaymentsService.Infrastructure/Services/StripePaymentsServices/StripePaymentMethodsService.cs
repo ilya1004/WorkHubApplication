@@ -3,7 +3,7 @@ using PaymentsService.Domain.Models;
 
 namespace PaymentsService.Infrastructure.Services.StripePaymentsServices;
 
-public class StripePaymentMethodsService(IMapper mapper) : IEmployerPaymentMethodsService
+public class StripePaymentMethodsService(IMapper mapper) : IPaymentMethodsService
 {
     private readonly PaymentMethodService _paymentMethodService = new();
     private readonly CustomerPaymentMethodService _customerPaymentMethodService = new();

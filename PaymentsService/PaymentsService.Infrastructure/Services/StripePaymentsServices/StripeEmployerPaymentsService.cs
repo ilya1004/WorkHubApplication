@@ -104,7 +104,10 @@ public class StripeEmployerPaymentsService(
             paymentIntent.Id, confirmOptions, cancellationToken: cancellationToken);
         
         await transfersService.TransferFundsToFreelancer(
-            mapper.Map<PaymentIntentModel>(capturedPaymentIntent), freelancer.StripeAccountId, cancellationToken);
+            mapper.Map<PaymentIntentModel>(capturedPaymentIntent),
+            project.Id,
+            freelancer.StripeAccountId, 
+            cancellationToken);
     }
 
     // This method will be called from Projects Service only via gRPC

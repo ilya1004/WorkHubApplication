@@ -3,17 +3,18 @@ using PaymentsService.Domain.Abstractions.TransfersServices;
 using PaymentsService.Domain.Abstractions.UserContext;
 using PaymentsService.Domain.Models;
 
-namespace PaymentsService.Applications.UseCases.PaymentsUseCases.Queries;
+namespace PaymentsService.Applications.UseCases.PaymentsUseCases.Queries.GetEmployerPaymentsQuery;
 
 public class GetEmployerPaymentsQueryHandler(
     IUserContext userContext,
     ITransfersService transfersService) : IRequestHandler<GetEmployerPaymentsQuery, PaginatedResultModel<ChargeModel>>
 {
-    public async Task<PaginatedResultModel<ChargeModel>> Handle(GetEmployerPaymentsQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedResultModel<ChargeModel>> Handle(Queries.GetEmployerPaymentsQuery.GetEmployerPaymentsQuery request, CancellationToken cancellationToken)
     {
         var userId = userContext.GetUserId();
         
-        var result = await transfersService.GetEmployerPaymentsAsync(userId, cancellationToken);
+        var result = await transfersService.GetEmployerPaymentsAsync(
+            userId, request.ProjectId, cancellationToken);
 
         var offset = (request.PageNo - 1) * request.PageSize;
         var resultList = result.Skip(offset).Take(request.PageSize).ToList();

@@ -4,13 +4,13 @@ using PaymentsService.Domain.Abstractions.UserContext;
 namespace PaymentsService.Applications.UseCases.PaymentMethodUseCases.Commands.SavePaymentMethod;
 
 public class SavePaymentMethodCommandHandler(
-    IEmployerPaymentMethodsService employerPaymentMethodsService,
+    IPaymentMethodsService paymentMethodsService,
     IUserContext userContext) : IRequestHandler<SavePaymentMethodCommand>
 {
     public async Task Handle(SavePaymentMethodCommand request, CancellationToken cancellationToken)
     {
         var userId = userContext.GetUserId();
         
-        await employerPaymentMethodsService.SavePaymentMethodAsync(userId, request.PaymentMethodId, cancellationToken);
+        await paymentMethodsService.SavePaymentMethodAsync(userId, request.PaymentMethodId, cancellationToken);
     }
 }

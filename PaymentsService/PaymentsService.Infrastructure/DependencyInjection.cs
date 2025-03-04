@@ -33,6 +33,7 @@ public static class DependencyInjection
         services.AddScoped<IEmployerAccountsService, StripeEmployerAccountsService>();
         services.AddScoped<IFreelancerAccountsService, StripeFreelancerAccountsService>();
         services.AddScoped<IEmployerPaymentsService, StripeEmployerPaymentsService>();
+        services.AddScoped<IPaymentMethodsService, StripePaymentMethodsService>();
         services.AddScoped<ITransfersService, StripeTransfersService>();
         
         return services;
