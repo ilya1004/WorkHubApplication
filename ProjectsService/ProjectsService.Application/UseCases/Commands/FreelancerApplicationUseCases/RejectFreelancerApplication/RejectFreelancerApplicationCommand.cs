@@ -1,0 +1,3 @@
+namespace ProjectsService.Application.UseCases.Commands.FreelancerApplicationUseCases.RejectFreelancerApplication;
+
+public sealed record RejectFreelancerApplicationCommand(Guid ProjectId, Guid ApplicationId) : IRequest;
