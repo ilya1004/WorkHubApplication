@@ -1,7 +1,7 @@
 using PaymentsService.API.Contracts.PaymentContracts;
 using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.ConfirmPaymentForProject;
+using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.CreateSetupIntent;
 using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.PayForProjectWithSavedMethod;
-using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.SetupPaymentMethod;
 using PaymentsService.Applications.UseCases.PaymentsUseCases.Queries.GetEmployerPaymentsQuery;
 using PaymentsService.Applications.UseCases.PaymentsUseCases.Queries.GetFreelancerTransfers;
 
@@ -15,7 +15,7 @@ public class PaymentsController(
     IMapper mapper) : ControllerBase
 {
     [HttpPost]
-    [Route("create-setup-intent")]
+    [Route("setup-intent")]
     public async Task<IActionResult> CreateSetupIntent(CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(new CreateSetupIntentCommand(), cancellationToken);
@@ -24,11 +24,11 @@ public class PaymentsController(
     }
 
     [HttpPost]
-    [Route("pay-for-project/{projectId:guid}/with-saved-method")]
-    public async Task<IActionResult> CreatePaymentByProject([FromRoute] Guid projectId, 
+    [Route("pay-for-project/{projectId:guid}/with-method/{paymentMethodId}")]
+    public async Task<IActionResult> CreatePaymentByProject([FromRoute] Guid projectId, [FromRoute] string paymentMethodId, 
         CancellationToken cancellationToken = default)
     {
-        await mediator.Send(new PayForProjectWithSavedMethodCommand(projectId), cancellationToken);
+        await mediator.Send(new PayForProjectWithSavedMethodCommand(projectId, paymentMethodId), cancellationToken);
 
         return NoContent();
     }

@@ -33,7 +33,7 @@ public class StripeEmployerPaymentsService(
         return setupIntent.ClientSecret;
     }
     
-    public async Task CreatePaymentIntentWithSavedMethodAsync(Guid userId, Guid projectId, CancellationToken cancellationToken)
+    public async Task CreatePaymentIntentWithSavedMethodAsync(Guid userId, Guid projectId, string paymentMethodId, CancellationToken cancellationToken)
     {
         var employerCustomerId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
         
@@ -42,12 +42,12 @@ public class StripeEmployerPaymentsService(
             throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
         }
 
-        var paymentMethods = await _customerPaymentMethodService.ListAsync(
-            employerCustomerId, cancellationToken: cancellationToken);
+        var paymentMethod = await _customerPaymentMethodService.GetAsync(
+            employerCustomerId, paymentMethodId, cancellationToken: cancellationToken);
 
-        if (!paymentMethods.Any())
+        if (paymentMethod is null)
         {
-            throw new BadRequestException("You must save at least one payment method.");
+            throw new BadRequestException($"Payment method with ID '{paymentMethodId}' not found.");
         }
 
         var project = new ProjectDto(); // This data will be requested from Projects Service via gRPC
@@ -57,7 +57,7 @@ public class StripeEmployerPaymentsService(
             Amount = project.Budget * 100,
             Currency = "usd",
             Customer = employerCustomerId,
-            PaymentMethod = paymentMethods.First().Id,
+            PaymentMethod = paymentMethod.Id,
             Confirm = true,
             CaptureMethod = "manual",
             TransferGroup = projectId.ToString(),

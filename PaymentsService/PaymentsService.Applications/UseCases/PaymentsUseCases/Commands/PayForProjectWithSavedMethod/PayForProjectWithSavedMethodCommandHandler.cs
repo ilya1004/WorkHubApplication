@@ -11,6 +11,6 @@ public class PayForProjectWithSavedMethodCommandHandler(
     {
         var userId = userContext.GetUserId();
 
-        await employerPaymentsService.CreatePaymentIntentWithSavedMethodAsync(userId, request.ProjectId, cancellationToken);
+        await employerPaymentsService.CreatePaymentIntentWithSavedMethodAsync(userId, request.ProjectId, request.PaymentMethodId, cancellationToken);
     }
 }

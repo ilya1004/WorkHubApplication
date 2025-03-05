@@ -7,11 +7,8 @@ public class StripeTransfersService(IMapper mapper) : ITransfersService
 {
     private readonly TransferService _transferService = new();
     private readonly ChargeService _chargeService = new();
-    public async Task TransferFundsToFreelancer(
-        PaymentIntentModel paymentIntent,
-        Guid projectId,
-        string freelancerStripeAccountId, 
-        CancellationToken cancellationToken)
+    public async Task TransferFundsToFreelancer(PaymentIntentModel paymentIntent, Guid projectId,
+        string freelancerStripeAccountId, CancellationToken cancellationToken)
     {
         var transferOptions = new TransferCreateOptions
         {

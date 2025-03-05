@@ -1,3 +1,4 @@
+using PaymentsService.Applications.UseCases.PaymentMethodUseCases.Commands.DeletePaymentMethod;
 using PaymentsService.Applications.UseCases.PaymentMethodUseCases.Commands.SavePaymentMethod;
 using PaymentsService.Applications.UseCases.PaymentMethodUseCases.Queries.GetMyPaymentMethods;
 
@@ -9,7 +10,8 @@ namespace PaymentsService.API.Controllers;
 public class PaymentMethodsController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> SavePaymentMethod([FromBody] Guid paymentMethodId, CancellationToken cancellationToken = default)
+    [Route("{paymentMethodId}")]
+    public async Task<IActionResult> SavePaymentMethod([FromRoute] string paymentMethodId, CancellationToken cancellationToken = default)
     {
         await mediator.Send(new SavePaymentMethodCommand(paymentMethodId), cancellationToken);
 
@@ -23,5 +25,15 @@ public class PaymentMethodsController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new GetMyPaymentMethodsQuery(), cancellationToken);
 
         return Ok(result);
+    }
+
+    [HttpDelete]
+    [Route("{paymentMethodId}")]
+    public async Task<IActionResult> DeletePaymentMethod([FromRoute] string paymentMethodId,
+        CancellationToken cancellationToken = default)
+    {
+        await mediator.Send(new DeletePaymentMethodCommand(paymentMethodId), cancellationToken);
+
+        return NoContent();
     }
 }

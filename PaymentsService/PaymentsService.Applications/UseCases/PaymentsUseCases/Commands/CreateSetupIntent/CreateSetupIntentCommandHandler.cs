@@ -1,4 +1,3 @@
-using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.SetupPaymentMethod;
 using PaymentsService.Domain.Abstractions.PaymentsServices;
 using PaymentsService.Domain.Abstractions.UserContext;
 
