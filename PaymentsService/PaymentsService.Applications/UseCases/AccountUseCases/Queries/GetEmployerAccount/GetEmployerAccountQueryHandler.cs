@@ -11,13 +11,10 @@ public class GetEmployerAccountQueryHandler(
     public async Task<EmployerAccountModel> Handle(GetEmployerAccountQuery request, CancellationToken cancellationToken)
     {
         var userId = userContext.GetUserId();
-        
+
         var employerAccount = await employerAccountsService.GetEmployerAccountAsync(userId, cancellationToken);
 
-        if (employerAccount is null)
-        {
-            throw new NotFoundException($"Employer account by owner ID '{userId}' not found");
-        }
+        if (employerAccount is null) throw new NotFoundException($"Employer account by owner ID '{userId}' not found");
 
         return employerAccount;
     }

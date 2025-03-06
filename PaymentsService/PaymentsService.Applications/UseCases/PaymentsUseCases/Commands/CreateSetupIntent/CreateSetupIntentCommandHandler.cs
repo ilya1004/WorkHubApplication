@@ -10,7 +10,7 @@ public class CreateSetupIntentCommandHandler(
     public async Task<string> Handle(CreateSetupIntentCommand request, CancellationToken cancellationToken)
     {
         var userId = userContext.GetUserId();
-        
+
         var clientSecret = await employerPaymentsService.CreateSetupIntent(userId, cancellationToken);
 
         return clientSecret;

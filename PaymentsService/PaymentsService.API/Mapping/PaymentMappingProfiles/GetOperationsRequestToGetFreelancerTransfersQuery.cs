@@ -7,6 +7,6 @@ public class GetOperationsRequestToGetFreelancerTransfersQuery : Profile
 {
     public GetOperationsRequestToGetFreelancerTransfersQuery()
     {
-        CreateMap<GetOperationsRequest,  GetFreelancerTransferQuery>();
+        CreateMap<GetOperationsRequest, GetFreelancerTransferQuery>();
     }
 }

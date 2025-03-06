@@ -10,7 +10,7 @@ public class DeletePaymentMethodCommandHandler(
     public async Task Handle(DeletePaymentMethodCommand request, CancellationToken cancellationToken)
     {
         var userId = userContext.GetUserId();
-        
+
         await paymentMethodsService.DeletePaymentMethodAsync(userId, request.PaymentMethodId, cancellationToken);
     }
 }

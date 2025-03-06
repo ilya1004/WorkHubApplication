@@ -5,5 +5,5 @@ namespace PaymentsService.Applications.UseCases.PaymentsUseCases.Queries.GetFree
 
 public sealed record GetFreelancerTransferQuery(
     Guid? ProjectId,
-    int PageNo, 
+    int PageNo,
     int PageSize) : IRequest<PaginatedResultModel<TransferModel>>;

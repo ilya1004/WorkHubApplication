@@ -10,12 +10,12 @@ services.AddControllers();
 services.AddHttpContextAccessor();
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
-services.AddAPI();
+services.AddAPI(builder.Configuration);
 services.AddApplication();
 services.AddInfrastructure(builder.Configuration);
 
-services.AddEndpointsApiExplorer();
-services.AddSwaggerGen();
+services.AddEndpointsApiExplorer()
+    .AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -28,6 +28,9 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

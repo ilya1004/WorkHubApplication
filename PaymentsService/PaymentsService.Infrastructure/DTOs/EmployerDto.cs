@@ -1,7 +1,7 @@
 namespace PaymentsService.Infrastructure.DTOs;
 
-public record FreelancerDto
+public record EmployerDto
 {
     public string Id { get; init; }
-    public string? StripeAccountId { get; init; }
+    public string? EmployerCustomerId { get; init; }
 }

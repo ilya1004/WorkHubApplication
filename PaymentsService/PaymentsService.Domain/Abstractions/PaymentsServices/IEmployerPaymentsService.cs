@@ -1,5 +1,3 @@
-using PaymentsService.Domain.Models;
-
 namespace PaymentsService.Domain.Abstractions.PaymentsServices;
 
 public interface IEmployerPaymentsService

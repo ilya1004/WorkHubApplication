@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
 using PaymentsService.Applications.Exceptions;
 
 namespace PaymentsService.API.Middlewares;

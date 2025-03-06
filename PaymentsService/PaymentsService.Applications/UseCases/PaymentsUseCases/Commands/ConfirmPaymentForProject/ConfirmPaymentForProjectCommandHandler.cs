@@ -10,7 +10,7 @@ public class ConfirmPaymentForProjectCommandHandler(
     public async Task Handle(ConfirmPaymentForProjectCommand request, CancellationToken cancellationToken)
     {
         var userId = userContext.GetUserId();
-        
+
         await employerPaymentsService.ConfirmPaymentForProjectAsync(request.ProjectId, userId, cancellationToken);
     }
 }

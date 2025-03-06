@@ -9,7 +9,7 @@ public class PayForProjectWithSavedMethodCommandValidator : AbstractValidator<Pa
     {
         RuleFor(x => x.ProjectId)
             .NotEmpty().WithMessage("ProjectId is required");
-        
+
         RuleFor(x => x.PaymentMethodId)
             .NotEmpty().WithMessage("PaymentMethodId is required")
             .Matches(@"^pm_\w{24}$").WithMessage("Invalid PaymentMethodId format");

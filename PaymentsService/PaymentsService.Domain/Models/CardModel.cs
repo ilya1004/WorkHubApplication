@@ -7,5 +7,5 @@ public record CardModel
     public string Country { get; init; }
     public long ExpMonth { get; init; }
     public long ExpYear { get; init; }
-    public string Last4Digits { get; init; } 
+    public string Last4Digits { get; init; }
 }

@@ -10,7 +10,7 @@ public class SavePaymentMethodCommandHandler(
     public async Task Handle(SavePaymentMethodCommand request, CancellationToken cancellationToken)
     {
         var userId = userContext.GetUserId();
-        
+
         await paymentMethodsService.SavePaymentMethodAsync(userId, request.PaymentMethodId, cancellationToken);
     }
 }

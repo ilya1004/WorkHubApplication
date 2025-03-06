@@ -7,17 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Swashbuckle" Version="5.6.0" />
-      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.3.1" />
-      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.13"/>
+        <PackageReference Include="Swashbuckle" Version="5.6.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.3.1"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.1"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\PaymentsService.Infrastructure\PaymentsService.Infrastructure.csproj" />
+        <ProjectReference Include="..\PaymentsService.Infrastructure\PaymentsService.Infrastructure.csproj"/>
     </ItemGroup>
 
 </Project>

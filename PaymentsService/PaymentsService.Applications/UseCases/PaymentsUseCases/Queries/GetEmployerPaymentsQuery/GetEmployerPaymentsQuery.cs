@@ -5,5 +5,5 @@ namespace PaymentsService.Applications.UseCases.PaymentsUseCases.Queries.GetEmpl
 
 public sealed record GetEmployerPaymentsQuery(
     Guid? ProjectId,
-    int PageNo, 
+    int PageNo,
     int PageSize) : IRequest<PaginatedResultModel<ChargeModel>>;
