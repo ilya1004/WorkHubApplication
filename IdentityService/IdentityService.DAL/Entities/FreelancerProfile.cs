@@ -8,6 +8,7 @@ public class FreelancerProfile : Entity
     public string LastName { get; set; }
     public string About { get; set; }
     public ICollection<FreelancerSkill> Skills { get; set; }
+    public string? StripeAccountId { get; set; }
     public Guid UserId { get; set; }
     public AppUser User { get; set; }
 }
