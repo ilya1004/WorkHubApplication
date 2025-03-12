@@ -12,11 +12,11 @@ public class GetProjectsByFreelancerFilterRequestValidator : AbstractValidator<G
             .WithMessage("ProjectStatus must be a valid Enum value.");
 
         RuleFor(x => x.PageNo)
-            .InclusiveBetween(1, 1000)
-            .WithMessage("PageNo value must be from 1 to 1000");
+            .InclusiveBetween(1, 100_000)
+            .WithMessage("Page number must be between 1 and 100_000.");
 
         RuleFor(x => x.PageSize)
             .InclusiveBetween(1, 1000)
-            .WithMessage("PageSize value must be from 1 to 1000");
+            .WithMessage("Page size must be between 1 and 1000.");
     }
 }
