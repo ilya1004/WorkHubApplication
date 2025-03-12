@@ -1,3 +1,3 @@
 ﻿namespace IdentityService.BLL.UseCases.AuthUseCases.LogoutUser;
 
-public sealed record LogoutUserCommand(Guid UserId) : IRequest;
+public sealed record LogoutUserCommand : IRequest;

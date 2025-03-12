@@ -12,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using System.Reflection;
 using System.Text;
+using IdentityService.API.Services;
+using IdentityService.DAL.Abstractions.UserContext;
 
 namespace IdentityService.API;
 
@@ -81,14 +83,16 @@ public static class DependencyInjection
             });
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        services.AddFluentValidationAutoValidation(configuration =>
+        services.AddFluentValidationAutoValidation(config =>
         {
-            configuration.EnableFormBindingSourceAutomaticValidation = true;
-            configuration.EnableBodyBindingSourceAutomaticValidation = true;
-            configuration.EnableQueryBindingSourceAutomaticValidation = true;
+            config.EnableFormBindingSourceAutomaticValidation = true;
+            config.EnableBodyBindingSourceAutomaticValidation = true;
+            config.EnableQueryBindingSourceAutomaticValidation = true;
         });
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+        services.AddScoped<IUserContext, UserContext>();
 
         return services;
     }
