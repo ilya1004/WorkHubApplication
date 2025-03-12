@@ -1,24 +1,21 @@
-﻿using IdentityService.API.Constants;
-using IdentityService.API.DTOs;
+﻿using IdentityService.API.DTOs;
 using IdentityService.BLL.UseCases.FreelancerSkillUseCases.Commands.CreateFreelancerSkill;
 using IdentityService.BLL.UseCases.FreelancerSkillUseCases.Commands.DeleteFreelancerSkill;
 using IdentityService.BLL.UseCases.FreelancerSkillUseCases.Commands.UpdateFreelancerSkill;
 using IdentityService.BLL.UseCases.FreelancerSkillUseCases.Queries.GetAllFreelancerSkills;
 using IdentityService.BLL.UseCases.FreelancerSkillUseCases.Queries.GetFreelancerSkillById;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityService.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/freelancer-skills")]
 public class FreelancerSkillsController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     [Authorize(Policy = AuthPolicies.AdminPolicy)]
-    public async Task<IActionResult> Create([FromBody] FreelancerSkillDTO skillDTO, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] FreelancerSkillDto skillDto, CancellationToken cancellationToken)
     {
-        await mediator.Send(new CreateFreelancerSkillCommand(skillDTO.Name), cancellationToken);
+        await mediator.Send(new CreateFreelancerSkillCommand(skillDto.Name), cancellationToken);
 
         return Created();
     }
@@ -45,9 +42,9 @@ public class FreelancerSkillsController(IMediator mediator) : ControllerBase
     [HttpPut]
     [Route("{id:guid}")]
     [Authorize]
-    public async Task<IActionResult> Update(Guid id, [FromBody] FreelancerSkillDTO skillDTO, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(Guid id, [FromBody] FreelancerSkillDto skillDto, CancellationToken cancellationToken)
     {
-        await mediator.Send(new UpdateFreelancerSkillCommand(id, skillDTO.Name), cancellationToken);
+        await mediator.Send(new UpdateFreelancerSkillCommand(id, skillDto.Name), cancellationToken);
 
         return NoContent();
     }

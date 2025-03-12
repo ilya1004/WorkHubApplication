@@ -4,6 +4,6 @@ namespace IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateFreelancerPro
 
 public sealed record UpdateFreelancerProfileCommand(
     Guid Id,
-    FreelancerProfileDTO FreelancerProfile,
+    FreelancerProfileDto FreelancerProfile,
     Stream? FileStream,
     string? ContentType) : IRequest;

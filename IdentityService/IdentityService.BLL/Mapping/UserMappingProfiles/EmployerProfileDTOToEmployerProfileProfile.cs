@@ -6,6 +6,6 @@ public class EmployerProfileDTOToEmployerProfileProfile : Profile
 {
     public EmployerProfileDTOToEmployerProfileProfile()
     {
-        CreateMap<EmployerProfileDTO, EmployerProfile>();
+        CreateMap<EmployerProfileDto, EmployerProfile>();
     }
 }

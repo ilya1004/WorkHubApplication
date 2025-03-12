@@ -1,24 +1,21 @@
-﻿using IdentityService.API.Constants;
-using IdentityService.API.DTOs;
+﻿using IdentityService.API.DTOs;
 using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.CreateEmployerIndustry;
 using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.DeleteEmployerIndustry;
 using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.UpdateEmployerIndustry;
 using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetAllEmployerIndustries;
 using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetEmployerIndustryById;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityService.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/employer-industries")]
 public class EmployerIndustriesController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     [Authorize(Policy = AuthPolicies.AdminPolicy)]
-    public async Task<IActionResult> Create([FromBody] EmployerIndustryDTO industryDTO, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] EmployerIndustryDto industryDto, CancellationToken cancellationToken)
     {
-        await mediator.Send(new CreateEmployerIndustryCommand(industryDTO.Name), cancellationToken);
+        await mediator.Send(new CreateEmployerIndustryCommand(industryDto.Name), cancellationToken);
 
         return Created();
     }
@@ -45,9 +42,9 @@ public class EmployerIndustriesController(IMediator mediator) : ControllerBase
     [HttpPut]
     [Route("{id:guid}")]
     [Authorize(Policy = AuthPolicies.AdminPolicy)]
-    public async Task<IActionResult> Update(Guid id, [FromBody] EmployerIndustryDTO industryDTO, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(Guid id, [FromBody] EmployerIndustryDto industryDto, CancellationToken cancellationToken)
     {
-        await mediator.Send(new UpdateEmployerIndustryCommand(id, industryDTO.Name), cancellationToken);
+        await mediator.Send(new UpdateEmployerIndustryCommand(id, industryDto.Name), cancellationToken);
 
         return NoContent();
     }

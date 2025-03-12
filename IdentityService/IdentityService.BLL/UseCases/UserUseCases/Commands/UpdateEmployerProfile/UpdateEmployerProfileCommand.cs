@@ -4,6 +4,6 @@ namespace IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateEmployerProfi
 
 public sealed record UpdateEmployerProfileCommand(
     Guid Id,
-    EmployerProfileDTO EmployerProfile,
+    EmployerProfileDto EmployerProfile,
     Stream? FileStream,
     string? ContentType) : IRequest;

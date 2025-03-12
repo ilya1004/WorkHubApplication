@@ -1,5 +1,5 @@
 ﻿namespace IdentityService.BLL.DTOs;
 
-public record AuthTokensDTO(
+public record AuthTokensDto(
     string AccessToken,
     string RefreshToken);

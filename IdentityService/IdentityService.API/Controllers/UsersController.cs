@@ -1,5 +1,4 @@
-﻿using IdentityService.API.Constants;
-using IdentityService.API.Contracts.UserContracts;
+﻿using IdentityService.API.Contracts.UserContracts;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.ChangePassword;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.DeleteUserCommand;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
@@ -9,14 +8,12 @@ using IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateFreelancerProfile
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetAllUsers;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUserById;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUsersByRole;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace IdentityService.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/users")]
 public class UsersController(IMediator mediator, IMapper mapper) : ControllerBase
 {
     [HttpPost]

@@ -10,9 +10,9 @@ namespace IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
 public class RefreshTokenCommandHandler(
     ITokenProvider tokenProvider,
     IUnitOfWork unitOfWork,
-    IOptions<JwtSettings> options) : IRequestHandler<RefreshTokenCommand, AuthTokensDTO>
+    IOptions<JwtSettings> options) : IRequestHandler<RefreshTokenCommand, AuthTokensDto>
 {
-    public async Task<AuthTokensDTO> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+    public async Task<AuthTokensDto> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
         var principal = tokenProvider.GetPrincipalFromExpiredToken(request.AccessToken);
 
@@ -33,6 +33,6 @@ public class RefreshTokenCommandHandler(
         await unitOfWork.UsersRepository.UpdateAsync(user, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
 
-        return new AuthTokensDTO(newAccessToken, newRefreshToken);
+        return new AuthTokensDto(newAccessToken, newRefreshToken);
     }
 }

@@ -3,5 +3,5 @@
 namespace IdentityService.API.Contracts.UserContracts;
 
 public sealed record UpdateEmployerProfileRequest(
-    EmployerProfileDTO EmployerProfile,
+    EmployerProfileDto EmployerProfile,
     IFormFile? ImageFile);

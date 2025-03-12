@@ -5,9 +5,9 @@ namespace IdentityService.BLL.UseCases.FileUseCases.Queries.GetImageByUserId;
 
 public class GetImageByUserIdQueryHandler(
     UserManager<AppUser> userManager,
-    IBlobService blobService) : IRequestHandler<GetImageByUserIdQuery, FileResponseDTO>
+    IBlobService blobService) : IRequestHandler<GetImageByUserIdQuery, FileResponseDto>
 {
-    public async Task<FileResponseDTO> Handle(GetImageByUserIdQuery request, CancellationToken cancellationToken)
+    public async Task<FileResponseDto> Handle(GetImageByUserIdQuery request, CancellationToken cancellationToken)
     {
         var user = await userManager.FindByIdAsync(request.UserId.ToString());
 

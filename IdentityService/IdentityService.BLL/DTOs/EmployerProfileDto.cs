@@ -1,6 +1,6 @@
 ﻿namespace IdentityService.BLL.DTOs;
 
-public record EmployerProfileDTO(
+public record EmployerProfileDto(
     string CompanyName,
     string About,
     Guid? IndustryId,

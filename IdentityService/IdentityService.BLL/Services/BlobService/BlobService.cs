@@ -40,7 +40,7 @@ public class BlobService : IBlobService
         }
     }
 
-    public async Task<FileResponseDTO> DownloadAsync(Guid fileId, CancellationToken cancellationToken = default)
+    public async Task<FileResponseDto> DownloadAsync(Guid fileId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -50,7 +50,7 @@ public class BlobService : IBlobService
 
             Response<BlobDownloadResult> fileResponse = await blobClient.DownloadContentAsync(cancellationToken);
 
-            return new FileResponseDTO(fileResponse.Value.Content.ToStream(), fileResponse.Value.Details.ContentType);
+            return new FileResponseDto(fileResponse.Value.Content.ToStream(), fileResponse.Value.Details.ContentType);
         }
         catch (RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.BlobNotFound)
         {
