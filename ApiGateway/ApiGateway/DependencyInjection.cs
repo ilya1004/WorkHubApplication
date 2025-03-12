@@ -50,9 +50,10 @@ public static class DependencyInjection
 
         services.AddRateLimiter(options =>
         {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
             options.AddPolicy("fixed", context =>
                 RateLimitPartition.GetFixedWindowLimiter(
-                    partitionKey: context.Request.Path,
+                    partitionKey: context.Connection.RemoteIpAddress?.ToString(),
                     _ => new FixedWindowRateLimiterOptions
                     {
                         PermitLimit = 20,
