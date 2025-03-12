@@ -1,4 +1,5 @@
-﻿using IdentityService.API.DTOs;
+﻿using IdentityService.API.Contracts.CommonContracts;
+using IdentityService.API.DTOs;
 using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.CreateEmployerIndustry;
 using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.DeleteEmployerIndustry;
 using IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.UpdateEmployerIndustry;
@@ -32,9 +33,10 @@ public class EmployerIndustriesController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetAll([FromQuery] int pageNo = 1, [FromQuery] int pageSize = 10, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAll([FromQuery] GetPaginatedListRequest request, CancellationToken cancellationToken = default)
     {
-        var industries = await mediator.Send(new GetAllEmployerIndustriesQuery(pageNo, pageSize), cancellationToken);
+        var industries = await mediator.Send(new GetAllEmployerIndustriesQuery(
+            request.PageNo, request.PageSize), cancellationToken);
 
         return Ok(industries);
     }

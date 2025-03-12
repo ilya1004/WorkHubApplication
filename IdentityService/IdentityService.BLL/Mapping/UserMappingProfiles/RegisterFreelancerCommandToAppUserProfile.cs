@@ -13,4 +13,3 @@ public class RegisterFreelancerCommandToAppUserProfile : Profile
                 opt.MapFrom(_ => DateTime.UtcNow));
     }
 }
-

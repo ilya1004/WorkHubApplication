@@ -1,4 +1,5 @@
-﻿using IdentityService.API.DTOs;
+﻿using IdentityService.API.Contracts.CommonContracts;
+using IdentityService.API.DTOs;
 using IdentityService.BLL.UseCases.FreelancerSkillUseCases.Commands.CreateFreelancerSkill;
 using IdentityService.BLL.UseCases.FreelancerSkillUseCases.Commands.DeleteFreelancerSkill;
 using IdentityService.BLL.UseCases.FreelancerSkillUseCases.Commands.UpdateFreelancerSkill;
@@ -32,9 +33,10 @@ public class FreelancerSkillsController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetAll([FromQuery] int pageNo = 1, [FromQuery] int pageSize = 10, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAll([FromQuery] GetPaginatedListRequest request, CancellationToken cancellationToken = default)
     {
-        var skills = await mediator.Send(new GetAllFreelancerSkillsQuery(pageNo, pageSize), cancellationToken);
+        var skills = await mediator.Send(new GetAllFreelancerSkillsQuery(
+            request.PageNo, request.PageSize), cancellationToken);
 
         return Ok(skills);
     }

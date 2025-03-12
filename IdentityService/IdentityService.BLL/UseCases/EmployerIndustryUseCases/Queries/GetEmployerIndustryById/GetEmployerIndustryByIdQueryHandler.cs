@@ -9,10 +9,7 @@ public class GetEmployerIndustryByIdQueryHandler(
     {
         var industry = await unitOfWork.EmployerIndustriesRepository.GetByIdAsync(request.Id);
 
-        if (industry is null)
-        {
-            throw new NotFoundException($"Employer Industry with ID '{request.Id}' not found");
-        }
+        if (industry is null) throw new NotFoundException($"Employer Industry with ID '{request.Id}' not found");
 
         return industry;
     }

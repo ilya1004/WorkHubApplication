@@ -8,8 +8,8 @@ public class ConfirmEmailRequestValidator : AbstractValidator<ConfirmEmailReques
     public ConfirmEmailRequestValidator()
     {
         RuleFor(x => x.Email)
-           .NotEmpty().WithMessage("Email is required.")
-           .EmailAddress().WithMessage("Invalid email format.");
+            .NotEmpty().WithMessage("Email is required.")
+            .EmailAddress().WithMessage("Invalid email format.");
 
         RuleFor(x => x.Token)
             .NotEmpty().WithMessage("Email confirmation token is required.");

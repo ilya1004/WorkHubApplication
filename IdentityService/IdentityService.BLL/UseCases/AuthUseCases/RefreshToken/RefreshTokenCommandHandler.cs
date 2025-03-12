@@ -16,12 +16,11 @@ public class RefreshTokenCommandHandler(
     {
         var principal = tokenProvider.GetPrincipalFromExpiredToken(request.AccessToken);
 
-        var user = await unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier)!), cancellationToken, u => u.Role);
+        var user = await unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            cancellationToken, u => u.Role);
 
         if (user is null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime < DateTime.UtcNow)
-        {
             throw new UnauthorizedException("Invalid refresh token");
-        }
 
         var newAccessToken = tokenProvider.GenerateAccessToken(user);
         var newRefreshToken = tokenProvider.GenerateRefreshToken();

@@ -11,15 +11,9 @@ public class GetImageByUserIdQueryHandler(
     {
         var user = await userManager.FindByIdAsync(request.UserId.ToString());
 
-        if (user is null)
-        {
-            throw new NotFoundException($"User with ID '{request.UserId}' not found");
-        }
+        if (user is null) throw new NotFoundException($"User with ID '{request.UserId}' not found");
 
-        if (user.ImageUrl is null)
-        {
-            throw new NotFoundException($"User with ID {request.UserId} don't have an image");
-        }
+        if (user.ImageUrl is null) throw new NotFoundException($"User with ID {request.UserId} don't have an image");
 
         var result = await blobService.DownloadAsync(Guid.Parse(user.ImageUrl), cancellationToken);
 

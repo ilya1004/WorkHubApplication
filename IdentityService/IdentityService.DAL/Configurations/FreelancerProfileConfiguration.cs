@@ -26,7 +26,7 @@ public class FreelancerProfileConfiguration : IEntityTypeConfiguration<Freelance
 
         builder.HasMany(f => f.Skills)
             .WithMany(s => s.FreelancerProfiles);
-        
+
         builder.Property(f => f.StripeAccountId)
             .HasMaxLength(50);
     }

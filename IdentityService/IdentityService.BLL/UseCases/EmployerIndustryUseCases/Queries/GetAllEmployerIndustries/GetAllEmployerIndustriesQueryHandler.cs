@@ -6,9 +6,10 @@ namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetAllEm
 public class GetAllEmployerIndustriesQueryHandler(
     IUnitOfWork unitOfWork) : IRequestHandler<GetAllEmployerIndustriesQuery, PaginatedResultModel<EmployerIndustry>>
 {
-    public async Task<PaginatedResultModel<EmployerIndustry>> Handle(GetAllEmployerIndustriesQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedResultModel<EmployerIndustry>> Handle(GetAllEmployerIndustriesQuery request,
+        CancellationToken cancellationToken)
     {
-        int offset = (request.PageNo - 1) * request.PageSize;
+        var offset = (request.PageNo - 1) * request.PageSize;
 
         var industries = await unitOfWork.EmployerIndustriesRepository.PaginatedListAllAsync(
             offset,

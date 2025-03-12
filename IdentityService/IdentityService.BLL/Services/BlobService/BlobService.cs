@@ -21,10 +21,10 @@ public class BlobService : IBlobService
     {
         try
         {
-            BlobContainerClient blobContainerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
+            var blobContainerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
 
             var fileId = Guid.NewGuid();
-            BlobClient blobClient = blobContainerClient.GetBlobClient(fileId.ToString());
+            var blobClient = blobContainerClient.GetBlobClient(fileId.ToString());
 
             await blobClient.UploadAsync(stream, new BlobHttpHeaders { ContentType = contentType }, cancellationToken: cancellationToken);
 
@@ -44,9 +44,9 @@ public class BlobService : IBlobService
     {
         try
         {
-            BlobContainerClient blobContainerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
+            var blobContainerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
 
-            BlobClient blobClient = blobContainerClient.GetBlobClient(fileId.ToString());
+            var blobClient = blobContainerClient.GetBlobClient(fileId.ToString());
 
             Response<BlobDownloadResult> fileResponse = await blobClient.DownloadContentAsync(cancellationToken);
 
@@ -66,9 +66,9 @@ public class BlobService : IBlobService
     {
         try
         {
-            BlobContainerClient blobContainerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
+            var blobContainerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
 
-            BlobClient blobClient = blobContainerClient.GetBlobClient(fileId.ToString());
+            var blobClient = blobContainerClient.GetBlobClient(fileId.ToString());
 
             await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
         }

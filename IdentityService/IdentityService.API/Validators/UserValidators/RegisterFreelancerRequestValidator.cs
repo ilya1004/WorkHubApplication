@@ -20,8 +20,8 @@ public class RegisterFreelancerRequestValidator : AbstractValidator<RegisterFree
             .MaximumLength(100).WithMessage("Last name must be at most 100 characters long");
 
         RuleFor(x => x.Email)
-           .NotEmpty().WithMessage("Email is required.")
-           .EmailAddress().WithMessage("Invalid email format.");
+            .NotEmpty().WithMessage("Email is required.")
+            .EmailAddress().WithMessage("Invalid email format.");
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Password is required.")

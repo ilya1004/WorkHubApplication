@@ -3,9 +3,11 @@ using IdentityService.DAL.Abstractions.Repositories;
 
 namespace IdentityService.BLL.UseCases.FreelancerSkillUseCases.Queries.GetAllFreelancerSkills;
 
-public class GetAllFreelancerSkillsQueryHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetAllFreelancerSkillsQuery, PaginatedResultModel<FreelancerSkill>>
+public class GetAllFreelancerSkillsQueryHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<GetAllFreelancerSkillsQuery, PaginatedResultModel<FreelancerSkill>>
 {
-    public async Task<PaginatedResultModel<FreelancerSkill>> Handle(GetAllFreelancerSkillsQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedResultModel<FreelancerSkill>> Handle(GetAllFreelancerSkillsQuery request,
+        CancellationToken cancellationToken)
     {
         var offset = (request.PageNo - 1) * request.PageSize;
 

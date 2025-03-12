@@ -7,7 +7,6 @@ namespace IdentityService.API.Controllers;
 [Route("api/files")]
 public class FilesController(IMediator mediator) : ControllerBase
 {
-
     [HttpGet]
     [Route("by-user-id/{userId:guid}")]
     [Authorize]

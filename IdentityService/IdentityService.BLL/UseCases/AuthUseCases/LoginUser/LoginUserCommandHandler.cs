@@ -16,22 +16,13 @@ public class LoginUserCommandHandler(
     {
         var user = await unitOfWork.UsersRepository.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken, u => u.Role);
 
-        if (user is null)
-        {
-            throw new UnauthorizedException("Invalid credentials.");
-        }
+        if (user is null) throw new UnauthorizedException("Invalid credentials.");
 
         var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
-        if (!result.Succeeded)
-        {
-            throw new UnauthorizedException("Invalid credentials.");
-        }
+        if (!result.Succeeded) throw new UnauthorizedException("Invalid credentials.");
 
-        if (!user.EmailConfirmed)
-        {
-            throw new UnauthorizedException("You need to confirm your email.");
-        }
+        if (!user.EmailConfirmed) throw new UnauthorizedException("You need to confirm your email.");
 
         var accessToken = tokenService.GenerateAccessToken(user);
         var refreshToken = tokenService.GenerateRefreshToken();

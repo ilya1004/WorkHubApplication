@@ -5,6 +5,7 @@ namespace IdentityService.BLL.Services.EmailSender;
 public class EmailSender : IEmailSender
 {
     private readonly IFluentEmail _fluentEmail;
+
     public EmailSender(IFluentEmail fluentEmail)
     {
         _fluentEmail = fluentEmail;

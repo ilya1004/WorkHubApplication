@@ -10,10 +10,7 @@ public class GetFreelancerSkillByIdQueryHandler(IUnitOfWork unitOfWork) : IReque
             request.Id,
             cancellationToken);
 
-        if (freelancerSkill is null)
-        {
-            throw new NotFoundException($"Freelancer Skill with ID '{request.Id}' not found");
-        }
+        if (freelancerSkill is null) throw new NotFoundException($"Freelancer Skill with ID '{request.Id}' not found");
 
         return freelancerSkill;
     }

@@ -8,32 +8,26 @@ namespace IdentityService.DAL.Repository;
 
 public class UsersRepository(ApplicationDbContext context) : IUsersRepository
 {
-    public async Task<AppUser?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default, params Expression<Func<AppUser, object>>[]? includesProperties)
+    public async Task<AppUser?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default,
+        params Expression<Func<AppUser, object>>[]? includesProperties)
     {
         IQueryable<AppUser> query = context.AppUsers.AsQueryable().AsNoTracking();
 
         if (includesProperties != null)
-        {
             foreach (var includeProperty in includesProperties)
-            {
                 query = query.Include(includeProperty);
-            }
-        }
 
         return await query.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
     }
 
-    public async Task<AppUser?> FirstOrDefaultAsync(Expression<Func<AppUser, bool>> filter, CancellationToken cancellationToken = default, params Expression<Func<AppUser, object>>[]? includesProperties)
+    public async Task<AppUser?> FirstOrDefaultAsync(Expression<Func<AppUser, bool>> filter, CancellationToken cancellationToken = default,
+        params Expression<Func<AppUser, object>>[]? includesProperties)
     {
         IQueryable<AppUser> query = context.AppUsers.AsQueryable().AsNoTracking();
 
         if (includesProperties != null)
-        {
             foreach (var includeProperty in includesProperties)
-            {
                 query = query.Include(includeProperty);
-            }
-        }
 
         return await query.FirstOrDefaultAsync(filter, cancellationToken);
     }
@@ -48,22 +42,16 @@ public class UsersRepository(ApplicationDbContext context) : IUsersRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<AppUser>> PaginatedListAsync(Expression<Func<AppUser, bool>>? filter, int offset, int limit, CancellationToken cancellationToken = default, params Expression<Func<AppUser, object>>[]? includesProperties)
+    public async Task<IReadOnlyList<AppUser>> PaginatedListAsync(Expression<Func<AppUser, bool>>? filter, int offset, int limit,
+        CancellationToken cancellationToken = default, params Expression<Func<AppUser, object>>[]? includesProperties)
     {
         IQueryable<AppUser> query = context.AppUsers.AsQueryable().AsNoTracking();
 
-        if (filter != null)
-        {
-            query = query.Where(filter);
-        }
+        if (filter != null) query = query.Where(filter);
 
         if (includesProperties != null)
-        {
             foreach (var includeProperty in includesProperties)
-            {
                 query = query.Include(includeProperty);
-            }
-        }
 
         return await query
             .OrderBy(x => x.RegisteredAt)
@@ -88,10 +76,7 @@ public class UsersRepository(ApplicationDbContext context) : IUsersRepository
     {
         IQueryable<AppUser> query = context.AppUsers.AsQueryable();
 
-        if (filter != null)
-        {
-            query = query.Where(filter);
-        }
+        if (filter != null) query = query.Where(filter);
 
         return await query.CountAsync(cancellationToken);
     }

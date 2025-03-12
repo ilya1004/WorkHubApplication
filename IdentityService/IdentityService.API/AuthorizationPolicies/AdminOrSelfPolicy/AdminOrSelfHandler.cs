@@ -31,7 +31,7 @@ public class AdminOrSelfHandler(
             return Task.CompletedTask;
         }
 
-        if (httpContextAccessor.HttpContext!.Request.RouteValues.TryGetValue("userId", out object? routeUserId))
+        if (httpContextAccessor.HttpContext!.Request.RouteValues.TryGetValue("userId", out var routeUserId))
         {
             if (routeUserId is null)
             {
@@ -41,10 +41,7 @@ public class AdminOrSelfHandler(
 
             var userId = routeUserId.ToString();
 
-            if (userId == userIdClaim)
-            {
-                context.Succeed(requirement);
-            }
+            if (userId == userIdClaim) context.Succeed(requirement);
         }
 
         return Task.CompletedTask;
