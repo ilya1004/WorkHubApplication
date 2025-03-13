@@ -12,10 +12,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddBLL(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddMediatR(configuration =>
-        {
-            configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-        });
+        services.AddMediatR(configuration => { configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()); });
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
@@ -26,7 +23,7 @@ public static class DependencyInjection
         services.AddSingleton(_ => new BlobServiceClient(configuration.GetConnectionString("AzuriteConnection")));
 
         services.AddFluentEmail(configuration["EmailSenderMailHog:EmailSender"], configuration["EmailSenderMailHog:SenderName"])
-                .AddSmtpSender(configuration["EmailSenderMailHog:Host"], int.Parse(configuration["EmailSenderMailHog:Port"]!));
+            .AddSmtpSender(configuration["EmailSenderMailHog:Host"], int.Parse(configuration["EmailSenderMailHog:Port"]!));
 
         return services;
     }

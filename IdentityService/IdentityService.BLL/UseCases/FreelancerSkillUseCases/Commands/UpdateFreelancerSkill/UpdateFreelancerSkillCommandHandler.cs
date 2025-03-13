@@ -10,10 +10,7 @@ public class UpdateFreelancerSkillCommandHandler(
     {
         var freelancerSkill = await unitOfWork.FreelancerSkillsRepository.GetByIdAsync(request.Id);
 
-        if (freelancerSkill is null)
-        {
-            throw new NotFoundException($"Freelancer skill with ID '{request.Id}' not found");
-        }
+        if (freelancerSkill is null) throw new NotFoundException($"Freelancer skill with ID '{request.Id}' not found");
 
         mapper.Map(request, freelancerSkill);
 

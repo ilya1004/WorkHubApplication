@@ -14,7 +14,7 @@ using ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases
 namespace ProjectsService.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/freelancer-applications")]
 public class FreelancerApplicationsController(IMediator mediator, IMapper mapper) : ControllerBase
 {
     [HttpPost]

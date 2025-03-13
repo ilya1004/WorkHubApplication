@@ -6,10 +6,7 @@ public class ChangePasswordCommandHandler(UserManager<AppUser> userManager) : IR
     {
         var user = await userManager.FindByEmailAsync(request.Email);
 
-        if (user is null)
-        {
-            throw new NotFoundException($"User with email '{request.Email}' not found");
-        }
+        if (user is null) throw new NotFoundException($"User with email '{request.Email}' not found");
 
         var result = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
 

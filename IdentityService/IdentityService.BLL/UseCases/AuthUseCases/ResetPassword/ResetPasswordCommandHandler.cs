@@ -1,5 +1,4 @@
-﻿
-namespace IdentityService.BLL.UseCases.AuthUseCases.ResetPassword;
+﻿namespace IdentityService.BLL.UseCases.AuthUseCases.ResetPassword;
 
 public class ResetPasswordCommandHandler(
     UserManager<AppUser> userManager) : IRequestHandler<ResetPasswordCommand>
@@ -8,10 +7,7 @@ public class ResetPasswordCommandHandler(
     {
         var user = await userManager.FindByEmailAsync(request.Email);
 
-        if (user is null)
-        {
-            throw new NotFoundException("User with this email does not exist.");
-        }
+        if (user is null) throw new NotFoundException("User with this email does not exist.");
 
         var result = await userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
 

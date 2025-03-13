@@ -6,5 +6,4 @@ namespace IdentityService.DAL.Repository;
 
 public class EmployersRepository(ApplicationDbContext context) : AppRepository<EmployerProfile>(context), IEmployersRepository
 {
-
 }

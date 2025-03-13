@@ -16,9 +16,8 @@ using ProjectsService.Application.UseCases.Queries.ProjectUseCases.GetProjectsBy
 
 namespace ProjectsService.API.Controllers;
 
-
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/projects")]
 public class ProjectsController(IMediator mediator, IMapper mapper) : ControllerBase
 {
     [HttpPost]

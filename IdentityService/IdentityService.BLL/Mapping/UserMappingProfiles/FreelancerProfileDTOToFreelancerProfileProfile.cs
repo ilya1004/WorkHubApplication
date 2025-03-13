@@ -6,7 +6,7 @@ public class FreelancerProfileDTOToFreelancerProfileProfile : Profile
 {
     public FreelancerProfileDTOToFreelancerProfileProfile()
     {
-        CreateMap<FreelancerProfileDTO, FreelancerProfile>()
+        CreateMap<FreelancerProfileDto, FreelancerProfile>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.UserId, opt => opt.Ignore());
     }

@@ -2,4 +2,4 @@
 
 namespace IdentityService.BLL.UseCases.FileUseCases.Queries.GetImageByUserId;
 
-public sealed record GetImageByUserIdQuery(Guid UserId) : IRequest<FileResponseDTO>;
+public sealed record GetImageByUserIdQuery(Guid UserId) : IRequest<FileResponseDto>;

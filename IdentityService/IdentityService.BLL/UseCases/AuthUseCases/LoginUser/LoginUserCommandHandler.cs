@@ -10,28 +10,19 @@ public class LoginUserCommandHandler(
     SignInManager<AppUser> signInManager,
     IUnitOfWork unitOfWork,
     ITokenProvider tokenService,
-    IOptions<JwtSettings> options) : IRequestHandler<LoginUserCommand, AuthTokensDTO>
+    IOptions<JwtSettings> options) : IRequestHandler<LoginUserCommand, AuthTokensDto>
 {
-    public async Task<AuthTokensDTO> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+    public async Task<AuthTokensDto> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         var user = await unitOfWork.UsersRepository.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken, u => u.Role);
 
-        if (user is null)
-        {
-            throw new UnauthorizedException("Invalid credentials.");
-        }
+        if (user is null) throw new UnauthorizedException("Invalid credentials.");
 
         var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
-        if (!result.Succeeded)
-        {
-            throw new UnauthorizedException("Invalid credentials.");
-        }
+        if (!result.Succeeded) throw new UnauthorizedException("Invalid credentials.");
 
-        if (!user.EmailConfirmed)
-        {
-            throw new UnauthorizedException("You need to confirm your email.");
-        }
+        if (!user.EmailConfirmed) throw new UnauthorizedException("You need to confirm your email.");
 
         var accessToken = tokenService.GenerateAccessToken(user);
         var refreshToken = tokenService.GenerateRefreshToken();
@@ -43,6 +34,6 @@ public class LoginUserCommandHandler(
         await unitOfWork.UsersRepository.UpdateAsync(user, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
 
-        return new AuthTokensDTO(accessToken, refreshToken);
+        return new AuthTokensDto(accessToken, refreshToken);
     }
 }

@@ -15,19 +15,13 @@ public class RegisterEmployerCommandHandler(
     {
         var userByEmail = await userManager.FindByEmailAsync(request.Email);
 
-        if (userByEmail is not null)
-        {
-            throw new AlreadyExistsException($"A user with the email '{request.Email}' already exists.");
-        }
+        if (userByEmail is not null) throw new AlreadyExistsException($"A user with the email '{request.Email}' already exists.");
 
         var user = mapper.Map<AppUser>(request);
 
         var role = await roleManager.FindByNameAsync(AppRoles.EmployerRole);
 
-        if (role is null)
-        {
-            throw new BadRequestException($"User is not successfully registered. User Role is not successfully find");
-        }
+        if (role is null) throw new BadRequestException($"User is not successfully registered. User Role is not successfully find");
 
         user.RoleId = role.Id;
 

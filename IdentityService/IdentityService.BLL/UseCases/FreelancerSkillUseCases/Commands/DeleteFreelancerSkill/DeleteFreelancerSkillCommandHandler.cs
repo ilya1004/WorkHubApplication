@@ -8,10 +8,7 @@ public class DeleteFreelancerSkillCommandHandler(IUnitOfWork unitOfWork) : IRequ
     {
         var freelancerSkill = await unitOfWork.FreelancerSkillsRepository.GetByIdAsync(request.Id);
 
-        if (freelancerSkill is null)
-        {
-            throw new NotFoundException($"Freelancer skill with ID '{request.Id}' not found");
-        }
+        if (freelancerSkill is null) throw new NotFoundException($"Freelancer skill with ID '{request.Id}' not found");
 
         await unitOfWork.FreelancerSkillsRepository.DeleteAsync(freelancerSkill, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);

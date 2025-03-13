@@ -1,6 +1,6 @@
 ﻿namespace IdentityService.BLL.DTOs;
 
-public record FreelancerProfileDTO(
+public record FreelancerProfileDto(
     string FirstName,
     string LastName,
     string About,

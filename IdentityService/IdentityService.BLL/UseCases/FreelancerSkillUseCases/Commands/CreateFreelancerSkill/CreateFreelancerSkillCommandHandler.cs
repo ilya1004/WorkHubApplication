@@ -8,12 +8,10 @@ public class CreateFreelancerSkillCommandHandler(
 {
     public async Task Handle(CreateFreelancerSkillCommand request, CancellationToken cancellationToken)
     {
-        var freelancerSkill = await unitOfWork.FreelancerSkillsRepository.FirstOrDefaultAsync(fs => fs.Name == request.Name, cancellationToken);
+        var freelancerSkill =
+            await unitOfWork.FreelancerSkillsRepository.FirstOrDefaultAsync(fs => fs.Name == request.Name, cancellationToken);
 
-        if (freelancerSkill != null)
-        {
-            throw new BadRequestException($"Freelancer skill with name '{request.Name}' already exists.");
-        }
+        if (freelancerSkill != null) throw new BadRequestException($"Freelancer skill with name '{request.Name}' already exists.");
 
         var newFreelancerSkill = mapper.Map<FreelancerSkill>(request);
 

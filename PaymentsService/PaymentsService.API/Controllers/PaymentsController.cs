@@ -35,7 +35,8 @@ public class PaymentsController(
         return NoContent();
     }
 
-    [HttpPost("confirm-payment-for-project/{projectId:guid}")]
+    [HttpPost]
+    [Route("confirm-payment-for-project/{projectId:guid}")]
     [Authorize(Policy = AuthPolicies.EmployerPolicy)]
     public async Task<IActionResult> ConfirmPayment([FromRoute] Guid projectId,
         CancellationToken cancellationToken = default)

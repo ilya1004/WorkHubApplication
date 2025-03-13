@@ -2,4 +2,6 @@
 
 namespace IdentityService.API.AuthorizationPolicies.AdminOrSelfPolicy;
 
-public class AdminOrSelfRequirement : IAuthorizationRequirement { }
+public class AdminOrSelfRequirement : IAuthorizationRequirement
+{
+}

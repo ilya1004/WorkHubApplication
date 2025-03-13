@@ -12,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using System.Reflection;
 using System.Text;
+using IdentityService.API.Services;
+using IdentityService.DAL.Abstractions.UserContext;
 
 namespace IdentityService.API;
 
@@ -20,13 +22,13 @@ public static class DependencyInjection
     public static IServiceCollection AddAPI(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
-        {
-            options.Password.RequiredLength = 8;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireUppercase = true;
-            options.Password.RequireDigit = true;
-            options.Password.RequireNonAlphanumeric = true;
-        })
+            {
+                options.Password.RequiredLength = 8;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireDigit = true;
+                options.Password.RequireNonAlphanumeric = true;
+            })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
@@ -37,10 +39,10 @@ public static class DependencyInjection
         var jwtSettings = configuration.GetRequiredSection("JwtSettings").Get<JwtSettings>();
 
         services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
             .AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
@@ -59,36 +61,24 @@ public static class DependencyInjection
             });
 
         services.AddAuthorizationBuilder()
-            .AddPolicy(AuthPolicies.AdminPolicy, policy =>
-            {
-                policy.RequireRole(AppRoles.AdminRole);
-            })
-            .AddPolicy(AuthPolicies.FreelancerPolicy, policy =>
-            {
-                policy.RequireRole(AppRoles.FreelancerRole);
-            })
-            .AddPolicy(AuthPolicies.EmployerPolicy, policy =>
-            {
-                policy.RequireRole(AppRoles.EmployerRole);
-            })
-            .AddPolicy(AuthPolicies.FreelancerOrEmployerPolicy, policy =>
-            {
-                policy.RequireRole(AppRoles.FreelancerRole, AppRoles.EmployerRole);
-            })
-            .AddPolicy(AuthPolicies.AdminOrSelfPolicy, policy =>
-            {
-                policy.Requirements.Add(new AdminOrSelfRequirement());
-            });
+            .AddPolicy(AuthPolicies.AdminPolicy, policy => { policy.RequireRole(AppRoles.AdminRole); })
+            .AddPolicy(AuthPolicies.FreelancerPolicy, policy => { policy.RequireRole(AppRoles.FreelancerRole); })
+            .AddPolicy(AuthPolicies.EmployerPolicy, policy => { policy.RequireRole(AppRoles.EmployerRole); })
+            .AddPolicy(AuthPolicies.FreelancerOrEmployerPolicy,
+                policy => { policy.RequireRole(AppRoles.FreelancerRole, AppRoles.EmployerRole); })
+            .AddPolicy(AuthPolicies.AdminOrSelfPolicy, policy => { policy.Requirements.Add(new AdminOrSelfRequirement()); });
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        services.AddFluentValidationAutoValidation(configuration =>
+        services.AddFluentValidationAutoValidation(config =>
         {
-            configuration.EnableFormBindingSourceAutomaticValidation = true;
-            configuration.EnableBodyBindingSourceAutomaticValidation = true;
-            configuration.EnableQueryBindingSourceAutomaticValidation = true;
+            config.EnableFormBindingSourceAutomaticValidation = true;
+            config.EnableBodyBindingSourceAutomaticValidation = true;
+            config.EnableQueryBindingSourceAutomaticValidation = true;
         });
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+        services.AddScoped<IUserContext, UserContext>();
 
         return services;
     }

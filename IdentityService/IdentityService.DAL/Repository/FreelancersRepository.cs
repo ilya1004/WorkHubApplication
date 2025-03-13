@@ -6,5 +6,4 @@ namespace IdentityService.DAL.Repository;
 
 public class FreelancersRepository(ApplicationDbContext context) : AppRepository<FreelancerProfile>(context), IFreelancersRepository
 {
-
 }

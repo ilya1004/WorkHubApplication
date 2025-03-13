@@ -11,10 +11,7 @@ public class ForgotPasswordCommandHandler(
     {
         var user = await userManager.FindByEmailAsync(request.Email);
 
-        if (user is null)
-        {
-            throw new NotFoundException("User with this email does not exist.");
-        }
+        if (user is null) throw new NotFoundException("User with this email does not exist.");
 
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
 

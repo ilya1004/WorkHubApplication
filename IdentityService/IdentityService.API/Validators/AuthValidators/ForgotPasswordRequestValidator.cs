@@ -8,11 +8,11 @@ public class ForgotPasswordRequestValidator : AbstractValidator<ForgotPasswordRe
     public ForgotPasswordRequestValidator()
     {
         RuleFor(x => x.Email)
-           .NotEmpty().WithMessage("Email is required.")
-           .EmailAddress().WithMessage("Invalid email format.");
+            .NotEmpty().WithMessage("Email is required.")
+            .EmailAddress().WithMessage("Invalid email format.");
 
         RuleFor(x => x.ResetUrl)
-           .NotEmpty().WithMessage("Reset Url is required.")
-           .Must(uri => Uri.TryCreate(uri, UriKind.Absolute, out _)).WithMessage("Invalid url format.");
+            .NotEmpty().WithMessage("Reset Url is required.")
+            .Must(uri => Uri.TryCreate(uri, UriKind.Absolute, out _)).WithMessage("Invalid url format.");
     }
 }

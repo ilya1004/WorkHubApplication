@@ -1,5 +1,4 @@
-﻿
-using IdentityService.DAL.Abstractions.Repositories;
+﻿using IdentityService.DAL.Abstractions.Repositories;
 
 namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.CreateEmployerIndustry;
 
@@ -13,10 +12,7 @@ public class CreateEmployerIndustryCommandHandler(
             ei => ei.Name == request.Name,
             cancellationToken);
 
-        if (industry != null)
-        {
-            throw new BadRequestException($"Industry with the name '{request.Name}' already exists.");
-        }
+        if (industry != null) throw new BadRequestException($"Industry with the name '{request.Name}' already exists.");
 
         var newIndustry = mapper.Map<EmployerIndustry>(request);
 

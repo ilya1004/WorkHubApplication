@@ -21,10 +21,10 @@ public class BlobService : IBlobService
     {
         try
         {
-            BlobContainerClient blobContainerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
+            var blobContainerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
 
             var fileId = Guid.NewGuid();
-            BlobClient blobClient = blobContainerClient.GetBlobClient(fileId.ToString());
+            var blobClient = blobContainerClient.GetBlobClient(fileId.ToString());
 
             await blobClient.UploadAsync(stream, new BlobHttpHeaders { ContentType = contentType }, cancellationToken: cancellationToken);
 
@@ -40,17 +40,17 @@ public class BlobService : IBlobService
         }
     }
 
-    public async Task<FileResponseDTO> DownloadAsync(Guid fileId, CancellationToken cancellationToken = default)
+    public async Task<FileResponseDto> DownloadAsync(Guid fileId, CancellationToken cancellationToken = default)
     {
         try
         {
-            BlobContainerClient blobContainerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
+            var blobContainerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
 
-            BlobClient blobClient = blobContainerClient.GetBlobClient(fileId.ToString());
+            var blobClient = blobContainerClient.GetBlobClient(fileId.ToString());
 
             Response<BlobDownloadResult> fileResponse = await blobClient.DownloadContentAsync(cancellationToken);
 
-            return new FileResponseDTO(fileResponse.Value.Content.ToStream(), fileResponse.Value.Details.ContentType);
+            return new FileResponseDto(fileResponse.Value.Content.ToStream(), fileResponse.Value.Details.ContentType);
         }
         catch (RequestFailedException ex) when (ex.ErrorCode == BlobErrorCode.BlobNotFound)
         {
@@ -66,9 +66,9 @@ public class BlobService : IBlobService
     {
         try
         {
-            BlobContainerClient blobContainerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
+            var blobContainerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
 
-            BlobClient blobClient = blobContainerClient.GetBlobClient(fileId.ToString());
+            var blobClient = blobContainerClient.GetBlobClient(fileId.ToString());
 
             await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
         }

@@ -23,9 +23,9 @@ public class TokenProvider(IOptions<JwtSettings> options) : ITokenProvider
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: options.Value.Issuer,
-            audience: options.Value.Audience,
-            claims: claims,
+            options.Value.Issuer,
+            options.Value.Audience,
+            claims,
             expires: DateTime.UtcNow.AddMinutes(30),
             signingCredentials: creds);
 
@@ -55,13 +55,12 @@ public class TokenProvider(IOptions<JwtSettings> options) : ITokenProvider
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
-        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
         var jwtSecurityToken = securityToken as JwtSecurityToken;
 
-        if (jwtSecurityToken is null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-        {
+        if (jwtSecurityToken is null ||
+            !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             throw new UnauthorizedException("Invalid token");
-        }
 
         return principal;
     }

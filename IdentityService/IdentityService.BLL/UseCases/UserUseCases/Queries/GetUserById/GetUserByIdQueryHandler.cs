@@ -1,5 +1,4 @@
-﻿
-using IdentityService.DAL.Abstractions.Repositories;
+﻿using IdentityService.DAL.Abstractions.Repositories;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Queries.GetUserById;
 
@@ -15,10 +14,7 @@ public class GetUserByIdQueryHandler(IUnitOfWork unitOfWork) : IRequestHandler<G
             u => u.FreelancerProfile == null ? null! : u.FreelancerProfile.Skills,
             u => u.EmployerProfile == null ? null! : u.EmployerProfile.Industry!);
 
-        if (user is null)
-        {
-            throw new NotFoundException($"User with ID '{request.Id}' not found");
-        }
+        if (user is null) throw new NotFoundException($"User with ID '{request.Id}' not found");
 
         return user;
     }

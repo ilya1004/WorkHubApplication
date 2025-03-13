@@ -8,8 +8,8 @@ public class ChangePasswordRequestValidator : AbstractValidator<ChangePasswordRe
     public ChangePasswordRequestValidator()
     {
         RuleFor(x => x.Email)
-           .NotEmpty().WithMessage("Email is required.")
-           .EmailAddress().WithMessage("Invalid email format.");
+            .NotEmpty().WithMessage("Email is required.")
+            .EmailAddress().WithMessage("Invalid email format.");
 
         RuleFor(x => x.CurrentPassword)
             .NotEmpty().WithMessage("Current password is required.");

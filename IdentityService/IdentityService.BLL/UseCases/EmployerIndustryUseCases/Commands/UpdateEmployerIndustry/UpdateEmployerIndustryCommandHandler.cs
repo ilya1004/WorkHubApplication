@@ -1,5 +1,4 @@
-﻿
-using IdentityService.DAL.Abstractions.Repositories;
+﻿using IdentityService.DAL.Abstractions.Repositories;
 
 namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.UpdateEmployerIndustry;
 
@@ -11,10 +10,7 @@ public class UpdateEmployerIndustryCommandHandler(
     {
         var industry = await unitOfWork.EmployerIndustriesRepository.GetByIdAsync(request.Id);
 
-        if (industry is null)
-        {
-            throw new NotFoundException($"Employer industry with ID '{request.Id}' not found");
-        }
+        if (industry is null) throw new NotFoundException($"Employer industry with ID '{request.Id}' not found");
 
         mapper.Map(request, industry);
 

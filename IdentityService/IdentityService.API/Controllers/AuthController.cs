@@ -6,14 +6,11 @@ using IdentityService.BLL.UseCases.AuthUseCases.LogoutUser;
 using IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
 using IdentityService.BLL.UseCases.AuthUseCases.ResendEmailConfirmation;
 using IdentityService.BLL.UseCases.AuthUseCases.ResetPassword;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace IdentityService.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/auth")]
 public class AuthController(IMediator mediator, IMapper mapper) : ControllerBase
 {
     [HttpPost]
@@ -30,7 +27,7 @@ public class AuthController(IMediator mediator, IMapper mapper) : ControllerBase
     [Authorize]
     public async Task<IActionResult> Logout(CancellationToken cancellationToken)
     {
-        await mediator.Send(new LogoutUserCommand(Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!)), cancellationToken);
+        await mediator.Send(new LogoutUserCommand(), cancellationToken);
 
         return NoContent();
     }

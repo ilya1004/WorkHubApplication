@@ -10,18 +10,17 @@ namespace IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
 public class RefreshTokenCommandHandler(
     ITokenProvider tokenProvider,
     IUnitOfWork unitOfWork,
-    IOptions<JwtSettings> options) : IRequestHandler<RefreshTokenCommand, AuthTokensDTO>
+    IOptions<JwtSettings> options) : IRequestHandler<RefreshTokenCommand, AuthTokensDto>
 {
-    public async Task<AuthTokensDTO> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+    public async Task<AuthTokensDto> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
         var principal = tokenProvider.GetPrincipalFromExpiredToken(request.AccessToken);
 
-        var user = await unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier)!), cancellationToken, u => u.Role);
+        var user = await unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            cancellationToken, u => u.Role);
 
         if (user is null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime < DateTime.UtcNow)
-        {
             throw new UnauthorizedException("Invalid refresh token");
-        }
 
         var newAccessToken = tokenProvider.GenerateAccessToken(user);
         var newRefreshToken = tokenProvider.GenerateRefreshToken();
@@ -33,6 +32,6 @@ public class RefreshTokenCommandHandler(
         await unitOfWork.UsersRepository.UpdateAsync(user, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
 
-        return new AuthTokensDTO(newAccessToken, newRefreshToken);
+        return new AuthTokensDto(newAccessToken, newRefreshToken);
     }
 }

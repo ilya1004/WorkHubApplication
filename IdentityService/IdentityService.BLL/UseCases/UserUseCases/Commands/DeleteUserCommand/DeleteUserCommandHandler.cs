@@ -15,15 +15,9 @@ public class DeleteUserCommandHandler(
             u => u.FreelancerProfile!,
             u => u.EmployerProfile!);
 
-        if (user is null)
-        {
-            throw new NotFoundException($"User with ID '{request.UserId}' not found");
-        }
+        if (user is null) throw new NotFoundException($"User with ID '{request.UserId}' not found");
 
-        if (!string.IsNullOrEmpty(user.ImageUrl))
-        {
-            await blobService.DeleteAsync(Guid.Parse(user.ImageUrl), cancellationToken);
-        }
+        if (!string.IsNullOrEmpty(user.ImageUrl)) await blobService.DeleteAsync(Guid.Parse(user.ImageUrl), cancellationToken);
 
         await unitOfWork.UsersRepository.DeleteAsync(user, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);

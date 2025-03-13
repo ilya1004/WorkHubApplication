@@ -1,16 +1,12 @@
-﻿using IdentityService.API.Constants;
-using IdentityService.BLL.UseCases.FileUseCases.Queries.GetImageById;
+﻿using IdentityService.BLL.UseCases.FileUseCases.Queries.GetImageById;
 using IdentityService.BLL.UseCases.FileUseCases.Queries.GetImageByUserId;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityService.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/files")]
 public class FilesController(IMediator mediator) : ControllerBase
 {
-
     [HttpGet]
     [Route("by-user-id/{userId:guid}")]
     [Authorize]

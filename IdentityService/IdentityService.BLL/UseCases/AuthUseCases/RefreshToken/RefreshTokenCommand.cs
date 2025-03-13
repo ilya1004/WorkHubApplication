@@ -2,4 +2,4 @@
 
 namespace IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
 
-public sealed record RefreshTokenCommand(string AccessToken, string RefreshToken) : IRequest<AuthTokensDTO>;
+public sealed record RefreshTokenCommand(string AccessToken, string RefreshToken) : IRequest<AuthTokensDto>;
