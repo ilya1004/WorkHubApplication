@@ -31,6 +31,11 @@ public static class DependencyInjection
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+        
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromHours(configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Get<int>());
+        });
 
         services.AddScoped<IAuthorizationHandler, AdminOrSelfHandler>();
 

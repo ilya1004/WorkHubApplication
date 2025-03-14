@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using ChatService.Applications.Exceptions;
+using ChatService.Application.Exceptions;
 using ChatService.Domain.Abstractions.UserContext;
 
 namespace ChatService.API.Services;

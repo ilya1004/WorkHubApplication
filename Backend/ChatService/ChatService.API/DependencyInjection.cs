@@ -3,7 +3,7 @@ using System.Text;
 using ChatService.API.Constants;
 using ChatService.API.Services;
 using ChatService.API.Settings;
-using ChatService.Applications.Constants;
+using ChatService.Application.Constants;
 using ChatService.Domain.Abstractions.UserContext;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;

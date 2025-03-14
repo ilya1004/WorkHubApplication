@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using PaymentsService.API.Services;
 using PaymentsService.API.Settings;
-using PaymentsService.Applications.Constants;
+using PaymentsService.Application.Constants;
 using PaymentsService.Domain.Abstractions.UserContext;
 
 namespace PaymentsService.API;

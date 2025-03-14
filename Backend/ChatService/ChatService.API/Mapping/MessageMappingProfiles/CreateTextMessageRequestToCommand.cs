@@ -1,5 +1,5 @@
 using ChatService.API.Contracts.ChatContracts;
-using ChatService.Applications.UseCases.MessageUseCases.CreateTextMessage;
+using ChatService.Application.UseCases.MessageUseCases.CreateTextMessage;
 
 namespace ChatService.API.Mapping.MessageMappingProfiles;
 

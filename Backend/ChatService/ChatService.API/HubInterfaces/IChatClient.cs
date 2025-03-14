@@ -1,4 +1,4 @@
-using ChatService.Applications.Models;
+using ChatService.Application.Models;
 using ChatService.Domain.Entities;
 
 namespace ChatService.API.HubInterfaces;

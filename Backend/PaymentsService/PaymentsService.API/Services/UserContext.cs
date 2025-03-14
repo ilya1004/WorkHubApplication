@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using PaymentsService.Applications.Exceptions;
+using PaymentsService.Application.Exceptions;
 using PaymentsService.Domain.Abstractions.UserContext;
 
 namespace PaymentsService.API.Services;

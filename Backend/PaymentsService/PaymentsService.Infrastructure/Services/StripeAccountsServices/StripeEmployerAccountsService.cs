@@ -1,4 +1,4 @@
-using PaymentsService.Applications.Constants;
+using PaymentsService.Application.Constants;
 using PaymentsService.Domain.Abstractions.AccountsServices;
 using PaymentsService.Domain.Models;
 using PaymentsService.Infrastructure.DTOs;

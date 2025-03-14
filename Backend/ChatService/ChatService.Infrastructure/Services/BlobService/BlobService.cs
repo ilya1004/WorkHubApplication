@@ -1,7 +1,7 @@
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using ChatService.Applications.Exceptions;
+using ChatService.Application.Exceptions;
 using ChatService.Domain.Abstractions.BlobService;
 using ChatService.Infrastructure.Settings;
 using Microsoft.Extensions.Options;

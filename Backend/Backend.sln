@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ChatService", "ChatService"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatService.API", "ChatService\ChatService.API\ChatService.API.csproj", "{EB3B2D83-6D77-4132-BDEA-1B7F231B8BD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatService.Applications", "ChatService\ChatService.Applications\ChatService.Applications.csproj", "{C046769A-9ADC-4C0B-AD89-30D3A969B98A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatService.Application", "ChatService\ChatService.Application\ChatService.Application.csproj", "{C046769A-9ADC-4C0B-AD89-30D3A969B98A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatService.Domain", "ChatService\ChatService.Domain\ChatService.Domain.csproj", "{37B43F3D-8DEB-427F-9C24-0DEEA6A82757}"
 EndProject
@@ -31,7 +31,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentsService.Infrastruct
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentsService.Domain", "PaymentsService\PaymentsService.Domain\PaymentsService.Domain.csproj", "{85785CE5-EFCC-4FEF-AE61-A575BF5DFBD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentsService.Applications", "PaymentsService\PaymentsService.Applications\PaymentsService.Applications.csproj", "{D73C5D60-06AA-4878-A3C2-DDC57156E1D6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentsService.Application", "PaymentsService\PaymentsService.Application\PaymentsService.Application.csproj", "{D73C5D60-06AA-4878-A3C2-DDC57156E1D6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentsService.API", "PaymentsService\PaymentsService.API\PaymentsService.API.csproj", "{E04BA9A6-4392-4D3A-AA01-0F84D06D408F}"
 EndProject

@@ -1,5 +1,5 @@
 using System.Text.Json;
-using PaymentsService.Applications.Exceptions;
+using PaymentsService.Application.Exceptions;
 
 namespace PaymentsService.API.Middlewares;
 

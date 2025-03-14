@@ -1,5 +1,5 @@
 using PaymentsService.API.Contracts.PaymentContracts;
-using PaymentsService.Applications.UseCases.PaymentsUseCases.Queries.GetEmployerPaymentsQuery;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetEmployerPaymentsQuery;
 
 namespace PaymentsService.API.Mapping.PaymentMappingProfiles;
 

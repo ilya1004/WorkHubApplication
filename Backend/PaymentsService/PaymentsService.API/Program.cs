@@ -1,6 +1,6 @@
 using PaymentsService.API;
 using PaymentsService.API.Middlewares;
-using PaymentsService.Applications;
+using PaymentsService.Application;
 using PaymentsService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);

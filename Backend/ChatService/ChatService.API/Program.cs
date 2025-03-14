@@ -2,7 +2,7 @@ using ChatService.API;
 using ChatService.API.Filters;
 using ChatService.API.Hubs;
 using ChatService.API.Middlewares;
-using ChatService.Applications;
+using ChatService.Application;
 using ChatService.Domain.Abstractions.DbInitializer;
 using ChatService.Infrastructure;
 using Microsoft.AspNetCore.SignalR;

@@ -1,7 +1,7 @@
-using PaymentsService.Applications.UseCases.AccountUseCases.Commands.CreateEmployerAccount;
-using PaymentsService.Applications.UseCases.AccountUseCases.Commands.CreateFreelancerAccount;
-using PaymentsService.Applications.UseCases.AccountUseCases.Queries.GetEmployerAccount;
-using PaymentsService.Applications.UseCases.AccountUseCases.Queries.GetFreelancerAccount;
+using PaymentsService.Application.UseCases.AccountUseCases.Commands.CreateEmployerAccount;
+using PaymentsService.Application.UseCases.AccountUseCases.Commands.CreateFreelancerAccount;
+using PaymentsService.Application.UseCases.AccountUseCases.Queries.GetEmployerAccount;
+using PaymentsService.Application.UseCases.AccountUseCases.Queries.GetFreelancerAccount;
 
 namespace PaymentsService.API.Controllers;
 

@@ -4,6 +4,7 @@ using IdentityService.BLL;
 using IdentityService.DAL;
 using IdentityService.DAL.Services.DbInitializer;
 using System.Text.Json.Serialization;
+using IdentityService.DAL.Abstractions.DbInitializer;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;

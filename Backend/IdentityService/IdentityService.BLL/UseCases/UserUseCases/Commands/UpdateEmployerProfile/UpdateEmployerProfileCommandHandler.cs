@@ -23,8 +23,13 @@ public class UpdateEmployerProfileCommandHandler(
 
         if (request.EmployerProfile.ResetImage) user.ImageUrl = null;
 
-        if (request.FileStream is not null)
+        if (request.FileStream is not null && request.ContentType is not null)
         {
+            if (!request.ContentType.StartsWith("image/"))
+            {
+                throw new BadRequestException("Only image files are allowed.");
+            }
+            
             if (!string.IsNullOrEmpty(user.ImageUrl) && Guid.TryParse(user.ImageUrl, out var imageId))
                 await blobService.DeleteAsync(imageId, cancellationToken);
 

@@ -12,7 +12,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddBLL(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddMediatR(configuration => { configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()); });
+        services.AddMediatR(config =>
+        {
+            config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+        });
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

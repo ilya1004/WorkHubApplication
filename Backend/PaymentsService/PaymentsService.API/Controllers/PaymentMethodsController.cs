@@ -1,6 +1,6 @@
-using PaymentsService.Applications.UseCases.PaymentMethodUseCases.Commands.DeletePaymentMethod;
-using PaymentsService.Applications.UseCases.PaymentMethodUseCases.Commands.SavePaymentMethod;
-using PaymentsService.Applications.UseCases.PaymentMethodUseCases.Queries.GetMyPaymentMethods;
+using PaymentsService.Application.UseCases.PaymentMethodUseCases.Commands.DeletePaymentMethod;
+using PaymentsService.Application.UseCases.PaymentMethodUseCases.Commands.SavePaymentMethod;
+using PaymentsService.Application.UseCases.PaymentMethodUseCases.Queries.GetMyPaymentMethods;
 
 namespace PaymentsService.API.Controllers;
 

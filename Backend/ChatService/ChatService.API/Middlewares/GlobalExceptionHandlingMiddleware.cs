@@ -1,5 +1,5 @@
 using System.Text.Json;
-using ChatService.Applications.Exceptions;
+using ChatService.Application.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatService.API.Middlewares;

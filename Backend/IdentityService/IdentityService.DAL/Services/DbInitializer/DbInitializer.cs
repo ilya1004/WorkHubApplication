@@ -1,4 +1,5 @@
-﻿using IdentityService.DAL.Abstractions.Repositories;
+﻿using IdentityService.DAL.Abstractions.DbInitializer;
+using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Constants;
 using IdentityService.DAL.Entities;
 using Microsoft.AspNetCore.Identity;

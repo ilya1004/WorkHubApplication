@@ -1,6 +1,8 @@
 ﻿using IdentityService.BLL.Services.EmailSender;
+using IdentityService.DAL.Abstractions.RedisService;
 using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Constants;
+using Microsoft.Extensions.Configuration;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
 
@@ -9,7 +11,9 @@ public class RegisterEmployerCommandHandler(
     RoleManager<IdentityRole<Guid>> roleManager,
     IUnitOfWork unitOfWork,
     IMapper mapper,
-    IEmailSender emailSender) : IRequestHandler<RegisterEmployerCommand>
+    IEmailSender emailSender,
+    ICachedService cachedService,
+    IConfiguration configuration) : IRequestHandler<RegisterEmployerCommand>
 {
     public async Task Handle(RegisterEmployerCommand request, CancellationToken cancellationToken)
     {
@@ -21,7 +25,7 @@ public class RegisterEmployerCommandHandler(
 
         var role = await roleManager.FindByNameAsync(AppRoles.EmployerRole);
 
-        if (role is null) throw new BadRequestException($"User is not successfully registered. User Role is not successfully find");
+        if (role is null) throw new BadRequestException("User is not successfully registered. User Role is not successfully find");
 
         user.RoleId = role.Id;
 
@@ -40,8 +44,17 @@ public class RegisterEmployerCommandHandler(
         await unitOfWork.EmployersRepository.AddAsync(employerProfile, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
 
-        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+        var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
-        await emailSender.SendEmailConfirmation(user.Email!, code, cancellationToken);
+        string code;
+        do
+        {
+            code = new Random().Next(100000, 999999).ToString();
+        } while (await cachedService.ExistsAsync(code));
+
+        await cachedService.SetAsync(code, token, TimeSpan.FromHours(
+            int.Parse(configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Value!)));
+
+        await emailSender.SendEmailConfirmation(user.Email!, code, cancellationToken);    
     }
 }

@@ -1,11 +1,15 @@
 ﻿using IdentityService.BLL.Services.EmailSender;
 using System.Net;
+using IdentityService.DAL.Abstractions.RedisService;
+using Microsoft.Extensions.Configuration;
 
 namespace IdentityService.BLL.UseCases.AuthUseCases.ForgotPassword;
 
 public class ForgotPasswordCommandHandler(
     UserManager<AppUser> userManager,
-    IEmailSender emailSender) : IRequestHandler<ForgotPasswordCommand>
+    IEmailSender emailSender,
+    ICachedService cachedService,
+    IConfiguration configuration) : IRequestHandler<ForgotPasswordCommand>
 {
     public async Task Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
     {
@@ -13,9 +17,18 @@ public class ForgotPasswordCommandHandler(
 
         if (user is null) throw new NotFoundException("User with this email does not exist.");
 
-        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+        var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
-        var resetUrl = $"{request.ResetUrl}?email={user.Email}&token={WebUtility.UrlEncode(token)}";
+        string code;
+        do
+        {
+            code = new Random().Next(100000, 999999).ToString();
+        } while (await cachedService.ExistsAsync(code));
+
+        await cachedService.SetAsync(code, token, TimeSpan.FromHours(
+            int.Parse(configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Value!)));
+
+        var resetUrl = $"{request.ResetUrl}?email={user.Email}&token={token}";
 
         await emailSender.SendPasswordReset(user.Email!, resetUrl, cancellationToken);
     }

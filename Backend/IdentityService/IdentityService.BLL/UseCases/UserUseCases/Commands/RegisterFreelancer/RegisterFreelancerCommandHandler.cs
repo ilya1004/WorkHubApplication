@@ -1,6 +1,8 @@
 ﻿using IdentityService.BLL.Services.EmailSender;
+using IdentityService.DAL.Abstractions.RedisService;
 using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Constants;
+using Microsoft.Extensions.Configuration;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterFreelancer;
 
@@ -9,7 +11,9 @@ public class RegisterFreelancerCommandHandler(
     RoleManager<IdentityRole<Guid>> roleManager,
     IUnitOfWork unitOfWork,
     IMapper mapper,
-    IEmailSender emailSender) : IRequestHandler<RegisterFreelancerCommand>
+    IEmailSender emailSender,
+    ICachedService cachedService,
+    IConfiguration configuration) : IRequestHandler<RegisterFreelancerCommand>
 {
     public async Task Handle(RegisterFreelancerCommand request, CancellationToken cancellationToken)
     {
@@ -40,8 +44,17 @@ public class RegisterFreelancerCommandHandler(
         await unitOfWork.FreelancersRepository.AddAsync(freelancerProfile, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
 
-        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+        var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
-        await emailSender.SendEmailConfirmation(user.Email!, code, cancellationToken);
+        string code;
+        do
+        {
+            code = new Random().Next(100000, 999999).ToString();
+        } while (await cachedService.ExistsAsync(code));
+
+        await cachedService.SetAsync(code, token, TimeSpan.FromHours(
+            int.Parse(configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Value!)));
+
+        await emailSender.SendEmailConfirmation(user.Email!, code, cancellationToken);   
     }
 }

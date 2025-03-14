@@ -1,9 +1,9 @@
 using PaymentsService.API.Contracts.PaymentContracts;
-using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.ConfirmPaymentForProject;
-using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.CreateSetupIntent;
-using PaymentsService.Applications.UseCases.PaymentsUseCases.Commands.PayForProjectWithSavedMethod;
-using PaymentsService.Applications.UseCases.PaymentsUseCases.Queries.GetEmployerPaymentsQuery;
-using PaymentsService.Applications.UseCases.PaymentsUseCases.Queries.GetFreelancerTransfers;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Commands.ConfirmPaymentForProject;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Commands.CreateSetupIntent;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Commands.PayForProjectWithSavedMethod;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetEmployerPaymentsQuery;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetFreelancerTransfers;
 
 namespace PaymentsService.API.Controllers;
 
