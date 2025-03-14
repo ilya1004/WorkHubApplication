@@ -7,8 +7,6 @@ using IdentityService.DAL.Services.DbInitializer;
 using IdentityService.DAL.Services.RedisService;
 using IdentityService.DAL.Settings;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -31,8 +29,6 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, AppUnitOfWork>();
         services.AddScoped<ICachedService, RedisService>();
         services.AddScoped<IDbInitializer, DbInitializer>();
-        services.AddScoped(typeof(AppRepository<>));
-        services.AddScoped(typeof(UsersRepository));
         
         return services;
     }

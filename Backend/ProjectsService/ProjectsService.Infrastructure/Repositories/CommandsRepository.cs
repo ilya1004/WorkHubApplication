@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using ProjectsService.Domain.Abstractions.Data;
 using ProjectsService.Domain.Primitives;
 using ProjectsService.Infrastructure.Data;
 

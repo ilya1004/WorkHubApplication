@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace ProjectsService.Infrastructure.Data;
 
 public class CommandsDbContext(DbContextOptions<CommandsDbContext> options) : DbContext(options)

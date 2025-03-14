@@ -1,28 +1,41 @@
-using ProjectsService.Domain.Abstractions.Data;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Options;
 using ProjectsService.Infrastructure.Data;
+using ProjectsService.Infrastructure.Settings;
 
 namespace ProjectsService.Infrastructure.Repositories;
 
 public class AppUnitOfWork(
     CommandsDbContext commandsDbContext, 
-    QueriesDbContext queriesDbContext) : IUnitOfWork
+    QueriesDbContext queriesDbContext,
+    IDistributedCache distributedCache,
+    IOptions<CacheOptions> options) : IUnitOfWork
 {
     private readonly Lazy<ICommandsRepository<Category>> _categoryCommandsRepository = 
-        new(() => new CommandsRepository<Category>(commandsDbContext));
+        new(() => new CachedCommandsRepository<Category>(new CommandsRepository<Category>(commandsDbContext), distributedCache));
+    
     private readonly Lazy<IQueriesRepository<Category>> _categoryQueriesRepository =
-        new(() => new QueriesRepository<Category>(queriesDbContext));
+        new(() => new CachedQueriesRepository<Category>(new QueriesRepository<Category>(queriesDbContext), distributedCache, options));
+    
     private readonly Lazy<ICommandsRepository<FreelancerApplication>> _freelancerApplicationCommandsRepository =
-        new(() => new CommandsRepository<FreelancerApplication>(commandsDbContext));
+        new(() => new CachedCommandsRepository<FreelancerApplication>(
+            new CommandsRepository<FreelancerApplication>(commandsDbContext), distributedCache));
+    
     private readonly Lazy<IQueriesRepository<FreelancerApplication>> _freelancerApplicationQueriesRepository =
-        new(() => new QueriesRepository<FreelancerApplication>(queriesDbContext));
+        new(() => new CachedQueriesRepository<FreelancerApplication>(
+            new QueriesRepository<FreelancerApplication>(queriesDbContext), distributedCache, options));
+    
     private readonly Lazy<ICommandsRepository<Lifecycle>> _lifecycleCommandsRepository =
-        new(() => new CommandsRepository<Lifecycle>(commandsDbContext));
+        new(() => new CachedCommandsRepository<Lifecycle>(new CommandsRepository<Lifecycle>(commandsDbContext), distributedCache));
+    
     private readonly Lazy<IQueriesRepository<Lifecycle>> _lifecycleQueriesRepository =
-        new(() => new QueriesRepository<Lifecycle>(queriesDbContext));
+        new(() => new CachedQueriesRepository<Lifecycle>(new QueriesRepository<Lifecycle>(queriesDbContext), distributedCache, options));
+    
     private readonly Lazy<ICommandsRepository<Project>> _projectCommandsRepository =
-        new(() => new CommandsRepository<Project>(commandsDbContext));
+        new(() => new CachedCommandsRepository<Project>(new CommandsRepository<Project>(commandsDbContext), distributedCache));
+    
     private readonly Lazy<IQueriesRepository<Project>> _projectQueriesRepository =
-        new(() => new QueriesRepository<Project>(queriesDbContext));
+        new(() => new CachedQueriesRepository<Project>(new QueriesRepository<Project>(queriesDbContext), distributedCache, options));
     
     public ICommandsRepository<Category> CategoryCommandsRepository => _categoryCommandsRepository.Value;
     public IQueriesRepository<Category> CategoryQueriesRepository => _categoryQueriesRepository.Value;

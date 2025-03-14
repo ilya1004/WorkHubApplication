@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 using ProjectsService.Domain.Primitives;
 
 namespace ProjectsService.Infrastructure.Extensions;

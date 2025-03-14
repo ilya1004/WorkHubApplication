@@ -1,7 +1,5 @@
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 using ProjectsService.Application.Specifications;
-using ProjectsService.Domain.Abstractions.Data;
 using ProjectsService.Domain.Abstractions.Specification;
 using ProjectsService.Domain.Primitives;
 using ProjectsService.Infrastructure.Data;
