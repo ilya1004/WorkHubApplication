@@ -41,7 +41,7 @@ public class RegisterEmployerCommandHandler(
 
         employerProfile.UserId = user.Id;
 
-        await unitOfWork.EmployersRepository.AddAsync(employerProfile, cancellationToken);
+        await unitOfWork.EmployerProfilesRepository.AddAsync(employerProfile, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
 
         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);

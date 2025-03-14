@@ -2,13 +2,15 @@
 using IdentityService.DAL.Abstractions.RedisService;
 using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Data;
-using IdentityService.DAL.Repository;
+using IdentityService.DAL.Repositories;
 using IdentityService.DAL.Services.DbInitializer;
 using IdentityService.DAL.Services.RedisService;
+using IdentityService.DAL.Settings;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using StackExchange.Redis;
 
 namespace IdentityService.DAL;
 
@@ -23,11 +25,15 @@ public static class DependencyInjection
         {
             options.Configuration = configuration.GetConnectionString("RedisConnection");
         });
+
+        services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
         
         services.AddScoped<IUnitOfWork, AppUnitOfWork>();
         services.AddScoped<ICachedService, RedisService>();
         services.AddScoped<IDbInitializer, DbInitializer>();
-
+        services.AddScoped(typeof(AppRepository<>));
+        services.AddScoped(typeof(UsersRepository));
+        
         return services;
     }
 }

@@ -66,12 +66,16 @@ public static class DependencyInjection
             });
 
         services.AddAuthorizationBuilder()
-            .AddPolicy(AuthPolicies.AdminPolicy, policy => { policy.RequireRole(AppRoles.AdminRole); })
-            .AddPolicy(AuthPolicies.FreelancerPolicy, policy => { policy.RequireRole(AppRoles.FreelancerRole); })
-            .AddPolicy(AuthPolicies.EmployerPolicy, policy => { policy.RequireRole(AppRoles.EmployerRole); })
+            .AddPolicy(AuthPolicies.AdminPolicy, 
+                policy => policy.RequireRole(AppRoles.AdminRole))
+            .AddPolicy(AuthPolicies.FreelancerPolicy, 
+                policy => policy.RequireRole(AppRoles.FreelancerRole))
+            .AddPolicy(AuthPolicies.EmployerPolicy, 
+                policy => policy.RequireRole(AppRoles.EmployerRole))
             .AddPolicy(AuthPolicies.FreelancerOrEmployerPolicy,
-                policy => { policy.RequireRole(AppRoles.FreelancerRole, AppRoles.EmployerRole); })
-            .AddPolicy(AuthPolicies.AdminOrSelfPolicy, policy => { policy.Requirements.Add(new AdminOrSelfRequirement()); });
+                policy => policy.RequireRole(AppRoles.FreelancerRole, AppRoles.EmployerRole))
+            .AddPolicy(AuthPolicies.AdminOrSelfPolicy, 
+                policy => policy.Requirements.Add(new AdminOrSelfRequirement()));
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddFluentValidationAutoValidation(config =>

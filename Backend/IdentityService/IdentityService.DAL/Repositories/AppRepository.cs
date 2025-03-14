@@ -1,14 +1,13 @@
-﻿using IdentityService.DAL.Abstractions.Repositories;
+﻿using System.Linq.Expressions;
+using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Data;
 using IdentityService.DAL.Primitives;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
-namespace IdentityService.DAL.Repository;
+namespace IdentityService.DAL.Repositories;
 
 public class AppRepository<TEntity>(ApplicationDbContext context) : IRepository<TEntity> where TEntity : Entity
 {
-    protected readonly ApplicationDbContext _context = context;
     protected readonly DbSet<TEntity> _entities = context.Set<TEntity>();
 
     public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)

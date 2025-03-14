@@ -41,7 +41,7 @@ public class RegisterFreelancerCommandHandler(
 
         freelancerProfile.UserId = user.Id;
 
-        await unitOfWork.FreelancersRepository.AddAsync(freelancerProfile, cancellationToken);
+        await unitOfWork.FreelancerProfilesRepository.AddAsync(freelancerProfile, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
 
         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);

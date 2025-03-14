@@ -1,10 +1,10 @@
-﻿using IdentityService.DAL.Abstractions.Repositories;
+﻿using System.Linq.Expressions;
+using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Data;
 using IdentityService.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
-namespace IdentityService.DAL.Repository;
+namespace IdentityService.DAL.Repositories;
 
 public class UsersRepository(ApplicationDbContext context) : IUsersRepository
 {
