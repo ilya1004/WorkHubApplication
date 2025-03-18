@@ -1,3 +1,0 @@
-namespace PaymentsService.Applications.UseCases.AccountUseCases.Commands.CreateFreelancerAccount;
-
-public sealed record CreateFreelancerAccountCommand : IRequest;

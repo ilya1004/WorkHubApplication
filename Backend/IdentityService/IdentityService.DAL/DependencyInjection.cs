@@ -1,0 +1,35 @@
+﻿using IdentityService.DAL.Abstractions.DbInitializer;
+using IdentityService.DAL.Abstractions.RedisService;
+using IdentityService.DAL.Abstractions.Repositories;
+using IdentityService.DAL.Data;
+using IdentityService.DAL.Repositories;
+using IdentityService.DAL.Services.DbInitializer;
+using IdentityService.DAL.Services.RedisService;
+using IdentityService.DAL.Settings;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace IdentityService.DAL;
+
+public static class DependencyInjection
+{
+    public static IServiceCollection AddDAL(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("PostgresConnection")));
+        
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = configuration.GetConnectionString("RedisConnection");
+        });
+
+        services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
+        
+        services.AddScoped<IUnitOfWork, AppUnitOfWork>();
+        services.AddScoped<ICachedService, RedisService>();
+        services.AddScoped<IDbInitializer, DbInitializer>();
+        
+        return services;
+    }
+}
