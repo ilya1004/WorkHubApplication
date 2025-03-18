@@ -21,10 +21,12 @@ public class ResendEmailConfirmationCommandHandler(
         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
         string code;
+        var random = new Random();
         do
         {
-            code = new Random().Next(100000, 999999).ToString();
-        } while (await cachedService.ExistsAsync(code));
+            code = random.Next(100000, 999999).ToString();
+        }
+        while (await cachedService.ExistsAsync(code));
 
         await cachedService.SetAsync(code, token, TimeSpan.FromHours(
             int.Parse(configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Value!)));
