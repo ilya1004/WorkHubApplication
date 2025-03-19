@@ -1,18 +1,18 @@
 using PaymentsService.Application.Constants;
 using PaymentsService.Domain.Abstractions.AccountsServices;
 using PaymentsService.Domain.Models;
-using PaymentsService.Infrastructure.DTOs;
+using PaymentsService.Infrastructure.Interfaces;
 
 namespace PaymentsService.Infrastructure.Services.StripeAccountsServices;
 
-public class StripeFreelancerAccountsService : IFreelancerAccountsService
+public class StripeFreelancerAccountsService(IFreelancersGrpcClient freelancersGrpcClient) : IFreelancerAccountsService
 {
     private readonly AccountService _accountService = new();
     private readonly BalanceService _balanceService = new();
 
     public async Task<string?> CreateFreelancerAccountAsync(Guid userId, string email, CancellationToken cancellationToken)
     {
-        var freelancer = new FreelancerDto(); // This data will be requested from Identity Service via gRPC
+        var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(userId.ToString(), cancellationToken);
 
         if (freelancer.StripeAccountId is not null) throw new AlreadyExistsException("You account is already exists.");
 
@@ -49,22 +49,22 @@ public class StripeFreelancerAccountsService : IFreelancerAccountsService
 
     public async Task<FreelancerAccountModel?> GetFreelancerAccountAsync(Guid userId, CancellationToken cancellationToken)
     {
-        var stripeAccountId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
+        var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(userId.ToString(), cancellationToken);
 
-        if (stripeAccountId is null || string.IsNullOrEmpty(stripeAccountId))
-            throw new NotFoundException($"Stripe account with ID '{stripeAccountId}' not found.");
+        if (freelancer.StripeAccountId is null)
+            throw new NotFoundException($"Stripe account with user ID '{userId}' not found.");
 
         try
         {
-            var account = await _accountService.GetAsync(stripeAccountId, cancellationToken: cancellationToken);
+            var account = await _accountService.GetAsync(freelancer.StripeAccountId, cancellationToken: cancellationToken);
             var balance = await _balanceService.GetAsync(
                 new BalanceGetOptions(),
-                new RequestOptions { StripeAccount = stripeAccountId },
+                new RequestOptions { StripeAccount = freelancer.StripeAccountId },
                 cancellationToken);
 
             return new FreelancerAccountModel
             {
-                Id = stripeAccountId,
+                Id = freelancer.StripeAccountId,
                 OwnerEmail = account.Email,
                 AccountType = account.Type,
                 Country = account.Country,
@@ -82,7 +82,7 @@ public class StripeFreelancerAccountsService : IFreelancerAccountsService
         }
         catch
         {
-            throw new BadRequestException($"Stripe account with ID '{stripeAccountId}' not found or cannot get its balance.");
+            throw new BadRequestException($"Stripe account with ID '{freelancer.StripeAccountId}' not found or cannot get its balance.");
         }
     }
 }

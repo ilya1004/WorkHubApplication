@@ -1,17 +1,18 @@
 using PaymentsService.Application.Constants;
 using PaymentsService.Domain.Abstractions.AccountsServices;
 using PaymentsService.Domain.Models;
-using PaymentsService.Infrastructure.DTOs;
+using PaymentsService.Infrastructure.Interfaces;
 
 namespace PaymentsService.Infrastructure.Services.StripeAccountsServices;
 
-public class StripeEmployerAccountsService : IEmployerAccountsService
+public class StripeEmployerAccountsService(
+    IEmployersGrpcClient employersGrpcClient) : IEmployerAccountsService
 {
     private readonly CustomerService _customerService = new();
 
     public async Task<string?> CreateEmployerAccountAsync(Guid userId, string email, CancellationToken cancellationToken)
     {
-        var employer = new EmployerDto(); // This data will be requested from Identity Service via gRPC
+        var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken);
 
         if (employer.EmployerCustomerId is not null) throw new AlreadyExistsException("You account is already exists.");
 
@@ -42,18 +43,17 @@ public class StripeEmployerAccountsService : IEmployerAccountsService
 
     public async Task<EmployerAccountModel?> GetEmployerAccountAsync(Guid userId, CancellationToken cancellationToken)
     {
-        var employerCustomerId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
+        var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken);
 
-        if (employerCustomerId is null || string.IsNullOrEmpty(employerCustomerId))
-            throw new NotFoundException($"Stripe account with ID '{employerCustomerId}' not found.");
+        if (employer.EmployerCustomerId is null) throw new NotFoundException($"Stripe account by user ID '{userId}' not found.");
 
         try
         {
-            var customer = await _customerService.GetAsync(employerCustomerId, cancellationToken: cancellationToken);
+            var customer = await _customerService.GetAsync(employer.EmployerCustomerId, cancellationToken: cancellationToken);
 
             return new EmployerAccountModel
             {
-                Id = employerCustomerId,
+                Id = employer.EmployerCustomerId,
                 OwnerEmail = customer.Email,
                 Currency = customer.Currency,
                 Balance = customer.Balance
@@ -65,7 +65,7 @@ public class StripeEmployerAccountsService : IEmployerAccountsService
         }
         catch
         {
-            throw new BadRequestException($"Stripe customer with ID '{employerCustomerId}' not found.");
+            throw new BadRequestException($"Stripe customer with ID '{employer.EmployerCustomerId}' not found.");
         }
     }
 }
