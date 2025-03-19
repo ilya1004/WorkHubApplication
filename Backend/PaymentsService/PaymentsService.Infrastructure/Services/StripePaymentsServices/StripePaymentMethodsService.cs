@@ -1,24 +1,30 @@
 using PaymentsService.Domain.Abstractions.PaymentsServices;
 using PaymentsService.Domain.Models;
+using PaymentsService.Infrastructure.Interfaces;
 
 namespace PaymentsService.Infrastructure.Services.StripePaymentsServices;
 
-public class StripePaymentMethodsService(IMapper mapper) : IPaymentMethodsService
+public class StripePaymentMethodsService(
+    IMapper mapper,
+    IEmployersGrpcClient employersGrpcClient) : IPaymentMethodsService
 {
     private readonly CustomerPaymentMethodService _customerPaymentMethodService = new();
     private readonly PaymentMethodService _paymentMethodService = new();
 
     public async Task SavePaymentMethodAsync(Guid userId, string paymentMethodId, CancellationToken cancellationToken)
     {
-        var employerCustomerId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
-
+        var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken);
+        
+        if (string.IsNullOrEmpty(employer.EmployerCustomerId)) 
+            throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
+        
         try
         {
             await _paymentMethodService.AttachAsync(
                 paymentMethodId,
                 new PaymentMethodAttachOptions
                 {
-                    Customer = employerCustomerId
+                    Customer = employer.EmployerCustomerId
                 },
                 cancellationToken: cancellationToken);
         }
@@ -34,14 +40,15 @@ public class StripePaymentMethodsService(IMapper mapper) : IPaymentMethodsServic
 
     public async Task<IEnumerable<PaymentMethodModel>> GetPaymentMethodsAsync(Guid userId, CancellationToken cancellationToken)
     {
-        var employerCustomerId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
-
-        if (string.IsNullOrEmpty(employerCustomerId)) throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
-
+        var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken);
+        
+        if (string.IsNullOrEmpty(employer.EmployerCustomerId)) 
+            throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
+        
         try
         {
             var paymentMethods = await _customerPaymentMethodService.ListAsync(
-                employerCustomerId, cancellationToken: cancellationToken);
+                employer.EmployerCustomerId, cancellationToken: cancellationToken);
 
             return paymentMethods.Data.Select(mapper.Map<PaymentMethodModel>);
         }
@@ -57,12 +64,13 @@ public class StripePaymentMethodsService(IMapper mapper) : IPaymentMethodsServic
 
     public async Task DeletePaymentMethodAsync(Guid userId, string paymentMethodId, CancellationToken cancellationToken)
     {
-        var employerCustomerId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
-
-        if (string.IsNullOrEmpty(employerCustomerId)) throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
+        var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken);
+        
+        if (string.IsNullOrEmpty(employer.EmployerCustomerId)) 
+            throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
 
         var paymentMethods = await _customerPaymentMethodService.ListAsync(
-            employerCustomerId, cancellationToken: cancellationToken);
+            employer.EmployerCustomerId, cancellationToken: cancellationToken);
 
         if (paymentMethods.All(pm => pm.Id != paymentMethodId))
             throw new NotFoundException($"You do not have saved Payment method with ID '{userId}'.");

@@ -14,7 +14,7 @@ public class StripeFreelancerAccountsService(IFreelancersGrpcClient freelancersG
     {
         var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(userId.ToString(), cancellationToken);
 
-        if (freelancer.StripeAccountId is not null) throw new AlreadyExistsException("You account is already exists.");
+        if (string.IsNullOrEmpty(freelancer.StripeAccountId)) throw new AlreadyExistsException("You account is already exists.");
 
         var accountOptions = new AccountCreateOptions
         {
@@ -51,7 +51,7 @@ public class StripeFreelancerAccountsService(IFreelancersGrpcClient freelancersG
     {
         var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(userId.ToString(), cancellationToken);
 
-        if (freelancer.StripeAccountId is null)
+        if (string.IsNullOrEmpty(freelancer.StripeAccountId)) 
             throw new NotFoundException($"Stripe account with user ID '{userId}' not found.");
 
         try

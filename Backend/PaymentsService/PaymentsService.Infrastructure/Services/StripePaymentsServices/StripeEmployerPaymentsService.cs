@@ -20,7 +20,8 @@ public class StripeEmployerPaymentsService(
     {
         var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken); 
 
-        if (employer.EmployerCustomerId is null) throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
+        if (string.IsNullOrEmpty(employer.EmployerCustomerId)) 
+            throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
 
         var options = new SetupIntentCreateOptions
         {
@@ -38,7 +39,8 @@ public class StripeEmployerPaymentsService(
     {
         var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken);
 
-        if (employer.EmployerCustomerId is null) throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
+        if (string.IsNullOrEmpty(employer.EmployerCustomerId)) 
+            throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
 
         var paymentMethod = await _customerPaymentMethodService.GetAsync(
             employer.EmployerCustomerId, paymentMethodId, cancellationToken: cancellationToken);
@@ -83,11 +85,11 @@ public class StripeEmployerPaymentsService(
     {
         var project = await projectsGrpcClient.GetProjectByIdAsync(projectId.ToString(), cancellationToken);
 
-        if (project.PaymentIntentId is null) throw new NotFoundException("This project does not have an attached Payment Intent.");
+        if (string.IsNullOrEmpty(project.PaymentIntentId)) throw new NotFoundException("This project does not have an attached Payment Intent.");
 
         var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(projectId.ToString(), cancellationToken);
 
-        if (freelancer.StripeAccountId is null)
+        if (string.IsNullOrEmpty(freelancer.StripeAccountId))
             throw new NotFoundException($"Freelancer's Stripe Account to project with ID '{projectId}' not found.");
 
         var paymentIntent = await _paymentIntentService.GetAsync(project.PaymentIntentId, cancellationToken: cancellationToken);
@@ -124,7 +126,7 @@ public class StripeEmployerPaymentsService(
     // This method will be called from Projects Service only via Kafka
     public async Task CancelPaymentForProjectAsync(string paymentIntentId, CancellationToken cancellationToken)
     {
-        if (paymentIntentId is null) throw new NotFoundException("This project does not have an attached Payment Intent.");
+        if (string.IsNullOrEmpty(paymentIntentId)) throw new NotFoundException("This project does not have an attached Payment Intent.");
 
         var paymentIntent = await _paymentIntentService.GetAsync(paymentIntentId, cancellationToken: cancellationToken);
 

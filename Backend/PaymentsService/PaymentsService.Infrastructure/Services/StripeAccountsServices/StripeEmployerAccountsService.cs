@@ -14,7 +14,7 @@ public class StripeEmployerAccountsService(
     {
         var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken);
 
-        if (employer.EmployerCustomerId is not null) throw new AlreadyExistsException("You account is already exists.");
+        if (string.IsNullOrEmpty(employer.EmployerCustomerId)) throw new AlreadyExistsException("You account is already exists.");
 
         var options = new CustomerCreateOptions
         {
@@ -45,7 +45,7 @@ public class StripeEmployerAccountsService(
     {
         var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken);
 
-        if (employer.EmployerCustomerId is null) throw new NotFoundException($"Stripe account by user ID '{userId}' not found.");
+        if (string.IsNullOrEmpty(employer.EmployerCustomerId)) throw new NotFoundException($"Stripe account by user ID '{userId}' not found.");
 
         try
         {
