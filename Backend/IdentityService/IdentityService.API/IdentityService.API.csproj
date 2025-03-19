@@ -9,6 +9,13 @@
     <ItemGroup>
         <PackageReference Include="FluentValidation" Version="11.11.0"/>
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0"/>
+        <PackageReference Include="Google.Protobuf" Version="3.30.1" />
+        <PackageReference Include="Grpc.AspNetCore.Server" Version="2.70.0" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.70.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.71.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
             <PrivateAssets>all</PrivateAssets>
@@ -20,6 +27,11 @@
 
     <ItemGroup>
         <ProjectReference Include="..\IdentityService.BLL\IdentityService.BLL.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="Protos\employers.proto" GrpcServices="Server" />
+        <Protobuf Include="Protos\freelancers.proto" GrpcServices="Server" />
     </ItemGroup>
 
 </Project>

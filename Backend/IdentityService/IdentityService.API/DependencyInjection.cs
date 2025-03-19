@@ -89,6 +89,11 @@ public static class DependencyInjection
 
         services.AddScoped<IUserContext, UserContext>();
 
+        services.AddGrpc(options =>
+        {
+            options.EnableDetailedErrors = true;
+        });
+
         return services;
     }
 }

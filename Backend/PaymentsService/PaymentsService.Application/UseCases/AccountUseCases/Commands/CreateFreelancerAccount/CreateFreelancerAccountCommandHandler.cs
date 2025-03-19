@@ -14,6 +14,6 @@ public class CreateFreelancerAccountCommandHandler(
 
         var freelancerAccountId = await freelancerAccountsService.CreateFreelancerAccountAsync(
             userId, userEmail, cancellationToken);
-        // This data will be saved to Identity Service via gRPC
+        // This data will be saved to Identity Service via Kafka
     }
 }

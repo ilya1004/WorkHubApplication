@@ -4,6 +4,7 @@ using IdentityService.BLL;
 using IdentityService.DAL;
 using IdentityService.DAL.Services.DbInitializer;
 using System.Text.Json.Serialization;
+using IdentityService.API.GrpcServices;
 using IdentityService.DAL.Abstractions.DbInitializer;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +45,9 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapGrpcService<EmployersGrpcService>();
+app.MapGrpcService<FreelancersGrpcService>();
 
 app.MapControllers();
 
