@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package projects;
 
-import "google/protobuf/empty.proto";
-
 service Projects {
   rpc GetProjectById (GetProjectByIdRequest) returns (GetProjectByIdResponse);
 }

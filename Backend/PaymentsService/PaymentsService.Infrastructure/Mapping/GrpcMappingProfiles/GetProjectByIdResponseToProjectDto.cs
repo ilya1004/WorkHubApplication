@@ -1,6 +1,6 @@
 using Projects;
 
-namespace PaymentsService.Infrastructure.Mapping.EmployersMappingProfiles;
+namespace PaymentsService.Infrastructure.Mapping.GrpcMappingProfiles;
 
 public class GetProjectByIdResponseToProjectDto : Profile
 {

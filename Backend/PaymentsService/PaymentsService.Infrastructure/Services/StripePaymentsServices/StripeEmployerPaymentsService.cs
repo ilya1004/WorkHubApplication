@@ -51,7 +51,7 @@ public class StripeEmployerPaymentsService(
 
         var options = new PaymentIntentCreateOptions
         {
-            Amount = project.Budget * 100,
+            Amount = project.BudgetInCents,
             Currency = "usd",
             Customer = employer.EmployerCustomerId,
             PaymentMethod = paymentMethod.Id,

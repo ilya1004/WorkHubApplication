@@ -13,10 +13,4 @@ public class ProjectsGrpcClient(Projects.Projects.ProjectsClient client, IMapper
 
         return projectDto;
     }
-
-    public async Task SaveProjectPaymentIntentAsync(string id, string paymentIntentId, CancellationToken cancellationToken)
-    { 
-        await client.SaveProjectPaymentIntentAsync(new SaveProjectPaymentIntentRequest { Id = id, PaymentIntentId = paymentIntentId }, 
-            cancellationToken: cancellationToken);
-    }
 }

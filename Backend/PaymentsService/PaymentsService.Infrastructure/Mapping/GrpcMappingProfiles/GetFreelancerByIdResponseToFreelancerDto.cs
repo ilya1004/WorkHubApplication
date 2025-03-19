@@ -1,6 +1,6 @@
 using Freelancers;
 
-namespace PaymentsService.Infrastructure.Mapping.EmployersMappingProfiles;
+namespace PaymentsService.Infrastructure.Mapping.GrpcMappingProfiles;
 
 public class GetFreelancerByIdResponseToFreelancerDto : Profile
 {

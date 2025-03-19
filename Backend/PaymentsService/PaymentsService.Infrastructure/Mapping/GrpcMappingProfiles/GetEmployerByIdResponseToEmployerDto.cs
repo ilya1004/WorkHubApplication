@@ -1,12 +1,12 @@
-using PaymentsService.Infrastructure.DTOs;
+using Employers;
 
-namespace PaymentsService.Infrastructure.Mapping.EmployersMappingProfiles;
+namespace PaymentsService.Infrastructure.Mapping.GrpcMappingProfiles;
 
 public class GetEmployerByIdResponseToEmployerDto : Profile
 {
     public GetEmployerByIdResponseToEmployerDto()
     {
-        CreateMap<Employers.GetEmployerByIdResponse, EmployerDto>()
+        CreateMap<GetEmployerByIdResponse, EmployerDto>()
             .ForMember(dest => dest.Id, opt => 
                 opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.EmployerCustomerId, opt => 
