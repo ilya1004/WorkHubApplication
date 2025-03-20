@@ -6,6 +6,7 @@ namespace IdentityService.API.GrpcServices;
 
 public class FreelancersGrpcService(IMediator mediator) : Freelancers.Freelancers.FreelancersBase
 {
+    [Authorize]
     public override async Task<GetFreelancerByIdResponse> GetFreelancerById(GetFreelancerByIdRequest request, ServerCallContext context)
     {
         var appUser = await mediator.Send(new GetUserByIdQuery(Guid.Parse(request.Id)));

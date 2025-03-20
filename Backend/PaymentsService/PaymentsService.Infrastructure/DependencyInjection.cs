@@ -6,6 +6,7 @@ using PaymentsService.Domain.Abstractions.AccountsServices;
 using PaymentsService.Domain.Abstractions.PaymentsServices;
 using PaymentsService.Domain.Abstractions.TransfersServices;
 using PaymentsService.Infrastructure.GrpcClients;
+using PaymentsService.Infrastructure.Interceptors;
 using PaymentsService.Infrastructure.Interfaces;
 using PaymentsService.Infrastructure.Services.StripeAccountsServices;
 using PaymentsService.Infrastructure.Services.StripePaymentsServices;
@@ -36,20 +37,25 @@ public static class DependencyInjection
         services.Configure<GrpcSettings>(configuration.GetSection("GrpcSettings"));
         var grpcSettings = configuration.GetSection("GrpcSettings").Get<GrpcSettings>()!;
 
+        services.AddSingleton<AuthInterceptor>();
+        
         services.AddGrpcClient<Employers.Employers.EmployersClient>(options =>
         {
             options.Address = new Uri(grpcSettings.IdentityServiceAddress);
-        });
+        })
+        .AddInterceptor<AuthInterceptor>();
         
         services.AddGrpcClient<Freelancers.Freelancers.FreelancersClient>(options =>
         {
             options.Address = new Uri(grpcSettings.IdentityServiceAddress);
-        });
+        })
+        .AddInterceptor<AuthInterceptor>();
         
         services.AddGrpcClient<Projects.Projects.ProjectsClient>(options =>
         {
             options.Address = new Uri(grpcSettings.ProjectsServiceAddress);
-        });
+        })
+        .AddInterceptor<AuthInterceptor>();
 
         services.AddScoped<IEmployersGrpcClient, EmployersGrpcClient>();
         services.AddScoped<IFreelancersGrpcClient, FreelancersGrpcClient>();
