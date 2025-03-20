@@ -85,7 +85,8 @@ public class StripeEmployerPaymentsService(
     {
         var project = await projectsGrpcClient.GetProjectByIdAsync(projectId.ToString(), cancellationToken);
 
-        if (string.IsNullOrEmpty(project.PaymentIntentId)) throw new NotFoundException("This project does not have an attached Payment Intent.");
+        if (string.IsNullOrEmpty(project.PaymentIntentId)) 
+            throw new NotFoundException("This project does not have an attached Payment Intent.");
 
         var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(projectId.ToString(), cancellationToken);
 

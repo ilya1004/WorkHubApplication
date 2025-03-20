@@ -83,7 +83,7 @@ public static class DependencyInjection
         services.AddScoped<IUserContext, UserContext>();
         
         services.AddSingleton<ErrorHandlingInterceptor>();
-            
+        
         services.AddGrpc(options =>
         {
             options.EnableDetailedErrors = true;

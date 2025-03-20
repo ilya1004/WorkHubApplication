@@ -10,7 +10,11 @@ public class FreelancersGrpcService(IMediator mediator) : Freelancers.Freelancer
     public override async Task<GetFreelancerByIdResponse> GetFreelancerById(GetFreelancerByIdRequest request, ServerCallContext context)
     {
         var appUser = await mediator.Send(new GetUserByIdQuery(Guid.Parse(request.Id)));
-        
-        return new GetFreelancerByIdResponse { Id = appUser.Id.ToString(), StripeAccountId = appUser.FreelancerProfile?.StripeAccountId};
+
+        return new GetFreelancerByIdResponse
+        {
+            Id = appUser.Id.ToString(), 
+            StripeAccountId = appUser.FreelancerProfile?.StripeAccountId ?? string.Empty
+        };
     }
 }

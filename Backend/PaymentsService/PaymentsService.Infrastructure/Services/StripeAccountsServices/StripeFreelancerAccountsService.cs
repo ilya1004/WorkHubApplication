@@ -13,8 +13,8 @@ public class StripeFreelancerAccountsService(IFreelancersGrpcClient freelancersG
     public async Task<string?> CreateFreelancerAccountAsync(Guid userId, string email, CancellationToken cancellationToken)
     {
         var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(userId.ToString(), cancellationToken);
-
-        if (string.IsNullOrEmpty(freelancer.StripeAccountId)) throw new AlreadyExistsException("You account is already exists.");
+        
+        if (!string.IsNullOrEmpty(freelancer.StripeAccountId)) throw new AlreadyExistsException("You account is already exists.");
 
         var accountOptions = new AccountCreateOptions
         {
