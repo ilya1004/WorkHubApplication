@@ -41,7 +41,7 @@ public class StripeEmployerAccountsService(
         }
     }
 
-    public async Task<EmployerAccountModel?> GetEmployerAccountAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<EmployerAccountModel> GetEmployerAccountAsync(Guid userId, CancellationToken cancellationToken)
     {
         var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken);
 
@@ -51,6 +51,11 @@ public class StripeEmployerAccountsService(
         try
         {
             var customer = await _customerService.GetAsync(employer.EmployerCustomerId, cancellationToken: cancellationToken);
+
+            if (customer is null)
+            {
+                throw new NotFoundException($"Stripe account by user ID '{userId}' not found.");
+            }
 
             return new EmployerAccountModel
             {

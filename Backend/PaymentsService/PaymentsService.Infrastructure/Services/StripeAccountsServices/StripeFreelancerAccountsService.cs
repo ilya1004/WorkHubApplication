@@ -10,20 +10,60 @@ public class StripeFreelancerAccountsService(IFreelancersGrpcClient freelancersG
     private readonly AccountService _accountService = new();
     private readonly BalanceService _balanceService = new();
 
-    public async Task<string?> CreateFreelancerAccountAsync(Guid userId, string email, CancellationToken cancellationToken)
+    public async Task<string?> CreateFreelancerAccountAsync(Guid userId, string email, CancellationToken cancellationToken) 
     {
         var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(userId.ToString(), cancellationToken);
         
-        if (!string.IsNullOrEmpty(freelancer.StripeAccountId)) throw new AlreadyExistsException("You account is already exists.");
+        if (!string.IsNullOrEmpty(freelancer.StripeAccountId)) 
+            throw new AlreadyExistsException("Your account already exists.");
 
         var accountOptions = new AccountCreateOptions
         {
-            Type = "express",
+            Type = "custom",
             Email = email,
+            BusinessType = "individual",
+            Individual = new AccountIndividualOptions
+            {
+                FirstName = "John",
+                LastName = "Doe",
+                Email = email,
+                Phone = "+37052345678",
+                Address = new AddressOptions
+                {
+                    City = "Vilnius",
+                    Line1 = "Vilnius",
+                    Line2 = "Vilnius",
+                    Country = "LT",
+                    PostalCode = "01100"
+                },
+                Dob = new DobOptions
+                {
+                    Day = 1,
+                    Month = 1,
+                    Year = 1902
+                },
+            },
+            BusinessProfile = new AccountBusinessProfileOptions
+            {
+                Name = "WorkHub",
+                Url = "https://www.workhub.me",
+                Mcc = "7372"
+            },
             Capabilities = new AccountCapabilitiesOptions
             {
                 Transfers = new AccountCapabilitiesTransfersOptions { Requested = true },
                 CardPayments = new AccountCapabilitiesCardPaymentsOptions { Requested = true }
+            },
+            ExternalAccount = new AccountBankAccountOptions
+            {
+                AccountNumber = "LT121000011101001000",
+                Country = "LT",
+                Currency = "eur",
+            },
+            TosAcceptance = new AccountTosAcceptanceOptions
+            {
+                Date = DateTime.UtcNow,
+                Ip = "127.0.0.1"
             },
             Metadata = new Dictionary<string, string>
             {
@@ -35,19 +75,20 @@ public class StripeFreelancerAccountsService(IFreelancersGrpcClient freelancersG
         try
         {
             var account = await _accountService.CreateAsync(accountOptions, cancellationToken: cancellationToken);
+
             return account.Id;
         }
         catch (StripeException ex)
         {
             throw new BadRequestException($"Stripe error: {ex.Message}");
         }
-        catch
+        catch (Exception ex)
         {
-            throw new BadRequestException($"Could not create an account for freelancer with ID '{userId}'.");
+            throw new BadRequestException($"Could not create an account for freelancer with ID '{userId}'. Error: {ex.Message}");
         }
     }
 
-    public async Task<FreelancerAccountModel?> GetFreelancerAccountAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<FreelancerAccountModel> GetFreelancerAccountAsync(Guid userId, CancellationToken cancellationToken)
     {
         var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(userId.ToString(), cancellationToken);
 
@@ -61,6 +102,11 @@ public class StripeFreelancerAccountsService(IFreelancersGrpcClient freelancersG
                 new BalanceGetOptions(),
                 new RequestOptions { StripeAccount = freelancer.StripeAccountId },
                 cancellationToken);
+            
+            if (account is null || balance is null)
+            {
+                throw new NotFoundException($"Stripe account by user ID '{userId}' not found.");
+            }
 
             return new FreelancerAccountModel
             {
@@ -68,12 +114,7 @@ public class StripeFreelancerAccountsService(IFreelancersGrpcClient freelancersG
                 OwnerEmail = account.Email,
                 AccountType = account.Type,
                 Country = account.Country,
-                Balance = balance.Available.Select(b =>
-                    new BalanceAmountModel
-                    {
-                        Amount = b.Amount,
-                        Currency = b.Currency
-                    })
+                Balance = balance.Available.Where(x => x.Currency == "eur").Sum(x => x.Amount),
             };
         }
         catch (StripeException ex)

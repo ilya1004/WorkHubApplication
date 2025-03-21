@@ -50,7 +50,8 @@ public class StripeTransfersService(
             Customer = employer.EmployerCustomerId
         };
 
-        if (projectId is not null) chargeListOptions.TransferGroup = projectId.ToString();
+        if (projectId is not null) 
+            chargeListOptions.TransferGroup = projectId.ToString();
 
         try
         {
@@ -81,7 +82,8 @@ public class StripeTransfersService(
             Destination = freelancer.StripeAccountId
         };
 
-        if (projectId is not null) options.TransferGroup = projectId.ToString();
+        if (projectId is not null) 
+            options.TransferGroup = projectId.ToString();
 
         try
         {

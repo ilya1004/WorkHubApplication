@@ -11,6 +11,10 @@ public class EmployersGrpcService(IMediator mediator) : Employers.Employers.Empl
     {
         var appUser = await mediator.Send(new GetUserByIdQuery(Guid.Parse(request.Id)));
         
-        return new GetEmployerByIdResponse { Id = appUser.Id.ToString(), EmployerCustomerId = appUser.EmployerProfile?.StripeCustomerId };
+        return new GetEmployerByIdResponse
+        {
+            Id = appUser.Id.ToString(), 
+            EmployerCustomerId = appUser.EmployerProfile?.StripeCustomerId ?? string.Empty,
+        };
     }
 }

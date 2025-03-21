@@ -20,6 +20,11 @@ public class StripePaymentMethodsService(
         
         try
         {
+            var paymentMethod = await _paymentMethodService.GetAsync(paymentMethodId, cancellationToken: cancellationToken);
+
+            if (paymentMethod is null)
+                throw new NotFoundException($"Payment method with ID '{paymentMethodId}' not found.");
+            
             await _paymentMethodService.AttachAsync(
                 paymentMethodId,
                 new PaymentMethodAttachOptions
@@ -49,7 +54,7 @@ public class StripePaymentMethodsService(
         {
             var paymentMethods = await _customerPaymentMethodService.ListAsync(
                 employer.EmployerCustomerId, cancellationToken: cancellationToken);
-
+            
             return paymentMethods.Data.Select(mapper.Map<PaymentMethodModel>);
         }
         catch (StripeException ex)
@@ -68,15 +73,17 @@ public class StripePaymentMethodsService(
         
         if (string.IsNullOrEmpty(employer.EmployerCustomerId)) 
             throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
-
-        var paymentMethods = await _customerPaymentMethodService.ListAsync(
-            employer.EmployerCustomerId, cancellationToken: cancellationToken);
-
-        if (paymentMethods.All(pm => pm.Id != paymentMethodId))
-            throw new NotFoundException($"You do not have saved Payment method with ID '{userId}'.");
-
+        
         try
         {
+            var paymentMethods = await _customerPaymentMethodService.ListAsync(
+                employer.EmployerCustomerId, cancellationToken: cancellationToken);
+
+            var paymentMethod = paymentMethods.FirstOrDefault(pm => pm.Id == paymentMethodId);
+
+            if (paymentMethod is null)
+                throw new NotFoundException($"You do not have a saved Payment method with ID '{paymentMethodId}'.");
+            
             await _paymentMethodService.DetachAsync(paymentMethodId, cancellationToken: cancellationToken);
         }
         catch (StripeException ex)
