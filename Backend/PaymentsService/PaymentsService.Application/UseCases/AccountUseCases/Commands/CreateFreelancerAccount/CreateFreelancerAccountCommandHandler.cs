@@ -14,7 +14,6 @@ public class CreateFreelancerAccountCommandHandler(
 
         var freelancerAccountId = await freelancerAccountsService.CreateFreelancerAccountAsync(
             userId, userEmail, cancellationToken);
-        Console.WriteLine(freelancerAccountId);
         // This data will be saved to Identity Service via Kafka
     }
 }
