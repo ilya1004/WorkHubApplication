@@ -7,11 +7,11 @@ ENV ASPNETCORE_ENVIRONMENT=Release
 RUN mkdir /https
 
 # Настраиваем HTTPS
-ENV ASPNETCORE_URLS="https://+:7082;http://+:5082"
+ENV ASPNETCORE_URLS="https://+:7080;http://+:5080"
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path="/https/aspnetapp.pfx"
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password="HttpsPassword"
 
-EXPOSE 5082 7082
+EXPOSE 5080 7080
 
 # Сборка и публикация
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -19,20 +19,20 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Копируем csproj и восстанавливаем зависимости
-COPY ["Backend/ChatService/ChatService.API/ChatService.API.csproj", "ChatService.API/"]
-RUN dotnet restore "ChatService.API/ChatService.API.csproj"
+COPY ["Backend/IdentityService/IdentityService.API/IdentityService.API.csproj", "IdentityService.API/"]
+RUN dotnet restore "IdentityService.API/IdentityService.API.csproj"
 
 # Копируем исходники
-COPY Backend/ChatService ChatService/
-WORKDIR "/src/ChatService/ChatService.API"
-RUN dotnet build "ChatService.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+COPY Backend/IdentityService IdentityService/
+WORKDIR "/src/IdentityService/IdentityService.API"
+RUN dotnet build "IdentityService.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "ChatService.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "IdentityService.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Финальный образ
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ChatService.API.dll"]
+ENTRYPOINT ["dotnet", "IdentityService.API.dll"]

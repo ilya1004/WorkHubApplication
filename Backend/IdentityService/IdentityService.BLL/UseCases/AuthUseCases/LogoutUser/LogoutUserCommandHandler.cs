@@ -1,4 +1,4 @@
-﻿using IdentityService.DAL.Abstractions.UserContext;
+﻿using IdentityService.BLL.Abstractions.UserContext;
 
 namespace IdentityService.BLL.UseCases.AuthUseCases.LogoutUser;
 

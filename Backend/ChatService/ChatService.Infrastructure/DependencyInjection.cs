@@ -42,6 +42,10 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, AppUnitOfWork>();
         services.AddScoped<IDbInitializer, DbInitializer>();
         
+        services.AddHealthChecks()
+            .AddMongoDb(_ => new MongoClient(mongoSettings.ConnectionString))
+            .AddAzureBlobStorage(_ => new BlobServiceClient(azuriteSettings.ConnectionString));
+        
         return services;
     }
 }

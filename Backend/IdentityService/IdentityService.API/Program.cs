@@ -2,9 +2,11 @@ using IdentityService.API;
 using IdentityService.API.Middlewares;
 using IdentityService.BLL;
 using IdentityService.DAL;
-using IdentityService.DAL.Services.DbInitializer;
 using System.Text.Json.Serialization;
-using IdentityService.DAL.Abstractions.DbInitializer;
+using HealthChecks.UI.Client;
+using IdentityService.BLL.Abstractions.AzuriteStartupService;
+using IdentityService.DAL.Abstractions.DbStartupService;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -32,13 +34,22 @@ if (app.Environment.IsDevelopment())
 
 using (var scope = app.Services.CreateScope())
 {
-    var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
-    await dbInitializer.InitializeDb();
+    var azuriteStartupService = scope.ServiceProvider.GetRequiredService<IAzuriteStartupService>();
+    await azuriteStartupService.CreateContainerIfNotExistAsync();
+    
+    var dbStartupService = scope.ServiceProvider.GetRequiredService<IDbStartupService>();
+    await dbStartupService.MakeMigrationsAsync();
+    await dbStartupService.InitializeDb();
 }
 
 app.UseRouting();
 
 app.UseHttpsRedirection();
+
+app.MapHealthChecks("health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 

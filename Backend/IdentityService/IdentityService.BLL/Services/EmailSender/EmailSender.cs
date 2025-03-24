@@ -1,4 +1,5 @@
 ﻿using FluentEmail.Core;
+using IdentityService.BLL.Abstractions.EmailSender;
 
 namespace IdentityService.BLL.Services.EmailSender;
 

@@ -1,9 +1,9 @@
-﻿using IdentityService.DAL.Abstractions.DbInitializer;
+﻿using IdentityService.DAL.Abstractions.DbStartupService;
 using IdentityService.DAL.Abstractions.RedisService;
 using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Data;
 using IdentityService.DAL.Repositories;
-using IdentityService.DAL.Services.DbInitializer;
+using IdentityService.DAL.Services.DbStartupService;
 using IdentityService.DAL.Services.RedisService;
 using IdentityService.DAL.Settings;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +28,11 @@ public static class DependencyInjection
         
         services.AddScoped<IUnitOfWork, AppUnitOfWork>();
         services.AddScoped<ICachedService, RedisService>();
-        services.AddScoped<IDbInitializer, DbInitializer>();
+        services.AddScoped<IDbStartupService, DbStartupService>();
+
+        services.AddHealthChecks()
+            .AddNpgSql(configuration.GetConnectionString("PostgresConnection")!)
+            .AddRedis(configuration.GetConnectionString("RedisConnection")!);
         
         return services;
     }

@@ -1,6 +1,6 @@
 using System.Security.Claims;
+using IdentityService.BLL.Abstractions.UserContext;
 using IdentityService.BLL.Exceptions;
-using IdentityService.DAL.Abstractions.UserContext;
 
 namespace IdentityService.API.Services;
 
@@ -13,14 +13,5 @@ public class UserContext(IHttpContextAccessor httpContextAccessor) : IUserContex
         if (userId is null) throw new UnauthorizedException("You are not authorized to access this resource.");
 
         return Guid.Parse(userId);
-    }
-
-    public string GetUserRole()
-    {
-        var userRole = httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Role);
-
-        if (userRole is null) throw new UnauthorizedException("You are not authorized to access this resource.");
-
-        return userRole;
     }
 }

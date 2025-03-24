@@ -1,16 +1,29 @@
-﻿using IdentityService.DAL.Abstractions.DbInitializer;
+using IdentityService.DAL.Abstractions.DbStartupService;
 using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Constants;
+using IdentityService.DAL.Data;
 using IdentityService.DAL.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace IdentityService.DAL.Services.DbInitializer;
+namespace IdentityService.DAL.Services.DbStartupService;
 
-public class DbInitializer(
+public class DbStartupService(
+    IServiceProvider serviceProvider,
     RoleManager<IdentityRole<Guid>> roleManager,
     IUnitOfWork unitOfWork,
-    UserManager<AppUser> userManager) : IDbInitializer
+    UserManager<AppUser> userManager) : IDbStartupService
 {
+    public async Task MakeMigrationsAsync()
+    {
+        using var scope = serviceProvider.CreateScope();
+
+        await using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        await dbContext.Database.MigrateAsync();
+    }
+    
     public async Task InitializeDb()
     {
         if (await roleManager.FindByNameAsync(AppRoles.AdminRole) is null)
@@ -69,4 +82,3 @@ public class DbInitializer(
         await unitOfWork.SaveAllAsync();
     }
 }
-// This is only a test data, which initialization will be moved to HasData() method lately

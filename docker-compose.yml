@@ -1,3 +1,7 @@
+networks:
+  workhub_network:
+    driver: bridge
+
 services:
   redis:
     image: redis:latest
@@ -6,9 +10,9 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    environment:
-      - REDIS_PASSWORD=redispass
     restart: unless-stopped
+    networks:
+      - workhub_network
 
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
@@ -18,6 +22,8 @@ services:
     volumes:
       - azurite_data:/data
     restart: unless-stopped
+    networks:
+      - workhub_network
 
   mailhog:
     image: mailhog/mailhog
@@ -28,6 +34,22 @@ services:
     volumes:
       - mailhog_data:/data
     restart: unless-stopped
+    networks:
+      - workhub_network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: mongopass
+    restart: unless-stopped
+    networks:
+      - workhub_network
 
   workhub_apigateway:
     build:
@@ -37,15 +59,66 @@ services:
     ports:
       - "5000:5000"
       - "7000:7000"
-    environment:
-      ASPNETCORE_URLS: "https://+:7000;http://+:5000"
-      ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
-      ASPNETCORE_Kestrel__Certificates__Default__Password: "HttpsPassword"
     volumes:
       - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     restart: unless-stopped
+    networks:
+      - workhub_network
+
+  workhub_identityservice:
+    build:
+      context: .
+      dockerfile: Backend/IdentityService/Dockerfile
+    container_name: workhub_identityservice
+    ports:
+      - "5080:5080"
+      - "7080:7080"
+    volumes:
+      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    restart: unless-stopped
+    networks:
+      - workhub_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./DockerConfig/InitPostgresDb:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: passpass
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d IdentityServiceDb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - workhub_network
+
+  workhub_chatservice:
+    build:
+      context: .
+      dockerfile: Backend/ChatService/Dockerfile
+    container_name: workhub_chatservice
+    ports:
+      - "5082:5082"
+      - "7082:7082"
+    volumes:
+      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    restart: unless-stopped
+    networks:
+      - workhub_network
 
 volumes:
   redis_data:
   azurite_data:
   mailhog_data:
+  mongodb_data:
+  postgres_data:

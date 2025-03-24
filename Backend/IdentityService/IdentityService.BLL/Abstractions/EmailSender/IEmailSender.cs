@@ -1,4 +1,4 @@
-﻿namespace IdentityService.BLL.Services.EmailSender;
+﻿namespace IdentityService.BLL.Abstractions.EmailSender;
 
 public interface IEmailSender
 {

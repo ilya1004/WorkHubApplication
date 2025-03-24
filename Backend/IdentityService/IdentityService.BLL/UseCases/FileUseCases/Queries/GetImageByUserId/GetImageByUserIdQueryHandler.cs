@@ -1,4 +1,5 @@
-﻿using IdentityService.BLL.DTOs;
+﻿using IdentityService.BLL.Abstractions.BlobService;
+using IdentityService.BLL.DTOs;
 using IdentityService.BLL.Services.BlobService;
 
 namespace IdentityService.BLL.UseCases.FileUseCases.Queries.GetImageByUserId;

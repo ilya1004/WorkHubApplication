@@ -1,4 +1,6 @@
 using ApiGateway;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -12,7 +14,10 @@ var app = builder.Build();
 
 app.UseRateLimiter();
 
-app.MapHealthChecks("health");
+app.MapHealthChecks("health", new HealthCheckOptions()
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

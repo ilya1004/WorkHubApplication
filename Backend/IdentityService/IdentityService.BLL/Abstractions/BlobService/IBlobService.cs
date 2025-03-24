@@ -1,6 +1,6 @@
 ﻿using IdentityService.BLL.DTOs;
 
-namespace IdentityService.BLL.Services.BlobService;
+namespace IdentityService.BLL.Abstractions.BlobService;
 
 public interface IBlobService
 {
