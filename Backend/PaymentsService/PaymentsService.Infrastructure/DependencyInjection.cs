@@ -1,9 +1,11 @@
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using PaymentsService.Domain.Abstractions.AccountsServices;
 using PaymentsService.Domain.Abstractions.PaymentsServices;
 using PaymentsService.Domain.Abstractions.TransfersServices;
+using PaymentsService.Infrastructure.HealthChecks;
 using PaymentsService.Infrastructure.Services.StripeAccountsServices;
 using PaymentsService.Infrastructure.Services.StripePaymentsServices;
 using PaymentsService.Infrastructure.Services.StripeTransfersServices;
@@ -27,6 +29,9 @@ public static class DependencyInjection
         services.AddScoped<IEmployerPaymentsService, StripeEmployerPaymentsService>();
         services.AddScoped<IPaymentMethodsService, StripePaymentMethodsService>();
         services.AddScoped<ITransfersService, StripeTransfersService>();
+
+        services.AddHealthChecks()
+            .AddCheck<StripeHealthCheck>("stipe", HealthStatus.Unhealthy);
 
         return services;
     }

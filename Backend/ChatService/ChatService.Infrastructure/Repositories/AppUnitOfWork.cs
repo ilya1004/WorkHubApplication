@@ -19,5 +19,4 @@ public class AppUnitOfWork : IUnitOfWork
 
     public IMessagesRepository MessagesRepository => _messages.Value;
     public IChatsRepository ChatRepository => _chats.Value;
-    
 }

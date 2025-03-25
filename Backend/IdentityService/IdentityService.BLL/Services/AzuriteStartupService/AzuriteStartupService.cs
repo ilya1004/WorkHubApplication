@@ -12,6 +12,9 @@ public class AzuriteStartupService(IConfiguration configuration, BlobServiceClie
         var containerName = configuration["Azurite:ImagesContainerName"];
         var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
 
-        await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob, metadata: null);
+        if (!await containerClient.ExistsAsync())
+        {
+            await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob, metadata: null);    
+        }
     }
 }

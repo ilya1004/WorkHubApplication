@@ -7,12 +7,12 @@ ENV ASPNETCORE_ENVIRONMENT=Release
 RUN mkdir /https
 
 # Настраиваем HTTPS
-ENV HTTP_PORTS=5000
-ENV HTTPS_PORTS=7000
+ENV HTTP_PORTS=5083
+ENV HTTPS_PORTS=7083
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path="/https/aspnetapp.pfx"
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password="HttpsPassword"
 
-EXPOSE 5000 7000
+EXPOSE 5083 7083
 
 # Сборка и публикация
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -20,20 +20,20 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Копируем csproj и восстанавливаем зависимости
-COPY ["Backend/ApiGateway/ApiGateway/ApiGateway.csproj", "ApiGateway/"]
-RUN dotnet restore "ApiGateway/ApiGateway.csproj"
+COPY ["Backend/PaymentsService/PaymentsService.API/PaymentsService.API.csproj", "PaymentsService.API/"]
+RUN dotnet restore "PaymentsService.API/PaymentsService.API.csproj"
 
 # Копируем исходники
-COPY Backend/ApiGateway ApiGateway/
-WORKDIR "/src/ApiGateway/ApiGateway"
-RUN dotnet build "ApiGateway.csproj" -c $BUILD_CONFIGURATION -o /app/build
+COPY Backend/PaymentsService PaymentsService/
+WORKDIR "/src/PaymentsService/PaymentsService.API"
+RUN dotnet build "PaymentsService.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./ApiGateway.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "PaymentsService.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Финальный образ
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ApiGateway.dll"]
+ENTRYPOINT ["dotnet", "PaymentsService.API.dll"]

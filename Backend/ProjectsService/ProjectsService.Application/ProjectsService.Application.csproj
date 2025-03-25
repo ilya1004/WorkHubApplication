@@ -19,8 +19,4 @@
     <ProjectReference Include="..\ProjectsService.Domain\ProjectsService.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Abstractions\" />
-  </ItemGroup>
-
 </Project>

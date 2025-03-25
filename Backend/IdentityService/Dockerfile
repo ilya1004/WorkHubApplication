@@ -7,7 +7,8 @@ ENV ASPNETCORE_ENVIRONMENT=Release
 RUN mkdir /https
 
 # Настраиваем HTTPS
-ENV ASPNETCORE_URLS="https://+:7080;http://+:5080"
+ENV HTTP_PORTS=5080
+ENV HTTPS_PORTS=7080
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path="/https/aspnetapp.pfx"
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password="HttpsPassword"
 

@@ -19,9 +19,7 @@ public class SmtpHealthCheck(IConfiguration configuration) : IHealthCheck
             
             await tcpClient.ConnectAsync(host, port, cancellationToken);
             
-            return tcpClient.Connected 
-                ? HealthCheckResult.Healthy("SMTP server is reachable") 
-                : HealthCheckResult.Unhealthy("SMTP server connection failed");
+            return tcpClient.Connected ? HealthCheckResult.Healthy() : HealthCheckResult.Unhealthy();
         }
         catch (Exception ex)
         {

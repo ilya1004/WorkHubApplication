@@ -30,16 +30,17 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseRouting();
-
-app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
-
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseHttpsRedirection();
 
 app.MapHealthChecks("health", new HealthCheckOptions()
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<ChatHub>("hubs/chat");

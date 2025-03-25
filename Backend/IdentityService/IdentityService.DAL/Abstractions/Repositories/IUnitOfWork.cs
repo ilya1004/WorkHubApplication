@@ -1,6 +1,4 @@
-﻿using IdentityService.DAL.Entities;
-
-namespace IdentityService.DAL.Abstractions.Repositories;
+﻿namespace IdentityService.DAL.Abstractions.Repositories;
 
 public interface IUnitOfWork
 {

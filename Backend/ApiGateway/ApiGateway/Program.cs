@@ -12,7 +12,9 @@ services.AddHealthChecks();
 
 var app = builder.Build();
 
+app.UseRouting();
 app.UseRateLimiter();
+app.UseHttpsRedirection();
 
 app.MapHealthChecks("health", new HealthCheckOptions()
 {

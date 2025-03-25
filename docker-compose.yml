@@ -79,8 +79,21 @@ services:
     networks:
       - workhub_network
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
+
+  workhub_projectsservice:
+    build:
+      context: .
+      dockerfile: Backend/ProjectsService/Dockerfile
+    container_name: workhub_projectsservice
+    ports:
+      - "5081:5081"
+      - "7081:7081"
+    volumes:
+      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    restart: unless-stopped
+    networks:
+      - workhub_network
 
   postgres:
     image: postgres:latest
@@ -94,11 +107,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: passpass
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d IdentityServiceDb"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
     networks:
       - workhub_network
 
@@ -110,6 +118,20 @@ services:
     ports:
       - "5082:5082"
       - "7082:7082"
+    volumes:
+      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    restart: unless-stopped
+    networks:
+      - workhub_network
+  
+  workhub_paymentsservice:
+    build:
+      context: .
+      dockerfile: Backend/PaymentsService/Dockerfile
+    container_name: workhub_paymentsservice
+    ports:
+      - "5083:5083"
+      - "7083:7083"
     volumes:
       - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     restart: unless-stopped

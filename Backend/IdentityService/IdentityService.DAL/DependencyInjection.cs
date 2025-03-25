@@ -18,14 +18,11 @@ public static class DependencyInjection
     {
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("PostgresConnection")));
-        
-        services.AddStackExchangeRedisCache(options =>
-        {
-            options.Configuration = configuration.GetConnectionString("RedisConnection");
-        });
+
+        services.AddStackExchangeRedisCache(options => { options.Configuration = configuration.GetConnectionString("RedisConnection"); });
 
         services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
-        
+
         services.AddScoped<IUnitOfWork, AppUnitOfWork>();
         services.AddScoped<ICachedService, RedisService>();
         services.AddScoped<IDbStartupService, DbStartupService>();
@@ -33,7 +30,7 @@ public static class DependencyInjection
         services.AddHealthChecks()
             .AddNpgSql(configuration.GetConnectionString("PostgresConnection")!)
             .AddRedis(configuration.GetConnectionString("RedisConnection")!);
-        
+
         return services;
     }
 }

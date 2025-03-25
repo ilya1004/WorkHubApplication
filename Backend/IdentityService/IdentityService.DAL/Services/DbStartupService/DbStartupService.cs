@@ -2,9 +2,6 @@ using IdentityService.DAL.Abstractions.DbStartupService;
 using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Constants;
 using IdentityService.DAL.Data;
-using IdentityService.DAL.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IdentityService.DAL.Services.DbStartupService;
@@ -23,7 +20,7 @@ public class DbStartupService(
 
         await dbContext.Database.MigrateAsync();
     }
-    
+
     public async Task InitializeDb()
     {
         if (await roleManager.FindByNameAsync(AppRoles.AdminRole) is null)
