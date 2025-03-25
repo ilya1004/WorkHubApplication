@@ -26,8 +26,7 @@ public class PaymentsController(
     [HttpPost]
     [Route("pay-for-project/{projectId:guid}/with-method/{paymentMethodId}")]
     [Authorize(Policy = AuthPolicies.EmployerPolicy)]
-    public async Task<IActionResult> CreatePaymentByProject([FromRoute] Guid projectId,
-        [FromRoute] string paymentMethodId,
+    public async Task<IActionResult> CreatePaymentByProject([FromRoute] Guid projectId, [FromRoute] string paymentMethodId,
         CancellationToken cancellationToken = default)
     {
         await mediator.Send(new PayForProjectWithSavedMethodCommand(projectId, paymentMethodId), cancellationToken);
@@ -38,8 +37,7 @@ public class PaymentsController(
     [HttpPost]
     [Route("confirm-payment-for-project/{projectId:guid}")]
     [Authorize(Policy = AuthPolicies.EmployerPolicy)]
-    public async Task<IActionResult> ConfirmPayment([FromRoute] Guid projectId,
-        CancellationToken cancellationToken = default)
+    public async Task<IActionResult> ConfirmPayment([FromRoute] Guid projectId, CancellationToken cancellationToken = default)
     {
         await mediator.Send(new ConfirmPaymentForProjectCommand(projectId), cancellationToken);
 

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package freelancers;
+
+service Freelancers {
+  rpc GetFreelancerById (GetFreelancerByIdRequest) returns (GetFreelancerByIdResponse);
+}
+
+message GetFreelancerByIdRequest {
+  string id = 1;
+}
+
+message GetFreelancerByIdResponse {
+  string id = 1;
+  optional string stripe_account_id = 2;
+}

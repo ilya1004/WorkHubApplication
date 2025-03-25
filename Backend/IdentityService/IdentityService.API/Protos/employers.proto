@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package employers;
+
+service Employers {
+  rpc GetEmployerById (GetEmployerByIdRequest) returns (GetEmployerByIdResponse);
+}
+
+message GetEmployerByIdRequest {
+  string id = 1;
+}
+
+message GetEmployerByIdResponse {
+  string id = 1;
+  optional string employer_customer_id = 2; 
+}

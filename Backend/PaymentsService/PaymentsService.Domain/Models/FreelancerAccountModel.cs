@@ -6,5 +6,5 @@ public record FreelancerAccountModel
     public string OwnerEmail { get; init; }
     public string AccountType { get; init; }
     public string Country { get; init; }
-    public IEnumerable<BalanceAmountModel> Balance { get; init; }
+    public long Balance { get; init; }
 }

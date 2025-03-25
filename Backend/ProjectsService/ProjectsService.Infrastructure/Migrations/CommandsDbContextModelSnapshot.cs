@@ -139,8 +139,9 @@ namespace ProjectsService.Infrastructure.Migrations
                     b.Property<Guid?>("FreelancerId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("PaymentId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("PaymentIntentId")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Title")
                         .IsRequired()

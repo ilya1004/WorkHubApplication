@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Entities;
 using IdentityService.DAL.Settings;
@@ -13,6 +14,7 @@ public class CachedUsersRepository(
     IDistributedCache distributedCache,
     IOptions<CacheOptions> options) : IUsersRepository
 {
+    private readonly JsonSerializerOptions _jsonOptions = new() { ReferenceHandler = ReferenceHandler.IgnoreCycles };
     public async Task<AppUser?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default, 
         params Expression<Func<AppUser, object>>[]? includesProperties)
     {
@@ -21,14 +23,14 @@ public class CachedUsersRepository(
 
         if (cachedUser != null)
         {
-            return JsonSerializer.Deserialize<AppUser>(cachedUser);
+            return JsonSerializer.Deserialize<AppUser>(cachedUser, _jsonOptions);
         }
 
         var user = await usersRepository.GetByIdAsync(id, cancellationToken, includesProperties);
 
         if (user != null)
         {
-            await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(user), new DistributedCacheEntryOptions
+            await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(user, _jsonOptions), new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(options.Value.RecordExpirationTimeInMinutes)
             }, cancellationToken);

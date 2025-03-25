@@ -12,6 +12,6 @@ public class Project : Entity
     public ICollection<FreelancerApplication> FreelancerApplications { get; set; }
     public Guid EmployerId { get; set; }
     public Guid? FreelancerId { get; set; }
-    public Guid? PaymentId { get; set; }
+    public string? PaymentIntentId { get; set; }
     public Lifecycle Lifecycle { get; set; }
 }

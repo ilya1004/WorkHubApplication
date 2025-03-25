@@ -15,8 +15,6 @@ public class GetEmployerAccountQueryHandler(
 
         var employerAccount = await employerAccountsService.GetEmployerAccountAsync(userId, cancellationToken);
 
-        if (employerAccount is null) throw new NotFoundException($"Employer account by owner ID '{userId}' not found");
-
         return employerAccount;
     }
 }
