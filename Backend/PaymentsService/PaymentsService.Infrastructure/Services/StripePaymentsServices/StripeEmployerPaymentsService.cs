@@ -63,7 +63,9 @@ public class StripeEmployerPaymentsService(
         try
         {
             var paymentIntent = await _paymentIntentService.CreateAsync(options, cancellationToken: cancellationToken);
-            // This data will be sent to Projects Service via gRPC
+            
+            
+            
         }
         catch (StripeException ex)
         {
@@ -116,21 +118,18 @@ public class StripeEmployerPaymentsService(
             throw new BadRequestException($"Could not confirm Payment for project with ID '{projectId}'.");
         }
     }
-
-    // This method will be called from Projects Service only via gRPC
-    public async Task CancelPaymentForProjectAsync(Guid userId, Guid projectId, CancellationToken cancellationToken)
+    
+    public async Task CancelPaymentForProjectAsync(string paymentIntentId, CancellationToken cancellationToken)
     {
-        var project = new ProjectDto(); // This data will be requested from Projects Service via gRPC
+        if (paymentIntentId is null) throw new NotFoundException("Payment Intent ID was not provided.");
 
-        if (project.PaymentIntentId is null) throw new NotFoundException("This project does not have an attached Payment Intent.");
+        var paymentIntent = await _paymentIntentService.GetAsync(paymentIntentId, cancellationToken: cancellationToken);
 
-        var paymentIntent = await _paymentIntentService.GetAsync(project.PaymentIntentId, cancellationToken: cancellationToken);
-
-        if (paymentIntent is null) throw new NotFoundException($"Payment Intent with ID '{project.PaymentIntentId}' not found.");
+        if (paymentIntent is null) throw new NotFoundException($"Payment Intent with ID '{paymentIntentId}' not found.");
 
         try
         {
-            await _paymentIntentService.CancelAsync(project.PaymentIntentId, cancellationToken: cancellationToken);
+            await _paymentIntentService.CancelAsync(paymentIntentId, cancellationToken: cancellationToken);
         }
         catch (StripeException ex)
         {
@@ -138,7 +137,7 @@ public class StripeEmployerPaymentsService(
         }
         catch
         {
-            throw new BadRequestException($"Could not cancel Payment for project with ID '{projectId}'.");
+            throw new BadRequestException($"Could not cancel Payment Intent with ID '{paymentIntentId}'.");
         }
     }
 }

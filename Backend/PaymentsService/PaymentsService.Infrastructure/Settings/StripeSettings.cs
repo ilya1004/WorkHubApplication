@@ -2,6 +2,6 @@ namespace PaymentsService.Infrastructure.Settings;
 
 public class StripeSettings
 {
-    public required string SecretKey { get; set; }
-    public required string PublishableKey { get; set; }
+    public required string SecretKey { get; init; }
+    public required string PublishableKey { get; init; }
 }

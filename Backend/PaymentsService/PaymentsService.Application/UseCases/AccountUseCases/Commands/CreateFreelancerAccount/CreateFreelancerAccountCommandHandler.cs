@@ -1,11 +1,13 @@
 using PaymentsService.Domain.Abstractions.AccountsServices;
+using PaymentsService.Domain.Abstractions.KafkaProducerServices;
 using PaymentsService.Domain.Abstractions.UserContext;
 
 namespace PaymentsService.Application.UseCases.AccountUseCases.Commands.CreateFreelancerAccount;
 
 public class CreateFreelancerAccountCommandHandler(
     IFreelancerAccountsService freelancerAccountsService,
-    IUserContext userContext) : IRequestHandler<CreateFreelancerAccountCommand>
+    IUserContext userContext,
+    IAccountsProducerService accountsProducerService) : IRequestHandler<CreateFreelancerAccountCommand>
 {
     public async Task Handle(CreateFreelancerAccountCommand request, CancellationToken cancellationToken)
     {
@@ -14,6 +16,7 @@ public class CreateFreelancerAccountCommandHandler(
 
         var freelancerAccountId = await freelancerAccountsService.CreateFreelancerAccountAsync(
             userId, userEmail, cancellationToken);
-        // This data will be saved to Identity Service via gRPC
+
+        await accountsProducerService.SaveFreelancerAccountId(freelancerAccountId, cancellationToken);
     }
 }
