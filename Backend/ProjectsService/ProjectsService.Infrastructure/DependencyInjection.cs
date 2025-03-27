@@ -21,6 +21,11 @@ public static class DependencyInjection
             options.UseNpgsql(configuration.GetConnectionString("PostgresConnectionReplicaDb")));
 
         services.AddScoped<IUnitOfWork, AppUnitOfWork>();
+
+        var q = configuration.GetConnectionString("PostgresConnectionHangfireDb");
+
+        Console.WriteLine("PostgresConnectionHangfireDb:");
+        Console.WriteLine(q);
         
         services.AddHangfire(config => 
             config.UsePostgreSqlStorage(options => 
@@ -39,7 +44,9 @@ public static class DependencyInjection
         services.AddScoped<IBackgroundJobsInitializer, HangfireJobsInitializer>();
         
         services.AddHealthChecks()
-            .AddNpgSql(configuration.GetConnectionString("PostgresConnectionHangfireDb")!, name: "postgres-hangfire")
+            .AddNpgSql(configuration.GetConnectionString("PostgresConnectionPrimaryDb")!, name: "postgres-primary")
+            .AddNpgSql(configuration.GetConnectionString("PostgresConnectionReplicaDb")!, name: "postgres-replica")
+            // .AddNpgSql(configuration.GetConnectionString("PostgresConnectionHangfireDb")!, name: "postgres-hangfire")
             .AddRedis(configuration.GetConnectionString("RedisConnection")!);
         
         return services;

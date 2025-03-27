@@ -43,7 +43,6 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseRouting();
-app.UseHttpsRedirection();
 
 app.MapHealthChecks("health", new HealthCheckOptions
 {

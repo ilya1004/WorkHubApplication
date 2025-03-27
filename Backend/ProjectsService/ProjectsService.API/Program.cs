@@ -37,11 +37,10 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var jobInitializer = scope.ServiceProvider.GetRequiredService<IBackgroundJobsInitializer>();
-    jobInitializer.StartBackgroundJobs();
+    // jobInitializer.StartBackgroundJobs();
 }
 
 app.UseRouting();
-app.UseHttpsRedirection();
 
 app.MapHealthChecks("health", new HealthCheckOptions
 {

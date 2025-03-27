@@ -50,6 +50,71 @@ services:
     restart: unless-stopped
     networks:
       - workhub_network
+  
+  postgres_identity:
+    image: postgres:latest
+    container_name: postgres_identity
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_identity_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: passpass
+      POSTGRES_DB: IdentityServiceDb
+    restart: unless-stopped
+    networks:
+      - workhub_network
+
+  postgres_primary:
+    image: postgres:latest
+    container_name: postgres_primary
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_primary_data:/var/lib/postgresql/data
+      - ./DockerConfig/InitPostgresPrimaryDb/init-primary.sh:/docker-entrypoint-initdb.d/init-primary.sh
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: passpass_primary
+      POSTGRES_DB: ProjectsServiceDb
+    restart: unless-stopped
+    networks:
+      - workhub_network
+
+  postgres_replica:
+    image: postgres:latest
+    container_name: postgres_replica
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_replica_data:/var/lib/postgresql/data
+      - ./DockerConfig/InitPostgresReplicaDb/init-replica.sh:/docker-entrypoint-initdb.d/init-replica.sh
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: passpass_replica
+      POSTGRES_DB: ProjectsServiceDb
+    depends_on:
+      - postgres_primary
+    restart: unless-stopped
+    networks:
+      - workhub_network
+    command: ["/bin/bash", "/docker-entrypoint-initdb.d/init-replica.sh"]
+  
+  postgres_hangfire:
+    image: postgres:latest
+    container_name: postgres_hangfire
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_hangfire_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: passpass
+      POSTGRES_DB: ProjectsServiceHangfireDb
+    restart: unless-stopped
+    networks:
+      - workhub_network
 
   workhub_apigateway:
     build:
@@ -79,7 +144,7 @@ services:
     networks:
       - workhub_network
     depends_on:
-      - postgres
+      - postgres_identity
 
   workhub_projectsservice:
     build:
@@ -94,21 +159,10 @@ services:
     restart: unless-stopped
     networks:
       - workhub_network
-
-  postgres:
-    image: postgres:latest
-    container_name: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./DockerConfig/InitPostgresDb:/docker-entrypoint-initdb.d
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: passpass
-    restart: unless-stopped
-    networks:
-      - workhub_network
+    depends_on:
+      - postgres_hangfire
+      - postgres_primary
+      - postgres_replica
 
   workhub_chatservice:
     build:
@@ -123,6 +177,8 @@ services:
     restart: unless-stopped
     networks:
       - workhub_network
+    depends_on:
+      - mongodb
   
   workhub_paymentsservice:
     build:
@@ -143,4 +199,7 @@ volumes:
   azurite_data:
   mailhog_data:
   mongodb_data:
-  postgres_data:
+  postgres_identity_data:
+  postgres_hangfire_data:
+  postgres_primary_data:
+  postgres_replica_data:
