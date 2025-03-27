@@ -3,6 +3,48 @@ networks:
     driver: bridge
 
 services:
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    volumes:
+      - mailhog_data:/data
+    restart: unless-stopped
+    networks:
+      - workhub_network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+    restart: unless-stopped
+    networks:
+      - workhub_network
+  
+  kafka:
+    image: confluentinc/cp-kafka
+    container_name: kafka
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+    depends_on:
+      - zookeeper
+    restart: unless-stopped
+    networks:
+      - workhub_network
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+  
   redis:
     image: redis:latest
     container_name: redis
@@ -21,18 +63,6 @@ services:
       - "10000:10000"
     volumes:
       - azurite_data:/data
-    restart: unless-stopped
-    networks:
-      - workhub_network
-
-  mailhog:
-    image: mailhog/mailhog
-    container_name: mailhog
-    ports:
-      - "1025:1025"
-      - "8025:8025"
-    volumes:
-      - mailhog_data:/data
     restart: unless-stopped
     networks:
       - workhub_network
@@ -181,6 +211,9 @@ services:
     restart: unless-stopped
     networks:
       - workhub_network
+    depends_on:
+      kafka:
+        condition: service_healthy
 
 volumes:
   redis_data:

@@ -1,3 +1,4 @@
+using PaymentsService.Domain.Abstractions.KafkaProducerServices;
 using PaymentsService.Domain.Abstractions.PaymentsServices;
 using PaymentsService.Domain.Abstractions.TransfersServices;
 using PaymentsService.Domain.Models;
@@ -7,7 +8,8 @@ namespace PaymentsService.Infrastructure.Services.StripePaymentsServices;
 
 public class StripeEmployerPaymentsService(
     IMapper mapper,
-    ITransfersService transfersService) : IEmployerPaymentsService
+    ITransfersService transfersService,
+    IPaymentsProducerService paymentsProducerService) : IEmployerPaymentsService
 {
     private readonly CustomerPaymentMethodService _customerPaymentMethodService = new();
     private readonly SetupIntentService _intentService = new();
@@ -63,9 +65,8 @@ public class StripeEmployerPaymentsService(
         try
         {
             var paymentIntent = await _paymentIntentService.CreateAsync(options, cancellationToken: cancellationToken);
-            
-            
-            
+
+            await paymentsProducerService.SavePaymentIntent(paymentIntent.Id, cancellationToken);
         }
         catch (StripeException ex)
         {

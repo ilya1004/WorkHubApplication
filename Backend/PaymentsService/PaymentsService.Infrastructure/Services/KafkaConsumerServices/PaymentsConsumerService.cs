@@ -16,6 +16,7 @@ public class PaymentsConsumerService(
         var config = new ConsumerConfig
         {
             BootstrapServers = options.Value.BootstrapServers,
+            GroupId = "payments_group",
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
 
@@ -41,6 +42,10 @@ public class PaymentsConsumerService(
                     // logging error
                 }
             }
+        }
+        catch (OperationCanceledException ex)
+        {
+            // logging error
         }
         finally
         {

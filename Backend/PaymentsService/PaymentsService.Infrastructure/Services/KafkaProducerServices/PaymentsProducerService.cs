@@ -17,7 +17,10 @@ public class PaymentsProducerService : IPaymentsProducerService
         {
             BootstrapServers = options.Value.BootstrapServers,
             AllowAutoCreateTopics = true,
-            Acks = Acks.All
+            Acks = Acks.All,
+            RetryBackoffMs = 500,   // Задержка перед ретраем
+            MessageTimeoutMs = 30000,  // 30 секунд ожидания
+            SocketTimeoutMs = 30000,   // 30 секунд ожидания соединения
         };
         
         _producer = new ProducerBuilder<Null, string>(producerConfig).Build();

@@ -21,11 +21,6 @@ public static class DependencyInjection
             options.UseNpgsql(configuration.GetConnectionString("PostgresConnectionReplicaDb")));
 
         services.AddScoped<IUnitOfWork, AppUnitOfWork>();
-
-        var q = configuration.GetConnectionString("PostgresConnectionHangfireDb");
-
-        Console.WriteLine("PostgresConnectionHangfireDb:");
-        Console.WriteLine(q);
         
         services.AddHangfire(config => 
             config.UsePostgreSqlStorage(options => 
