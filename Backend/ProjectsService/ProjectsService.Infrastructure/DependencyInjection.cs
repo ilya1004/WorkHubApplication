@@ -46,7 +46,7 @@ public static class DependencyInjection
         services.AddHealthChecks()
             .AddNpgSql(configuration.GetConnectionString("PostgresConnectionPrimaryDb")!, name: "postgres-primary")
             .AddNpgSql(configuration.GetConnectionString("PostgresConnectionReplicaDb")!, name: "postgres-replica")
-            // .AddNpgSql(configuration.GetConnectionString("PostgresConnectionHangfireDb")!, name: "postgres-hangfire")
+            .AddNpgSql(configuration.GetConnectionString("PostgresConnectionHangfireDb")!, name: "postgres-hangfire")
             .AddRedis(configuration.GetConnectionString("RedisConnection")!);
         
         return services;

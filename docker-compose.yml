@@ -54,8 +54,6 @@ services:
   postgres_identity:
     image: postgres:latest
     container_name: postgres_identity
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_identity_data:/var/lib/postgresql/data
     environment:
@@ -69,8 +67,6 @@ services:
   postgres_primary:
     image: postgres:latest
     container_name: postgres_primary
-    ports:
-      - "5433:5432"
     volumes:
       - postgres_primary_data:/var/lib/postgresql/data
       - ./DockerConfig/InitPostgresPrimaryDb/init-primary.sh:/docker-entrypoint-initdb.d/init-primary.sh
@@ -85,15 +81,9 @@ services:
   postgres_replica:
     image: postgres:latest
     container_name: postgres_replica
-    ports:
-      - "5434:5432"
     volumes:
       - postgres_replica_data:/var/lib/postgresql/data
       - ./DockerConfig/InitPostgresReplicaDb/init-replica.sh:/docker-entrypoint-initdb.d/init-replica.sh
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: passpass_replica
-      POSTGRES_DB: ProjectsServiceDb
     depends_on:
       - postgres_primary
     restart: unless-stopped
@@ -104,8 +94,6 @@ services:
   postgres_hangfire:
     image: postgres:latest
     container_name: postgres_hangfire
-    ports:
-      - "5435:5432"
     volumes:
       - postgres_hangfire_data:/var/lib/postgresql/data
     environment:
