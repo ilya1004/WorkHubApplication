@@ -35,11 +35,16 @@ public class PaymentsConsumerService(
 
                     var dto = JsonSerializer.Deserialize<SavePaymentIntentIdDto>(result.Message.Value);
                     
+                    if (dto is null)
+                    {
+                        throw new BadRequestException("Some error is occured in Message deserialization");
+                    }
+                    
                     using var scope = serviceScopeFactory.CreateScope();
                     var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
                     var project = await unitOfWork.ProjectQueriesRepository.GetByIdAsync(
-                        Guid.Parse(dto!.ProjectId), stoppingToken);
+                        Guid.Parse(dto.ProjectId), stoppingToken);
 
                     if (project is null)
                     {

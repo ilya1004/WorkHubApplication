@@ -65,7 +65,7 @@ public class StripeEmployerPaymentsService(
         {
             var paymentIntent = await _paymentIntentService.CreateAsync(options, cancellationToken: cancellationToken);
 
-            await paymentsProducerService.SavePaymentIntentIdAsync(paymentIntent.Id, cancellationToken);
+            await paymentsProducerService.SavePaymentIntentIdAsync(project.Id.ToString(), paymentIntent.Id, cancellationToken);
         }
         catch (StripeException ex)
         {

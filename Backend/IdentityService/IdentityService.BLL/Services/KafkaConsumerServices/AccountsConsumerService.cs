@@ -1,4 +1,6 @@
-﻿using Confluent.Kafka;
+﻿using System.Text.Json;
+using Confluent.Kafka;
+using IdentityService.BLL.DTOs;
 using IdentityService.BLL.Settings;
 using IdentityService.DAL.Abstractions.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,15 +40,52 @@ public class AccountsConsumerService(
                     using var scope = serviceScopeFactory.CreateScope();
                     if (result.Topic == options.Value.EmployerAccountIdSavingTopic)
                     {
-                        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                        var dto = JsonSerializer.Deserialize<SaveEmployerAccountIdDto>(result.Message.Value);
+
+                        if (dto is null)
+                        {
+                            throw new BadRequestException("Some error is occured in Message deserialization");
+                        }
                         
-                        unitOfWork.EmployerProfilesRepository.
+                        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
+                        var employerProfile = await unitOfWork.EmployerProfilesRepository.FirstOrDefaultAsync(
+                            ep => ep.UserId == Guid.Parse(dto.UserId), stoppingToken);
+
+                        if (employerProfile is null)
+                        {
+                            throw new BadRequestException($"Employer profile with user ID '{dto.UserId}' not found");
+                        }
+
+                        employerProfile.StripeCustomerId = dto.EmployerAccountId;
+                        
+                        await unitOfWork.EmployerProfilesRepository.UpdateAsync(employerProfile, stoppingToken);
+                        await unitOfWork.SaveAllAsync(stoppingToken);
                     }
+                    else if (result.Topic == options.Value.FreelancerAccountIdSavingTopic)
+                    {
+                        var dto = JsonSerializer.Deserialize<SaveFreelancerAccountIdDto>(result.Message.Value);
 
-                    // using var scope = serviceScopeFactory.CreateScope();
-                    var employerPaymentsService = scope.ServiceProvider.GetRequiredService<IEmployerPaymentsService>();
+                        if (dto is null)
+                        {
+                            throw new BadRequestException("Some error is occured in Message deserialization");
+                        }
+                        
+                        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-                    await employerPaymentsService.CancelPaymentForProjectAsync(result.Message.Value, stoppingToken);
+                        var freelancerProfile = await unitOfWork.FreelancerProfilesRepository.FirstOrDefaultAsync(
+                            fp => fp.UserId == Guid.Parse(dto.UserId), stoppingToken);
+
+                        if (freelancerProfile is null)
+                        {
+                            throw new BadRequestException($"Freelancer profile with user ID '{dto.UserId}' not found");
+                        }
+
+                        freelancerProfile.StripeAccountId = dto.FreelancerAccountId;
+                        
+                        await unitOfWork.FreelancerProfilesRepository.UpdateAsync(freelancerProfile, stoppingToken);
+                        await unitOfWork.SaveAllAsync(stoppingToken);
+                    }
                 }
                 catch (ConsumeException ex)
                 {
