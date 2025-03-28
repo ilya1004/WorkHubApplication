@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using System.Reflection;
 using System.Text;
+using IdentityService.API.Interceptors;
 using IdentityService.API.Services;
 using IdentityService.BLL.Abstractions.UserContext;
 
@@ -88,6 +89,14 @@ public static class DependencyInjection
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         services.AddScoped<IUserContext, UserContext>();
+
+        services.AddSingleton<ErrorHandlingInterceptor>();
+            
+        services.AddGrpc(options =>
+        {
+            options.EnableDetailedErrors = true;
+            options.Interceptors.Add<ErrorHandlingInterceptor>();
+        });
 
         return services;
     }

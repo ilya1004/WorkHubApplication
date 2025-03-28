@@ -1,8 +1,13 @@
 using PaymentsService.Domain.Abstractions.TransfersServices;
+using PaymentsService.Domain.Models;
+using PaymentsService.Infrastructure.Interfaces;
 
 namespace PaymentsService.Infrastructure.Services.StripeTransfersServices;
 
-public class StripeTransfersService(IMapper mapper) : ITransfersService
+public class StripeTransfersService(
+    IMapper mapper,
+    IEmployersGrpcClient employersGrpcClient,
+    IFreelancersGrpcClient freelancersGrpcClient) : ITransfersService
 {
     private readonly ChargeService _chargeService = new();
     private readonly TransferService _transferService = new();
@@ -35,16 +40,18 @@ public class StripeTransfersService(IMapper mapper) : ITransfersService
     public async Task<IEnumerable<ChargeModel>> GetEmployerPaymentsAsync(
         Guid userId, Guid? projectId, CancellationToken cancellationToken)
     {
-        var employerCustomerId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
-
-        if (employerCustomerId is null) throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
+        var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken);
+        
+        if (string.IsNullOrEmpty(employer.EmployerCustomerId)) 
+            throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
 
         var chargeListOptions = new ChargeListOptions
         {
-            Customer = employerCustomerId
+            Customer = employer.EmployerCustomerId
         };
 
-        if (projectId is not null) chargeListOptions.TransferGroup = projectId.ToString();
+        if (projectId is not null) 
+            chargeListOptions.TransferGroup = projectId.ToString();
 
         try
         {
@@ -65,14 +72,18 @@ public class StripeTransfersService(IMapper mapper) : ITransfersService
     public async Task<IEnumerable<TransferModel>> GetFreelancerTransfersAsync(
         Guid userId, Guid? projectId, CancellationToken cancellationToken)
     {
-        var freelancerStripeAccountId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
+        var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(userId.ToString(), cancellationToken);
+
+        if (string.IsNullOrEmpty(freelancer.StripeAccountId)) 
+            throw new NotFoundException($"Stripe account with user ID '{userId}' not found.");
 
         var options = new TransferListOptions
         {
-            Destination = freelancerStripeAccountId
+            Destination = freelancer.StripeAccountId
         };
 
-        if (projectId is not null) options.TransferGroup = projectId.ToString();
+        if (projectId is not null) 
+            options.TransferGroup = projectId.ToString();
 
         try
         {

@@ -16,8 +16,6 @@ public class GetFreelancerAccountQueryHandler(
 
         var freelancerAccount = await freelancerAccountsService.GetFreelancerAccountAsync(userId, cancellationToken);
 
-        if (freelancerAccount is null) throw new NotFoundException($"Freelancer account by owner ID '{userId}' not found");
-
         return freelancerAccount;
     }
 }

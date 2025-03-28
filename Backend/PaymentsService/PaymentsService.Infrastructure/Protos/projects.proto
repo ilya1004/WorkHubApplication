@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package projects;
+
+import "google/protobuf/empty.proto";
+
+service Projects {
+  rpc GetProjectById (GetProjectByIdRequest) returns (GetProjectByIdResponse);
+}
+
+message GetProjectByIdRequest {
+  string id = 1;
+}
+
+message GetProjectByIdResponse {
+  string id = 1;
+  int32 budget_in_cents = 2;
+  string freelancer_id = 3;
+  optional string payment_intent_id = 4;
+}

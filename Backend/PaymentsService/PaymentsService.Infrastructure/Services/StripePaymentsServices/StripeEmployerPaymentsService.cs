@@ -2,13 +2,18 @@ using PaymentsService.Domain.Abstractions.KafkaProducerServices;
 using PaymentsService.Domain.Abstractions.PaymentsServices;
 using PaymentsService.Domain.Abstractions.TransfersServices;
 using PaymentsService.Infrastructure.DTOs;
+using PaymentsService.Domain.Models;
+using PaymentsService.Infrastructure.Interfaces;
 
 namespace PaymentsService.Infrastructure.Services.StripePaymentsServices;
 
 public class StripeEmployerPaymentsService(
     IMapper mapper,
     ITransfersService transfersService,
-    IPaymentsProducerService paymentsProducerService) : IEmployerPaymentsService
+    IPaymentsProducerService paymentsProducerService,
+    IEmployersGrpcClient employersGrpcClient,
+    IProjectsGrpcClient projectsGrpcClient,
+    IFreelancersGrpcClient freelancersGrpcClient) : IEmployerPaymentsService
 {
     private readonly CustomerPaymentMethodService _customerPaymentMethodService = new();
     private readonly SetupIntentService _intentService = new();
@@ -16,56 +21,72 @@ public class StripeEmployerPaymentsService(
 
     public async Task<string> CreateSetupIntent(Guid userId, CancellationToken cancellationToken)
     {
-        var employerCustomerId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
+        var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken); 
 
-        if (employerCustomerId is null) throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
+        if (string.IsNullOrEmpty(employer.EmployerCustomerId)) 
+            throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
 
-        var options = new SetupIntentCreateOptions
+        try
         {
-            Customer = employerCustomerId,
-            PaymentMethodTypes = ["card"]
-        };
+            var options = new SetupIntentCreateOptions
+            {
+                Customer = employer.EmployerCustomerId,
+                PaymentMethodTypes = ["card"]
+            };
 
-        var setupIntent = await _intentService.CreateAsync(options, cancellationToken: cancellationToken);
+            var setupIntent = await _intentService.CreateAsync(options, cancellationToken: cancellationToken);
 
-        return setupIntent.ClientSecret;
+            return setupIntent.ClientSecret;
+        }
+        catch (StripeException ex)
+        {
+            throw new BadRequestException($"Stripe error: {ex.Message}");
+        }
+        catch
+        {
+            throw new BadRequestException($"Could not create Setup intent for user with ID '{userId}'.");
+        }
     }
 
     public async Task CreatePaymentIntentWithSavedMethodAsync(Guid userId, Guid projectId, string paymentMethodId,
         CancellationToken cancellationToken)
     {
-        var employerCustomerId = Guid.NewGuid().ToString(); // This data will be requested from Identity Service via gRPC
+        var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken);
 
-        if (employerCustomerId is null) throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
-
-        var paymentMethod = await _customerPaymentMethodService.GetAsync(
-            employerCustomerId, paymentMethodId, cancellationToken: cancellationToken);
-
-        if (paymentMethod is null) throw new BadRequestException($"Payment method with ID '{paymentMethodId}' not found.");
-
-        var project = new ProjectDto(); // This data will be requested from Projects Service via gRPC
-
-        var options = new PaymentIntentCreateOptions
-        {
-            Amount = project.Budget * 100,
-            Currency = "usd",
-            Customer = employerCustomerId,
-            PaymentMethod = paymentMethod.Id,
-            Confirm = true,
-            CaptureMethod = "manual",
-            TransferGroup = projectId.ToString(),
-            Metadata = new Dictionary<string, string>
-            {
-                { "project_id", projectId.ToString() },
-                { "freelancer_id", project.FreelancerId.ToString() }
-            }
-        };
-
+        if (string.IsNullOrEmpty(employer.EmployerCustomerId)) 
+            throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
+        
+        var project = await projectsGrpcClient.GetProjectByIdAsync(projectId.ToString(), cancellationToken);
+        
         try
         {
+            var paymentMethod = await _customerPaymentMethodService.GetAsync(
+                employer.EmployerCustomerId, paymentMethodId, cancellationToken: cancellationToken);
+
+            if (paymentMethod is null) throw new BadRequestException($"Payment method with ID '{paymentMethodId}' not found.");
+            
+            var options = new PaymentIntentCreateOptions
+            {
+                Amount = project.BudgetInCents,
+                Currency = "usd",
+                Customer = employer.EmployerCustomerId,
+                PaymentMethod = paymentMethod.Id,
+                Confirm = true,
+                CaptureMethod = "manual",
+                TransferGroup = projectId.ToString(),
+                Metadata = new Dictionary<string, string>
+                {
+                    { "project_id", projectId.ToString() },
+                    { "freelancer_id", project.FreelancerId.ToString() }
+                }
+            };
+            
+            await _paymentIntentService.CreateAsync(options, cancellationToken: cancellationToken);
+            
             var paymentIntent = await _paymentIntentService.CreateAsync(options, cancellationToken: cancellationToken);
 
             await paymentsProducerService.SavePaymentIntentIdAsync(project.Id.ToString(), paymentIntent.Id, cancellationToken);
+            
         }
         catch (StripeException ex)
         {
@@ -79,27 +100,31 @@ public class StripeEmployerPaymentsService(
 
     public async Task ConfirmPaymentForProjectAsync(Guid userId, Guid projectId, CancellationToken cancellationToken)
     {
-        var project = new ProjectDto(); // This data will be requested from Projects Service via gRPC
+        var project = await projectsGrpcClient.GetProjectByIdAsync(projectId.ToString(), cancellationToken);
 
-        if (project.PaymentIntentId is null) throw new NotFoundException("This project does not have an attached Payment Intent.");
+        if (string.IsNullOrEmpty(project.PaymentIntentId)) 
+            throw new NotFoundException("This project does not have an attached Payment Intent.");
 
-        var freelancer = new FreelancerDto(); // This data will be requested from Identity Service via gRPC
+        var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(projectId.ToString(), cancellationToken);
 
-        if (freelancer.StripeAccountId is null)
+        if (string.IsNullOrEmpty(freelancer.StripeAccountId))
             throw new NotFoundException($"Freelancer's Stripe Account to project with ID '{projectId}' not found.");
-
-        var paymentIntent = await _paymentIntentService.GetAsync(project.PaymentIntentId, cancellationToken: cancellationToken);
-
-        if (paymentIntent is null)
-            throw new NotFoundException($"Payment Intent with ID '{project.PaymentIntentId}' not found for this project.");
-
-        var confirmOptions = new PaymentIntentCaptureOptions
-        {
-            AmountToCapture = paymentIntent.Amount
-        };
 
         try
         {
+            var paymentIntent = await _paymentIntentService.GetAsync(project.PaymentIntentId, cancellationToken: cancellationToken);
+
+            if (paymentIntent is null)
+                throw new NotFoundException($"Payment Intent with ID '{project.PaymentIntentId}' not found for this project.");
+        
+            if (paymentIntent.Status != "requires_capture")
+                throw new BadRequestException($"Payment Intent with ID '{project.PaymentIntentId}' is not in a capturable state.");
+
+            var confirmOptions = new PaymentIntentCaptureOptions
+            {
+                AmountToCapture = paymentIntent.Amount
+            };
+            
             var capturedPaymentIntent = await _paymentIntentService.CaptureAsync(
                 paymentIntent.Id, confirmOptions, cancellationToken: cancellationToken);
 
@@ -119,16 +144,19 @@ public class StripeEmployerPaymentsService(
         }
     }
     
-    public async Task CancelPaymentForProjectAsync(string paymentIntentId, CancellationToken cancellationToken)
+    public async Task CancelPaymentIntentForProjectAsync(string paymentIntentId, CancellationToken cancellationToken)
     {
-        if (paymentIntentId is null) throw new NotFoundException("Payment Intent ID was not provided.");
-
-        var paymentIntent = await _paymentIntentService.GetAsync(paymentIntentId, cancellationToken: cancellationToken);
-
-        if (paymentIntent is null) throw new NotFoundException($"Payment Intent with ID '{paymentIntentId}' not found.");
-
+        if (string.IsNullOrEmpty(paymentIntentId)) throw new NotFoundException("This project does not have an attached Payment Intent.");
+        
         try
         {
+            var paymentIntent = await _paymentIntentService.GetAsync(paymentIntentId, cancellationToken: cancellationToken);
+
+            if (paymentIntent is null) throw new NotFoundException($"Payment Intent with ID '{paymentIntentId}' not found.");
+
+            if (paymentIntent.Status != "requires_capture" && paymentIntent.Status != "requires_payment_method")
+                throw new BadRequestException($"Payment Intent with ID '{paymentIntentId}' cannot be canceled in its current state.");
+            
             await _paymentIntentService.CancelAsync(paymentIntentId, cancellationToken: cancellationToken);
         }
         catch (StripeException ex)

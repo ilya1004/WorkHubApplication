@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Primitives;
 using Microsoft.Extensions.Caching.Distributed;
@@ -12,6 +13,7 @@ public class CachedAppRepository<TEntity>(
     IDistributedCache distributedCache,
     IOptions<CacheOptions> options) : IRepository<TEntity> where TEntity : Entity
 {
+    private readonly JsonSerializerOptions _jsonOptions = new() { ReferenceHandler = ReferenceHandler.IgnoreCycles };
     public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         await repository.AddAsync(entity, cancellationToken);
@@ -35,12 +37,16 @@ public class CachedAppRepository<TEntity>(
         var cacheKey = $"{typeof(TEntity).Name}:{id}";
         var cachedEntity = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
 
-        if (cachedEntity != null) return JsonSerializer.Deserialize<TEntity>(cachedEntity);
+        if (cachedEntity != null)
+        {
+            return JsonSerializer.Deserialize<TEntity>(cachedEntity, _jsonOptions);
+        }
 
         var entity = await repository.GetByIdAsync(id, cancellationToken, includesProperties);
 
         if (entity != null)
-            await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(entity), new DistributedCacheEntryOptions
+        {
+            await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(entity, _jsonOptions), new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(options.Value.RecordExpirationTimeInMinutes)
             }, cancellationToken);
@@ -53,11 +59,14 @@ public class CachedAppRepository<TEntity>(
         var cacheKey = $"{typeof(TEntity).Name}:ListAll";
         var cachedEntities = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
 
-        if (cachedEntities != null) return JsonSerializer.Deserialize<IReadOnlyList<TEntity>>(cachedEntities) ?? [];
+        if (cachedEntities != null)
+        {
+            return JsonSerializer.Deserialize<IReadOnlyList<TEntity>>(cachedEntities, _jsonOptions) ?? [];
+        }
 
         var entities = await repository.ListAllAsync(cancellationToken);
 
-        await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(entities), new DistributedCacheEntryOptions
+        await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(entities, _jsonOptions), new DistributedCacheEntryOptions
         {
             AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(options.Value.RecordExpirationTimeInMinutes)
         }, cancellationToken);
@@ -70,11 +79,14 @@ public class CachedAppRepository<TEntity>(
         var cacheKey = $"{typeof(TEntity).Name}:PaginatedListAll:{offset}:{limit}";
         var cachedEntities = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
 
-        if (cachedEntities != null) return JsonSerializer.Deserialize<IReadOnlyList<TEntity>>(cachedEntities) ?? [];
+        if (cachedEntities != null)
+        {
+            return JsonSerializer.Deserialize<IReadOnlyList<TEntity>>(cachedEntities, _jsonOptions) ?? [];
+        }
 
         var entities = await repository.PaginatedListAllAsync(offset, limit, cancellationToken);
 
-        await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(entities), new DistributedCacheEntryOptions
+        await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(entities, _jsonOptions), new DistributedCacheEntryOptions
         {
             AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(options.Value.RecordExpirationTimeInMinutes)
         }, cancellationToken);

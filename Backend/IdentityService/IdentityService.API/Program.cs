@@ -54,6 +54,9 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGrpcService<EmployersGrpcService>();
+app.MapGrpcService<FreelancersGrpcService>();
+
 app.MapControllers();
 
 app.Run();

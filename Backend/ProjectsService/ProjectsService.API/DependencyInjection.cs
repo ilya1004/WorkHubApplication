@@ -4,6 +4,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ProjectsService.API.Constants;
+using ProjectsService.API.Interceptors;
 using ProjectsService.API.Services;
 using ProjectsService.API.Settings;
 using ProjectsService.Application.Constants;
@@ -81,6 +82,14 @@ public static class DependencyInjection
             .BindConfiguration("ProjectsSettings");
 
         services.AddScoped<IUserContext, UserContext>();
+        
+        services.AddSingleton<ErrorHandlingInterceptor>();
+        
+        services.AddGrpc(options =>
+        {
+            options.EnableDetailedErrors = true;
+            options.Interceptors.Add<ErrorHandlingInterceptor>();
+        });
         
         return services;
     }
