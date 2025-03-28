@@ -12,7 +12,6 @@ using PaymentsService.Infrastructure.Services.KafkaProducerServices;
 using PaymentsService.Infrastructure.Services.StripeAccountsServices;
 using PaymentsService.Infrastructure.Services.StripePaymentsServices;
 using PaymentsService.Infrastructure.Services.StripeTransfersServices;
-using PaymentsService.Infrastructure.Settings;
 
 namespace PaymentsService.Infrastructure;
 

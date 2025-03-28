@@ -1,5 +1,4 @@
 using PaymentsService.Domain.Abstractions.PaymentsServices;
-using PaymentsService.Domain.Models;
 
 namespace PaymentsService.Infrastructure.Services.StripePaymentsServices;
 

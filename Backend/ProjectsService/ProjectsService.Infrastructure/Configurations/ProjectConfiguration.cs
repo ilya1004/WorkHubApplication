@@ -23,6 +23,9 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
         builder.Property(p => p.Budget)
             .HasColumnType("decimal(18,2)");
 
+        builder.Property(p => p.PaymentIntentId)
+            .HasMaxLength(50);
+
         builder.HasOne(p => p.Category)
             .WithMany(c => c.Projects)
             .HasForeignKey(p => p.CategoryId)

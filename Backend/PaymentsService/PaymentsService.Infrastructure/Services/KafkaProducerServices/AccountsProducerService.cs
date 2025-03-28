@@ -1,8 +1,8 @@
-﻿using System.Text;
+﻿using System.Text.Json;
 using Confluent.Kafka;
 using Microsoft.Extensions.Options;
 using PaymentsService.Domain.Abstractions.KafkaProducerServices;
-using PaymentsService.Infrastructure.Settings;
+using PaymentsService.Infrastructure.DTOs;
 
 namespace PaymentsService.Infrastructure.Services.KafkaProducerServices;
 
@@ -27,13 +27,22 @@ public class AccountsProducerService : IAccountsProducerService
         _freelancerAccountIdSavingTopic = options.Value.FreelancerAccountIdSavingTopic;
     }
     
-    public async Task SaveEmployerAccountId(string employerAccountId, CancellationToken cancellationToken)
+    public async Task SaveEmployerAccountIdAsync(string userEmployerId, string employerAccountId, 
+        CancellationToken cancellationToken)
     {
         try
         {
+            var dto = new SaveEmployerAccountIdDto
+            {
+                UserId = userEmployerId,
+                EmployerAccountId = employerAccountId
+            };
+
+            var jsonData = JsonSerializer.Serialize(dto);
+            
             await _producer.ProduceAsync(_employerAccountIdSavingTopic, new Message<Null, string>
             {
-                Value = employerAccountId
+                Value = jsonData
             }, cancellationToken);
         }
         catch (ProduceException<Null, string> ex)
@@ -47,13 +56,22 @@ public class AccountsProducerService : IAccountsProducerService
         }
     }
     
-    public async Task SaveFreelancerAccountId(string freelancerAccountId, CancellationToken cancellationToken)
+    public async Task SaveFreelancerAccountIdAsync(string userFreelancerId, string freelancerAccountId, 
+        CancellationToken cancellationToken)
     {
         try
         {
+            var dto = new SaveFreelancerAccountIdDto
+            {
+                UserId = userFreelancerId,
+                FreelancerAccountId = freelancerAccountId
+            };
+
+            var jsonData = JsonSerializer.Serialize(dto);
+            
             await _producer.ProduceAsync(_freelancerAccountIdSavingTopic, new Message<Null, string>
             {
-                Value = freelancerAccountId
+                Value = jsonData
             }, cancellationToken);
         }
         catch (ProduceException<Null, string> ex)

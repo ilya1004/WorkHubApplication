@@ -2,11 +2,13 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectsService.Domain.Abstractions.KafkaProducerServices;
 using ProjectsService.Domain.Abstractions.StartupServices;
 using ProjectsService.Infrastructure.Data;
 using ProjectsService.Infrastructure.Repositories;
 using ProjectsService.Infrastructure.Services.HangfireJobsInitializer;
-using ProjectsService.Infrastructure.Settings;
+using ProjectsService.Infrastructure.Services.KafkaConsumerServices;
+using ProjectsService.Infrastructure.Services.KafkaProducerServices;
 
 namespace ProjectsService.Infrastructure;
 
@@ -37,6 +39,12 @@ public static class DependencyInjection
 
         services.AddScoped<IRecurringJobManager, RecurringJobManager>();
         services.AddScoped<IBackgroundJobsInitializer, HangfireJobsInitializer>();
+        
+        services.Configure<KafkaSettings>(configuration.GetSection("KafkaSettings"));
+
+        services.AddSingleton<IPaymentsProducerService, PaymentsProducerService>();
+
+        services.AddHostedService<PaymentsConsumerService>();
         
         services.AddHealthChecks()
             .AddNpgSql(configuration.GetConnectionString("PostgresConnectionPrimaryDb")!, name: "postgres-primary")

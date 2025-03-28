@@ -32,8 +32,4 @@
     <ProjectReference Include="..\ProjectsService.Application\ProjectsService.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\KafkaProducerServices\" />
-  </ItemGroup>
-
 </Project>

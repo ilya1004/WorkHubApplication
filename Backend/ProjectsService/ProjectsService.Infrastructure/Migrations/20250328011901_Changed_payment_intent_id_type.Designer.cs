@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProjectsService.Infrastructure.Data;
@@ -11,9 +12,11 @@ using ProjectsService.Infrastructure.Data;
 namespace ProjectsService.Infrastructure.Migrations
 {
     [DbContext(typeof(CommandsDbContext))]
-    partial class CommandsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250328011901_Changed_payment_intent_id_type")]
+    partial class Changed_payment_intent_id_type
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

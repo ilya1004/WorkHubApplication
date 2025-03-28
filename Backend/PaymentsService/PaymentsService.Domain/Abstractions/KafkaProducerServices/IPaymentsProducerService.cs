@@ -2,5 +2,5 @@
 
 public interface IPaymentsProducerService
 {
-    Task SavePaymentIntent(string paymentIntentId, CancellationToken cancellationToken);
+    Task SavePaymentIntentIdAsync(string projectId, string paymentIntentId, CancellationToken cancellationToken);
 }

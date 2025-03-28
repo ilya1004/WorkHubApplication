@@ -1,14 +1,16 @@
-﻿using Confluent.Kafka;
+﻿using System.Text.Json;
+using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using PaymentsService.Domain.Abstractions.PaymentsServices;
+using ProjectsService.Application.Exceptions;
+using ProjectsService.Infrastructure.DTOs;
 
-namespace PaymentsService.Infrastructure.Services.KafkaConsumerServices;
+namespace ProjectsService.Infrastructure.Services.KafkaConsumerServices;
 
 public class PaymentsConsumerService(
     IOptions<KafkaSettings> options,
-    IServiceScopeFactory serviceScopeFactory) : BackgroundService 
+    IServiceScopeFactory serviceScopeFactory) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -21,7 +23,7 @@ public class PaymentsConsumerService(
 
         using var consumer = new ConsumerBuilder<Ignore, string>(config).Build();
         
-        consumer.Subscribe(options.Value.PaymentCancellationTopic);
+        consumer.Subscribe(options.Value.PaymentIntentSavingTopic);
 
         try
         {
@@ -31,10 +33,23 @@ public class PaymentsConsumerService(
                 {
                     var result = consumer.Consume(stoppingToken);
 
+                    var dto = JsonSerializer.Deserialize<SavePaymentIntentIdDto>(result.Message.Value);
+                    
                     using var scope = serviceScopeFactory.CreateScope();
-                    var employerPaymentsService = scope.ServiceProvider.GetRequiredService<IEmployerPaymentsService>();
+                    var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-                    await employerPaymentsService.CancelPaymentForProjectAsync(result.Message.Value, stoppingToken);
+                    var project = await unitOfWork.ProjectQueriesRepository.GetByIdAsync(
+                        Guid.Parse(dto!.ProjectId), stoppingToken);
+
+                    if (project is null)
+                    {
+                        throw new NotFoundException($"Project with ID '{dto.ProjectId}' not found");
+                    }
+                    
+                    project.PaymentIntentId = dto.PaymentIntentId;
+
+                    await unitOfWork.ProjectCommandsRepository.UpdateAsync(project, stoppingToken);
+                    await unitOfWork.SaveAllAsync(stoppingToken);
                 }
                 catch (ConsumeException ex)
                 {

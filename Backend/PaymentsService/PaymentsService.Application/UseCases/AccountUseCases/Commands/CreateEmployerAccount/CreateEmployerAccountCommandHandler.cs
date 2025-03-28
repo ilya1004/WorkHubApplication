@@ -17,6 +17,6 @@ public class CreateEmployerAccountCommandHandler(
         var employerAccountId = await employerAccountsService.CreateEmployerAccountAsync(
             userId, userEmail, cancellationToken);
 
-        await accountsProducerService.SaveEmployerAccountId(employerAccountId, cancellationToken);
+        await accountsProducerService.SaveEmployerAccountIdAsync(employerAccountId, cancellationToken);
     }
 }

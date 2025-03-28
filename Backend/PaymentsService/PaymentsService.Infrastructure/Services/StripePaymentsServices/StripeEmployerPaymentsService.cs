@@ -1,7 +1,6 @@
 using PaymentsService.Domain.Abstractions.KafkaProducerServices;
 using PaymentsService.Domain.Abstractions.PaymentsServices;
 using PaymentsService.Domain.Abstractions.TransfersServices;
-using PaymentsService.Domain.Models;
 using PaymentsService.Infrastructure.DTOs;
 
 namespace PaymentsService.Infrastructure.Services.StripePaymentsServices;
@@ -66,7 +65,7 @@ public class StripeEmployerPaymentsService(
         {
             var paymentIntent = await _paymentIntentService.CreateAsync(options, cancellationToken: cancellationToken);
 
-            await paymentsProducerService.SavePaymentIntent(paymentIntent.Id, cancellationToken);
+            await paymentsProducerService.SavePaymentIntentIdAsync(paymentIntent.Id, cancellationToken);
         }
         catch (StripeException ex)
         {

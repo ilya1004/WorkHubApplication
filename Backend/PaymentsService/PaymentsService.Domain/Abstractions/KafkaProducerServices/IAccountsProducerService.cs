@@ -2,6 +2,8 @@
 
 public interface IAccountsProducerService
 {
-    Task SaveEmployerAccountId(string employerAccountId, CancellationToken cancellationToken);
-    Task SaveFreelancerAccountId(string freelancerAccountId, CancellationToken cancellationToken);
+    Task SaveEmployerAccountIdAsync(string userEmployerId, string employerAccountId,
+        CancellationToken cancellationToken);
+    Task SaveFreelancerAccountIdAsync(string userFreelancerId, string freelancerAccountId, 
+        CancellationToken cancellationToken);
 }
