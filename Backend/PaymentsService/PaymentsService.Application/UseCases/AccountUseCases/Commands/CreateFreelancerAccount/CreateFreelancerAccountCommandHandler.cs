@@ -14,8 +14,10 @@ public class CreateFreelancerAccountCommandHandler(
         var userId = userContext.GetUserId();
         var userEmail = userContext.GetUserEmail();
 
-        var freelancerAccountId = await freelancerAccountsService.CreateFreelancerAccountAsync(
-            userId, userEmail, cancellationToken);
+        // var freelancerAccountId = await freelancerAccountsService.CreateFreelancerAccountAsync(
+            // userId, userEmail, cancellationToken);
+
+        var freelancerAccountId = "qweqwe";
 
         await accountsProducerService.SaveFreelancerAccountIdAsync(userId.ToString(), freelancerAccountId, cancellationToken);
     }

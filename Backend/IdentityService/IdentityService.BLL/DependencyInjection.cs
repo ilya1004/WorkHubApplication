@@ -10,6 +10,7 @@ using IdentityService.BLL.Abstractions.BlobService;
 using IdentityService.BLL.Abstractions.EmailSender;
 using IdentityService.BLL.HealthChecks;
 using IdentityService.BLL.Services.AzuriteStartupService;
+using IdentityService.BLL.Services.KafkaConsumerServices;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace IdentityService.BLL;
@@ -34,6 +35,9 @@ public static class DependencyInjection
 
         services.AddFluentEmail(configuration["EmailSenderMailHog:EmailSender"], configuration["EmailSenderMailHog:SenderName"])
             .AddSmtpSender(configuration["EmailSenderMailHog:Host"], int.Parse(configuration["EmailSenderMailHog:Port"]!));
+
+        services.AddHostedService<EmployerAccountsConsumerService>();
+        services.AddHostedService<FreelancerAccountsConsumerService>();
         
         services.AddHealthChecks()
             .AddAzureBlobStorage(_ => new BlobServiceClient(configuration.GetConnectionString("AzuriteConnection")))

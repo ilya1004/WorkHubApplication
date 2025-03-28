@@ -142,8 +142,6 @@ services:
     ports:
       - "5000:5000"
       - "7000:7000"
-    volumes:
-      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     restart: unless-stopped
     networks:
       - workhub_network
@@ -156,8 +154,6 @@ services:
     ports:
       - "5080:5080"
       - "7080:7080"
-    volumes:
-      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     restart: unless-stopped
     networks:
       - workhub_network
@@ -172,8 +168,6 @@ services:
     ports:
       - "5081:5081"
       - "7081:7081"
-    volumes:
-      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     restart: unless-stopped
     networks:
       - workhub_network
@@ -190,8 +184,6 @@ services:
     ports:
       - "5082:5082"
       - "7082:7082"
-    volumes:
-      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     restart: unless-stopped
     networks:
       - workhub_network
@@ -206,8 +198,6 @@ services:
     ports:
       - "5083:5083"
       - "7083:7083"
-    volumes:
-      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     restart: unless-stopped
     networks:
       - workhub_network
