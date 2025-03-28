@@ -13,6 +13,8 @@ public class EmployerAccountsConsumerService(
     IOptions<KafkaSettings> options,
     IServiceScopeFactory serviceScopeFactory) : BackgroundService
 {
+    private IConsumer<Ignore, string> _consumer = null!;
+    
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var config = new ConsumerConfig
@@ -22,54 +24,67 @@ public class EmployerAccountsConsumerService(
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
 
-        using var consumer = new ConsumerBuilder<Ignore, string>(config).Build();
-        
-        consumer.Subscribe(options.Value.EmployerAccountIdSavingTopic);
+        _consumer = new ConsumerBuilder<Ignore, string>(config).Build();
+        _consumer.Subscribe(options.Value.EmployerAccountIdSavingTopic);
 
+        await Task.Run(() => ConsumeMessagesAsync(stoppingToken), stoppingToken);
+    }
+
+    private async Task ConsumeMessagesAsync(CancellationToken stoppingToken)
+    {
         try
         {
             while (!stoppingToken.IsCancellationRequested)
             {
+                ConsumeResult<Ignore, string>? result = null;
                 try
                 {
-                    var result = consumer.Consume(stoppingToken);
-
-                    using var scope = serviceScopeFactory.CreateScope();
+                    result = _consumer.Consume(stoppingToken);
                     var dto = JsonSerializer.Deserialize<SaveEmployerAccountIdDto>(result.Message.Value);
-
+                    
                     if (dto is null)
                     {
-                        throw new BadRequestException("Some error is occured in Message deserialization");
-                    }
-                        
-                    var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-
-                    var employerProfile = await unitOfWork.EmployerProfilesRepository.FirstOrDefaultAsync(
-                        ep => ep.UserId == Guid.Parse(dto.UserId), stoppingToken);
-
-                    if (employerProfile is null)
-                    {
-                        throw new BadRequestException($"Employer profile with user ID '{dto.UserId}' not found");
+                        throw new BadRequestException("Error occurred during message deserialization");
                     }
 
-                    employerProfile.StripeCustomerId = dto.EmployerAccountId;
-                        
-                    await unitOfWork.EmployerProfilesRepository.UpdateAsync(employerProfile, stoppingToken);
-                    await unitOfWork.SaveAllAsync(stoppingToken);
+                    await ProcessMessageAsync(dto, stoppingToken);
                 }
                 catch (ConsumeException ex)
                 {
-                    // logging error
+                    // Логирование ошибки Kafka
+                }
+                catch (Exception ex)
+                {
+                    // Логирование ошибки
                 }
             }
         }
-        catch (OperationCanceledException ex)
+        catch (OperationCanceledException)
         {
-            // logging error
+            // Логирование завершения работы
         }
         finally
         {
-            consumer.Close();
+            _consumer.Close();
         }
+    }
+
+    private async Task ProcessMessageAsync(SaveEmployerAccountIdDto dto, CancellationToken stoppingToken)
+    {
+        using var scope = serviceScopeFactory.CreateScope();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
+        var employerProfile = await unitOfWork.EmployerProfilesRepository.FirstOrDefaultAsync(
+            ep => ep.UserId == Guid.Parse(dto.UserId), stoppingToken);
+
+        if (employerProfile is null)
+        {
+            throw new BadRequestException($"Employer profile with user ID '{dto.UserId}' not found");
+        }
+
+        employerProfile.StripeCustomerId = dto.EmployerAccountId;
+
+        await unitOfWork.EmployerProfilesRepository.UpdateAsync(employerProfile, stoppingToken);
+        await unitOfWork.SaveAllAsync(stoppingToken);
     }
 }

@@ -1,4 +1,5 @@
 using System.Reflection;
+using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -19,7 +20,9 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<StripeSettings>(configuration.GetSection("StripeSettings"));
+        services.AddOptionsWithValidateOnStart<StripeSettings>()
+            .BindConfiguration("StripeSettings");
+        
         var stripeSettings = configuration.GetSection("StripeSettings").Get<StripeSettings>()!;
 
         StripeConfiguration.ApiKey = stripeSettings.SecretKey;
@@ -32,15 +35,20 @@ public static class DependencyInjection
         services.AddScoped<IPaymentMethodsService, StripePaymentMethodsService>();
         services.AddScoped<ITransfersService, StripeTransfersService>();
 
-        services.Configure<KafkaSettings>(configuration.GetSection("KafkaSettings"));
-
+        services.AddOptionsWithValidateOnStart<KafkaSettings>()
+            .BindConfiguration("KafkaSettings");
+        
         services.AddSingleton<IAccountsProducerService, AccountsProducerService>();
         services.AddSingleton<IPaymentsProducerService, PaymentsProducerService>();
         
         services.AddHostedService<PaymentsConsumerService>();
         
         services.AddHealthChecks()
-            .AddCheck<StripeHealthCheck>("stipe", HealthStatus.Unhealthy);
+            .AddCheck<StripeHealthCheck>("stipe", HealthStatus.Unhealthy)
+            .AddKafka(new ProducerConfig
+            {
+                BootstrapServers = configuration["KafkaSettings:BootstrapServers"]
+            }, name: "kafka");
 
         return services;
     }

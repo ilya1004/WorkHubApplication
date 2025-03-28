@@ -5,12 +5,14 @@ using IdentityService.BLL.Services.TokenProvider;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using Confluent.Kafka;
 using IdentityService.BLL.Abstractions.AzuriteStartupService;
 using IdentityService.BLL.Abstractions.BlobService;
 using IdentityService.BLL.Abstractions.EmailSender;
 using IdentityService.BLL.HealthChecks;
 using IdentityService.BLL.Services.AzuriteStartupService;
 using IdentityService.BLL.Services.KafkaConsumerServices;
+using IdentityService.BLL.Settings;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace IdentityService.BLL;
@@ -33,15 +35,25 @@ public static class DependencyInjection
         services.AddSingleton<IBlobService, BlobService>();
         services.AddSingleton(_ => new BlobServiceClient(configuration.GetConnectionString("AzuriteConnection")));
 
-        services.AddFluentEmail(configuration["EmailSenderMailHog:EmailSender"], configuration["EmailSenderMailHog:SenderName"])
-            .AddSmtpSender(configuration["EmailSenderMailHog:Host"], int.Parse(configuration["EmailSenderMailHog:Port"]!));
+        services.AddFluentEmail(configuration["EmailSenderMailHog:EmailSender"], 
+                configuration["EmailSenderMailHog:SenderName"])
+            .AddSmtpSender(configuration["EmailSenderMailHog:Host"], 
+                int.Parse(configuration["EmailSenderMailHog:Port"]!));
+
+        services.AddOptions<KafkaSettings>()
+            .BindConfiguration("KafkaSettings")
+            .ValidateOnStart();
 
         services.AddHostedService<EmployerAccountsConsumerService>();
         services.AddHostedService<FreelancerAccountsConsumerService>();
         
         services.AddHealthChecks()
             .AddAzureBlobStorage(_ => new BlobServiceClient(configuration.GetConnectionString("AzuriteConnection")))
-            .AddCheck<SmtpHealthCheck>("smtp_mailhog", HealthStatus.Unhealthy);
+            .AddCheck<SmtpHealthCheck>("smtp_mailhog", HealthStatus.Unhealthy)
+            .AddKafka(new ProducerConfig
+            {
+                BootstrapServers = configuration["KafkaSettings:BootstrapServers"]
+            }, name: "kafka");
 
         return services;
     }

@@ -1,3 +1,4 @@
+using Confluent.Kafka;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.Extensions.Configuration;
@@ -35,12 +36,14 @@ public static class DependencyInjection
             options.Configuration = configuration.GetConnectionString("RedisConnection");
         });
 
-        services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
+        services.AddOptionsWithValidateOnStart<CacheOptions>()
+            .BindConfiguration("CacheOptions");
 
         services.AddScoped<IRecurringJobManager, RecurringJobManager>();
         services.AddScoped<IBackgroundJobsInitializer, HangfireJobsInitializer>();
         
-        services.Configure<KafkaSettings>(configuration.GetSection("KafkaSettings"));
+        services.AddOptionsWithValidateOnStart<KafkaSettings>()
+            .BindConfiguration("KafkaSettings");
 
         services.AddSingleton<IPaymentsProducerService, PaymentsProducerService>();
 
@@ -50,7 +53,11 @@ public static class DependencyInjection
             .AddNpgSql(configuration.GetConnectionString("PostgresConnectionPrimaryDb")!, name: "postgres-primary")
             .AddNpgSql(configuration.GetConnectionString("PostgresConnectionReplicaDb")!, name: "postgres-replica")
             .AddNpgSql(configuration.GetConnectionString("PostgresConnectionHangfireDb")!, name: "postgres-hangfire")
-            .AddRedis(configuration.GetConnectionString("RedisConnection")!);
+            .AddRedis(configuration.GetConnectionString("RedisConnection")!)
+            .AddKafka(new ProducerConfig
+            {
+                BootstrapServers = configuration["KafkaSettings:BootstrapServers"]
+            }, name: "kafka");
         
         return services;
     }

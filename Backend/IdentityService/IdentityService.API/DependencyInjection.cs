@@ -32,12 +32,14 @@ public static class DependencyInjection
         
         services.Configure<DataProtectionTokenProviderOptions>(options =>
         {
-            options.TokenLifespan = TimeSpan.FromHours(configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Get<int>());
+            options.TokenLifespan = TimeSpan.FromHours(
+                configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Get<int>());
         });
 
         services.AddScoped<IAuthorizationHandler, AdminOrSelfHandler>();
 
-        services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+        services.AddOptionsWithValidateOnStart<JwtSettings>()
+            .BindConfiguration("JwtSettings");
 
         var jwtSettings = configuration.GetRequiredSection("JwtSettings").Get<JwtSettings>();
 

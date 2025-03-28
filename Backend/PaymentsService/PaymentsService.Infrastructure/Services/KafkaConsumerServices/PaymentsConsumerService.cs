@@ -8,8 +8,10 @@ namespace PaymentsService.Infrastructure.Services.KafkaConsumerServices;
 
 public class PaymentsConsumerService(
     IOptions<KafkaSettings> options,
-    IServiceScopeFactory serviceScopeFactory) : BackgroundService 
+    IServiceScopeFactory serviceScopeFactory) : BackgroundService
 {
+    private IConsumer<Ignore, string> _consumer = null!;
+    
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var config = new ConsumerConfig
@@ -19,18 +21,22 @@ public class PaymentsConsumerService(
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
 
-        using var consumer = new ConsumerBuilder<Ignore, string>(config).Build();
-        
-        consumer.Subscribe(options.Value.PaymentCancellationTopic);
+        _consumer = new ConsumerBuilder<Ignore, string>(config).Build();
+        _consumer.Subscribe(options.Value.PaymentCancellationTopic);
 
+        await Task.Run(() => ConsumeMessagesAsync(stoppingToken), stoppingToken);
+    }
+
+    private async Task ConsumeMessagesAsync(CancellationToken stoppingToken)
+    {
         try
         {
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    var result = consumer.Consume(stoppingToken);
-
+                    var result = _consumer.Consume(stoppingToken);
+                    
                     using var scope = serviceScopeFactory.CreateScope();
                     var employerPaymentsService = scope.ServiceProvider.GetRequiredService<IEmployerPaymentsService>();
 
@@ -38,17 +44,21 @@ public class PaymentsConsumerService(
                 }
                 catch (ConsumeException ex)
                 {
-                    // logging error
+                    // Логирование ошибки Kafka
+                }
+                catch (Exception ex)
+                {
+                    // Логирование ошибки
                 }
             }
         }
-        catch (OperationCanceledException ex)
+        catch (OperationCanceledException)
         {
-            // logging error
+            // Логирование завершения работы
         }
         finally
         {
-            consumer.Close();
+            _consumer.Close();
         }
     }
 }

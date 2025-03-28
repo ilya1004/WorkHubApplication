@@ -77,7 +77,8 @@ public static class DependencyInjection
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-        services.Configure<ProjectsSettings>(configuration.GetSection("ProjectsSettings"));
+        services.AddOptionsWithValidateOnStart<ProjectsSettings>()
+            .BindConfiguration("ProjectsSettings");
 
         services.AddScoped<IUserContext, UserContext>();
         

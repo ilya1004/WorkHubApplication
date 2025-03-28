@@ -15,7 +15,7 @@ var app = builder.Build();
 app.UseRouting();
 app.UseRateLimiter();
 
-app.MapHealthChecks("health", new HealthCheckOptions()
+app.MapHealthChecks("health", new HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });

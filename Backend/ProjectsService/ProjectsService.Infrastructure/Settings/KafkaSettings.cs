@@ -2,7 +2,7 @@
 
 public class KafkaSettings
 {
-    public required string BootstrapServers { get; init; }
-    public required string PaymentIntentSavingTopic { get; init; }
-    public required string PaymentCancellationTopic { get; init; }
+    public string BootstrapServers { get; init; }
+    public string PaymentIntentSavingTopic { get; init; }
+    public string PaymentCancellationTopic { get; init; }
 }

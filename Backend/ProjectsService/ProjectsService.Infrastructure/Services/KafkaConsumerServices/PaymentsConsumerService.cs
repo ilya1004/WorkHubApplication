@@ -12,6 +12,7 @@ public class PaymentsConsumerService(
     IOptions<KafkaSettings> options,
     IServiceScopeFactory serviceScopeFactory) : BackgroundService
 {
+    private IConsumer<Ignore, string> _consumer = null!;
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var config = new ConsumerConfig
@@ -21,54 +22,67 @@ public class PaymentsConsumerService(
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
 
-        using var consumer = new ConsumerBuilder<Ignore, string>(config).Build();
+        _consumer = new ConsumerBuilder<Ignore, string>(config).Build();
         
-        consumer.Subscribe(options.Value.PaymentIntentSavingTopic);
+        _consumer.Subscribe(options.Value.PaymentIntentSavingTopic);
 
+        await Task.Run(() => ConsumeMessagesAsync(stoppingToken), stoppingToken);
+    }
+
+    private async Task ConsumeMessagesAsync(CancellationToken stoppingToken)
+    {
         try
         {
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    var result = consumer.Consume(stoppingToken);
-
+                    var result = _consumer.Consume(stoppingToken);
                     var dto = JsonSerializer.Deserialize<SavePaymentIntentIdDto>(result.Message.Value);
                     
                     if (dto is null)
                     {
-                        throw new BadRequestException("Some error is occured in Message deserialization");
+                        throw new BadRequestException("Error occurred during message deserialization");
                     }
-                    
-                    using var scope = serviceScopeFactory.CreateScope();
-                    var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-                    var project = await unitOfWork.ProjectQueriesRepository.GetByIdAsync(
-                        Guid.Parse(dto.ProjectId), stoppingToken);
-
-                    if (project is null)
-                    {
-                        throw new NotFoundException($"Project with ID '{dto.ProjectId}' not found");
-                    }
-                    
-                    project.PaymentIntentId = dto.PaymentIntentId;
-
-                    await unitOfWork.ProjectCommandsRepository.UpdateAsync(project, stoppingToken);
-                    await unitOfWork.SaveAllAsync(stoppingToken);
+                    await ProcessMessageAsync(dto, stoppingToken);
                 }
                 catch (ConsumeException ex)
                 {
-                    // logging error
+                    // Логирование ConsumeException
+                }
+                catch (Exception ex)
+                {
+                    // Логирование Exception
                 }
             }
         }
-        catch (OperationCanceledException ex)
+        catch (OperationCanceledException)
         {
-            // logging error
+            // Логирование OperationCanceledException
         }
         finally
         {
-            consumer.Close();
+            _consumer.Close();
         }
+    }
+
+    private async Task ProcessMessageAsync(SavePaymentIntentIdDto dto, CancellationToken stoppingToken)
+    {
+        using var scope = serviceScopeFactory.CreateScope();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
+        var project = await unitOfWork.ProjectQueriesRepository.GetByIdAsync(
+            Guid.Parse(dto.ProjectId), stoppingToken);
+
+        if (project is null)
+        {
+            throw new NotFoundException($"Project with ID '{dto.ProjectId}' not found");
+        }
+
+        project.PaymentIntentId = dto.PaymentIntentId;
+
+        await unitOfWork.ProjectCommandsRepository.UpdateAsync(project, stoppingToken);
+        await unitOfWork.SaveAllAsync(stoppingToken);
     }
 }

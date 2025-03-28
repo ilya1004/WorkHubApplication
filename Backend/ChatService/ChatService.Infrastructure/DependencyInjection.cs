@@ -18,8 +18,11 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<MongoDbSettings>(configuration.GetSection("MongoDbSettings"));
-        services.Configure<AzuriteSettings>(configuration.GetSection("AzuriteSettings"));
+        services.AddOptionsWithValidateOnStart<MongoDbSettings>()
+            .BindConfiguration("MongoDbSettings");
+
+        services.AddOptionsWithValidateOnStart<AzuriteSettings>()
+            .BindConfiguration("AzuriteSettings");
         
         var mongoSettings = configuration.GetRequiredSection("MongoDbSettings").Get<MongoDbSettings>()!;
         var azuriteSettings = configuration.GetRequiredSection("AzuriteSettings").Get<AzuriteSettings>()!;

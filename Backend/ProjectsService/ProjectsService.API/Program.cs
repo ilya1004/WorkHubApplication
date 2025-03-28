@@ -37,7 +37,7 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var jobInitializer = scope.ServiceProvider.GetRequiredService<IBackgroundJobsInitializer>();
-    // jobInitializ er.StartBackgroundJobs();
+    // jobInitializer.StartBackgroundJobs();
 }
 
 app.UseRouting();

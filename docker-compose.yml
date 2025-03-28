@@ -34,15 +34,15 @@ services:
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-    depends_on:
-      - zookeeper
     restart: unless-stopped
     networks:
       - workhub_network
+    depends_on:
+      - zookeeper
     healthcheck:
       test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list"]
       interval: 10s
-      timeout: 10s
+      timeout: 5s
       retries: 5
   
   redis:
@@ -55,6 +55,11 @@ services:
     restart: unless-stopped
     networks:
       - workhub_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
@@ -93,6 +98,11 @@ services:
     restart: unless-stopped
     networks:
       - workhub_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d IdentityServiceDb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgres_primary:
     image: postgres:latest
@@ -107,6 +117,11 @@ services:
     restart: unless-stopped
     networks:
       - workhub_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ProjectsServiceDb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgres_replica:
     image: postgres:latest
@@ -114,12 +129,18 @@ services:
     volumes:
       - postgres_replica_data:/var/lib/postgresql/data
       - ./DockerConfig/InitPostgresReplicaDb/init-replica.sh:/docker-entrypoint-initdb.d/init-replica.sh
-    depends_on:
-      - postgres_primary
     restart: unless-stopped
     networks:
       - workhub_network
     command: ["/bin/bash", "/docker-entrypoint-initdb.d/init-replica.sh"]
+    depends_on:
+      postgres_primary:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ProjectsServiceDb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   
   postgres_hangfire:
     image: postgres:latest
@@ -133,6 +154,11 @@ services:
     restart: unless-stopped
     networks:
       - workhub_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ProjectsServiceHangfireDb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   workhub_apigateway:
     build:
@@ -142,6 +168,8 @@ services:
     ports:
       - "5000:5000"
       - "7000:7000"
+    volumes:
+      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     restart: unless-stopped
     networks:
       - workhub_network
@@ -154,11 +182,18 @@ services:
     ports:
       - "5080:5080"
       - "7080:7080"
+    volumes:
+      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     restart: unless-stopped
     networks:
       - workhub_network
     depends_on:
-      - postgres_identity
+      postgres_identity:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
 
   workhub_projectsservice:
     build:
@@ -168,13 +203,22 @@ services:
     ports:
       - "5081:5081"
       - "7081:7081"
+    volumes:
+      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     restart: unless-stopped
     networks:
       - workhub_network
     depends_on:
-      - postgres_hangfire
-      - postgres_primary
-      - postgres_replica
+      postgres_primary:
+        condition: service_healthy
+      postgres_replica:
+        condition: service_healthy
+      postgres_hangfire:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
 
   workhub_chatservice:
     build:
@@ -184,6 +228,8 @@ services:
     ports:
       - "5082:5082"
       - "7082:7082"
+    volumes:
+      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     restart: unless-stopped
     networks:
       - workhub_network
@@ -198,6 +244,8 @@ services:
     ports:
       - "5083:5083"
       - "7083:7083"
+    volumes:
+      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
     restart: unless-stopped
     networks:
       - workhub_network

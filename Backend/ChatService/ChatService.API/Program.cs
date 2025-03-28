@@ -1,5 +1,4 @@
 using ChatService.API;
-using ChatService.API.Filters;
 using ChatService.API.Hubs;
 using ChatService.API.Middlewares;
 using ChatService.Application;
@@ -7,7 +6,6 @@ using ChatService.Domain.Abstractions.DbInitializer;
 using ChatService.Infrastructure;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
