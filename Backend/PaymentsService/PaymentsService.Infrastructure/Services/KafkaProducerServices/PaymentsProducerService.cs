@@ -9,7 +9,7 @@ namespace PaymentsService.Infrastructure.Services.KafkaProducerServices;
 public class PaymentsProducerService : IPaymentsProducerService
 {
     private readonly IProducer<Null, string> _producer;
-    private readonly string _paymentsTopic;
+    private readonly string _paymentIntentSavingTopic;
 
     public PaymentsProducerService(IOptions<KafkaSettings> options)
     {
@@ -17,25 +17,21 @@ public class PaymentsProducerService : IPaymentsProducerService
         {
             BootstrapServers = options.Value.BootstrapServers,
             AllowAutoCreateTopics = true,
-            Acks = Acks.All,
-            RetryBackoffMs = 500,   // Задержка перед ретраем
-            MessageTimeoutMs = 30000,  // 30 секунд ожидания
-            SocketTimeoutMs = 30000,   // 30 секунд ожидания соединения
+            Acks = Acks.All
         };
         
         _producer = new ProducerBuilder<Null, string>(producerConfig).Build();
 
-        _paymentsTopic = options.Value.PaymentsTopic;
+        _paymentIntentSavingTopic = options.Value.PaymentIntentSavingTopic;
     }
 
     public async Task SavePaymentIntent(string paymentIntentId, CancellationToken cancellationToken)
     {
         try
         {
-            await _producer.ProduceAsync(_paymentsTopic, new Message<Null, string>
+            await _producer.ProduceAsync(_paymentIntentSavingTopic, new Message<Null, string>
             {
-                Value = paymentIntentId,
-                Headers = [new Header("event_type", Encoding.UTF8.GetBytes($"{nameof(SavePaymentIntent)}"))]
+                Value = paymentIntentId
             }, cancellationToken);
         }
         catch (ProduceException<Null, string> ex)

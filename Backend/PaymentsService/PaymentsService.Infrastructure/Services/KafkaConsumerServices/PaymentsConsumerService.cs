@@ -22,7 +22,7 @@ public class PaymentsConsumerService(
 
         using var consumer = new ConsumerBuilder<Ignore, string>(config).Build();
         
-        consumer.Subscribe(options.Value.PaymentsTopic);
+        consumer.Subscribe(options.Value.PaymentCancellationTopic);
 
         try
         {

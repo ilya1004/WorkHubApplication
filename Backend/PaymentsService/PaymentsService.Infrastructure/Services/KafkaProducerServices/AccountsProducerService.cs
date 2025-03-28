@@ -9,33 +9,31 @@ namespace PaymentsService.Infrastructure.Services.KafkaProducerServices;
 public class AccountsProducerService : IAccountsProducerService
 {
     private readonly IProducer<Null, string> _producer;
-    private readonly string _accountsTopic;
-
+    private readonly string _employerAccountIdSavingTopic;
+    private readonly string _freelancerAccountIdSavingTopic;
+    
     public AccountsProducerService(IOptions<KafkaSettings> options)
     {
         var producerConfig = new ProducerConfig
         {
             BootstrapServers = options.Value.BootstrapServers,
             AllowAutoCreateTopics = true,
-            Acks = Acks.All,
-            RetryBackoffMs = 500,   // Задержка перед ретраем
-            MessageTimeoutMs = 30000,  // 30 секунд ожидания
-            SocketTimeoutMs = 30000,   // 30 секунд ожидания соединения
+            Acks = Acks.All
         };
         
         _producer = new ProducerBuilder<Null, string>(producerConfig).Build();
 
-        _accountsTopic = options.Value.AccountsTopic;
+        _employerAccountIdSavingTopic = options.Value.EmployerAccountIdSavingTopic;
+        _freelancerAccountIdSavingTopic = options.Value.FreelancerAccountIdSavingTopic;
     }
     
     public async Task SaveEmployerAccountId(string employerAccountId, CancellationToken cancellationToken)
     {
         try
         {
-            await _producer.ProduceAsync(_accountsTopic, new Message<Null, string>
+            await _producer.ProduceAsync(_employerAccountIdSavingTopic, new Message<Null, string>
             {
-                Value = employerAccountId,
-                Headers = [new Header("event_type", Encoding.UTF8.GetBytes($"{nameof(SaveEmployerAccountId)}"))]
+                Value = employerAccountId
             }, cancellationToken);
         }
         catch (ProduceException<Null, string> ex)
@@ -53,10 +51,9 @@ public class AccountsProducerService : IAccountsProducerService
     {
         try
         {
-            await _producer.ProduceAsync(_accountsTopic, new Message<Null, string>
+            await _producer.ProduceAsync(_freelancerAccountIdSavingTopic, new Message<Null, string>
             {
-                Value = freelancerAccountId,
-                Headers = [new Header("event_type", Encoding.UTF8.GetBytes($"{nameof(SaveFreelancerAccountId)}"))]
+                Value = freelancerAccountId
             }, cancellationToken);
         }
         catch (ProduceException<Null, string> ex)
