@@ -11,8 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
 services.AddControllers();
-services.AddTransient<GlobalExceptionHandlingMiddleware>();
-
 services.AddHttpContextAccessor();
 
 services.AddAPI(builder.Configuration);
@@ -29,11 +27,12 @@ using (var scope = app.Services.CreateScope())
 
 app.UseRouting();
 
-app.MapHealthChecks("health", new HealthCheckOptions()
+app.MapHealthChecks("health", new HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
+app.UseMiddleware<GlobalLoggingMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseAuthentication();

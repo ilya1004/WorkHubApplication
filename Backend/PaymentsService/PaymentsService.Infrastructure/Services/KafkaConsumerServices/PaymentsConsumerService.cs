@@ -40,7 +40,7 @@ public class PaymentsConsumerService(
                     using var scope = serviceScopeFactory.CreateScope();
                     var employerPaymentsService = scope.ServiceProvider.GetRequiredService<IEmployerPaymentsService>();
 
-                    await employerPaymentsService.CancelPaymentForProjectAsync(result.Message.Value, stoppingToken);
+                    await employerPaymentsService.CancelPaymentIntentForProjectAsync(result.Message.Value, stoppingToken);
                 }
                 catch (ConsumeException ex)
                 {

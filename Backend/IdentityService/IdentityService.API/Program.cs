@@ -4,6 +4,7 @@ using IdentityService.BLL;
 using IdentityService.DAL;
 using System.Text.Json.Serialization;
 using HealthChecks.UI.Client;
+using IdentityService.API.GrpcServices;
 using IdentityService.BLL.Abstractions.AzuriteStartupService;
 using IdentityService.DAL.Abstractions.DbStartupService;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;

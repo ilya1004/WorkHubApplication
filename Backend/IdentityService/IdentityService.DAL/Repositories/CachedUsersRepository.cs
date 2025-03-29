@@ -32,6 +32,7 @@ public class CachedUsersRepository(
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(options.Value.RecordExpirationTimeInMinutes)
             }, cancellationToken);
+        }
 
         return user;
     }

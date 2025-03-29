@@ -8,11 +8,12 @@ using Microsoft.AspNetCore.SignalR;
 namespace ChatService.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class FileController(
+[Route("api/files")]
+public class FilesController(
     IHubContext<ChatHub, IChatClient> hubContext, 
     IMediator mediator,
-    IMapper mapper) : ControllerBase
+    IMapper mapper,
+    ILogger<FilesController> logger) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> UploadFile([FromForm] CreateFileMessageRequest request, 
@@ -21,6 +22,8 @@ public class FileController(
         var fileId = await mediator.Send(mapper.Map<CreateFileMessageCommand>(request), cancellationToken);
         
         await hubContext.Clients.User(request.ReceiverId.ToString()).ReceiveFileMessage(fileId);
+        
+        logger.LogInformation("File uploaded for receiver with ID '{ReceiverId}'", request.ReceiverId);
 
         return Created();
     }

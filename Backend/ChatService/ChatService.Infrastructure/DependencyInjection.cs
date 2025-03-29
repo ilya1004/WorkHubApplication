@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
+using Serilog;
+using Serilog.Formatting.Compact;
 
 namespace ChatService.Infrastructure;
 
@@ -48,6 +50,18 @@ public static class DependencyInjection
         services.AddHealthChecks()
             .AddMongoDb(_ => new MongoClient(mongoSettings.ConnectionString))
             .AddAzureBlobStorage(_ => new BlobServiceClient(azuriteSettings.ConnectionString));
+        
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .Enrich.WithProperty("Service", "ChatService")
+            .WriteTo.Console(new CompactJsonFormatter())
+            .WriteTo.Http(
+                requestUri: configuration["Logstash:Url"]!,
+                queueLimitBytes: null,
+                textFormatter: new CompactJsonFormatter())
+            .CreateLogger();
+
+        services.AddLogging(logging => logging.AddSerilog());
         
         return services;
     }
