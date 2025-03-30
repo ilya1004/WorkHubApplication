@@ -1,18 +1,23 @@
-using ChatService.Application.Exceptions;
 using ChatService.Application.Models;
 
-namespace ChatService.Application.UseCases.MessageUseCases.GetChatMessages;
+namespace ChatService.Application.UseCases.MessageUseCases.Queries.GetChatMessages;
 
 public class GetChatMessagesQueryHandler(
     IUnitOfWork unitOfWork,
-    IUserContext userContext) : IRequestHandler<GetChatMessagesQuery, PaginatedResultModel<Message>>
+    IUserContext userContext,
+    ILogger<GetChatMessagesQueryHandler> logger) : IRequestHandler<GetChatMessagesQuery, PaginatedResultModel<Message>>
 {
     public async Task<PaginatedResultModel<Message>> Handle(GetChatMessagesQuery request, CancellationToken cancellationToken)
     {
+        logger.LogInformation("Getting messages for chat {ChatId}. Page {PageNo}, Size {PageSize}", 
+            request.ChatId, request.PageNo, request.PageSize);
+
         var chat = await unitOfWork.ChatRepository.GetByIdAsync(request.ChatId, cancellationToken);
 
         if (chat is null)
         {
+            logger.LogWarning("Chat {ChatId} not found", request.ChatId);
+            
             throw new NotFoundException($"Chat with ID '{request.ChatId}' not found");
         }
         
@@ -20,6 +25,8 @@ public class GetChatMessagesQueryHandler(
 
         if (chat.EmployerId != userId && chat.FreelancerId != userId)
         {
+            logger.LogWarning("User {UserId} has no access to chat {ChatId}", userId, request.ChatId);
+            
             throw new ForbiddenException($"You do not have access to chat with ID '{request.ChatId}'");
         }
         
@@ -28,7 +35,10 @@ public class GetChatMessagesQueryHandler(
         var messages = await unitOfWork.MessagesRepository.GetMessagesByChatIdAsync(
             request.ChatId, offset, request.PageSize, cancellationToken);
 
-        var messagesCount = await unitOfWork.MessagesRepository.CountAsync(m => m.ChatId == request.ChatId, cancellationToken);
+        var messagesCount = await unitOfWork.MessagesRepository.CountAsync(
+            m => m.ChatId == request.ChatId, cancellationToken);
+
+        logger.LogInformation("Retrieved {Count} messages from chat {ChatId}", messages.Count, request.ChatId);
 
         return new PaginatedResultModel<Message>
         {

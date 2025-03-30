@@ -1,4 +1,4 @@
-using ChatService.Application.UseCases.MessageUseCases.GetChatMessages;
+using ChatService.Application.UseCases.MessageUseCases.Queries.GetChatMessages;
 using FluentValidation;
 
 namespace ChatService.Application.Validators.MessageValidators;

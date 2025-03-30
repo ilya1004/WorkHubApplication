@@ -6,13 +6,13 @@ using ChatService.Infrastructure.Configurations;
 using ChatService.Infrastructure.Repositories;
 using ChatService.Infrastructure.Services.BlobService;
 using ChatService.Infrastructure.Services.DbInitializer;
+using ChatService.Infrastructure.Services.LogstashHelpers;
 using ChatService.Infrastructure.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using Serilog;
-using Serilog.Formatting.Compact;
 
 namespace ChatService.Infrastructure;
 
@@ -53,12 +53,13 @@ public static class DependencyInjection
         
         Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
-            .Enrich.WithProperty("Service", "ChatService")
-            .WriteTo.Console(new CompactJsonFormatter())
+            .WriteTo.Console(new LogstashTextFormatter())
             .WriteTo.Http(
-                requestUri: configuration["Logstash:Url"]!,
+                requestUri: configuration["Logstash:Url"]!, 
                 queueLimitBytes: null,
-                textFormatter: new CompactJsonFormatter())
+                textFormatter: new LogstashTextFormatter(),
+                httpClient: new LogstashHttpClient()
+            )
             .CreateLogger();
 
         services.AddLogging(logging => logging.AddSerilog());

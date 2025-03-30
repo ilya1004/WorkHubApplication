@@ -1,7 +1,7 @@
 using ChatService.API.Contracts.ChatContracts;
 using ChatService.API.HubInterfaces;
 using ChatService.API.Hubs;
-using ChatService.Application.UseCases.MessageUseCases.CreateFileMessage;
+using ChatService.Application.UseCases.MessageUseCases.Commands.CreateFileMessage;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 

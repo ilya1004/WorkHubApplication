@@ -4,9 +4,9 @@ using ChatService.API.HubInterfaces;
 using ChatService.Application.UseCases.ChatUseCases.Commands.CreateChat;
 using ChatService.Application.UseCases.ChatUseCases.Commands.SetChatInactive;
 using ChatService.Application.UseCases.ChatUseCases.Queries.GetAllChats;
-using ChatService.Application.UseCases.MessageUseCases.CreateTextMessage;
-using ChatService.Application.UseCases.MessageUseCases.DeleteMessage;
-using ChatService.Application.UseCases.MessageUseCases.GetChatMessages;
+using ChatService.Application.UseCases.MessageUseCases.Commands.CreateTextMessage;
+using ChatService.Application.UseCases.MessageUseCases.Commands.DeleteMessage;
+using ChatService.Application.UseCases.MessageUseCases.Queries.GetChatMessages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 

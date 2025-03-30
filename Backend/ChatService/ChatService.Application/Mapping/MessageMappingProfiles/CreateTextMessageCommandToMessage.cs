@@ -1,4 +1,4 @@
-using ChatService.Application.UseCases.MessageUseCases.CreateTextMessage;
+using ChatService.Application.UseCases.MessageUseCases.Commands.CreateTextMessage;
 using ChatService.Domain.Enums;
 
 namespace ChatService.Application.Mapping.MessageMappingProfiles;
