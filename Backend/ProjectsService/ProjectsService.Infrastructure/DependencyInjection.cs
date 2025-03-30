@@ -3,6 +3,7 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using ProjectsService.Domain.Abstractions.KafkaProducerServices;
 using ProjectsService.Domain.Abstractions.StartupServices;
 using ProjectsService.Infrastructure.Data;
@@ -57,7 +58,11 @@ public static class DependencyInjection
             .AddKafka(new ProducerConfig
             {
                 BootstrapServers = configuration["KafkaSettings:BootstrapServers"]
-            }, name: "kafka");
+            }, name: "kafka")
+            .AddElasticsearch(
+                elasticsearchUri: configuration["Elasticsearch:Url"]!,
+                name: "elasticsearch",
+                failureStatus: HealthStatus.Unhealthy);
         
         return services;
     }

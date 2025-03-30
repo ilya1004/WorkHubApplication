@@ -6,22 +6,31 @@ namespace ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseC
 
 public class GetFreelancerApplicationsByProjectIdQueryHandler(
     IUnitOfWork unitOfWork,
-    IUserContext userContext) : IRequestHandler<GetFreelancerApplicationsByProjectIdQuery, PaginatedResultModel<FreelancerApplication>>
+    IUserContext userContext,
+    ILogger<GetFreelancerApplicationsByProjectIdQueryHandler> logger) : IRequestHandler<GetFreelancerApplicationsByProjectIdQuery, PaginatedResultModel<FreelancerApplication>>
 {
     public async Task<PaginatedResultModel<FreelancerApplication>> Handle(GetFreelancerApplicationsByProjectIdQuery request, CancellationToken cancellationToken)
     {
+        logger.LogInformation("Getting freelancer applications for project ID: {ProjectId}", request.ProjectId);
+
         var project = await unitOfWork.ProjectQueriesRepository.GetByIdAsync(request.ProjectId, cancellationToken);
         
         if (project is null)
         {
+            logger.LogWarning("Project with ID {ProjectId} not found", request.ProjectId);
+            
             throw new NotFoundException($"Project with ID '{request.ProjectId}' not found");
         }
 
-        var isResourceOwner = userContext.GetUserId() == project.EmployerId;
+        var userId = userContext.GetUserId();
+        var isResourceOwner = userId == project.EmployerId;
         var isAdmin = userContext.GetUserRole() == AppRoles.AdminRole;
         
         if (!isResourceOwner && !isAdmin)
         {
+            logger.LogWarning("User {UserId} attempted to access project {ProjectId} applications without permission", 
+                userId, request.ProjectId);
+            
             throw new ForbiddenException($"You do not have access to Project with ID '{request.ProjectId}'");
         }
         
@@ -36,6 +45,9 @@ public class GetFreelancerApplicationsByProjectIdQueryHandler(
         var applicationsCount = await unitOfWork.FreelancerApplicationQueriesRepository.CountAsync(
             fa => fa.ProjectId == request.ProjectId, 
             cancellationToken);
+
+        logger.LogInformation("Retrieved {Count} applications for project {ProjectId} out of {TotalCount}", 
+            applications.Count, request.ProjectId, applicationsCount);
 
         return new PaginatedResultModel<FreelancerApplication>
         {

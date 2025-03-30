@@ -6,12 +6,17 @@ namespace ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseC
 
 public class GetFreelancerApplicationsByFilterQueryHandler(
     IUnitOfWork unitOfWork,
-    IUserContext userContext) : IRequestHandler<GetFreelancerApplicationsByFilterQuery, PaginatedResultModel<FreelancerApplication>>
+    IUserContext userContext,
+    ILogger<GetFreelancerApplicationsByFilterQueryHandler> logger) : IRequestHandler<GetFreelancerApplicationsByFilterQuery, PaginatedResultModel<FreelancerApplication>>
 {
     public async Task<PaginatedResultModel<FreelancerApplication>> Handle(GetFreelancerApplicationsByFilterQuery request, CancellationToken cancellationToken)
     {
-        var offset = (request.PageNo - 1) * request.PageSize;
         var userId = userContext.GetUserId();
+        
+        logger.LogInformation("User {UserId} getting filtered freelancer applications with filters: {@Filters}", 
+            userId, request);
+
+        var offset = (request.PageNo - 1) * request.PageSize;
 
         var specification = new GetFreelancerApplicationsByFilterSpecification(
             userId,
@@ -26,6 +31,9 @@ public class GetFreelancerApplicationsByFilterQueryHandler(
 
         var applicationsCount = await unitOfWork.FreelancerApplicationQueriesRepository.CountByFilterAsync(
             specification, cancellationToken);
+
+        logger.LogInformation("Retrieved {Count} filtered applications out of {TotalCount} for user {UserId}", 
+            applications.Count, applicationsCount, userId);
 
         return new PaginatedResultModel<FreelancerApplication>
         {

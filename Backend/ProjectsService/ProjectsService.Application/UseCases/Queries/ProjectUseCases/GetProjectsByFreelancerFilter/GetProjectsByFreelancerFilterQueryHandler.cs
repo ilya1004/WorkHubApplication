@@ -6,12 +6,17 @@ namespace ProjectsService.Application.UseCases.Queries.ProjectUseCases.GetProjec
 
 public class GetProjectsByFreelancerFilterQueryHandler(
     IUnitOfWork unitOfWork,
-    IUserContext userContext) : IRequestHandler<GetProjectsByFreelancerFilterQuery, PaginatedResultModel<Project>>
+    IUserContext userContext,
+    ILogger<GetProjectsByFreelancerFilterQueryHandler> logger) : IRequestHandler<GetProjectsByFreelancerFilterQuery, PaginatedResultModel<Project>>
 {
     public async Task<PaginatedResultModel<Project>> Handle(GetProjectsByFreelancerFilterQuery request, CancellationToken cancellationToken)
     {
-        var offset = (request.PageNo - 1) * request.PageSize;
         var userId = userContext.GetUserId();
+        
+        logger.LogInformation("User {UserId} getting freelancer filtered projects with filters: {@Filters}", 
+            userId, request);
+
+        var offset = (request.PageNo - 1) * request.PageSize;
 
         var specification = new GetProjectsByFreelancerFilterSpecification(
             userId,
@@ -24,6 +29,9 @@ public class GetProjectsByFreelancerFilterQueryHandler(
         
         var projectsCount = await unitOfWork.ProjectQueriesRepository.CountByFilterAsync(specification, cancellationToken);
         
+        logger.LogInformation("Retrieved {Count} freelancer filtered projects out of {TotalCount} for user {UserId}", 
+            projects.Count, projectsCount, userId);
+
         return new PaginatedResultModel<Project>
         {
             Items = projects.ToList(),
