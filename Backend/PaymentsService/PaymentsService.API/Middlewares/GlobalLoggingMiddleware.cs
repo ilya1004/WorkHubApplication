@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace ChatService.API.Middlewares;
+namespace PaymentsService.API.Middlewares;
 
 public class GlobalLoggingMiddleware(
     ILogger<GlobalLoggingMiddleware> logger) : IMiddleware

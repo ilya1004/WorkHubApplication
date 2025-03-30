@@ -60,7 +60,11 @@ public static class DependencyInjection
             .AddKafka(new ProducerConfig
             {
                 BootstrapServers = kafkaSettings.BootstrapServers
-            }, name: "kafka");
+            }, name: "kafka")
+            .AddElasticsearch(
+                elasticsearchUri: configuration["Elasticsearch:Url"]!,
+                name: "elasticsearch",
+                failureStatus: HealthStatus.Unhealthy);
         
         Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()

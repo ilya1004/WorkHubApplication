@@ -18,9 +18,7 @@ public class GrpcLoggingInterceptor(ILogger<GrpcLoggingInterceptor> logger) : In
         stopwatch.Stop();
 
         logger.LogInformation("Completed gRPC call {MethodName} in {ElapsedMs}ms with status {StatusCode}",
-            context.Method,
-            stopwatch.ElapsedMilliseconds,
-            context.Status.StatusCode);
+            context.Method, stopwatch.ElapsedMilliseconds, context.Status.StatusCode);
 
         return response;
     }

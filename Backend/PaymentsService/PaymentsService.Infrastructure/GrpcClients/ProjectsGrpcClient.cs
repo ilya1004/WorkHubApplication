@@ -1,15 +1,27 @@
+using Microsoft.Extensions.Logging;
 using PaymentsService.Infrastructure.Interfaces;
 using Projects;
 
 namespace PaymentsService.Infrastructure.GrpcClients;
 
-public class ProjectsGrpcClient(Projects.Projects.ProjectsClient client, IMapper mapper) : IProjectsGrpcClient
+public class ProjectsGrpcClient(
+    Projects.Projects.ProjectsClient client, 
+    IMapper mapper,
+    ILogger<ProjectsGrpcClient> logger) : IProjectsGrpcClient
 {
     public async Task<ProjectDto> GetProjectByIdAsync(string id, CancellationToken cancellationToken)
     {
-        var response = await client.GetProjectByIdAsync(new GetProjectByIdRequest { Id = id }, cancellationToken: cancellationToken);
+        logger.LogInformation("Requesting project with ID {ProjectId} from gRPC service", id);
         
+        var response = await client.GetProjectByIdAsync(
+            new GetProjectByIdRequest { Id = id }, 
+            cancellationToken: cancellationToken);
+        
+        logger.LogInformation("Successfully received project with ID {ProjectId} from gRPC service", id);
+
         var projectDto = mapper.Map<ProjectDto>(response);
+      
+        logger.LogDebug("Mapped gRPC response to ProjectDto for ID {ProjectId}", id);
 
         return projectDto;
     }
