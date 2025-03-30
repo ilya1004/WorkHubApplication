@@ -2,7 +2,6 @@
 using IdentityService.BLL.Services.TokenProvider;
 using IdentityService.BLL.Settings;
 using IdentityService.DAL.Abstractions.Repositories;
-using Microsoft.Extensions.Options;
 using System.Security.Claims;
 
 namespace IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
@@ -10,17 +9,27 @@ namespace IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
 public class RefreshTokenCommandHandler(
     ITokenProvider tokenProvider,
     IUnitOfWork unitOfWork,
-    IOptions<JwtSettings> options) : IRequestHandler<RefreshTokenCommand, AuthTokensDto>
+    IOptions<JwtSettings> options,
+    ILogger<RefreshTokenCommandHandler> logger) : IRequestHandler<RefreshTokenCommand, AuthTokensDto>
 {
     public async Task<AuthTokensDto> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        var principal = tokenProvider.GetPrincipalFromExpiredToken(request.AccessToken);
+        logger.LogInformation("Processing refresh token request");
 
-        var user = await unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier)!),
+        var principal = tokenProvider.GetPrincipalFromExpiredToken(request.AccessToken);
+        var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        logger.LogInformation("Refreshing tokens for user {UserId}", userId);
+        
+        var user = await unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(userId!),
             cancellationToken, u => u.Role);
 
         if (user is null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime < DateTime.UtcNow)
+        {
+            logger.LogWarning("Invalid refresh token for user {UserId}", userId);
+            
             throw new UnauthorizedException("Invalid refresh token");
+        }
 
         var newAccessToken = tokenProvider.GenerateAccessToken(user);
         var newRefreshToken = tokenProvider.GenerateRefreshToken();
@@ -32,6 +41,8 @@ public class RefreshTokenCommandHandler(
         await unitOfWork.UsersRepository.UpdateAsync(user, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
 
+        logger.LogInformation("Tokens refreshed successfully for user {UserId}", user.Id);
+        
         return new AuthTokensDto(newAccessToken, newRefreshToken);
     }
 }

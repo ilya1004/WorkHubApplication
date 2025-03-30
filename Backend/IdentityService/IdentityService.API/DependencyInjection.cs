@@ -11,6 +11,7 @@ using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using System.Reflection;
 using System.Text;
 using IdentityService.API.Interceptors;
+using IdentityService.API.Middlewares;
 using IdentityService.API.Services;
 using IdentityService.BLL.Abstractions.UserContext;
 
@@ -20,6 +21,9 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddAPI(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddTransient<GlobalLoggingMiddleware>();
+        services.AddTransient<GlobalExceptionHandlingMiddleware>();
+        
         services.AddIdentity<AppUser, IdentityRole<Guid>>(options =>
             {
                 options.Password.RequiredLength = 8;
@@ -91,10 +95,12 @@ public static class DependencyInjection
         services.AddScoped<IUserContext, UserContext>();
 
         services.AddSingleton<ErrorHandlingInterceptor>();
+        services.AddSingleton<GrpcLoggingInterceptor>();
             
         services.AddGrpc(options =>
         {
             options.EnableDetailedErrors = true;
+            options.Interceptors.Add<GrpcLoggingInterceptor>();
             options.Interceptors.Add<ErrorHandlingInterceptor>();
         });
 

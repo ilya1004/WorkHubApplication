@@ -15,7 +15,6 @@ var services = builder.Services;
 services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
-services.AddTransient<GlobalExceptionHandlingMiddleware>();
 services.AddHttpContextAccessor();
 
 services.AddAPI(builder.Configuration);
@@ -50,6 +49,7 @@ app.MapHealthChecks("health", new HealthCheckOptions
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
+app.UseMiddleware<GlobalLoggingMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseAuthentication();

@@ -1,18 +1,26 @@
 ﻿using IdentityService.BLL.Models;
-using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Constants;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Queries.GetUsersByRole;
 
-public class GetUsersByRoleQueryHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetUsersByRoleQuery, PaginatedResultModel<AppUser>>
+public class GetUsersByRoleQueryHandler(
+    IUnitOfWork unitOfWork,
+    ILogger<GetUsersByRoleQueryHandler> logger) : IRequestHandler<GetUsersByRoleQuery, PaginatedResultModel<AppUser>>
 {
     public async Task<PaginatedResultModel<AppUser>> Handle(GetUsersByRoleQuery request, CancellationToken cancellationToken)
     {
+        logger.LogInformation("Getting users by role: {RoleName} with pagination - PageNo: {PageNo}, PageSize: {PageSize}", 
+            request.RoleName, request.PageNo, request.PageSize);
+
         if (request.RoleName != AppRoles.AdminRole &&
             request.RoleName != AppRoles.EmployerRole &&
             request.RoleName != AppRoles.FreelancerRole)
+        {
+            logger.LogWarning("Invalid role name provided: {RoleName}", request.RoleName);
+            
             throw new BadRequestException($"User role value is incorrect. It should be " +
                                           $"'{AppRoles.AdminRole}', '{AppRoles.EmployerRole}' or '{AppRoles.FreelancerRole}'");
+        }
 
         var offset = (request.PageNo - 1) * request.PageSize;
 
@@ -23,7 +31,11 @@ public class GetUsersByRoleQueryHandler(IUnitOfWork unitOfWork) : IRequestHandle
             cancellationToken,
             u => u.Role);
 
+        logger.LogInformation("Retrieved {Count} users with role {RoleName}", users.Count, request.RoleName);
+
         var usersCount = await unitOfWork.UsersRepository.CountAsync(u => u.Role.Name == request.RoleName, cancellationToken);
+        
+        logger.LogInformation("Total count of users with role {RoleName}: {TotalCount}", request.RoleName, usersCount);
 
         return new PaginatedResultModel<AppUser>
         {
