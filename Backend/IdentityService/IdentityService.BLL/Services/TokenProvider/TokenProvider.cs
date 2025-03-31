@@ -32,7 +32,7 @@ public class TokenProvider(
             expires: DateTime.UtcNow.AddMinutes(30),
             signingCredentials: credentials);
 
-        logger.LogDebug("Access token generated successfully for user {UserId}", user.Id);
+        logger.LogInformation("Access token generated successfully for user {UserId}", user.Id);
         
         return new JwtSecurityTokenHandler().WriteToken(token);
     }

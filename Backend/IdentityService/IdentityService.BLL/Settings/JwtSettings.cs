@@ -2,8 +2,8 @@
 
 public class JwtSettings
 {
-    public string SecretKey { get; set; }
-    public string Issuer { get; set; }
-    public string Audience { get; set; }
-    public int RefreshTokenExpiryDays { get; set; }
+    public required string SecretKey { get; init; }
+    public required string Issuer { get; init; }
+    public required string Audience { get; init; }
+    public int RefreshTokenExpiryDays { get; init; }
 }

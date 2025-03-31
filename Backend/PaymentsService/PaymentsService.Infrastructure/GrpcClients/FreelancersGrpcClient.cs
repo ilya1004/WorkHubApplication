@@ -20,8 +20,6 @@ public class FreelancersGrpcClient(
         logger.LogInformation("Successfully received freelancer with ID {FreelancerId} from gRPC service", id);
 
         var freelancerDto = mapper.Map<FreelancerDto>(response);
-        
-        logger.LogDebug("Mapped gRPC response to FreelancerDto for ID {FreelancerId}", id);
 
         return freelancerDto;
     }

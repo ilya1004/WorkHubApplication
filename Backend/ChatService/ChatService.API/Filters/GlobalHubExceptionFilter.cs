@@ -16,22 +16,13 @@ public class GlobalHubExceptionFilter(
         
         try
         {
-            logger.LogDebug(
-                "SignalR {Hub}.{Method} invoked by {UserId}",
-                hubName,
-                methodName,
-                userId);
+            logger.LogInformation("SignalR {Hub}.{Method} invoked by {UserId}", hubName, methodName, userId);
 
             return await next(invocationContext);
         }
         catch (Exception ex)
         {
-            logger.LogError(
-                ex,
-                "SignalR Error in {Hub}.{Method} by {UserId}",
-                hubName,
-                methodName,
-                userId);
+            logger.LogError(ex, "SignalR Error in {Hub}.{Method} by {UserId}", hubName, methodName, userId);
 
             if (invocationContext.Hub is { } hub)
             {

@@ -11,6 +11,8 @@ using ProjectsService.Infrastructure.Repositories;
 using ProjectsService.Infrastructure.Services.HangfireJobsInitializer;
 using ProjectsService.Infrastructure.Services.KafkaConsumerServices;
 using ProjectsService.Infrastructure.Services.KafkaProducerServices;
+using ProjectsService.Infrastructure.Services.LogstashHelpers;
+using Serilog;
 
 namespace ProjectsService.Infrastructure;
 
@@ -63,6 +65,19 @@ public static class DependencyInjection
                 elasticsearchUri: configuration["Elasticsearch:Url"]!,
                 name: "elasticsearch",
                 failureStatus: HealthStatus.Unhealthy);
+        
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Console(new LogstashTextFormatter())
+            .WriteTo.Http(
+                requestUri: configuration["Logstash:Url"]!, 
+                queueLimitBytes: null,
+                textFormatter: new LogstashTextFormatter(),
+                httpClient: new LogstashHttpClient()
+            )
+            .CreateLogger();
+
+        services.AddLogging(logging => logging.AddSerilog());
         
         return services;
     }

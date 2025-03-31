@@ -20,8 +20,6 @@ public class ProjectsGrpcClient(
         logger.LogInformation("Successfully received project with ID {ProjectId} from gRPC service", id);
 
         var projectDto = mapper.Map<ProjectDto>(response);
-      
-        logger.LogDebug("Mapped gRPC response to ProjectDto for ID {ProjectId}", id);
 
         return projectDto;
     }

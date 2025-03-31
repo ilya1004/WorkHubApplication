@@ -12,7 +12,7 @@ public class BlobService(
     IOptions<AzuriteSettings> options,
     ILogger<BlobService> logger) : IBlobService
 {
-    private readonly string _containerName = options.Value.FilesContainerName;
+    private readonly string _containerName = options.Value.ImagesContainerName;
 
     public async Task<Guid> UploadAsync(Stream stream, string contentType, CancellationToken cancellationToken = default)
     {

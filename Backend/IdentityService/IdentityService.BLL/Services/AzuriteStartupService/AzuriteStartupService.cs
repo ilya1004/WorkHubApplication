@@ -12,7 +12,7 @@ public class AzuriteStartupService(
 {
     public async Task CreateContainerIfNotExistAsync()
     {
-        var containerName = options.Value.FilesContainerName;
+        var containerName = options.Value.ImagesContainerName;
         
         logger.LogInformation("Checking container '{ContainerName}' existence", containerName);
         

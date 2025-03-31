@@ -20,8 +20,6 @@ public class EmployersGrpcClient(
         logger.LogInformation("Successfully received employer with ID {EmployerId} from gRPC service", id);
 
         var employerDto = mapper.Map<EmployerDto>(response);
-        
-        logger.LogDebug("Mapped gRPC response to EmployerDto for ID {EmployerId}", id);
 
         return employerDto;
     }
