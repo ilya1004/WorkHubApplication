@@ -1,5 +1,7 @@
+using PaymentsService.Domain.Abstractions.KafkaProducerServices;
 using PaymentsService.Domain.Abstractions.PaymentsServices;
 using PaymentsService.Domain.Abstractions.TransfersServices;
+using PaymentsService.Infrastructure.DTOs;
 using PaymentsService.Domain.Models;
 using PaymentsService.Infrastructure.Interfaces;
 
@@ -8,6 +10,7 @@ namespace PaymentsService.Infrastructure.Services.StripePaymentsServices;
 public class StripeEmployerPaymentsService(
     IMapper mapper,
     ITransfersService transfersService,
+    IPaymentsProducerService paymentsProducerService,
     IEmployersGrpcClient employersGrpcClient,
     IProjectsGrpcClient projectsGrpcClient,
     IFreelancersGrpcClient freelancersGrpcClient) : IEmployerPaymentsService
@@ -80,7 +83,10 @@ public class StripeEmployerPaymentsService(
             
             await _paymentIntentService.CreateAsync(options, cancellationToken: cancellationToken);
             
-            // This data will be sent to Projects Service via Kafka
+            var paymentIntent = await _paymentIntentService.CreateAsync(options, cancellationToken: cancellationToken);
+
+            await paymentsProducerService.SavePaymentIntentIdAsync(project.Id.ToString(), paymentIntent.Id, cancellationToken);
+            
         }
         catch (StripeException ex)
         {
@@ -137,8 +143,7 @@ public class StripeEmployerPaymentsService(
             throw new BadRequestException($"Could not confirm Payment for project with ID '{projectId}'.");
         }
     }
-
-    // This method will be called from Projects Service only via Kafka
+    
     public async Task CancelPaymentIntentForProjectAsync(string paymentIntentId, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(paymentIntentId)) throw new NotFoundException("This project does not have an attached Payment Intent.");
@@ -160,7 +165,7 @@ public class StripeEmployerPaymentsService(
         }
         catch
         {
-            throw new BadRequestException($"Could not cancel Payment intent with ID '{paymentIntentId}'.");
+            throw new BadRequestException($"Could not cancel Payment Intent with ID '{paymentIntentId}'.");
         }
     }
 }

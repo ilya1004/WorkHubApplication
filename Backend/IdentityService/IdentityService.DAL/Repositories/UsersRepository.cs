@@ -1,8 +1,6 @@
 ﻿using System.Linq.Expressions;
 using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Data;
-using IdentityService.DAL.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.DAL.Repositories;
 

@@ -1,7 +1,5 @@
 ﻿using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Data;
-using IdentityService.DAL.Entities;
-using IdentityService.DAL.Settings;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 

@@ -45,8 +45,7 @@ public static class DependencyInjection
 
     public static IServiceCollection AddYarpConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddReverseProxy()
-            .LoadFromConfig(configuration.GetSection("ReverseProxy"));
+        services.AddReverseProxy().LoadFromConfig(configuration.GetSection("ReverseProxy"));
 
         services.AddRateLimiter(options =>
         {

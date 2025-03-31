@@ -20,7 +20,7 @@ public class RedisService(IDistributedCache distributedCache) : ICachedService
     {
         return await distributedCache.GetStringAsync(key);
     }
-    
+
     public async Task<bool> ExistsAsync(string key)
     {
         var value = await distributedCache.GetStringAsync(key);

@@ -1,3 +1,5 @@
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using PaymentsService.API;
 using PaymentsService.API.Middlewares;
 using PaymentsService.Application;
@@ -26,6 +28,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 

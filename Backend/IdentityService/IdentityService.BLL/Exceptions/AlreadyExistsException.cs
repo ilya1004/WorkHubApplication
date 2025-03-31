@@ -1,8 +1,3 @@
 ﻿namespace IdentityService.BLL.Exceptions;
 
-public class AlreadyExistsException : Exception
-{
-    public AlreadyExistsException(string message) : base(message)
-    {
-    }
-}
+public class AlreadyExistsException(string message) : Exception(message);

@@ -1,10 +1,12 @@
+using ProjectsService.Domain.Abstractions.KafkaProducerServices;
 using ProjectsService.Domain.Abstractions.UserContext;
 
 namespace ProjectsService.Application.UseCases.Commands.ProjectUseCases.CancelProject;
 
 public class CancelProjectCommandHandler(
     IUnitOfWork unitOfWork,
-    IUserContext userContext) : IRequestHandler<CancelProjectCommand>
+    IUserContext userContext,
+    IPaymentsProducerService paymentsProducerService) : IRequestHandler<CancelProjectCommand>
 {
     public async Task Handle(CancelProjectCommand request, CancellationToken cancellationToken)
     {
@@ -26,7 +28,13 @@ public class CancelProjectCommandHandler(
         }
         
         project.Lifecycle.Status = ProjectStatus.Cancelled;
+        
         await unitOfWork.ProjectCommandsRepository.UpdateAsync(project, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
+
+        if (project.PaymentIntentId is not null)
+        {
+            await paymentsProducerService.CancelPaymentAsync(project.PaymentIntentId, cancellationToken);    
+        }
     }
 }

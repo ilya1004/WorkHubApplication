@@ -1,6 +1,7 @@
-﻿using IdentityService.BLL.Services.BlobService;
+﻿using IdentityService.BLL.Abstractions.BlobService;
+using IdentityService.BLL.Abstractions.UserContext;
+using IdentityService.BLL.Services.BlobService;
 using IdentityService.DAL.Abstractions.Repositories;
-using IdentityService.DAL.Abstractions.UserContext;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateEmployerProfile;
 

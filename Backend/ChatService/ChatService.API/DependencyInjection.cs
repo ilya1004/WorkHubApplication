@@ -1,11 +1,14 @@
 using System.Reflection;
 using System.Text;
 using ChatService.API.Constants;
+using ChatService.API.Filters;
+using ChatService.API.Hubs;
 using ChatService.API.Services;
 using ChatService.API.Settings;
 using ChatService.Application.Constants;
 using ChatService.Domain.Abstractions.UserContext;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ChatService.API;
@@ -14,6 +17,13 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddAPI(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSignalR()
+            .AddHubOptions<ChatHub>(options =>
+            {
+                options.EnableDetailedErrors = true;
+                options.AddFilter<GlobalHubExceptionFilter>();
+            });
+        
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
         var jwtSettings = configuration.GetRequiredSection("JwtSettings").Get<JwtSettings>();
@@ -62,6 +72,8 @@ public static class DependencyInjection
             });
         
         services.AddScoped<IUserContext, UserContext>();
+
+        services.AddHealthChecks();
         
         return services;
     }

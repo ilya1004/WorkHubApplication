@@ -3,7 +3,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Primitives;
-using IdentityService.DAL.Settings;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 
@@ -32,7 +31,7 @@ public class CachedAppRepository<TEntity>(
         return await repository.FirstOrDefaultAsync(filter, cancellationToken);
     }
 
-    public async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default, 
+    public async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default,
         params Expression<Func<TEntity, object>>[]? includesProperties)
     {
         var cacheKey = $"{typeof(TEntity).Name}:{id}";
@@ -51,7 +50,6 @@ public class CachedAppRepository<TEntity>(
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(options.Value.RecordExpirationTimeInMinutes)
             }, cancellationToken);
-        }
 
         return entity;
     }
@@ -92,17 +90,17 @@ public class CachedAppRepository<TEntity>(
         {
             AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(options.Value.RecordExpirationTimeInMinutes)
         }, cancellationToken);
-        
+
         return entities;
     }
 
-    public async Task<IReadOnlyList<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? filter, 
+    public async Task<IReadOnlyList<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? filter,
         CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[]? includesProperties)
     {
         return await repository.ListAsync(filter, cancellationToken, includesProperties);
     }
 
-    public async Task<IReadOnlyList<TEntity>> PaginatedListAsync(Expression<Func<TEntity, bool>>? filter, int offset, int limit, 
+    public async Task<IReadOnlyList<TEntity>> PaginatedListAsync(Expression<Func<TEntity, bool>>? filter, int offset, int limit,
         CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[]? includesProperties)
     {
         return await repository.PaginatedListAsync(filter, offset, limit, cancellationToken, includesProperties);
@@ -124,10 +122,7 @@ public class CachedAppRepository<TEntity>(
         var cacheKey = $"{typeof(TEntity).Name}:CountAll";
         var cachedCount = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
 
-        if (cachedCount != null)
-        {
-            return int.Parse(cachedCount);
-        }
+        if (cachedCount != null) return int.Parse(cachedCount);
 
         var count = await repository.CountAllAsync(cancellationToken);
 

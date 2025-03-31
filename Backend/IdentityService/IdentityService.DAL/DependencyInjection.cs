@@ -1,12 +1,10 @@
-﻿using IdentityService.DAL.Abstractions.DbInitializer;
+﻿using IdentityService.DAL.Abstractions.DbStartupService;
 using IdentityService.DAL.Abstractions.RedisService;
 using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Data;
 using IdentityService.DAL.Repositories;
-using IdentityService.DAL.Services.DbInitializer;
+using IdentityService.DAL.Services.DbStartupService;
 using IdentityService.DAL.Services.RedisService;
-using IdentityService.DAL.Settings;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,18 +16,23 @@ public static class DependencyInjection
     {
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("PostgresConnection")));
-        
+
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = configuration.GetConnectionString("RedisConnection");
         });
 
-        services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
-        
+        services.AddOptionsWithValidateOnStart<CacheOptions>()
+            .BindConfiguration("CacheOptions");
+
         services.AddScoped<IUnitOfWork, AppUnitOfWork>();
         services.AddScoped<ICachedService, RedisService>();
-        services.AddScoped<IDbInitializer, DbInitializer>();
-        
+        services.AddScoped<IDbStartupService, DbStartupService>();
+
+        services.AddHealthChecks()
+            .AddNpgSql(configuration.GetConnectionString("PostgresConnection")!)
+            .AddRedis(configuration.GetConnectionString("RedisConnection")!);
+
         return services;
     }
 }

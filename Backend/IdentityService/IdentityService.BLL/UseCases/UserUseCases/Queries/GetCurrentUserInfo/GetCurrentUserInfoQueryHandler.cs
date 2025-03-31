@@ -1,5 +1,5 @@
+using IdentityService.BLL.Abstractions.UserContext;
 using IdentityService.DAL.Abstractions.Repositories;
-using IdentityService.DAL.Abstractions.UserContext;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Queries.GetCurrentUserInfo;
 

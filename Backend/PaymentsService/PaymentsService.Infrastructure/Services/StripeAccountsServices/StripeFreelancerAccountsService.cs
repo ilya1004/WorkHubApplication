@@ -1,5 +1,6 @@
 using PaymentsService.Application.Constants;
 using PaymentsService.Domain.Abstractions.AccountsServices;
+using PaymentsService.Infrastructure.DTOs;
 using PaymentsService.Domain.Models;
 using PaymentsService.Infrastructure.Interfaces;
 

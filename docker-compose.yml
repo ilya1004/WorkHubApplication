@@ -1,26 +1,8 @@
-version: '3.8'
+networks:
+  workhub_network:
+    driver: bridge
 
 services:
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    environment:
-      - REDIS_PASSWORD=redispass
-    restart: unless-stopped
-
-  azurite:
-    image: mcr.microsoft.com/azure-storage/azurite
-    container_name: azurite
-    ports:
-      - "10000:10000"
-    volumes:
-      - azurite_data:/data
-    restart: unless-stopped
-
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog
@@ -30,8 +12,253 @@ services:
     volumes:
       - mailhog_data:/data
     restart: unless-stopped
+    networks:
+      - workhub_network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+    restart: unless-stopped
+    networks:
+      - workhub_network
+  
+  kafka:
+    image: confluentinc/cp-kafka
+    container_name: kafka
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+    restart: unless-stopped
+    networks:
+      - workhub_network
+    depends_on:
+      - zookeeper
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - workhub_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: azurite
+    ports:
+      - "10000:10000"
+    volumes:
+      - azurite_data:/data
+    restart: unless-stopped
+    networks:
+      - workhub_network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: mongopass
+    restart: unless-stopped
+    networks:
+      - workhub_network
+  
+  postgres_identity:
+    image: postgres:latest
+    container_name: postgres_identity
+    volumes:
+      - postgres_identity_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: passpass
+      POSTGRES_DB: IdentityServiceDb
+    restart: unless-stopped
+    networks:
+      - workhub_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d IdentityServiceDb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres_primary:
+    image: postgres:latest
+    container_name: postgres_primary
+    volumes:
+      - postgres_primary_data:/var/lib/postgresql/data
+      - ./DockerConfig/InitPostgresPrimaryDb/init-primary.sh:/docker-entrypoint-initdb.d/init-primary.sh
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: passpass_primary
+      POSTGRES_DB: ProjectsServiceDb
+    restart: unless-stopped
+    networks:
+      - workhub_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ProjectsServiceDb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres_replica:
+    image: postgres:latest
+    container_name: postgres_replica
+    volumes:
+      - postgres_replica_data:/var/lib/postgresql/data
+      - ./DockerConfig/InitPostgresReplicaDb/init-replica.sh:/docker-entrypoint-initdb.d/init-replica.sh
+    restart: unless-stopped
+    networks:
+      - workhub_network
+    command: ["/bin/bash", "/docker-entrypoint-initdb.d/init-replica.sh"]
+    depends_on:
+      postgres_primary:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ProjectsServiceDb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  postgres_hangfire:
+    image: postgres:latest
+    container_name: postgres_hangfire
+    volumes:
+      - postgres_hangfire_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: passpass
+      POSTGRES_DB: ProjectsServiceHangfireDb
+    restart: unless-stopped
+    networks:
+      - workhub_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ProjectsServiceHangfireDb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  workhub_apigateway:
+    build:
+      context: .
+      dockerfile: Backend/ApiGateway/Dockerfile
+    container_name: workhub_apigateway
+    ports:
+      - "5000:5000"
+      - "7000:7000"
+    volumes:
+      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    restart: unless-stopped
+    networks:
+      - workhub_network
+
+  workhub_identityservice:
+    build:
+      context: .
+      dockerfile: Backend/IdentityService/Dockerfile
+    container_name: workhub_identityservice
+    ports:
+      - "5080:5080"
+      - "7080:7080"
+    volumes:
+      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    restart: unless-stopped
+    networks:
+      - workhub_network
+    depends_on:
+      postgres_identity:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  workhub_projectsservice:
+    build:
+      context: .
+      dockerfile: Backend/ProjectsService/Dockerfile
+    container_name: workhub_projectsservice
+    ports:
+      - "5081:5081"
+      - "7081:7081"
+    volumes:
+      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    restart: unless-stopped
+    networks:
+      - workhub_network
+    depends_on:
+      postgres_primary:
+        condition: service_healthy
+      postgres_replica:
+        condition: service_healthy
+      postgres_hangfire:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  workhub_chatservice:
+    build:
+      context: .
+      dockerfile: Backend/ChatService/Dockerfile
+    container_name: workhub_chatservice
+    ports:
+      - "5082:5082"
+      - "7082:7082"
+    volumes:
+      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    restart: unless-stopped
+    networks:
+      - workhub_network
+    depends_on:
+      - mongodb
+  
+  workhub_paymentsservice:
+    build:
+      context: .
+      dockerfile: Backend/PaymentsService/Dockerfile
+    container_name: workhub_paymentsservice
+    ports:
+      - "5083:5083"
+      - "7083:7083"
+    volumes:
+      - ./Backend/ApiGateway/https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
+    restart: unless-stopped
+    networks:
+      - workhub_network
+    depends_on:
+      kafka:
+        condition: service_healthy
 
 volumes:
   redis_data:
   azurite_data:
   mailhog_data:
+  mongodb_data:
+  postgres_identity_data:
+  postgres_hangfire_data:
+  postgres_primary_data:
+  postgres_replica_data:

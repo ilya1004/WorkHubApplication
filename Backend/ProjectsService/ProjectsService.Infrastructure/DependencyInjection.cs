@@ -1,14 +1,15 @@
+using Confluent.Kafka;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectsService.Application.Abstractions.BackgroundJobs;
+using ProjectsService.Domain.Abstractions.KafkaProducerServices;
 using ProjectsService.Domain.Abstractions.StartupServices;
 using ProjectsService.Infrastructure.Data;
 using ProjectsService.Infrastructure.Repositories;
 using ProjectsService.Infrastructure.Services.HangfireJobsInitializer;
-using ProjectsService.Infrastructure.Services.HangfireScheduler;
-using ProjectsService.Infrastructure.Settings;
+using ProjectsService.Infrastructure.Services.KafkaConsumerServices;
+using ProjectsService.Infrastructure.Services.KafkaProducerServices;
 
 namespace ProjectsService.Infrastructure;
 
@@ -28,17 +29,35 @@ public static class DependencyInjection
             config.UsePostgreSqlStorage(options => 
                 options.UseNpgsqlConnection(configuration.GetConnectionString("PostgresConnectionHangfireDb"))));
         
-        services.AddHangfireServer(options => options.SchedulePollingInterval = TimeSpan.FromSeconds(10));
+        services.AddHangfireServer();
         
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = configuration.GetConnectionString("RedisConnection");
         });
 
-        services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
+        services.AddOptionsWithValidateOnStart<CacheOptions>()
+            .BindConfiguration("CacheOptions");
 
-        services.AddScoped<IBackgroundJobScheduler, HangfireScheduler>();
+        services.AddScoped<IRecurringJobManager, RecurringJobManager>();
         services.AddScoped<IBackgroundJobsInitializer, HangfireJobsInitializer>();
+        
+        services.AddOptionsWithValidateOnStart<KafkaSettings>()
+            .BindConfiguration("KafkaSettings");
+
+        services.AddSingleton<IPaymentsProducerService, PaymentsProducerService>();
+
+        services.AddHostedService<PaymentsConsumerService>();
+        
+        services.AddHealthChecks()
+            .AddNpgSql(configuration.GetConnectionString("PostgresConnectionPrimaryDb")!, name: "postgres-primary")
+            .AddNpgSql(configuration.GetConnectionString("PostgresConnectionReplicaDb")!, name: "postgres-replica")
+            .AddNpgSql(configuration.GetConnectionString("PostgresConnectionHangfireDb")!, name: "postgres-hangfire")
+            .AddRedis(configuration.GetConnectionString("RedisConnection")!)
+            .AddKafka(new ProducerConfig
+            {
+                BootstrapServers = configuration["KafkaSettings:BootstrapServers"]
+            }, name: "kafka");
         
         return services;
     }

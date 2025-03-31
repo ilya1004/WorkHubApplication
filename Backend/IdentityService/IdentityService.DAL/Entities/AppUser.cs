@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace IdentityService.DAL.Entities;
+﻿namespace IdentityService.DAL.Entities;
 
 public class AppUser : IdentityUser<Guid>
 {

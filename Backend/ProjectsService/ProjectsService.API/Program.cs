@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 using Hangfire;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using ProjectsService.API;
 using ProjectsService.API.Middlewares;
 using ProjectsService.Application;
@@ -13,7 +15,6 @@ services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
-
 services.AddHttpContextAccessor();
 
 services.AddAPI(builder.Configuration);
@@ -36,10 +37,15 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var jobInitializer = scope.ServiceProvider.GetRequiredService<IBackgroundJobsInitializer>();
-    jobInitializer.StartBackgroundJobs();
+    // jobInitializer.StartBackgroundJobs();
 }
 
 app.UseRouting();
+
+app.MapHealthChecks("health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 

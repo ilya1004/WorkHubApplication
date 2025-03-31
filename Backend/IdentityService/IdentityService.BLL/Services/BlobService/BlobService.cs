@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using IdentityService.BLL.Abstractions.BlobService;
 using IdentityService.BLL.DTOs;
 using Microsoft.Extensions.Configuration;
 

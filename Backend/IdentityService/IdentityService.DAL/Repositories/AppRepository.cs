@@ -2,7 +2,6 @@
 using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Data;
 using IdentityService.DAL.Primitives;
-using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.DAL.Repositories;
 

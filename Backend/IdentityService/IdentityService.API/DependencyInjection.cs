@@ -1,12 +1,10 @@
 ﻿using FluentValidation;
 using IdentityService.API.AuthorizationPolicies.AdminOrSelfPolicy;
-using IdentityService.API.Constants;
 using IdentityService.BLL.Settings;
 using IdentityService.DAL.Constants;
 using IdentityService.DAL.Data;
 using IdentityService.DAL.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
@@ -14,7 +12,7 @@ using System.Reflection;
 using System.Text;
 using IdentityService.API.Interceptors;
 using IdentityService.API.Services;
-using IdentityService.DAL.Abstractions.UserContext;
+using IdentityService.BLL.Abstractions.UserContext;
 
 namespace IdentityService.API;
 
@@ -35,12 +33,14 @@ public static class DependencyInjection
         
         services.Configure<DataProtectionTokenProviderOptions>(options =>
         {
-            options.TokenLifespan = TimeSpan.FromHours(configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Get<int>());
+            options.TokenLifespan = TimeSpan.FromHours(
+                configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Get<int>());
         });
 
         services.AddScoped<IAuthorizationHandler, AdminOrSelfHandler>();
 
-        services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+        services.AddOptionsWithValidateOnStart<JwtSettings>()
+            .BindConfiguration("JwtSettings");
 
         var jwtSettings = configuration.GetRequiredSection("JwtSettings").Get<JwtSettings>();
 

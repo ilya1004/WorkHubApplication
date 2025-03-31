@@ -1,24 +1,17 @@
 using ChatService.API;
-using ChatService.API.Filters;
 using ChatService.API.Hubs;
 using ChatService.API.Middlewares;
 using ChatService.Application;
 using ChatService.Domain.Abstractions.DbInitializer;
 using ChatService.Infrastructure;
-using Microsoft.AspNetCore.SignalR;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
 services.AddControllers();
 services.AddTransient<GlobalExceptionHandlingMiddleware>();
-
-services.AddSignalR()
-    .AddHubOptions<ChatHub>(options =>
-    {
-        options.EnableDetailedErrors = true;
-        options.AddFilter<GlobalHubExceptionFilter>();
-    });
 
 services.AddHttpContextAccessor();
 
@@ -35,6 +28,11 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseRouting();
+
+app.MapHealthChecks("health", new HealthCheckOptions()
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 

@@ -1,14 +1,20 @@
 using Hangfire;
-using ProjectsService.Application.Abstractions.BackgroundJobs;
+using MediatR;
 using ProjectsService.Application.BackgroundJobs.UpdateProjectStatuses;
 using ProjectsService.Domain.Abstractions.StartupServices;
 
 namespace ProjectsService.Infrastructure.Services.HangfireJobsInitializer;
 
-public class HangfireJobsInitializer(IBackgroundJobScheduler scheduler) : IBackgroundJobsInitializer
+public class HangfireJobsInitializer(
+    IRecurringJobManager recurringJobManager,
+    IMediator mediator) : IBackgroundJobsInitializer
 {
     public void StartBackgroundJobs()
     {
-        scheduler.ScheduleRecurring("update_project_statuses", new UpdateProjectStatusesCommand(), Cron.Hourly());
+        recurringJobManager.AddOrUpdate(
+            "update_project_statuses",
+            () => mediator.Send(new UpdateProjectStatusesCommand(), CancellationToken.None),
+            Cron.Minutely()
+        );
     }
 }

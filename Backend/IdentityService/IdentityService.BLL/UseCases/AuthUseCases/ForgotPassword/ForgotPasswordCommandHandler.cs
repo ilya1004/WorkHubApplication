@@ -1,5 +1,6 @@
 ﻿using IdentityService.BLL.Services.EmailSender;
 using System.Net;
+using IdentityService.BLL.Abstractions.EmailSender;
 using IdentityService.DAL.Abstractions.RedisService;
 using Microsoft.Extensions.Configuration;
 
