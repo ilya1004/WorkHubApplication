@@ -1,13 +1,15 @@
 using IdentityService.BLL.Abstractions.UserContext;
+using IdentityService.BLL.DTOs;
 
-namespace IdentityService.BLL.UseCases.UserUseCases.Queries.GetCurrentUserInfo;
+namespace IdentityService.BLL.UseCases.UserUseCases.Queries.GetCurrentFreelancerUser;
 
-public class GetCurrentUserInfoQueryHandler(
+public class GetCurrentFreelancerUserQueryHandler(
     IUnitOfWork unitOfWork,
     IUserContext userContext,
-    ILogger<GetCurrentUserInfoQueryHandler> logger) : IRequestHandler<GetCurrentUserInfoQuery, AppUser>
+    IMapper mapper,
+    ILogger<GetCurrentFreelancerUserQueryHandler> logger) : IRequestHandler<GetCurrentFreelancerUserQuery, FreelancerUserDto>
 {
-    public async Task<AppUser> Handle(GetCurrentUserInfoQuery request, CancellationToken cancellationToken)
+    public async Task<FreelancerUserDto> Handle(GetCurrentFreelancerUserQuery request, CancellationToken cancellationToken)
     {
         var userId = userContext.GetUserId();
         
@@ -17,9 +19,8 @@ public class GetCurrentUserInfoQueryHandler(
             userId,
             cancellationToken,
             u => u.FreelancerProfile!,
-            u => u.EmployerProfile!,
-            u => u.FreelancerProfile == null ? null! : u.FreelancerProfile.Skills,
-            u => u.EmployerProfile == null ? null! : u.EmployerProfile.Industry!);
+            u => u.Role,
+            u => u.FreelancerProfile == null ? null! : u.FreelancerProfile.Skills);
 
         if (user is null)
         {
@@ -29,7 +30,9 @@ public class GetCurrentUserInfoQueryHandler(
         }
 
         logger.LogInformation("Successfully retrieved current user info for user ID: {UserId}", userId);
+
+        var result = mapper.Map<FreelancerUserDto>(user);
         
-        return user;
+        return result;
     }
 }

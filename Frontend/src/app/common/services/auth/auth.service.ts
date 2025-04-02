@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {IDENTITY_SERVICE_API_URL} from '../../../core/constants';
-import Tokens from './tokens';
+import {AuthInterface} from './auth.interface';
 import {tap} from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 
@@ -15,13 +15,17 @@ export class AuthService {
   ) { }
 
 
-  login(payload: {email: string, password: string}) {
-    return this.httpClient.post<Tokens>(
-      `${IDENTITY_SERVICE_API_URL}auth/login`, payload
+  login(payload: { email: string; password: string }) {
+    return this.httpClient.post<AuthInterface>(
+      `${IDENTITY_SERVICE_API_URL}auth/login`,
+      payload
     ).pipe(
-      tap(val => {
-        localStorage.setItem("access_token", val.accessToken);
-        localStorage.setItem("refresh_token", val.refreshToken);
+      tap({
+        next: val => {
+          localStorage.setItem('access_token', val.accessToken);
+          localStorage.setItem('refresh_token', val.refreshToken);
+        },
+        error: err => console.error('Login failed:', err)
       })
     );
   }
@@ -29,7 +33,9 @@ export class AuthService {
   register(payload: { username: string; firstName: string; lastName: string; email: string; password: string }) {
     return this.httpClient.post(
       `${IDENTITY_SERVICE_API_URL}auth/register`, payload
-    );
+    ).subscribe(value => {
+      console.log(value)
+    });
   }
 
   isAuthenticated(): boolean {

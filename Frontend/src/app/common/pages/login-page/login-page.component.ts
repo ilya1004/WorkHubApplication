@@ -8,7 +8,9 @@ import {NzFlexDirective} from 'ng-zorro-antd/flex';
 import {NzSpaceComponent, NzSpaceItemDirective} from 'ng-zorro-antd/space';
 import {AuthService} from '../../services/auth/auth.service';
 import {NgIf} from '@angular/common';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
+import {NzAlertComponent} from 'ng-zorro-antd/alert';
+import {routes} from '../../../app.routes';
 
 interface LoginForm {
   email: FormControl<string>;
@@ -18,14 +20,17 @@ interface LoginForm {
 @Component({
   standalone: true,
   selector: 'app-login-page',
-  imports: [NzCardComponent, NzInputDirective, NzInputGroupComponent, NzIconDirective, ReactiveFormsModule, NzButtonComponent, NzFlexDirective, NzSpaceComponent, NzSpaceItemDirective, NgIf, RouterLink],
+  imports: [NzCardComponent, NzInputDirective, NzInputGroupComponent, NzIconDirective, ReactiveFormsModule, NzButtonComponent, NzFlexDirective, NzSpaceComponent, NzSpaceItemDirective, NgIf, RouterLink, NzAlertComponent],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss'
 })
 export class LoginPageComponent {
   passwordVisible = false;
+  errorMessage: string | null = null;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router) {}
 
   form = new FormGroup<LoginForm>({
     email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
@@ -33,12 +38,25 @@ export class LoginPageComponent {
   });
 
   onSubmitLogin() {
+    this.errorMessage = null;
+
     if (this.form.valid) {
-      const payload: { email: string, password: string } = this.form.getRawValue();
-      this.authService.login(payload);
+      const payload = this.form.getRawValue();
+      this.authService.login(payload).subscribe({
+        next: () => {
+          this.router.navigate(['/freelancer/home']);
+        },
+        error: (err) => {
+          this.errorMessage = err.error?.message || 'Login failed. Please try again.';
+        },
+      });
     } else {
-      console.error('Invalid form:', this.getFormValidationErrors());
+      this.errorMessage = 'Please fill in all required fields.';
     }
+  }
+
+  onCloseMessage() {
+    this.errorMessage = null;
   }
 
   getFormValidationErrors() {
@@ -52,9 +70,5 @@ export class LoginPageComponent {
     });
 
     return errors;
-  }
-
-  onClickRegister() {
-
   }
 }

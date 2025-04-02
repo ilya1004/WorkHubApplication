@@ -8,6 +8,7 @@ import {NzIconDirective} from 'ng-zorro-antd/icon';
 import {NzInputDirective, NzInputGroupComponent} from 'ng-zorro-antd/input';
 import {NzSpaceComponent, NzSpaceItemDirective} from 'ng-zorro-antd/space';
 import {RouterLink} from '@angular/router';
+import {AuthService} from '../../services/auth/auth.service';
 
 interface RegisterForm {
   username: FormControl<string>;
@@ -41,6 +42,10 @@ export class RegisterPageComponent {
 
   passwordVisible = false;
   passwordConfirmVisible = false;
+
+  constructor(
+    private authService: AuthService) {
+  }
 
   form = new FormGroup<RegisterForm>({
     username: new FormControl('', {
@@ -91,20 +96,20 @@ export class RegisterPageComponent {
     return password === confirmPassword ? null : { passwordsMismatch: true };
   }
 
-  /**
-   * Отправка формы
-   */
   onSubmitRegister() {
     if (this.form.valid) {
-      console.log('Form submitted:', this.form.value);
+      const payload: {
+        username: string,
+        firstName: string,
+        lastName: string,
+        email: string,
+        password: string} = this.form.getRawValue();
+      this.authService.register(payload);
     } else {
-      console.error('Form errors:', this.getFormValidationErrors());
+
     }
   }
 
-  /**
-   * Метод для получения ошибок валидации
-   */
   private getFormValidationErrors() {
     const errors: any[] = [];
     Object.keys(this.form.controls).forEach(key => {

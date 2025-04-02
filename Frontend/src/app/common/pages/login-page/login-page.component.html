@@ -61,6 +61,17 @@
             style="border-radius: 7px">Sign In</button>
         </div>
 
+        @if (errorMessage) {
+          <div *nzSpaceItem style="background-color: var(--gray-color)">
+            <nz-alert
+              nzType="error"
+              [nzMessage]="errorMessage"
+              nzShowIcon
+              nzCloseable
+              (nzOnClose)="onCloseMessage()"></nz-alert>
+          </div>
+        }
+
       </nz-space>
     </form>
     <div style="margin: 10px 0 0 0; color: var(--white-color)">
