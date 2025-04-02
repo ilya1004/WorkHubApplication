@@ -1,0 +1,18 @@
+.error {
+  color: #ff4a45;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.login-card {
+  max-width: 400px;
+  margin: 200px 0 0 0;
+  background: var(--lighter-color);
+  border-radius: 20px;
+}
+
+.login-card__input {
+  border-radius: 7px;
+  background-color: var(--dark-color);
+  border-color: var(--dark-color);
+}
