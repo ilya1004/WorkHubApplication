@@ -1,0 +1,27 @@
+.error {
+  color: #ff4a45;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.confirm-email-card {
+  min-width: 355px;
+  margin: 200px 0 0 0;
+  background: var(--gray-color);
+  border-radius: 20px;
+  border-color: var(--light-gray-color);
+}
+
+.confirm-email-card__input {
+  width: 300px;
+  border-radius: 7px;
+  background-color: var(--dark-color);
+  border-color: var(--dark-color);
+  color: var(--light-color);
+}
+
+.confirm-email-card__default_btn {
+  background: var(--light-gray-color);
+  color: var(--light-color);
+  border-radius: 7px;
+}

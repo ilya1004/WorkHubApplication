@@ -1,1 +1,72 @@
-<p>confirm-email works!</p>
+<div nz-flex nzJustify="center" nzAlign="center">
+  <nz-card class="confirm-email-card">
+    <div>
+      <h2 style="color: var(--white-color)">Email confirmation</h2>
+    </div>
+    <form [formGroup]="confirmEmailForm">
+      <nz-space nzSize="middle" nzDirection="vertical">
+
+        <div *nzSpaceItem>
+          <input
+            nz-input
+            formControlName="email"
+            placeholder="Enter your email"
+            class="confirm-email-card__input">
+          <div *ngIf="confirmEmailForm.controls.email.invalid && confirmEmailForm.controls.email.touched" class="error">
+            <div *ngIf="confirmEmailForm.controls.email.errors?.['required']">Email is required</div>
+            <div *ngIf="confirmEmailForm.controls.email.errors?.['email']">Invalid email format</div>
+          </div>
+        </div>
+
+        <div *nzSpaceItem>
+          <button
+            nz-button
+            nzType="default"
+            [disabled]="isSendCodeBtnDisabled || confirmEmailForm.controls.email.invalid"
+            (click)="onClickSendCode()"
+            class="confirm-email-card__default_btn">
+            Send code
+          </button>
+        </div>
+
+        <div *nzSpaceItem>
+          <input
+            nz-input
+            formControlName="code"
+            placeholder="Enter code from email"
+            class="confirm-email-card__input">
+          <div *ngIf="confirmEmailForm.controls.code.invalid && confirmEmailForm.controls.code.touched" class="error">
+            <div *ngIf="confirmEmailForm.controls.code.errors?.['required']">Code is required</div>
+            <div *ngIf="confirmEmailForm.controls.code.errors?.['minlength'] || confirmEmailForm.controls.code.errors?.['maxlength']">
+              Code must be exactly 6 characters
+            </div>
+          </div>
+        </div>
+
+        <div *nzSpaceItem>
+          <button
+            nz-button
+            nzType="primary"
+            [disabled]="confirmEmailForm.invalid"
+            (click)="onClickConfirmEmail()"
+            style="border-radius: 7px;">
+            Confirm
+          </button>
+        </div>
+
+        @if (errorMessage) {
+          <div *nzSpaceItem style="background-color: var(--gray-color)">
+            <nz-alert
+              nzType="error"
+              [nzMessage]="errorMessage"
+              nzShowIcon
+              nzCloseable
+              (nzOnClose)="onCloseMessage()">
+            </nz-alert>
+          </div>
+        }
+
+      </nz-space>
+    </form>
+  </nz-card>
+</div>

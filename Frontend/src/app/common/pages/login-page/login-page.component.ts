@@ -56,16 +56,16 @@ export class LoginPageComponent {
           }),
           tap({
             next: value => {
+              console.log(value);
               this.cookieService.set('access_token', value.body!.accessToken);
               this.cookieService.set('refresh_token', value.body!.refreshToken);
+              console.log(value);
+              this.router.navigate(['/freelancer/home']);
+              console.log(value);
             },
           })
         )
-        .subscribe({
-          next: () => {
-            this.router.navigate(['/freelancer/home']);
-          }
-        });
+        .subscribe();
     } else {
       this.errorMessage = 'Please fill in all required fields.';
     }

@@ -52,20 +52,28 @@ export class AuthService {
     return decodedToken && decodedToken.exp * 1000 > Date.now();
   }
 
+  private decodeToken(token: string): any {
+    try {
+      const decoded = jwtDecode<{
+        exp: number;
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": string;
+      }>(token);
+
+      return {
+        exp: decoded.exp,
+        role: decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
+      };
+    } catch (error) {
+      console.error('Ошибка при декодировании токена:', error);
+      return null;
+    }
+  }
+
   getUserRole(): string | null {
     const token = this.cookieService.get('access_token');
     if (!token) return null;
 
     const decodedToken = this.decodeToken(token);
     return decodedToken?.role || null;
-  }
-
-  private decodeToken(token: string): any {
-    try {
-      return jwtDecode<{ exp: number; role: string }>(token);
-    } catch (error) {
-      console.error('Ошибка при декодировании токена:', error);
-      return null;
-    }
   }
 }
