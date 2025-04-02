@@ -1,9 +1,12 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpResponse} from '@angular/common/http';
 import {IDENTITY_SERVICE_API_URL} from '../../../core/constants';
 import {AuthInterface} from './auth.interface';
-import {tap} from 'rxjs';
+import {catchError, tap, throwError} from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
+import {CookieService} from 'ngx-cookie-service';
+import {routes} from '../../../app.routes';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -11,35 +14,38 @@ import { jwtDecode } from 'jwt-decode';
 export class AuthService {
 
   constructor(
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private cookieService: CookieService,
+    private router: Router,
   ) { }
 
 
   login(payload: { email: string; password: string }) {
     return this.httpClient.post<AuthInterface>(
       `${IDENTITY_SERVICE_API_URL}auth/login`,
-      payload
-    ).pipe(
-      tap({
-        next: val => {
-          localStorage.setItem('access_token', val.accessToken);
-          localStorage.setItem('refresh_token', val.refreshToken);
-        },
-        error: err => console.error('Login failed:', err)
-      })
+      payload,
+      { observe: 'response' }
     );
   }
 
-  register(payload: { username: string; firstName: string; lastName: string; email: string; password: string }) {
+  registerFreelancer(payload: { userName: string; firstName: string; lastName: string; email: string; password: string }) {
+    return this.httpClient.post<HttpResponse<any>>(
+      `${IDENTITY_SERVICE_API_URL}users/register-freelancer1`,
+      payload,
+      { observe: 'response' }
+    )
+  }
+
+  registerEmployer(payload: { userName: string; companyName: string, email: string; password: string }) {
     return this.httpClient.post(
-      `${IDENTITY_SERVICE_API_URL}auth/register`, payload
-    ).subscribe(value => {
-      console.log(value)
-    });
+      `${IDENTITY_SERVICE_API_URL}users/register-employer`,
+      payload,
+      { observe: 'response' }
+    );
   }
 
   isAuthenticated(): boolean {
-    const token = localStorage.getItem('access_token');
+    const token = this.cookieService.get('access_token');
     if (!token) return false;
 
     const decodedToken = this.decodeToken(token);
@@ -47,7 +53,7 @@ export class AuthService {
   }
 
   getUserRole(): string | null {
-    const token = localStorage.getItem('access_token');
+    const token = this.cookieService.get('access_token');
     if (!token) return null;
 
     const decodedToken = this.decodeToken(token);

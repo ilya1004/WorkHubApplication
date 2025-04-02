@@ -68,7 +68,8 @@
               [nzMessage]="errorMessage"
               nzShowIcon
               nzCloseable
-              (nzOnClose)="onCloseMessage()"></nz-alert>
+              (nzOnClose)="onCloseMessage()">
+            </nz-alert>
           </div>
         }
 
@@ -83,6 +84,17 @@
         style="padding: 0 0 0 0"
         [routerLink]="'/register'">
         Register now!
+      </button>
+    </div>
+    <div style="color: var(--white-color)">
+      Need to confirm your email?
+      <button
+        nz-button
+        nzType="link"
+        nzSize="small"
+        style="padding: 0 0 0 0"
+        [routerLink]="'/confirm-email'">
+        Confirm now!
       </button>
     </div>
   </nz-card>

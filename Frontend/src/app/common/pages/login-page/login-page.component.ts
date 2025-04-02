@@ -11,6 +11,8 @@ import {NgIf} from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
 import {NzAlertComponent} from 'ng-zorro-antd/alert';
 import {routes} from '../../../app.routes';
+import {catchError, tap, throwError} from 'rxjs';
+import {CookieService} from 'ngx-cookie-service';
 
 interface LoginForm {
   email: FormControl<string>;
@@ -30,7 +32,9 @@ export class LoginPageComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router) {}
+    private router: Router,
+    private cookieService: CookieService,
+    ) { }
 
   form = new FormGroup<LoginForm>({
     email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
@@ -42,14 +46,26 @@ export class LoginPageComponent {
 
     if (this.form.valid) {
       const payload = this.form.getRawValue();
-      this.authService.login(payload).subscribe({
-        next: () => {
-          this.router.navigate(['/freelancer/home']);
-        },
-        error: (err) => {
-          this.errorMessage = err.error?.message || 'Login failed. Please try again.';
-        },
-      });
+      this.authService.login(payload)
+        .pipe(
+          catchError(error => {
+            if (400 <= error.status && error.status < 500) {
+              this.errorMessage = error.error.detail;
+            }
+            return throwError(() => error);
+          }),
+          tap({
+            next: value => {
+              this.cookieService.set('access_token', value.body!.accessToken);
+              this.cookieService.set('refresh_token', value.body!.refreshToken);
+            },
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.router.navigate(['/freelancer/home']);
+          }
+        });
     } else {
       this.errorMessage = 'Please fill in all required fields.';
     }

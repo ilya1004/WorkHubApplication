@@ -24,7 +24,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     {
         await mediator.Send(mapper.Map<RegisterFreelancerCommand>(request), cancellationToken);
 
-        return Created();
+        return StatusCode(StatusCodes.Status201Created);
     }
 
     [HttpPost]
@@ -33,11 +33,11 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     {
         await mediator.Send(mapper.Map<RegisterEmployerCommand>(request), cancellationToken);
 
-        return Created();
+        return StatusCode(StatusCodes.Status201Created);
     }
 
     [HttpGet]
-    [Authorize(Policy = AuthPolicies.AdminPolicy)]
+    // [Authorize(Policy = AuthPolicies.AdminPolicy)]
     public async Task<IActionResult> GetAllUsers([FromQuery] GetPaginatedListRequest request, CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(new GetAllUsersQuery(request.PageNo, request.PageSize), cancellationToken);
@@ -57,7 +57,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
 
     [HttpGet]
     [Route("{userId:guid}")]
-    [Authorize(Policy = AuthPolicies.AdminPolicy)]
+    // [Authorize(Policy = AuthPolicies.AdminPolicy)]
     public async Task<IActionResult> GetUserById([FromRoute] Guid userId, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new GetUserByIdQuery(userId), cancellationToken);

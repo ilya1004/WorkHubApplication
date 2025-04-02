@@ -1,1 +1,17 @@
-<p>profile works!</p>
+<div nz-flex>
+  <div nz-flex nzVertical>
+    <img
+      ngSrc="{{ userData.imageUrl }}"
+      width="300px"
+      height="auto"
+      alt="User avatar"
+    />
+  </div>
+  <div nz-flex nzVertical>
+    <nz-card>
+      <h2>
+        {{ userData.firstName }} {{ userData.lastName }}
+      </h2>
+    </nz-card>
+  </div>
+</div>
