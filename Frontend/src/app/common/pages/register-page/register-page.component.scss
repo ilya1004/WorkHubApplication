@@ -1,0 +1,21 @@
+.error {
+  color: #ff4a45;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.register-card {
+  max-width: 400px;
+  margin: 200px 0 0 0;
+  background: var(--gray-color);
+  border-radius: 20px;
+  border-color: var(--light-gray-color);
+}
+
+.register-card__input {
+  width: 300px;
+  border-radius: 7px;
+  background-color: var(--dark-color);
+  border-color: var(--dark-color);
+  color: var(--light-color);
+}

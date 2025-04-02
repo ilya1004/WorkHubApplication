@@ -34,11 +34,10 @@ export class LoginPageComponent {
 
   onSubmitLogin() {
     if (this.form.valid) {
-      const { email, password } = this.form.getRawValue();
-      this.authService.login(email, password);
+      const payload: { email: string, password: string } = this.form.getRawValue();
+      this.authService.login(payload);
     } else {
-      console.log('error');
-      console.error('Форма невалидна:', this.getFormValidationErrors());
+      console.error('Invalid form:', this.getFormValidationErrors());
     }
   }
 

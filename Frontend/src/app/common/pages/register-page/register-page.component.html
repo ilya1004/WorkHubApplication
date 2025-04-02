@@ -1,76 +1,126 @@
 <div nz-flex nzJustify="center" nzAlign="center">
-  <nz-card class="login-card">
+  <nz-card class="register-card">
     <div>
       <h2 style="color: var(--white-color)">Register</h2>
     </div>
-    <form [formGroup]="form" (ngSubmit)="onSubmitLogin()">
+    <form [formGroup]="form" (ngSubmit)="onSubmitRegister()">
       <nz-space nzSize="middle" nzDirection="vertical">
+
+        <div *nzSpaceItem>
+          <input
+            nz-input
+            formControlName="username"
+            placeholder="Enter your username"
+            class="register-card__input">
+          <div *ngIf="form.controls.username.invalid && form.controls.username.touched" class="error">
+            <div *ngIf="form.controls.username.errors?.['required']">Username is required</div>
+            <div *ngIf="form.controls.username.errors?.['maxlength']">Username must be at most 200 characters</div>
+          </div>
+        </div>
+
+        <div *nzSpaceItem>
+          <input
+            nz-input
+            formControlName="firstName"
+            placeholder="Enter your first name"
+            class="register-card__input">
+          <div *ngIf="form.controls.firstName.invalid && form.controls.firstName.touched" class="error">
+            <div *ngIf="form.controls.firstName.errors?.['required']">First name is required</div>
+            <div *ngIf="form.controls.firstName.errors?.['maxlength']">First name must be at most 100 characters</div>
+          </div>
+        </div>
+
+        <div *nzSpaceItem>
+          <input
+            nz-input
+            formControlName="lastName"
+            placeholder="Enter your last name"
+            class="register-card__input">
+          <div *ngIf="form.controls.lastName.invalid && form.controls.lastName.touched" class="error">
+            <div *ngIf="form.controls.lastName.errors?.['required']">Last name is required</div>
+            <div *ngIf="form.controls.lastName.errors?.['maxlength']">Last name must be at most 100 characters</div>
+          </div>
+        </div>
 
         <div *nzSpaceItem>
           <input
             nz-input
             formControlName="email"
             placeholder="Enter your email"
-            style="width: 300px"
-            class="login-card__input">
+            class="register-card__input">
           <div *ngIf="form.controls.email.invalid && form.controls.email.touched" class="error">
             <div *ngIf="form.controls.email.errors?.['required']">Email is required</div>
             <div *ngIf="form.controls.email.errors?.['email']">Invalid email format</div>
           </div>
         </div>
 
+        <!-- Password -->
         <div *nzSpaceItem>
-          <nz-input-group [nzSuffix]="suffixTemplate" style="width: 300px" class="login-card__input">
+          <nz-input-group
+            [nzSuffix]="suffixTemplatePassword"
+            class="register-card__input">
             <input
               nz-input
               formControlName="password"
               [type]="passwordVisible ? 'text' : 'password'"
               placeholder="Enter your password"
-              style="background-color: inherit"/>
+              style="background-color: inherit; color: inherit"/>
           </nz-input-group>
-          <ng-template #suffixTemplate>
+          <ng-template #suffixTemplatePassword>
             <nz-icon
               class="ant-input-password-icon"
               [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
-              (click)="passwordVisible = !passwordVisible"/>
+              (click)="passwordVisible = !passwordVisible"
+              nzTheme="outline"
+              style="color: var(--white-color)"/>
           </ng-template>
           <div *ngIf="form.controls.password.invalid && form.controls.password.touched" class="error">
             <div *ngIf="form.controls.password.errors?.['required']">Password is required</div>
-            <div *ngIf="form.controls.password.errors?.['minlength']">
-              Password must be at least {{ form.controls.password.errors?.['minlength'].length}} characters
-            </div>
+            <div *ngIf="form.controls.password.errors?.['minlength']">Password must be at least 8 characters</div>
+            <div *ngIf="form.controls.password.errors?.['pattern']">Password must contain uppercase, lowercase, digit, and special character</div>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div *nzSpaceItem>
+          <nz-input-group
+            [nzSuffix]="suffixTemplateConfirmPassword"
+            class="register-card__input">
+            <input
+              nz-input
+              formControlName="passwordConfirm"
+              [type]="passwordConfirmVisible ? 'text' : 'password'"
+              placeholder="Confirm your password"
+              style="background-color: inherit; color: inherit"/>
+          </nz-input-group>
+          <ng-template #suffixTemplateConfirmPassword>
+            <nz-icon
+              class="ant-input-password-icon"
+              [nzType]="passwordConfirmVisible ? 'eye-invisible' : 'eye'"
+              (click)="passwordConfirmVisible = !passwordConfirmVisible"
+              nzTheme="outline"
+              style="color: var(--white-color)"/>
+          </ng-template>
+          <div *ngIf="form.controls.passwordConfirm.invalid && form.controls.passwordConfirm.touched" class="error">
+            <div *ngIf="form.errors?.['passwordsMismatch']">Passwords do not match</div>
           </div>
         </div>
 
         <div *nzSpaceItem>
-          <button
-            nz-button
-            nzType="link"
-            nzSize="small"
-            style="padding: 0 0 0 0">
-            Forgot password
-          </button>
-        </div>
-
-        <div *nzSpaceItem>
-          <button
-            nz-button
-            nzType="primary"
-            type="submit"
-            style="border-radius: 7px">Sign In</button>
+          <button nz-button nzType="primary" type="submit" style="border-radius: 7px">Sign Up</button>
         </div>
 
       </nz-space>
     </form>
     <div style="margin: 10px 0 0 0; color: var(--white-color)">
-      Don't have an account?
+      Already have an account?
       <button
         nz-button
         nzType="link"
         nzSize="small"
         style="padding: 0 0 0 0"
-        [routerLink]="'/register'">
-        Register now!
+        [routerLink]="'/login'">
+        Login now!
       </button>
     </div>
   </nz-card>

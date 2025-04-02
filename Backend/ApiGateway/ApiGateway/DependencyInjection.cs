@@ -45,7 +45,7 @@ public static class DependencyInjection
 
     public static IServiceCollection AddYarpConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddReverseProxy().LoadFromConfig(configuration.GetSection("ReverseProxy"));
+        services.AddReverseProxy().LoadFromConfig(configuration.GetRequiredSection("ReverseProxy"));
 
         services.AddRateLimiter(options =>
         {
@@ -58,6 +58,24 @@ public static class DependencyInjection
                         PermitLimit = 20,
                         Window = TimeSpan.FromSeconds(10),
                     }));
+        });
+
+        return services;
+    }
+
+    public static IServiceCollection AddCorsConfiguration(this IServiceCollection services, IConfiguration configuration)
+    {
+        var allowedOrigin = configuration.GetRequiredSection("Cors:AllowedOrigin").Get<string>();
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AngularApplication", policy =>
+            {
+                policy.WithOrigins(allowedOrigin!)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
         });
 
         return services;

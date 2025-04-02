@@ -11,7 +11,6 @@
             nz-input
             formControlName="email"
             placeholder="Enter your email"
-            style="width: 300px"
             class="login-card__input">
           <div *ngIf="form.controls.email.invalid && form.controls.email.touched" class="error">
             <div *ngIf="form.controls.email.errors?.['required']">Email is required</div>
@@ -20,19 +19,21 @@
         </div>
 
         <div *nzSpaceItem>
-          <nz-input-group [nzSuffix]="suffixTemplate" style="width: 300px" class="login-card__input">
+          <nz-input-group [nzSuffix]="suffixTemplate" class="login-card__input">
             <input
               nz-input
               formControlName="password"
               [type]="passwordVisible ? 'text' : 'password'"
               placeholder="Enter your password"
-              style="background-color: inherit"/>
+              style="background-color: inherit; color: inherit"/>
           </nz-input-group>
           <ng-template #suffixTemplate>
             <nz-icon
               class="ant-input-password-icon"
               [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
-              (click)="passwordVisible = !passwordVisible"/>
+              nzTheme="outline"
+              (click)="passwordVisible = !passwordVisible"
+              style="color: var(--white-color)"/>
           </ng-template>
           <div *ngIf="form.controls.password.invalid && form.controls.password.touched" class="error">
             <div *ngIf="form.controls.password.errors?.['required']">Password is required</div>

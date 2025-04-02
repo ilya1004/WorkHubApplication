@@ -7,12 +7,15 @@
 .login-card {
   max-width: 400px;
   margin: 200px 0 0 0;
-  background: var(--lighter-color);
+  background: var(--gray-color);
   border-radius: 20px;
+  border-color: var(--light-gray-color);
 }
 
 .login-card__input {
+  width: 300px;
   border-radius: 7px;
   background-color: var(--dark-color);
   border-color: var(--dark-color);
+  color: var(--light-color);
 }
