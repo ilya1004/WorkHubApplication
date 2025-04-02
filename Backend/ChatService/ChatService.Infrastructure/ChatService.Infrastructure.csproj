@@ -12,10 +12,13 @@
 
     <ItemGroup>
       <PackageReference Include="AspNetCore.HealthChecks.Azure.Storage.Blobs" Version="9.0.0" />
+      <PackageReference Include="AspNetCore.HealthChecks.Elasticsearch" Version="9.0.0" />
       <PackageReference Include="AspNetCore.HealthChecks.MongoDb" Version="9.0.0" />
       <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
       <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.3" />
       <PackageReference Include="MongoDB.Driver" Version="3.2.1" />
+      <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+      <PackageReference Include="Serilog.Sinks.Http" Version="9.1.1" />
     </ItemGroup>
 
 </Project>

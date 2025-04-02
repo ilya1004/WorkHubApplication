@@ -1,20 +1,25 @@
-using ChatService.Application.Exceptions;
 using ChatService.Domain.Abstractions.BlobService;
 
-namespace ChatService.Application.UseCases.MessageUseCases.CreateFileMessage;
+namespace ChatService.Application.UseCases.MessageUseCases.Commands.CreateFileMessage;
 
 public class CreateFileMessageCommandHandler(
     IUnitOfWork unitOfWork,
     IMapper mapper,
     IUserContext userContext,
-    IBlobService blobService) : IRequestHandler<CreateFileMessageCommand, Guid>
+    IBlobService blobService,
+    ILogger<CreateFileMessageCommandHandler> logger) : IRequestHandler<CreateFileMessageCommand, Guid>
 {
     public async Task<Guid> Handle(CreateFileMessageCommand request, CancellationToken cancellationToken)
     {
+        logger.LogInformation("Creating file message in chat {ChatId} by user {UserId}", 
+            request.ChatId, userContext.GetUserId());
+
         var chat = await unitOfWork.ChatRepository.GetByIdAsync(request.ChatId, cancellationToken);
 
         if (chat is null)
         {
+            logger.LogWarning("Chat {ChatId} not found", request.ChatId);
+            
             throw new NotFoundException($"Chat with ID '{request.ChatId}' not found");
         }
         
@@ -22,6 +27,8 @@ public class CreateFileMessageCommandHandler(
 
         if (chat.EmployerId != userId && chat.FreelancerId != userId)
         {
+            logger.LogWarning("User {UserId} has no access to chat {ChatId}", userId, request.ChatId);
+            
             throw new ForbiddenException($"You do not have access to chat with ID '{request.ChatId}'");
         }
 
@@ -29,9 +36,12 @@ public class CreateFileMessageCommandHandler(
         message.SenderId = userId;
 
         var fileId = await blobService.UploadAsync(request.FileStream, request.ContentType, cancellationToken);
+        
         message.FileId = fileId;
-
         await unitOfWork.MessagesRepository.InsertAsync(message, cancellationToken);
+
+        logger.LogInformation("File message created successfully. File ID: {FileId}, Message ID: {MessageId}", 
+            fileId, message.Id);
 
         return fileId;
     }

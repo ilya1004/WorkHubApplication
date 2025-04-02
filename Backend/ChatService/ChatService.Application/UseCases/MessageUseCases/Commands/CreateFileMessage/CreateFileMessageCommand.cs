@@ -1,4 +1,4 @@
-namespace ChatService.Application.UseCases.MessageUseCases.CreateFileMessage;
+namespace ChatService.Application.UseCases.MessageUseCases.Commands.CreateFileMessage;
 
 public sealed record CreateFileMessageCommand(
     Guid ChatId,

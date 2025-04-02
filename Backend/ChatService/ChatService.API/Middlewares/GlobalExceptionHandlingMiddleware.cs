@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ChatService.API.Middlewares;
 
-public class GlobalExceptionHandlingMiddleware : IMiddleware
+public class GlobalExceptionHandlingMiddleware(
+    ILogger<GlobalExceptionHandlingMiddleware> logger) : IMiddleware
 {
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
@@ -23,9 +24,21 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
                 NotFoundException => StatusCodes.Status404NotFound,
                 _ => StatusCodes.Status500InternalServerError
             };
+            
+            logger.LogError(
+                ex,
+                "HTTP {Method} {Path} => {StatusCode} | Error: {ErrorType}. Error message: {ErrorMessage}",
+                context.Request.Method,
+                context.Request.Path,
+                statusCode,
+                ex.GetType().Name,
+                ex.Message);
+
             var details = new ProblemDetails
             {
-                Title = statusCode == StatusCodes.Status500InternalServerError ? "Internal Server Error" : "Error",
+                Title = statusCode == StatusCodes.Status500InternalServerError 
+                    ? "Internal Server Error" 
+                    : ex.GetType().Name,
                 Type = ex.GetType().Name,
                 Status = statusCode,
                 Detail = ex.Message,
@@ -34,7 +47,7 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
 
             context.Response.StatusCode = statusCode;
             context.Response.ContentType = "application/json";
-
+            
             var json = JsonSerializer.Serialize(details);
 
             await context.Response.WriteAsync(json);

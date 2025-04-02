@@ -4,6 +4,7 @@ using IdentityService.BLL;
 using IdentityService.DAL;
 using System.Text.Json.Serialization;
 using HealthChecks.UI.Client;
+using IdentityService.API.GrpcServices;
 using IdentityService.BLL.Abstractions.AzuriteStartupService;
 using IdentityService.DAL.Abstractions.DbStartupService;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -14,7 +15,6 @@ var services = builder.Services;
 services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
-services.AddTransient<GlobalExceptionHandlingMiddleware>();
 services.AddHttpContextAccessor();
 
 services.AddAPI(builder.Configuration);
@@ -49,6 +49,7 @@ app.MapHealthChecks("health", new HealthCheckOptions
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
+app.UseMiddleware<GlobalLoggingMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseAuthentication();

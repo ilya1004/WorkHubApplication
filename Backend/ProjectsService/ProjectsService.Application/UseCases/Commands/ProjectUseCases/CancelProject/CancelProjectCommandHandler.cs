@@ -6,10 +6,13 @@ namespace ProjectsService.Application.UseCases.Commands.ProjectUseCases.CancelPr
 public class CancelProjectCommandHandler(
     IUnitOfWork unitOfWork,
     IUserContext userContext,
-    IPaymentsProducerService paymentsProducerService) : IRequestHandler<CancelProjectCommand>
+    IPaymentsProducerService paymentsProducerService,
+    ILogger<CancelProjectCommandHandler> logger) : IRequestHandler<CancelProjectCommand>
 {
     public async Task Handle(CancelProjectCommand request, CancellationToken cancellationToken)
     {
+        logger.LogInformation("Starting cancellation of project {ProjectId}", request.ProjectId);
+
         var project = await unitOfWork.ProjectQueriesRepository.GetByIdAsync(
             request.ProjectId, 
             cancellationToken, 
@@ -17,6 +20,8 @@ public class CancelProjectCommandHandler(
 
         if (project is null)
         {
+            logger.LogWarning("Project {ProjectId} not found", request.ProjectId);
+            
             throw new NotFoundException($"Project with ID '{request.ProjectId}' not found");
         }
         
@@ -24,8 +29,12 @@ public class CancelProjectCommandHandler(
 
         if (project.EmployerId != userId)
         {
+            logger.LogWarning("User {UserId} attempted to cancel project {ProjectId} without permission", userId, request.ProjectId);
+            
             throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }
+        
+        logger.LogInformation("Cancelling project {ProjectId}", request.ProjectId);
         
         project.Lifecycle.Status = ProjectStatus.Cancelled;
         
@@ -34,7 +43,12 @@ public class CancelProjectCommandHandler(
 
         if (project.PaymentIntentId is not null)
         {
+            logger.LogInformation("Sending payment cancellation for project {ProjectId}, payment intent {PaymentIntentId}", 
+                request.ProjectId, project.PaymentIntentId);
+            
             await paymentsProducerService.CancelPaymentAsync(project.PaymentIntentId, cancellationToken);    
         }
+
+        logger.LogInformation("Successfully cancelled project {ProjectId}", request.ProjectId);
     }
 }

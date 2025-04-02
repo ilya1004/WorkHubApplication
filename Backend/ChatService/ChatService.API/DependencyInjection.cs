@@ -3,6 +3,7 @@ using System.Text;
 using ChatService.API.Constants;
 using ChatService.API.Filters;
 using ChatService.API.Hubs;
+using ChatService.API.Middlewares;
 using ChatService.API.Services;
 using ChatService.API.Settings;
 using ChatService.Application.Constants;
@@ -17,10 +18,14 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddAPI(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddTransient<GlobalLoggingMiddleware>();
+        services.AddTransient<GlobalExceptionHandlingMiddleware>();
+        
         services.AddSignalR()
             .AddHubOptions<ChatHub>(options =>
             {
                 options.EnableDetailedErrors = true;
+                options.AddFilter<GlobalHubLoggingFilter>();
                 options.AddFilter<GlobalHubExceptionFilter>();
             });
         

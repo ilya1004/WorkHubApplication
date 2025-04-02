@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ProjectsService.API.Constants;
 using ProjectsService.API.Interceptors;
+using ProjectsService.API.Middlewares;
 using ProjectsService.API.Services;
 using ProjectsService.API.Settings;
 using ProjectsService.Application.Constants;
@@ -18,6 +19,9 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddAPI(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddTransient<GlobalLoggingMiddleware>();
+        services.AddTransient<GlobalExceptionHandlingMiddleware>();
+        
         var jwtSettings = configuration.GetRequiredSection("JwtSettings").Get<JwtSettings>();
         
         services.AddAuthentication(options =>
@@ -82,12 +86,14 @@ public static class DependencyInjection
             .BindConfiguration("ProjectsSettings");
 
         services.AddScoped<IUserContext, UserContext>();
-        
+
+        services.AddSingleton<GrpcLoggingInterceptor>();
         services.AddSingleton<ErrorHandlingInterceptor>();
         
         services.AddGrpc(options =>
         {
             options.EnableDetailedErrors = true;
+            options.Interceptors.Add<GrpcLoggingInterceptor>();
             options.Interceptors.Add<ErrorHandlingInterceptor>();
         });
         

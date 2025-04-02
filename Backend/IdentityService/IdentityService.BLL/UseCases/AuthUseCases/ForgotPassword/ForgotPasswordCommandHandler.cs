@@ -1,6 +1,4 @@
-﻿using IdentityService.BLL.Services.EmailSender;
-using System.Net;
-using IdentityService.BLL.Abstractions.EmailSender;
+﻿using IdentityService.BLL.Abstractions.EmailSender;
 using IdentityService.DAL.Abstractions.RedisService;
 using Microsoft.Extensions.Configuration;
 
@@ -10,14 +8,24 @@ public class ForgotPasswordCommandHandler(
     UserManager<AppUser> userManager,
     IEmailSender emailSender,
     ICachedService cachedService,
-    IConfiguration configuration) : IRequestHandler<ForgotPasswordCommand>
+    IConfiguration configuration,
+    ILogger<ForgotPasswordCommandHandler> logger) : IRequestHandler<ForgotPasswordCommand>
 {
     public async Task Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
     {
+        logger.LogInformation("Processing password reset request for {Email}", request.Email);
+
         var user = await userManager.FindByEmailAsync(request.Email);
 
-        if (user is null) throw new NotFoundException("User with this email does not exist.");
+        if (user is null)
+        {
+            logger.LogWarning("User with email {Email} not found", request.Email);
+            
+            throw new NotFoundException("User with this email does not exist.");
+        }
 
+        logger.LogInformation("Generating password reset token for user {UserId}", user.Id);
+        
         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
         string code;
@@ -28,11 +36,17 @@ public class ForgotPasswordCommandHandler(
         } 
         while (await cachedService.ExistsAsync(code));
 
+        logger.LogInformation("Storing reset code {Code} in cache", code);
+        
         await cachedService.SetAsync(code, token, TimeSpan.FromHours(
             int.Parse(configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Value!)));
 
         var resetUrl = $"{request.ResetUrl}?email={user.Email}&token={token}";
-
+        
+        logger.LogInformation("Sending password reset email to {Email}", user.Email);
+        
         await emailSender.SendPasswordReset(user.Email!, resetUrl, cancellationToken);
+        
+        logger.LogInformation("Password reset email sent to {Email}", user.Email);
     }
 }

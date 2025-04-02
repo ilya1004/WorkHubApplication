@@ -5,18 +5,19 @@ using IdentityService.BLL.Settings;
 using IdentityService.DAL.Abstractions.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 
 namespace IdentityService.BLL.Services.KafkaConsumerServices;
 
 public class FreelancerAccountsConsumerService(
     IOptions<KafkaSettings> options,
-    IServiceScopeFactory serviceScopeFactory) : BackgroundService
+    IServiceScopeFactory serviceScopeFactory,
+    ILogger<FreelancerAccountsConsumerService> logger) : BackgroundService
 {
     private IConsumer<Ignore, string> _consumer = null!;
-    
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        logger.LogInformation("Starting FreelancerAccounts consumer service");
+        
         var config = new ConsumerConfig
         {
             BootstrapServers = options.Value.BootstrapServers,
@@ -27,6 +28,8 @@ public class FreelancerAccountsConsumerService(
         _consumer = new ConsumerBuilder<Ignore, string>(config).Build();
         _consumer.Subscribe(options.Value.FreelancerAccountIdSavingTopic);
 
+        logger.LogInformation("Subscribed to topic: {Topic}", options.Value.FreelancerAccountIdSavingTopic);
+        
         await Task.Run(() => ConsumeMessagesAsync(stoppingToken), stoppingToken);
     }
 
@@ -34,42 +37,55 @@ public class FreelancerAccountsConsumerService(
     {
         try
         {
+            logger.LogInformation("Starting to consume messages");
+            
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
                     var result = _consumer.Consume(stoppingToken);
+                    
+                    logger.LogInformation("Received message: {Message}", result.Message.Value);
+                    
                     var dto = JsonSerializer.Deserialize<SaveFreelancerAccountIdDto>(result.Message.Value);
                     
                     if (dto is null)
                     {
+                        logger.LogWarning("Failed to deserialize message: {Message}", result.Message.Value);
+                        
                         throw new BadRequestException("Error occurred during message deserialization");
                     }
 
                     await ProcessMessageAsync(dto, stoppingToken);
+                    
+                    logger.LogInformation("Successfully processed message for user {UserId}", dto.UserId);
                 }
                 catch (ConsumeException ex)
                 {
-                    // Логирование ошибки Kafka
+                    logger.LogError(ex, "Kafka consume error");
                 }
                 catch (Exception ex)
                 {
-                    // Логирование ошибки
+                    logger.LogError(ex, "Error processing message");
                 }
             }
         }
         catch (OperationCanceledException)
         {
-            // Логирование завершения работы
+            logger.LogInformation("Consumer service stopping");
         }
         finally
         {
             _consumer.Close();
+            
+            logger.LogInformation("Consumer closed");
         }
     }
 
     private async Task ProcessMessageAsync(SaveFreelancerAccountIdDto dto, CancellationToken stoppingToken)
     {
+        logger.LogInformation("Processing freelancer account ID for user {UserId}", dto.UserId);
+        
         using var scope = serviceScopeFactory.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
@@ -78,6 +94,8 @@ public class FreelancerAccountsConsumerService(
 
         if (freelancerProfile is null)
         {
+            logger.LogWarning("Freelancer profile not found for user {UserId}", dto.UserId);
+            
             throw new BadRequestException($"Freelancer profile with user ID '{dto.UserId}' not found");
         }
 
@@ -85,5 +103,7 @@ public class FreelancerAccountsConsumerService(
 
         await unitOfWork.FreelancerProfilesRepository.UpdateAsync(freelancerProfile, stoppingToken);
         await unitOfWork.SaveAllAsync(stoppingToken);
+        
+        logger.LogInformation("Successfully updated freelancer profile for user {UserId}", dto.UserId);
     }
 }

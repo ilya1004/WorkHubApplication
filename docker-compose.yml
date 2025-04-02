@@ -34,13 +34,72 @@ services:
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-    restart: unless-stopped
     networks:
       - workhub_network
     depends_on:
       - zookeeper
     healthcheck:
       test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  kafka-setup:
+    image: confluentinc/cp-kafka
+    container_name: kafka-setup
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - workhub_network
+    entrypoint: ["/bin/bash", "-c", "sleep 15 && /scripts/create-topics.sh"]
+    volumes:
+      - ./DockerConfig/InitKafka/create-topics.sh:/scripts/create-topics.sh
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.4
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - workhub_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.17.4
+    container_name: logstash
+    ports:
+      - "5001:5000"
+    environment:
+      - LS_JAVA_OPTS=-Xmx256m -Xms256m
+    volumes:
+      - ./DockerConfig/LogstashConfig:/usr/share/logstash/pipeline
+    networks:
+      - workhub_network
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.17.4
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    networks:
+      - workhub_network
+    depends_on:
+      - elasticsearch
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5601"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -262,3 +321,4 @@ volumes:
   postgres_hangfire_data:
   postgres_primary_data:
   postgres_replica_data:
+  elasticsearch_data:

@@ -7,14 +7,20 @@ namespace ProjectsService.Infrastructure.Services.HangfireJobsInitializer;
 
 public class HangfireJobsInitializer(
     IRecurringJobManager recurringJobManager,
-    IMediator mediator) : IBackgroundJobsInitializer
+    IMediator mediator,
+    ILogger<HangfireJobsInitializer> logger) : IBackgroundJobsInitializer
 {
     public void StartBackgroundJobs()
     {
+        logger.LogInformation("Starting background jobs initialization");
+        
         recurringJobManager.AddOrUpdate(
             "update_project_statuses",
             () => mediator.Send(new UpdateProjectStatusesCommand(), CancellationToken.None),
             Cron.Minutely()
         );
+        
+        logger.LogInformation("Recurring job 'update_project_statuses' scheduled to run every minute");
     }
 }
+

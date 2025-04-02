@@ -50,7 +50,8 @@ public class CachedAppRepository<TEntity>(
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(options.Value.RecordExpirationTimeInMinutes)
             }, cancellationToken);
-
+        }
+        
         return entity;
     }
 

@@ -3,10 +3,14 @@ using ProjectsService.Application.Specifications.ProjectSpecifications;
 
 namespace ProjectsService.Application.UseCases.Queries.ProjectUseCases.GetProjectsByFilter;
 
-public class GetProjectsByFilterQueryHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetProjectsByFilterQuery, PaginatedResultModel<Project>>
+public class GetProjectsByFilterQueryHandler(
+    IUnitOfWork unitOfWork,
+    ILogger<GetProjectsByFilterQueryHandler> logger) : IRequestHandler<GetProjectsByFilterQuery, PaginatedResultModel<Project>>
 {
     public async Task<PaginatedResultModel<Project>> Handle(GetProjectsByFilterQuery request, CancellationToken cancellationToken)
     {
+        logger.LogInformation("Getting filtered projects with filters: {@Filters}", request);
+
         var offset = (request.PageNo - 1) * request.PageSize;
 
         var specification = new GetProjectsByFilterSpecification(
@@ -23,6 +27,9 @@ public class GetProjectsByFilterQueryHandler(IUnitOfWork unitOfWork) : IRequestH
 
         var projectsCount = await unitOfWork.ProjectQueriesRepository.CountByFilterAsync(specification, cancellationToken);
         
+        logger.LogInformation("Retrieved {Count} filtered projects out of {TotalCount}", 
+            projects.Count, projectsCount);
+
         return new PaginatedResultModel<Project>
         {
             Items = projects.ToList(),

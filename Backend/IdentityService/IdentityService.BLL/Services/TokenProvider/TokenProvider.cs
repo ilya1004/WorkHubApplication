@@ -1,5 +1,4 @@
 ﻿using IdentityService.BLL.Settings;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -8,10 +7,14 @@ using System.Text;
 
 namespace IdentityService.BLL.Services.TokenProvider;
 
-public class TokenProvider(IOptions<JwtSettings> options) : ITokenProvider
+public class TokenProvider(
+    IOptions<JwtSettings> options,
+    ILogger<TokenProvider> logger) : ITokenProvider
 {
     public string GenerateAccessToken(AppUser user)
     {
+        logger.LogInformation("Generating access token for user {UserId}", user.Id);
+        
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -20,20 +23,24 @@ public class TokenProvider(IOptions<JwtSettings> options) : ITokenProvider
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Value.SecretKey));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
             options.Value.Issuer,
             options.Value.Audience,
             claims,
             expires: DateTime.UtcNow.AddMinutes(30),
-            signingCredentials: creds);
+            signingCredentials: credentials);
 
+        logger.LogInformation("Access token generated successfully for user {UserId}", user.Id);
+        
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
     public string GenerateRefreshToken()
     {
+        logger.LogInformation("Generating refresh token");
+        
         var randomNumber = new byte[64];
         using var rng = RandomNumberGenerator.Create();
 
@@ -43,6 +50,8 @@ public class TokenProvider(IOptions<JwtSettings> options) : ITokenProvider
 
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
+        logger.LogInformation("Validating expired token");
+        
         var tokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -60,8 +69,14 @@ public class TokenProvider(IOptions<JwtSettings> options) : ITokenProvider
 
         if (jwtSecurityToken is null ||
             !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+        {
+            logger.LogWarning("Invalid token received");
+            
             throw new UnauthorizedException("Invalid token");
+        }
 
+        logger.LogInformation("Token validated successfully");
+        
         return principal;
     }
 }

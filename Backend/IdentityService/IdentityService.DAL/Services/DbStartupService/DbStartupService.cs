@@ -3,6 +3,7 @@ using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Constants;
 using IdentityService.DAL.Data;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace IdentityService.DAL.Services.DbStartupService;
 
@@ -10,31 +11,55 @@ public class DbStartupService(
     IServiceProvider serviceProvider,
     RoleManager<IdentityRole<Guid>> roleManager,
     IUnitOfWork unitOfWork,
-    UserManager<AppUser> userManager) : IDbStartupService
+    UserManager<AppUser> userManager,
+    ILogger<DbStartupService> logger) : IDbStartupService
 {
     public async Task MakeMigrationsAsync()
     {
+        logger.LogInformation("Starting database migrations...");
+        
         using var scope = serviceProvider.CreateScope();
-
         await using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        await dbContext.Database.MigrateAsync();
+        try
+        {
+            await dbContext.Database.MigrateAsync();
+            
+            logger.LogInformation("Database migrations applied successfully");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error applying database migrations");
+
+            throw new Exception("Error applying database migrations", ex);
+        }
     }
 
     public async Task InitializeDb()
     {
-        if (await roleManager.FindByNameAsync(AppRoles.AdminRole) is null)
+        logger.LogInformation("Starting database initialization...");
+
+        var adminRole = await roleManager.FindByNameAsync(AppRoles.AdminRole);
+        if (adminRole is null)
         {
+            logger.LogInformation("Creating application roles...");
+            
             await roleManager.CreateAsync(new IdentityRole<Guid>(AppRoles.AdminRole));
             await roleManager.CreateAsync(new IdentityRole<Guid>(AppRoles.EmployerRole));
             await roleManager.CreateAsync(new IdentityRole<Guid>(AppRoles.FreelancerRole));
+            
+            logger.LogInformation("Application roles created successfully");
         }
         else
         {
+            logger.LogInformation("Roles already exist, skipping creation");
+            
             return;
         }
 
-        var adminRole = await roleManager.FindByNameAsync(AppRoles.AdminRole);
+        adminRole = await roleManager.FindByNameAsync(AppRoles.AdminRole);
+        
+        logger.LogInformation("Creating default admin user...");
 
         var admin = new AppUser
         {
@@ -48,8 +73,20 @@ public class DbStartupService(
             RoleId = adminRole!.Id
         };
 
-        await userManager.CreateAsync(admin, "Admin_123");
+        var createResult = await userManager.CreateAsync(admin, "Admin_123");
+        if (!createResult.Succeeded)
+        {
+            var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+            
+            logger.LogError("Failed to create admin user. Errors: {Errors}", errors);
+            
+            throw new Exception($"Failed to create admin user: {errors}");
+        }
 
+        logger.LogInformation("Default admin user created successfully with ID: {AdminId}", admin.Id);
+
+        logger.LogInformation("Seeding freelancer skills...");
+        
         var freelancerSkills = new List<FreelancerSkill>
         {
             new() { Id = Guid.NewGuid(), Name = "Web Development", NormalizedName = "WEB_DEVELOPMENT" },
@@ -61,8 +98,12 @@ public class DbStartupService(
             new() { Id = Guid.NewGuid(), Name = "Data Analysis", NormalizedName = "DATA_ANALYSIS" }
         };
 
-        foreach (var item in freelancerSkills) await unitOfWork.FreelancerSkillsRepository.AddAsync(item);
+        foreach (var item in freelancerSkills) 
+        {
+            await unitOfWork.FreelancerSkillsRepository.AddAsync(item);
+        }
 
+        logger.LogInformation("Seeding employer industries...");
         var employerIndustries = new List<EmployerIndustry>
         {
             new() { Id = Guid.NewGuid(), Name = "IT & Software", NormalizedName = "IT_SOFTWARE" },
@@ -74,8 +115,12 @@ public class DbStartupService(
             new() { Id = Guid.NewGuid(), Name = "E-commerce & Retail", NormalizedName = "ECOMMERCE_RETAIL" }
         };
 
-        foreach (var item in employerIndustries) await unitOfWork.EmployerIndustriesRepository.AddAsync(item);
+        foreach (var item in employerIndustries) 
+        {
+            await unitOfWork.EmployerIndustriesRepository.AddAsync(item);
+        }
 
         await unitOfWork.SaveAllAsync();
+        logger.LogInformation("Database initialization completed successfully");
     }
 }

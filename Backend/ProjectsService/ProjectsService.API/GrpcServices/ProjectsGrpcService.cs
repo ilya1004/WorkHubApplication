@@ -5,13 +5,19 @@ using ProjectsService.Application.UseCases.Queries.ProjectUseCases.GetProjectByI
 
 namespace ProjectsService.API.GrpcServices;
 
-public class ProjectsGrpcService(IMediator mediator) : Projects.Projects.ProjectsBase
+public class ProjectsGrpcService(
+    IMediator mediator,
+    ILogger<ProjectsGrpcService> logger) : Projects.Projects.ProjectsBase
 {
     [Authorize]
     public override async Task<GetProjectByIdResponse> GetProjectById(GetProjectByIdRequest request, ServerCallContext context)
     {
+        logger.LogInformation("Getting project by ID: {ProjectId}", request.Id);
+        
         var project = await mediator.Send(new GetProjectByIdQuery(Guid.Parse(request.Id)));
-
+        
+        logger.LogInformation("Successfully returned project data for {ProjectId}", request.Id);
+        
         return new GetProjectByIdResponse
         {
             Id = project.Id.ToString(), 

@@ -2,7 +2,6 @@
 using IdentityService.BLL.Services.TokenProvider;
 using IdentityService.BLL.Settings;
 using IdentityService.DAL.Abstractions.Repositories;
-using Microsoft.Extensions.Options;
 
 namespace IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 
@@ -10,20 +9,40 @@ public class LoginUserCommandHandler(
     SignInManager<AppUser> signInManager,
     IUnitOfWork unitOfWork,
     ITokenProvider tokenService,
-    IOptions<JwtSettings> options) : IRequestHandler<LoginUserCommand, AuthTokensDto>
+    IOptions<JwtSettings> options,
+    ILogger<LoginUserCommandHandler> logger) : IRequestHandler<LoginUserCommand, AuthTokensDto>
 {
     public async Task<AuthTokensDto> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
+        logger.LogInformation("Login attempt for email {Email}", request.Email);
+
         var user = await unitOfWork.UsersRepository.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken, u => u.Role);
 
-        if (user is null) throw new UnauthorizedException("Invalid credentials.");
+        if (user is null)
+        {
+            logger.LogWarning("Invalid login attempt for email {Email}", request.Email);
+            
+            throw new UnauthorizedException("Invalid credentials.");
+        }
 
         var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
-        if (!result.Succeeded) throw new UnauthorizedException("Invalid credentials.");
+        if (!result.Succeeded)
+        {
+            logger.LogWarning("Invalid password for user {UserId}", user.Id);
+            
+            throw new UnauthorizedException("Invalid credentials.");
+        }
 
-        if (!user.EmailConfirmed) throw new UnauthorizedException("You need to confirm your email.");
+        if (!user.EmailConfirmed)
+        {
+            logger.LogWarning("Login attempt for unconfirmed email {Email}", request.Email);
+            
+            throw new UnauthorizedException("You need to confirm your email.");
+        }
 
+        logger.LogInformation("Generating tokens for user {UserId}", user.Id);
+        
         var accessToken = tokenService.GenerateAccessToken(user);
         var refreshToken = tokenService.GenerateRefreshToken();
 
@@ -34,6 +53,8 @@ public class LoginUserCommandHandler(
         await unitOfWork.UsersRepository.UpdateAsync(user, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
 
+        logger.LogInformation("Successful login for user {UserId}", user.Id);
+        
         return new AuthTokensDto(accessToken, refreshToken);
     }
 }

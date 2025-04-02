@@ -10,7 +10,6 @@ var services = builder.Services;
 
 services.AddControllers();
 services.AddHttpContextAccessor();
-services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 services.AddAPI(builder.Configuration);
 services.AddApplication();
@@ -34,6 +33,7 @@ app.MapHealthChecks("/health", new HealthCheckOptions
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
+app.UseMiddleware<GlobalLoggingMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseAuthentication();

@@ -1,4 +1,4 @@
-using ChatService.Application.UseCases.MessageUseCases.CreateTextMessage;
+using ChatService.Application.UseCases.MessageUseCases.Commands.CreateTextMessage;
 using FluentValidation;
 
 namespace ChatService.Application.Validators.MessageValidators;

@@ -1,4 +1,4 @@
-using ChatService.Application.UseCases.MessageUseCases.DeleteMessage;
+using ChatService.Application.UseCases.MessageUseCases.Commands.DeleteMessage;
 using FluentValidation;
 
 namespace ChatService.Application.Validators.MessageValidators;

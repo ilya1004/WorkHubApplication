@@ -3,6 +3,7 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using ProjectsService.Domain.Abstractions.KafkaProducerServices;
 using ProjectsService.Domain.Abstractions.StartupServices;
 using ProjectsService.Infrastructure.Data;
@@ -10,6 +11,8 @@ using ProjectsService.Infrastructure.Repositories;
 using ProjectsService.Infrastructure.Services.HangfireJobsInitializer;
 using ProjectsService.Infrastructure.Services.KafkaConsumerServices;
 using ProjectsService.Infrastructure.Services.KafkaProducerServices;
+using ProjectsService.Infrastructure.Services.LogstashHelpers;
+using Serilog;
 
 namespace ProjectsService.Infrastructure;
 
@@ -57,7 +60,24 @@ public static class DependencyInjection
             .AddKafka(new ProducerConfig
             {
                 BootstrapServers = configuration["KafkaSettings:BootstrapServers"]
-            }, name: "kafka");
+            }, name: "kafka")
+            .AddElasticsearch(
+                elasticsearchUri: configuration["Elasticsearch:Url"]!,
+                name: "elasticsearch",
+                failureStatus: HealthStatus.Unhealthy);
+        
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Console(new LogstashTextFormatter())
+            .WriteTo.Http(
+                requestUri: configuration["Logstash:Url"]!, 
+                queueLimitBytes: null,
+                textFormatter: new LogstashTextFormatter(),
+                httpClient: new LogstashHttpClient()
+            )
+            .CreateLogger();
+
+        services.AddLogging(logging => logging.AddSerilog());
         
         return services;
     }
