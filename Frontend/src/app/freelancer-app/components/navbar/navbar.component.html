@@ -1,10 +1,48 @@
 <div nz-flex nzAlign="center" nzJustify="center">
-  <div>
-    <nz-space-compact nzBlock>
-      <button nz-button nzType="default">Button 1</button>
-      <button nz-button nzType="default">Button 2</button>
-      <button nz-button nzType="default">Button 3</button>
-      <button nz-button nzType="default">Button 4</button>
-    </nz-space-compact>
-  </div>
+<!--  <div>-->
+<!--    <nz-space-compact nzBlock>-->
+<!--      <button-->
+<!--        nz-button-->
+<!--        nzType="default"-->
+<!--        nzSize="large"-->
+<!--      >-->
+<!--        Home-->
+<!--      </button>-->
+<!--      <button-->
+<!--        nz-button-->
+<!--        nzType="default"-->
+<!--        nzSize="large">-->
+<!--        My projects-->
+<!--      </button>-->
+<!--      <button-->
+<!--        nz-button-->
+<!--        nzType="default"-->
+<!--        nzSize="large">-->
+<!--        Profile-->
+<!--      </button>-->
+<!--    </nz-space-compact>-->
+<!--  </div>-->
+  <ul nz-menu nzMode="horizontal">
+    <li
+      nz-menu-item
+      [routerLink]="'/freelancer/home'"
+      [nzMatchRouter]="'/freelancer/home'">
+      <nz-icon nzType="home"/>
+      Home
+    </li>
+    <li
+      nz-menu-item
+      [routerLink]="'/freelancer/my-projects'"
+      [nzMatchRouter]="'/freelancer/my-projects'">
+      <nz-icon nzType="appstore" />
+      My Projects
+    </li>
+    <li
+      nz-menu-item
+      [routerLink]="'/freelancer/my-profile'"
+      [nzMatchRouter]="'/freelancer/my-profile'">
+      <nz-icon nzType="user" />
+      My Profile
+    </li>
+  </ul>
 </div>

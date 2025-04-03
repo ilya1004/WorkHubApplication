@@ -3,9 +3,10 @@ import {LoginPageComponent} from './common/pages/login-page/login-page.component
 import {RegisterPageComponent} from './common/pages/register-page/register-page.component';
 import {HomeComponent as FreelancerHomeComponent} from './freelancer-app/pages/home/home.component';
 import {MyProjectsComponent as FreelancerMyProjectsComponent} from './freelancer-app/pages/my-projects/my-projects.component';
-import {canActivateFreelancerAuth} from './common/services/auth/access.guard';
+import {canActivateFreelancerAuth} from './core/services/auth/access.guard';
 import {LayoutComponent as FreelancerLayoutComponent} from './freelancer-app/components/layout/layout.component';
 import {ConfirmEmailComponent} from './common/pages/confirm-email/confirm-email.component';
+import {ProfileComponent as FreelancerProfileComponent} from './freelancer-app/pages/profile/profile.component';
 
 
 export const routes: Routes = [
@@ -16,8 +17,8 @@ export const routes: Routes = [
     path: 'freelancer', component: FreelancerLayoutComponent, children: [
       {path: 'home', component: FreelancerHomeComponent},
       {path: 'my-projects', component: FreelancerMyProjectsComponent},
+      {path: 'my-profile', component: FreelancerProfileComponent},
     ],
     canActivate: [canActivateFreelancerAuth]
   }
-
 ];

@@ -1,17 +1,133 @@
-<div nz-flex>
-  <div nz-flex nzVertical>
+<div nz-flex nzGap="100px">
+  <div nz-flex nzVertical nzGap="large">
     <img
-      ngSrc="{{ userData.imageUrl }}"
-      width="300px"
-      height="auto"
+      [ngSrc]="userData.imageUrl || 'assets/avatar-placeholder.png'"
+      height="250"
+      width="250"
       alt="User avatar"
-    />
-  </div>
-  <div nz-flex nzVertical>
+      style="border-radius: 10px"/>
     <nz-card>
+      <div>
+        Email:
+        <br/>
+        {{ userData.email }}
+      </div>
+      <br/>
+      <div>
+        Registration date:
+        <br/>
+        {{ userData.registeredAt.slice(0, 10) }}
+      </div>
+    </nz-card>
+    <div nz-flex>
+      <button
+        nz-button
+        (click)="isEditing = !isEditing">
+        <nz-icon nzType="edit" />
+        Edit
+      </button>
+    </div>
+  </div>
+  <div nz-flex nzVertical nzGap="large">
+    <nz-card
+      style="min-width: 300px; min-height: 250px">
       <h2>
         {{ userData.firstName }} {{ userData.lastName }}
       </h2>
+
+      <div>
+        About me:
+      </div>
+      <div>
+        {{ userData.about }}
+      </div>
+      <br/>
+      <div>
+        My skills:
+      </div>
+      <div>
+        @for (skill of userData.skills; track skill) {
+          <nz-tag nzColor="yellow">{{ skill }}</nz-tag>
+        }
+      </div>
     </nz-card>
+
+    @if (isEditing) {
+      <nz-card>
+        <form
+          [formGroup]="editFreelancerForm"
+          (ngSubmit)="onSubmitEditForm()"
+          style="margin: 15px 0 0 0">
+
+          <nz-space nzSize="middle" nzDirection="vertical">
+
+            <div *nzSpaceItem>
+              <input
+                nz-input
+                formControlName="firstName"
+                placeholder="Enter your first name"
+                class="register-card__input">
+              <div *ngIf="editFreelancerForm.controls.firstName.invalid && editFreelancerForm.controls.firstName.touched" class="error">
+                <div *ngIf="editFreelancerForm.controls.firstName.errors?.['required']">First name is required</div>
+                <div *ngIf="editFreelancerForm.controls.firstName.errors?.['maxlength']">First name must be at most 100 characters</div>
+              </div>
+            </div>
+
+            <div *nzSpaceItem>
+              <input
+                nz-input
+                formControlName="lastName"
+                placeholder="Enter your last name"
+                class="register-card__input">
+              <div *ngIf="editFreelancerForm.controls.lastName.invalid && editFreelancerForm.controls.lastName.touched" class="error">
+                <div *ngIf="editFreelancerForm.controls.lastName.errors?.['required']">Last name is required</div>
+                <div *ngIf="editFreelancerForm.controls.lastName.errors?.['maxlength']">Last name must be at most 100 characters</div>
+              </div>
+            </div>
+
+            <div *nzSpaceItem>
+              <textarea
+                nz-input
+                formControlName="about"
+                placeholder="Tell about yourself"
+                rows="4"
+                class="register-card__input">
+              </textarea>
+              <div *ngIf="editFreelancerForm.controls.about.invalid && editFreelancerForm.controls.about.touched" class="error">
+                <div *ngIf="editFreelancerForm.controls.about.errors?.['maxlength']">About section must be at most 1000 characters</div>
+              </div>
+            </div>
+
+            <div *nzSpaceItem>
+              <nz-select
+                nzMode="multiple"
+                formControlName="skillIds"
+                nzPlaceHolder="Select your skills"
+                style="width: 100%;">
+                <nz-option *ngFor="let skill of availableSkills" [nzValue]="skill.id" [nzLabel]="skill.name"></nz-option>
+              </nz-select>
+            </div>
+
+            <div *nzSpaceItem>
+              <label>
+                <input type="checkbox" formControlName="resetImage"> Reset Profile Image
+              </label>
+            </div>
+
+            <div *nzSpaceItem>
+              <input
+                type="file"
+                [disabled]="editFreelancerForm.value.resetImage"
+                (change)="onFileSelected($event)">
+            </div>
+
+            <div *nzSpaceItem>
+              <button nz-button nzType="primary" type="submit" [disabled]="editFreelancerForm.invalid" style="border-radius: 7px">Save Changes</button>
+            </div>
+
+          </nz-space>
+        </form>
+      </nz-card>
+    }
   </div>
 </div>

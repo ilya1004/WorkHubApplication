@@ -8,7 +8,7 @@ import {NzIconDirective} from 'ng-zorro-antd/icon';
 import {NzInputDirective, NzInputGroupComponent} from 'ng-zorro-antd/input';
 import {NzSpaceComponent, NzSpaceItemDirective} from 'ng-zorro-antd/space';
 import {Router, RouterLink} from '@angular/router';
-import {AuthService} from '../../services/auth/auth.service';
+import {AuthService} from '../../../core/services/auth/auth.service';
 import {NzRadioComponent, NzRadioGroupComponent} from 'ng-zorro-antd/radio';
 import {RegisterFreelancerForm} from './register-freelancer-form.interface';
 import {RegisterEmployerForm} from './register-employer-form.interface';
@@ -46,12 +46,6 @@ export class RegisterPageComponent {
     private authService: AuthService,
     private router: Router,
     ) {
-  }
-
-  onRegisterUserChange(newRadioValue: EventEmitter<string>) {
-    if (newRadioValue.toString() === 'freelancer') {
-
-    }
   }
 
   freelancerForm = new FormGroup<RegisterFreelancerForm>({
@@ -207,16 +201,5 @@ export class RegisterPageComponent {
           .subscribe();
       }
     }
-  }
-
-  private getFormValidationErrors() {
-    const errors: any[] = [];
-    Object.keys(this.freelancerForm.controls).forEach(key => {
-      const controlErrors = this.freelancerForm.get(key)?.errors;
-      if (controlErrors) {
-        errors.push({ field: key, errors: controlErrors });
-      }
-    });
-    return errors;
   }
 }

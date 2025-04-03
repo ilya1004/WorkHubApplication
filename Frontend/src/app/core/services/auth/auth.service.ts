@@ -1,11 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
-import {IDENTITY_SERVICE_API_URL} from '../../../core/constants';
+import {IDENTITY_SERVICE_API_URL} from '../../constants';
 import {AuthInterface} from './auth.interface';
-import {catchError, tap, throwError} from 'rxjs';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import {CookieService} from 'ngx-cookie-service';
-import {routes} from '../../../app.routes';
 import {Router} from '@angular/router';
 
 @Injectable({
@@ -27,6 +25,14 @@ export class AuthService {
       { observe: 'response' }
     );
   }
+
+  logout() {
+    this.cookieService.delete('access_token', '/');
+    this.cookieService.delete('refresh_token', '/');
+
+    this.router.navigate(['/login']); // 🔥 Перенаправляем на страницу логина
+  }
+
 
   registerFreelancer(payload: { userName: string; firstName: string; lastName: string; email: string; password: string }) {
     return this.httpClient.post<HttpResponse<any>>(
@@ -70,10 +76,19 @@ export class AuthService {
   }
 
   getUserRole(): string | null {
+    if (!this.cookieService.check('access_token')) {
+      return null;
+    }
     const token = this.cookieService.get('access_token');
-    if (!token) return null;
 
     const decodedToken = this.decodeToken(token);
     return decodedToken?.role || null;
+  }
+
+  getAccessToken(): string | null {
+    if (!this.cookieService.check('access_token')) {
+      return null;
+    }
+    return this.cookieService.get('access_token');
   }
 }

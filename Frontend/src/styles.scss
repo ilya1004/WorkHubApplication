@@ -1,3 +1,5 @@
+@import "ng-zorro-antd/ng-zorro-antd.dark.css";
+
 * {
   padding: 0;
   margin: 0;
@@ -6,7 +8,7 @@
 
 :root {
   --dark-color: #151515;
-  --gray-color: #353535;
+  --gray-color: #2e2e2e;
   --light-gray-color: #4e4e4e;
   --light-color: #dddddd;
   --white-color: #f8f8f8;
@@ -18,5 +20,14 @@ body {
 }
 
 .ant-alert-error {
+  border-radius: 7px;
+}
+
+.ant-card {
+  border-radius: 10px;
+  background-color: var(--gray-color);
+}
+
+.ant-btn {
   border-radius: 7px;
 }

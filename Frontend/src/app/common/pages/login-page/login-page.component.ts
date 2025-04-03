@@ -6,7 +6,7 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {NzButtonComponent} from 'ng-zorro-antd/button';
 import {NzFlexDirective} from 'ng-zorro-antd/flex';
 import {NzSpaceComponent, NzSpaceItemDirective} from 'ng-zorro-antd/space';
-import {AuthService} from '../../services/auth/auth.service';
+import {AuthService} from '../../../core/services/auth/auth.service';
 import {NgIf} from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
 import {NzAlertComponent} from 'ng-zorro-antd/alert';
@@ -53,19 +53,19 @@ export class LoginPageComponent {
               this.errorMessage = error.error.detail;
             }
             return throwError(() => error);
-          }),
-          tap({
-            next: value => {
-              console.log(value);
-              this.cookieService.set('access_token', value.body!.accessToken);
-              this.cookieService.set('refresh_token', value.body!.refreshToken);
-              console.log(value);
-              this.router.navigate(['/freelancer/home']);
-              console.log(value);
-            },
           })
         )
-        .subscribe();
+        .subscribe(response => {
+          if (response.body && response.body.accessToken && response.body.refreshToken) {
+
+            this.cookieService.delete('access_token');
+            this.cookieService.delete('refresh_token');
+
+            this.cookieService.set('access_token', response.body.accessToken, { path: '/' });
+            this.cookieService.set('refresh_token', response.body.refreshToken, { path: '/' });
+            this.router.navigate(['/freelancer/home']);
+          }
+        });
     } else {
       this.errorMessage = 'Please fill in all required fields.';
     }
