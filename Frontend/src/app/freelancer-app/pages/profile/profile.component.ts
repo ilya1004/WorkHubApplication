@@ -126,11 +126,27 @@ export class ProfileComponent {
         formData.append("ImageFile", formValue.image);
       }
 
-      console.log(formData);
-
       this.profileService.updateFreelancerProfile(formData).subscribe({
         next: () => {
           console.log("Profile updated successfully");
+
+          // 🔄 Обновляем данные пользователя после сохранения
+          this.profileService.getUserData().subscribe(updated => {
+            this.userData = updated;
+
+            // Можно сразу обновить форму (опционально)
+            this.editFreelancerForm.patchValue({
+              firstName: updated.firstName,
+              lastName: updated.lastName,
+              about: updated.about,
+              skillIds: updated.skills.map(skill => skill.id),
+              resetImage: false,
+              image: null
+            });
+
+            // Закрываем режим редактирования
+            this.isEditing = false;
+          });
         },
         error: (err) => {
           console.error("Error updating profile", err);

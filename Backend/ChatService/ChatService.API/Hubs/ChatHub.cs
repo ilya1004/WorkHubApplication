@@ -4,6 +4,7 @@ using ChatService.API.HubInterfaces;
 using ChatService.Application.UseCases.ChatUseCases.Commands.CreateChat;
 using ChatService.Application.UseCases.ChatUseCases.Commands.SetChatInactive;
 using ChatService.Application.UseCases.ChatUseCases.Queries.GetAllChats;
+using ChatService.Application.UseCases.ChatUseCases.Queries.GetChatById;
 using ChatService.Application.UseCases.MessageUseCases.Commands.CreateTextMessage;
 using ChatService.Application.UseCases.MessageUseCases.Commands.DeleteMessage;
 using ChatService.Application.UseCases.MessageUseCases.Queries.GetChatMessages;
@@ -41,6 +42,16 @@ public class ChatHub(
         await mediator.Send(mapper.Map<CreateChatCommand>(request));
         
         logger.LogInformation("Chat created successfully");
+    }
+    
+    [Authorize]
+    public async Task GetChatById(Guid chatId)
+    {
+        var result = await mediator.Send(mapper.Map<GetChatByIdQuery>(chatId));
+
+        await Clients.Caller.ReceiveChat(result);
+        
+        logger.LogInformation("Chat retrieved successfully");
     }
 
     [Authorize]

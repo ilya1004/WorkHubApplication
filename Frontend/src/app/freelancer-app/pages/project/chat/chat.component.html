@@ -1,0 +1,24 @@
+<nz-card nzTitle="Чат" style="max-width: 800px; margin: auto">
+  <div style="height: 400px; overflow-y: auto; padding: 1rem; background: #f9f9f9">
+    <div *ngFor="let msg of messages" [style.text-align]="msg.isMine ? 'right' : 'left'">
+      <nz-tag [nzColor]="msg.isMine ? 'blue' : 'default'" style="margin-bottom: 8px; display: inline-block;">
+        <ng-container *ngIf="msg.text">{{ msg.text }}</ng-container>
+        <ng-container *ngIf="msg.fileUrl">
+          <a [href]="msg.fileUrl" target="_blank">📎 Скачать файл</a>
+        </ng-container>
+      </nz-tag>
+    </div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="sendMessage()" style="display: flex; margin-top: 16px">
+    <input nz-input formControlName="text" placeholder="Введите сообщение" style="flex: 1; margin-right: 8px" />
+    <button nz-button nzType="primary" htmlType="submit">Отправить</button>
+  </form>
+
+  <div style="margin-top: 16px; display: flex; align-items: center">
+    <input type="file" (change)="handleFileInput($event)" />
+    <button nz-button nzType="default" (click)="uploadFile()" [disabled]="!fileToUpload" style="margin-left: 8px">
+      Отправить файл
+    </button>
+  </div>
+</nz-card>

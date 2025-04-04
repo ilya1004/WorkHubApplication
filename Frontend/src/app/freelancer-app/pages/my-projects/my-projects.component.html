@@ -1,1 +1,76 @@
-<p>my-projects works!</p>
+<nz-card>
+  <form [formGroup]="filterForm" (ngSubmit)="onFilterSubmit()" nz-row [nzGutter]="16">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label>Статус проекта</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="projectsStatus" nzPlaceHolder="Все">
+            <nz-option [nzValue]="null" nzLabel="Все"></nz-option>
+            <nz-option [nzValue]="0" nzLabel="Создан"></nz-option>
+            <nz-option [nzValue]="1" nzLabel="В процессе"></nz-option>
+            <nz-option [nzValue]="2" nzLabel="Завершён"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label>ID работодателя</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="employerId" type="number" placeholder="Введите ID" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8" class="flex items-end">
+      <button nz-button nzType="primary" [disabled]="loading">Применить фильтр</button>
+    </div>
+  </form>
+</nz-card>
+
+<nz-table
+    [nzData]="projects"
+    [nzLoading]="loading"
+    [nzPageSize]="pageSize"
+    [nzTotal]="total"
+    [nzPageIndex]="pageNo"
+    [nzFrontPagination]="false"
+    (nzQueryParams)="onTableParamsChange($event)"
+    [nzShowPagination]="true"
+    class="mt-4"
+    nzScroll="{ x: '1000px' }"
+>
+  <thead>
+    <tr>
+      <th>Название</th>
+      <th>Описание</th>
+      <th>Бюджет</th>
+      <th>Категория</th>
+      <th>Даты подачи</th>
+      <th>Даты работы</th>
+      <th>Статус</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let project of projects">
+      <td>{{ project.title }}</td>
+      <td>{{ project.description }}</td>
+      <td>{{ project.budget | currency:'USD' }}</td>
+      <td>{{ project.category.name }}</td>
+      <td>
+        {{ project.lifecycle.applicationsStartDate | date:'shortDate' }} –<br />
+        {{ project.lifecycle.applicationsDeadline | date:'shortDate' }}
+      </td>
+      <td>
+        {{ project.lifecycle.workStartDate | date:'shortDate' }} –<br />
+        {{ project.lifecycle.workDeadline | date:'shortDate' }}
+      </td>
+      <td>
+        <nz-tag [nzColor]="getStatusColor(project.lifecycle.status)">
+          {{ getStatusText(project.lifecycle.status) }}
+        </nz-tag>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
