@@ -21,8 +21,11 @@ public class RefreshTokenCommandHandler(
 
         logger.LogInformation("Refreshing tokens for user {UserId}", userId);
         
-        var user = await unitOfWork.UsersRepository.GetByIdAsync(Guid.Parse(userId!),
-            cancellationToken, u => u.Role);
+        var user = await unitOfWork.UsersRepository.GetByIdAsync(
+            Guid.Parse(userId!),
+            false,
+            cancellationToken,
+            u => u.Role);
 
         if (user is null || user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiryTime < DateTime.UtcNow)
         {

@@ -18,6 +18,7 @@ public class GetCurrentEmployerUserQueryHandler(
 
         var user = await unitOfWork.UsersRepository.GetByIdAsync(
             userId,
+            false,
             cancellationToken,
             u => u.EmployerProfile!,
             u => u.Role,

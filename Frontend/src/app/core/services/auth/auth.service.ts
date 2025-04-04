@@ -36,7 +36,7 @@ export class AuthService {
 
   registerFreelancer(payload: { userName: string; firstName: string; lastName: string; email: string; password: string }) {
     return this.httpClient.post<HttpResponse<any>>(
-      `${IDENTITY_SERVICE_API_URL}users/register-freelancer1`,
+      `${IDENTITY_SERVICE_API_URL}users/register-freelancer`,
       payload,
       { observe: 'response' }
     )

@@ -11,6 +11,7 @@ public class GetUserByIdQueryHandler(
 
         var user = await unitOfWork.UsersRepository.GetByIdAsync(
             request.Id,
+            false,
             cancellationToken,
             u => u.FreelancerProfile!,
             u => u.EmployerProfile!,

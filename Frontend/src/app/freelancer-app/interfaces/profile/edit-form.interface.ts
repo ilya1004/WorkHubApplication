@@ -1,4 +1,5 @@
 import {FormControl} from '@angular/forms';
+import {FreelancerSkill} from './skill.interface';
 
 export interface EditFreelancerForm {
   firstName: FormControl<string>;

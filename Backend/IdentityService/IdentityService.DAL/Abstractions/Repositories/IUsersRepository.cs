@@ -4,7 +4,7 @@ namespace IdentityService.DAL.Abstractions.Repositories;
 
 public interface IUsersRepository
 {
-    Task<AppUser?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default,
+    Task<AppUser?> GetByIdAsync(Guid id, bool withTracking = true, CancellationToken cancellationToken = default,
         params Expression<Func<AppUser, object>>[]? includesProperties);
 
     Task<AppUser?> FirstOrDefaultAsync(Expression<Func<AppUser, bool>> filter, CancellationToken cancellationToken = default,

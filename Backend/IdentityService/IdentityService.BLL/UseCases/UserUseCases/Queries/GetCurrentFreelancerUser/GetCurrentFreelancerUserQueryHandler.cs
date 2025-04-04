@@ -17,6 +17,7 @@ public class GetCurrentFreelancerUserQueryHandler(
 
         var user = await unitOfWork.UsersRepository.GetByIdAsync(
             userId,
+            false,
             cancellationToken,
             u => u.FreelancerProfile!,
             u => u.Role,

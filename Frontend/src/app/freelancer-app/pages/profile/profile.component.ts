@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {ProfileService} from '../../services/profile.service';
-import {FreelancerUser} from '../../interfaces/profile/profile.interface';
+import {FreelancerUser} from '../../interfaces/profile/freelancer-user.interface';
 import {NzFlexDirective} from 'ng-zorro-antd/flex';
 import {NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
 import {NzCardComponent} from 'ng-zorro-antd/card';
@@ -13,6 +13,7 @@ import {NzSpaceComponent, NzSpaceItemDirective} from 'ng-zorro-antd/space';
 import {EditFreelancerForm} from '../../interfaces/profile/edit-form.interface';
 import {NzOptionComponent, NzSelectComponent} from 'ng-zorro-antd/select';
 import {FreelancerSkill} from '../../interfaces/profile/skill.interface';
+import {skip} from 'rxjs';
 
 
 @Component({
@@ -43,6 +44,8 @@ export class ProfileComponent {
   isEditing: boolean = false;
 
   userData: FreelancerUser = {
+    id: '',
+    userName: '',
     firstName: '',
     lastName: '',
     about: '',
@@ -69,7 +72,7 @@ export class ProfileComponent {
         Validators.maxLength(100)
       ]
     }),
-    about: new FormControl('', {
+    about: new FormControl(this.userData.about, {
       nonNullable: true,
       validators: [
         Validators.maxLength(1000)
@@ -94,7 +97,7 @@ export class ProfileComponent {
 
     this.profileService.getAvailableSkill()
       .subscribe(value => {
-        this.availableSkills = value;
+        this.availableSkills = value.items;
       })
   }
 
@@ -123,6 +126,8 @@ export class ProfileComponent {
         formData.append("ImageFile", formValue.image);
       }
 
+      console.log(formData);
+
       this.profileService.updateFreelancerProfile(formData).subscribe({
         next: () => {
           console.log("Profile updated successfully");
@@ -133,4 +138,19 @@ export class ProfileComponent {
       });
     }
   }
+
+  onClickEdit() {
+    this.isEditing = !this.isEditing;
+
+    if (this.isEditing) {
+      this.editFreelancerForm.patchValue({
+        firstName: this.userData.firstName,
+        lastName: this.userData.lastName,
+        about: this.userData.about,
+        skillIds: this.userData.skills.map(skill => skill.id)
+      });
+    }
+  }
+
+  protected readonly skip = skip;
 }

@@ -2,6 +2,8 @@
 
 public record EmployerUserDto
 {
+    public string Id { get; init; }
+    public string UserName { get; init; }
     public string CompanyName { get; init; }
     public string About { get; init; }
     public string Email { get; init; }

@@ -15,6 +15,7 @@ public class DeleteUserCommandHandler(
 
         var user = await unitOfWork.UsersRepository.GetByIdAsync(
             request.UserId,
+            false,
             cancellationToken,
             u => u.FreelancerProfile!,
             u => u.EmployerProfile!);

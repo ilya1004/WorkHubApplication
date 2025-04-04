@@ -1,10 +1,12 @@
 using System.Security.Claims;
 using System.Text;
 using System.Threading.RateLimiting;
+using ApiGateway.Services;
 using ApiGateway.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 namespace ApiGateway;
 
@@ -77,6 +79,24 @@ public static class DependencyInjection
                     .AllowCredentials();
             });
         });
+
+        return services;
+    }
+
+    public static IServiceCollection AddLogging(this IServiceCollection services, IConfiguration configuration)
+    {
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Console(new LogstashTextFormatter())
+            .WriteTo.Http(
+                requestUri: configuration["Logstash:Url"]!, 
+                queueLimitBytes: null,
+                textFormatter: new LogstashTextFormatter(),
+                httpClient: new LogstashHttpClient()
+            )
+            .CreateLogger();
+
+        services.AddLogging(logging => logging.AddSerilog());
 
         return services;
     }

@@ -7,7 +7,7 @@ namespace IdentityService.DAL.Repositories;
 
 public class AppRepository<TEntity>(ApplicationDbContext context) : IRepository<TEntity> where TEntity : Entity
 {
-    protected readonly DbSet<TEntity> _entities = context.Set<TEntity>();
+    private readonly DbSet<TEntity> _entities = context.Set<TEntity>();
 
     public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {

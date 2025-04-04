@@ -149,6 +149,8 @@ services:
   postgres_identity:
     image: postgres:latest
     container_name: postgres_identity
+    ports:
+      - "5433:5432"
     volumes:
       - postgres_identity_data:/var/lib/postgresql/data
     environment:

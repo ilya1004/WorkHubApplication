@@ -1,8 +1,8 @@
 <div nz-flex nzGap="100px">
   <div nz-flex nzVertical nzGap="large">
     <img
-      [ngSrc]="userData.imageUrl || 'assets/avatar-placeholder.png'"
-      height="250"
+      [ngSrc]="'http://localhost:10000/devstoreaccount1/user-images/' + userData.imageUrl || 'assets/avatar-placeholder.png'"
+      height="auto"
       width="250"
       alt="User avatar"
       style="border-radius: 10px"/>
@@ -22,7 +22,7 @@
     <div nz-flex>
       <button
         nz-button
-        (click)="isEditing = !isEditing">
+        (click)="onClickEdit()">
         <nz-icon nzType="edit" />
         Edit
       </button>
@@ -46,8 +46,8 @@
         My skills:
       </div>
       <div>
-        @for (skill of userData.skills; track skill) {
-          <nz-tag nzColor="yellow">{{ skill }}</nz-tag>
+        @for (skill of userData.skills; track skill.id) {
+          <nz-tag nzColor="blue">{{ skill.name }}</nz-tag>
         }
       </div>
     </nz-card>
@@ -103,7 +103,7 @@
                 nzMode="multiple"
                 formControlName="skillIds"
                 nzPlaceHolder="Select your skills"
-                style="width: 100%;">
+                style="min-width: 300px; max-width: 350px;">
                 <nz-option *ngFor="let skill of availableSkills" [nzValue]="skill.id" [nzLabel]="skill.name"></nz-option>
               </nz-select>
             </div>
