@@ -35,6 +35,10 @@ if (app.Environment.IsDevelopment())
 
 using (var scope = app.Services.CreateScope())
 {
+    var dbStartupService = scope.ServiceProvider.GetRequiredService<IDbStartupService>();
+    await dbStartupService.MakeMigrationsAsync();
+    await dbStartupService.InitializeDb();
+    
     var jobInitializer = scope.ServiceProvider.GetRequiredService<IBackgroundJobsInitializer>();
     // jobInitializer.StartBackgroundJobs();
 }

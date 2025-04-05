@@ -8,6 +8,7 @@ using ProjectsService.Domain.Abstractions.KafkaProducerServices;
 using ProjectsService.Domain.Abstractions.StartupServices;
 using ProjectsService.Infrastructure.Data;
 using ProjectsService.Infrastructure.Repositories;
+using ProjectsService.Infrastructure.Services.DbStartupService;
 using ProjectsService.Infrastructure.Services.HangfireJobsInitializer;
 using ProjectsService.Infrastructure.Services.KafkaConsumerServices;
 using ProjectsService.Infrastructure.Services.KafkaProducerServices;
@@ -43,6 +44,7 @@ public static class DependencyInjection
             .BindConfiguration("CacheOptions");
 
         services.AddScoped<IRecurringJobManager, RecurringJobManager>();
+        services.AddScoped<IDbStartupService, DbStartupService>();
         services.AddScoped<IBackgroundJobsInitializer, HangfireJobsInitializer>();
         
         services.AddOptionsWithValidateOnStart<KafkaSettings>()

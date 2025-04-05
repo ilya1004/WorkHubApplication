@@ -32,15 +32,21 @@ public class UpdateFreelancerProfileCommandHandler(
         
         mapper.Map(request.FreelancerProfile, user.FreelancerProfile);
         
-        var newSkillIds = request.FreelancerProfile.SkillIds.ToHashSet();
+        var newSkillIds = request.FreelancerProfile.SkillIds.ToList();
         var currentSkills = user.FreelancerProfile!.Skills.ToList();
         
-        var allPotentialSkills = await unitOfWork.FreelancerSkillsRepository.ListAsync(
-            s => newSkillIds.Contains(s.Id),
-            cancellationToken);
+        var skillsToRemove = currentSkills.Where(s => !newSkillIds.Contains(s.Id)).ToList();
+        foreach (var skill in skillsToRemove)
+        {
+            user.FreelancerProfile.Skills.Remove(skill);
+        }
         
-        var currentSkillIds = currentSkills.Select(cs => cs.Id).ToHashSet();
-        var skillsToAdd = allPotentialSkills.Where(s => !currentSkillIds.Contains(s.Id)).ToList();
+        var allPotentialSkills = await unitOfWork.FreelancerSkillsRepository.ListAsync(
+            s => newSkillIds.Contains(s.Id), cancellationToken);
+        
+        // var currentSkillIds = .ToList();
+        var skillsToAdd = allPotentialSkills.Where(s => 
+            !currentSkills.Select(cs => cs.Id).Contains(s.Id)).ToList();
         
         foreach (var skill in skillsToAdd)
         {

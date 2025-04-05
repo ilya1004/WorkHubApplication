@@ -1,48 +1,39 @@
-<div nz-flex nzAlign="center" nzJustify="center">
-<!--  <div>-->
-<!--    <nz-space-compact nzBlock>-->
-<!--      <button-->
-<!--        nz-button-->
-<!--        nzType="default"-->
-<!--        nzSize="large"-->
-<!--      >-->
-<!--        Home-->
-<!--      </button>-->
-<!--      <button-->
-<!--        nz-button-->
-<!--        nzType="default"-->
-<!--        nzSize="large">-->
-<!--        My projects-->
-<!--      </button>-->
-<!--      <button-->
-<!--        nz-button-->
-<!--        nzType="default"-->
-<!--        nzSize="large">-->
-<!--        Profile-->
-<!--      </button>-->
-<!--    </nz-space-compact>-->
-<!--  </div>-->
+<div
+    nz-flex
+    nzAlign="center"
+    nzJustify="center"
+    class="navbar-container">
   <ul nz-menu nzMode="horizontal">
     <li
-      nz-menu-item
-      [routerLink]="'/freelancer/home'"
-      [nzMatchRouter]="'/freelancer/home'">
+        nz-menu-item
+        [routerLink]="'/freelancer/home'"
+        [nzMatchRouter]="'/freelancer/home'">
       <nz-icon nzType="home"/>
       Home
     </li>
     <li
-      nz-menu-item
-      [routerLink]="'/freelancer/my-projects'"
-      [nzMatchRouter]="'/freelancer/my-projects'">
+        nz-menu-item
+        [routerLink]="'/freelancer/my-projects'"
+        [nzMatchRouter]="'/freelancer/my-projects'">
       <nz-icon nzType="appstore" />
       My Projects
     </li>
     <li
-      nz-menu-item
-      [routerLink]="'/freelancer/my-profile'"
-      [nzMatchRouter]="'/freelancer/my-profile'">
+        nz-menu-item
+        [routerLink]="'/freelancer/my-profile'"
+        [nzMatchRouter]="'/freelancer/my-profile'">
       <nz-icon nzType="user" />
       My Profile
     </li>
   </ul>
+
+  <div class="auth-buttons">
+    <button
+        nz-button
+        [nzType]="isAuthenticated() ? 'default' : 'primary'"
+        [routerLink]="isAuthenticated() ? null : '/login'"
+        (click)="isAuthenticated() ? logout() : null">
+      {{ isAuthenticated() ? 'Logout' : 'Login' }}
+    </button>
+  </div>
 </div>

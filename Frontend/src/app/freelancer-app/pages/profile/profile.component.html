@@ -1,11 +1,14 @@
-<div nz-flex nzGap="100px">
+<div
+  nz-flex
+  nzGap="80px"
+  style="margin-left: 150px">
   <div nz-flex nzVertical nzGap="large">
     <img
       [ngSrc]="'http://localhost:10000/devstoreaccount1/user-images/' + userData.imageUrl || 'assets/avatar-placeholder.png'"
-      height="auto"
-      width="250"
+      width="300"
+      height=""
       alt="User avatar"
-      style="border-radius: 10px"/>
+      style="border-radius: 10px; font-size: 24px"/>
     <nz-card>
       <div>
         Email:
@@ -30,7 +33,7 @@
   </div>
   <div nz-flex nzVertical nzGap="large">
     <nz-card
-      style="min-width: 300px; min-height: 250px">
+      style="min-width: 550px; min-height: 250px">
       <h2>
         {{ userData.firstName }} {{ userData.lastName }}
       </h2>

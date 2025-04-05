@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using ProjectsService.Domain.Abstractions.Specification;
@@ -13,6 +14,8 @@ public class CachedQueriesRepository<TEntity>(
     IDistributedCache distributedCache,
     IOptions<CacheOptions> options) : IQueriesRepository<TEntity> where TEntity : Entity
 {
+    private readonly JsonSerializerOptions _serializerOptions = 
+        new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles };
     public async Task<IReadOnlyList<TEntity>> ListAllAsync(CancellationToken cancellationToken = default)
     {
         var cacheKey = $"{typeof(TEntity).Name}:ListAll";
@@ -25,7 +28,7 @@ public class CachedQueriesRepository<TEntity>(
 
         var entities = await queriesRepository.ListAllAsync(cancellationToken);
 
-        await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(entities), new DistributedCacheEntryOptions
+        await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(entities, _serializerOptions), new DistributedCacheEntryOptions
         {
             AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(options.Value.RecordExpirationTimeInMinutes)
         }, cancellationToken);
@@ -45,7 +48,7 @@ public class CachedQueriesRepository<TEntity>(
 
         var entities = await queriesRepository.PaginatedListAllAsync(offset, limit, cancellationToken, includesProperties);
 
-        await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(entities), new DistributedCacheEntryOptions
+        await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(entities, _serializerOptions), new DistributedCacheEntryOptions
         {
             AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(options.Value.RecordExpirationTimeInMinutes)
         }, cancellationToken);
@@ -77,7 +80,7 @@ public class CachedQueriesRepository<TEntity>(
 
         if (entity != null)
         {
-            await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(entity), new DistributedCacheEntryOptions
+            await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(entity, _serializerOptions), new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(options.Value.RecordExpirationTimeInMinutes)
             }, cancellationToken);

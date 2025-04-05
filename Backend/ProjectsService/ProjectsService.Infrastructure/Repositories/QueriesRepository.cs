@@ -21,7 +21,7 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
     {
         IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
 
-        query.AddIncludes(includesProperties);
+        query = query.AddIncludes(includesProperties);
 
         return await query
             .OrderBy(x => x.Id)
@@ -40,7 +40,7 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
             query = query.Where(filter);
         }
 
-        query.AddIncludes(includesProperties);
+        query = query.AddIncludes(includesProperties);
 
         return await query.ToListAsync(cancellationToken);
     }
@@ -55,7 +55,7 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
             query = query.Where(filter);
         }
 
-        query.AddIncludes(includesProperties);
+        query = query.AddIncludes(includesProperties);
 
         return await query
             .OrderBy(x => x.Id)
@@ -68,7 +68,7 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
     {
         IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
 
-        query.AddIncludes(includesProperties);
+        query = query.AddIncludes(includesProperties);
 
         return await query.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
     }

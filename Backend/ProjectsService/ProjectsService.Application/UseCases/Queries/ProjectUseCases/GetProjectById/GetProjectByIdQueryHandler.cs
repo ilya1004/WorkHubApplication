@@ -9,8 +9,8 @@ public class GetProjectByIdQueryHandler(
         logger.LogInformation("Getting project by ID: {ProjectId}", request.Id);
 
         var project = await unitOfWork.ProjectQueriesRepository.GetByIdAsync(
-            request.Id, 
-            cancellationToken, 
+            request.Id,
+            cancellationToken,
             p => p.Lifecycle, 
             p => p.Category!);
 

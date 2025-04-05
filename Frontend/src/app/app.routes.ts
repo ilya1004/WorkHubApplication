@@ -7,17 +7,21 @@ import {canActivateFreelancerAuth} from './core/services/auth/access.guard';
 import {LayoutComponent as FreelancerLayoutComponent} from './freelancer-app/components/layout/layout.component';
 import {ConfirmEmailComponent} from './common/pages/confirm-email/confirm-email.component';
 import {ProfileComponent as FreelancerProfileComponent} from './freelancer-app/pages/profile/profile.component';
+import {ProjectInfoComponent as FreelancerProjectInfoComponent} from "./freelancer-app/pages/project-info/project-info.component";
+import {MyProjectInfoComponent as FreelancerMyProjectInfoComponent} from "./freelancer-app/pages/my-project-info/my-project-info.component";
 
 
 export const routes: Routes = [
-  {path: 'login', component: LoginPageComponent},
-  {path: 'register', component: RegisterPageComponent},
-  {path: 'confirm-email', component: ConfirmEmailComponent},
+  { path: 'login', component: LoginPageComponent },
+  { path: 'register', component: RegisterPageComponent },
+  { path: 'confirm-email', component: ConfirmEmailComponent },
   {
     path: 'freelancer', component: FreelancerLayoutComponent, children: [
-      {path: 'home', component: FreelancerHomeComponent},
-      {path: 'my-projects', component: FreelancerMyProjectsComponent},
-      {path: 'my-profile', component: FreelancerProfileComponent},
+      { path: 'home', component: FreelancerHomeComponent },
+      { path: 'home/project/:projectId', component: FreelancerProjectInfoComponent },
+      { path: 'my-projects', component: FreelancerMyProjectsComponent },
+      { path: 'my-projects/:projectId', component: FreelancerMyProjectInfoComponent },
+      { path: 'my-profile', component: FreelancerProfileComponent },
     ],
     canActivate: [canActivateFreelancerAuth]
   }

@@ -11,6 +11,8 @@ using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUsersByRole;
 using IdentityService.API.Contracts.CommonContracts;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetCurrentEmployerUser;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetCurrentFreelancerUser;
+using IdentityService.BLL.UseCases.UserUseCases.Queries.GetEmployerUserInfoById;
+using IdentityService.BLL.UseCases.UserUseCases.Queries.GetFreelancerUserInfoById;
 
 namespace IdentityService.API.Controllers;
 
@@ -61,6 +63,26 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     public async Task<IActionResult> GetUserById([FromRoute] Guid userId, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new GetUserByIdQuery(userId), cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    [Route("freelancer-info/{userId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> GetFreelancerUserInfoById([FromRoute] Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetFreelancerUserInfoByIdQuery(userId), cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    [Route("employer-info/{userId:guid}")]
+    [Authorize(Policy = AuthPolicies.FreelancerPolicy)]
+    public async Task<IActionResult> GetEmployerUserInfoById([FromRoute] Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetEmployerUserInfoByIdQuery(userId), cancellationToken);
 
         return Ok(result);
     }

@@ -6,18 +6,18 @@ public class GetChatByIdQueryHandler(
 {
     public async Task<Chat> Handle(GetChatByIdQuery request, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Getting chat by id '{ChatId}'", request.Id);
+        logger.LogInformation("Getting chat by ID '{ChatId}'", request.Id);
         
         var chat = await unitOfWork.ChatRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (chat is null)
         {
-            logger.LogWarning("Chat with ID '{UserId}' not found", request.Id);
+            logger.LogWarning("Chat with ID '{ChatId}' not found", request.Id);
             
             throw new NotFoundException("Chat not found");
         }
         
-        logger.LogInformation("Retrieved chat information by id {ChatId}", request.Id);
+        logger.LogInformation("Retrieved chat information by ID {ChatId}", request.Id);
 
         return chat;
     }

@@ -14,6 +14,9 @@ public class DbStartupService(
     UserManager<AppUser> userManager,
     ILogger<DbStartupService> logger) : IDbStartupService
 {
+    private const string EmployerId = "e13341b4-6532-41f6-9595-202525c7ff34";
+    private const string FreelancerId = "52d78d21-8f4d-469d-a911-b094d6f9994b";
+    
     public async Task MakeMigrationsAsync()
     {
         logger.LogInformation("Starting database migrations...");
@@ -126,10 +129,12 @@ public class DbStartupService(
         var freelancerRole = await roleManager.FindByNameAsync(AppRoles.FreelancerRole);
         
         logger.LogInformation("Creating freelancer user...");
+
+        var freelancerId = Guid.Parse(FreelancerId);
         
         var freelancer = new AppUser
         {
-            Id = Guid.NewGuid(),
+            Id = freelancerId,
             RegisteredAt = DateTime.UtcNow,
             UserName = "Moonlight",
             NormalizedUserName = "MOONLIGHT",
@@ -165,9 +170,11 @@ public class DbStartupService(
         
         logger.LogInformation("Creating employer user...");
         
+        var employerId = Guid.Parse(EmployerId);
+        
         var employer = new AppUser
         {
-            Id = Guid.NewGuid(),
+            Id = employerId,
             RegisteredAt = DateTime.UtcNow,
             UserName = "Pavlusha",
             NormalizedUserName = "PAVLUSHA",

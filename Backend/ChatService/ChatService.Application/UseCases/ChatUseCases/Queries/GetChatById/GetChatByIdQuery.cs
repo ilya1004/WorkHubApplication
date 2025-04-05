@@ -1,3 +1,3 @@
 namespace ChatService.Application.UseCases.ChatUseCases.Queries.GetChatById;
 
-public record GetChatByIdQuery(Guid Id) : IRequest<Chat>;
+public sealed record GetChatByIdQuery(Guid Id) : IRequest<Chat>;

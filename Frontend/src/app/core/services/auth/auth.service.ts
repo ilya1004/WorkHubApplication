@@ -30,7 +30,7 @@ export class AuthService {
     this.cookieService.delete('access_token', '/');
     this.cookieService.delete('refresh_token', '/');
 
-    this.router.navigate(['/login']); // 🔥 Перенаправляем на страницу логина
+    this.router.navigate(['/login']);
   }
 
 

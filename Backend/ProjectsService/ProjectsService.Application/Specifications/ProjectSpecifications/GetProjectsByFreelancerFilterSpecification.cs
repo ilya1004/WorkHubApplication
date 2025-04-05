@@ -7,12 +7,14 @@ public class GetProjectsByFreelancerFilterSpecification : Specification<Project>
         ProjectStatus? projectStatus,
         Guid? employerId,
         int offset,
-        int limit) 
+        int limit)
         : base(p => 
             p.FreelancerId == freelancerId &&
             (!projectStatus.HasValue || p.Lifecycle.Status == projectStatus.Value) &&
             (!employerId.HasValue || p.EmployerId == employerId))
     {
+        AddInclude(p => p.Lifecycle);
+        AddInclude(p => p.Category!);
         AddOrderByDescending(p => p.Lifecycle.CreatedAt);
         AddPagination(offset, limit);
     }
