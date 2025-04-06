@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {IDENTITY_SERVICE_API_URL} from '../../core/constants';
-import {Observable} from 'rxjs';
+import {catchError, Observable, throwError} from 'rxjs';
 import {FreelancerUser} from '../interfaces/profile/freelancer-user.interface';
 import {FreelancerSkill} from '../interfaces/profile/skill.interface';
 import {PaginatedResult} from '../../core/interfaces/paginated-result.interface';

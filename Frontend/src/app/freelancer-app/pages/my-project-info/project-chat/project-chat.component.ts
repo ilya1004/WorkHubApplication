@@ -5,11 +5,13 @@ import {CommonModule} from "@angular/common";
 import {NzInputModule} from "ng-zorro-antd/input";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {FormsModule} from "@angular/forms";
-import { Message } from '../../../interfaces/chat/message.interface';
+import {Message, MessageType} from '../../../interfaces/chat/message.interface';
 import {ChatService} from "../../../services/chat.service";
 import {AuthService} from "../../../../core/services/auth/auth.service";
 import {NzTagModule} from "ng-zorro-antd/tag";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
+import {CHAT_SERVICE_API_URL} from "../../../../core/constants";
+import {TokenService} from "../../../../core/services/token/token.service";
 
 @Component({
   selector: 'app-project-chat',
@@ -41,7 +43,8 @@ export class ProjectChatComponent implements OnInit {
 
   constructor(
     private chatService: ChatService,
-    private authService: AuthService
+    private authService: AuthService,
+    private tokenService: TokenService,
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -83,7 +86,7 @@ export class ProjectChatComponent implements OnInit {
 
   private async createAndFetchChat(): Promise<void> {
     try {
-      const freelancerId = this.authService.getUserId() || '';
+      const freelancerId = this.tokenService.getUserId() || '';
       console.log('Creating new chat with employer:', this.employerId, 'freelancer:', freelancerId);
       await this.chatService.createChat(this.employerId, freelancerId, this.projectId);
     } catch (error) {
@@ -92,13 +95,13 @@ export class ProjectChatComponent implements OnInit {
   }
 
   getMessageSender(message: Message): string {
-    return message.senderId === this.authService.getUserId() ? 'You' : 'Employer';
+    return message.senderId === this.tokenService.getUserId() ? 'You' : 'Employer';
   }
 
   private loadMessages(): void {
     if (this.chatId) {
       this.loading = true;
-      this.chatService.getChatMessages(this.chatId, 1, 10);
+      this.chatService.getChatMessages(this.chatId, 1, 50);
     }
   }
 
@@ -113,14 +116,12 @@ export class ProjectChatComponent implements OnInit {
     if (!this.chatId) return;
 
     if (this.newMessage.trim() && !this.selectedFile) {
-      // Send text message
       this.chatService.sendTextMessage(this.chatId, this.employerId, this.newMessage)
         .then(() => {
           this.newMessage = '';
         })
         .catch(err => console.error('Error sending message:', err));
     } else if (this.selectedFile && !this.newMessage.trim()) {
-      // Send file message
       this.chatService.uploadFile(this.chatId, this.employerId, this.selectedFile)
         .subscribe({
           next: () => {
@@ -151,5 +152,39 @@ export class ProjectChatComponent implements OnInit {
 
   isFileInputDisabled(): boolean {
     return !!this.newMessage.trim();
+  }
+
+  getDownloadUrl(message: Message): string {
+    if (message.type === MessageType.File && message.chatId && message.fileId) {
+      return `${CHAT_SERVICE_API_URL}files/chat/${message.chatId}/file/${message.fileId}`;
+    }
+    return '';
+  }
+
+  downloadFile(message: Message): void {
+    if (message.type !== MessageType.File || !message.chatId || !message.fileId) {
+      console.error('Invalid message for file download:', message);
+      return;
+    }
+
+    this.chatService.downloadFile(message.chatId, message.fileId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = message.fileId!;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error downloading file:', err);
+        if (err.status === 401) {
+          console.warn('Unauthorized, token might be expired or invalid');
+          this.authService.logout();
+        }
+      }
+    });
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Observable} from "rxjs";
 import {FreelancerUserDto} from "../../core/interfaces/freelancer-user-dto.interface";
-import {IDENTITY_SERVICE_API_URL, PROJECTS_SERVICE_API_URL} from "../../core/constants";
+import {IDENTITY_SERVICE_API_URL} from "../../core/constants";
 import {EmployerUserDto} from "../../core/interfaces/employer-user-dto.interface";
 import {HttpClient} from "@angular/common/http";
 

@@ -1,16 +1,20 @@
 import {inject} from '@angular/core';
 import {AuthService} from './auth.service';
 import {Router} from '@angular/router';
+import {TokenService} from "../token/token.service";
 
 export const  canActivateFreelancerAuth = () => {
-  const authService = inject(AuthService);
+  const tokenService = inject(TokenService);
+  const router = inject(Router);
 
-  const isAuthenticated = authService.isAuthenticated();
-  const role = authService.getUserRole();
+  const isAuthenticated = tokenService.isAuthenticated();
+  const role = tokenService.getUserRole();
 
-  if (isAuthenticated && role == 'Freelancer') {
+  if (isAuthenticated && role === 'Freelancer') {
     return true;
   }
 
-  return inject(Router).createUrlTree(['/login']);
+  console.warn('User is not authenticated, redirecting to login');
+  router.navigate(['/login']);
+  return false;
 }

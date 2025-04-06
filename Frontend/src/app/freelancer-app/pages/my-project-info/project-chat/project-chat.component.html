@@ -3,7 +3,6 @@
   [nzLoading]="loading"
   style="width: 560px">
   <nz-list
-    #messageList
     [nzDataSource]="messages"
     nzBordered
     style="height: 400px; overflow-y: auto"
@@ -18,9 +17,12 @@
         <div *ngIf="message.type === 0">
           {{ message.text }}
         </div>
-        <span *ngIf="message.type === 1">
-          File: {{ message.fileId }}
-        </span>
+        <div *ngIf="message.type === 1">
+          File:
+          <a (click)="downloadFile(message)" href="javascript:void(0)">
+            {{ message.fileId }}
+          </a>
+        </div>
       </div>
     </nz-list-item>
   </nz-list>

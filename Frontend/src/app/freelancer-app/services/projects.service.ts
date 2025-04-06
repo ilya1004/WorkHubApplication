@@ -4,8 +4,6 @@ import {PaginatedResult} from "../../core/interfaces/paginated-result.interface"
 import {Project} from "../interfaces/my-projects/project.interface";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {PROJECTS_SERVICE_API_URL} from "../../core/constants";
-import {FreelancerUserDto} from "../../core/interfaces/freelancer-user-dto.interface";
-import {EmployerUserDto} from "../../core/interfaces/employer-user-dto.interface";
 
 @Injectable({
   providedIn: 'root'

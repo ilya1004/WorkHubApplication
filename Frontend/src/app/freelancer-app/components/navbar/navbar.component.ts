@@ -5,6 +5,7 @@ import {NzIconDirective} from 'ng-zorro-antd/icon';
 import {RouterLink} from '@angular/router';
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {AuthService} from "../../../core/services/auth/auth.service";
+import {TokenService} from "../../../core/services/token/token.service";
 
 @Component({
   selector: 'app-navbar',
@@ -21,11 +22,12 @@ import {AuthService} from "../../../core/services/auth/auth.service";
 })
 export class NavbarComponent {
   constructor(
-    private authService: AuthService
+    private tokenService: TokenService,
+    private authService: AuthService,
   ) { }
 
   isAuthenticated(): boolean {
-    return this.authService.isAuthenticated();
+    return this.tokenService.isAuthenticated();
   }
 
   logout(): void {

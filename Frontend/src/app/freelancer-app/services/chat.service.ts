@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import {BehaviorSubject, catchError, Observable, Subject, throwError} from "rxjs";
 import {HubConnection, HubConnectionBuilder, HubConnectionState} from "@microsoft/signalr";
 import { Chat } from '../interfaces/chat/chat.interface';
-import {Message, MessageType} from "../interfaces/chat/message.interface";
+import {Message} from "../interfaces/chat/message.interface";
 import {HttpClient} from "@angular/common/http";
 import {AuthService} from "../../core/services/auth/auth.service";
 import {CHAT_SERVICE_API_URL, CHAT_SERVICE_HUB_URL} from "../../core/constants";
 import {PaginatedResult} from "../../core/interfaces/paginated-result.interface";
+import {TokenService} from "../../core/services/token/token.service";
 
 @Injectable({
   providedIn: 'root'
@@ -20,12 +21,13 @@ export class ChatService {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private tokenService: TokenService,
   ) {
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(CHAT_SERVICE_HUB_URL, {
         accessTokenFactory: () => {
-          const accessToken = this.authService.getAccessToken();
+          const accessToken = this.tokenService.getAccessToken();
           return accessToken || '';
         },
         withCredentials: true
@@ -47,16 +49,7 @@ export class ChatService {
       this.messageReceived.next(message);
     });
 
-    this.hubConnection.on('ReceiveFileMessage', (fileId: string) => {
-      const message: Message = {
-        id: '',
-        fileId,
-        createdAt: new Date().toISOString(),
-        senderId: this.authService.getUserId() || '',
-        receiverId: '',
-        chatId: '',
-        type: MessageType.File
-      };
+    this.hubConnection.on('ReceiveFileMessage', (message: Message) => {
       console.log('Received file message:', message);
       this.messageReceived.next(message);
     });
@@ -152,6 +145,13 @@ export class ChatService {
         return throwError(() => error);
       })
     );
+  }
+
+  downloadFile(chatId: string, fileId: string): Observable<Blob> {
+    const url = `${CHAT_SERVICE_API_URL}files/chat/${chatId}/file/${fileId}`;
+    return this.http.get(url, {
+      responseType: 'blob'
+    });
   }
 
   getMessageReceived(): Observable<Message> {
