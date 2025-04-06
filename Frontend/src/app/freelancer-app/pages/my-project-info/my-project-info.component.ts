@@ -10,6 +10,7 @@ import {NzGridModule} from "ng-zorro-antd/grid";
 import {UsersService} from "../../services/users.service";
 import {PROJECT_STATUSES} from "../../../core/constants";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
+import {ProjectChatComponent} from "./project-chat/project-chat.component";
 
 @Component({
   imports: [
@@ -18,7 +19,8 @@ import {NzFlexDirective} from "ng-zorro-antd/flex";
     NzDescriptionsModule,
     NzGridModule,
     RouterModule,
-    NzFlexDirective
+    NzFlexDirective,
+    ProjectChatComponent
   ],
   selector: 'app-my-project-info',
   standalone: true,

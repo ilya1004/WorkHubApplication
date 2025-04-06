@@ -5,8 +5,9 @@ namespace ChatService.API.HubInterfaces;
 
 public interface IChatClient
 {
-    Task ReceiveChat(Chat chat);
-    Task ReceiveTextMessage(string text);
+    Task ReceiveChat(Chat? chat);
+    Task ChatNotFound(Guid projectId);
+    Task ReceiveTextMessage(Message message);
     Task ReceiveFileMessage(Guid fileId);
     Task ReceiveChatMessages(PaginatedResultModel<Message> messages);
     Task ReceiveAllChats(PaginatedResultModel<Chat> chats);

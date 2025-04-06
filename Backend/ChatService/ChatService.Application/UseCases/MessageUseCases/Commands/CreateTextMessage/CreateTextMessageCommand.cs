@@ -3,4 +3,4 @@ namespace ChatService.Application.UseCases.MessageUseCases.Commands.CreateTextMe
 public sealed record CreateTextMessageCommand(
     Guid ChatId,
     Guid ReceiverId,
-    string Text) : IRequest;
+    string Text) : IRequest<Message>;

@@ -2,9 +2,9 @@ namespace ChatService.Application.UseCases.ChatUseCases.Queries.GetChatByProject
 
 public class GetChatByProjectIdQueryHandler(
     ILogger<GetChatByProjectIdQueryHandler> logger,
-    IUnitOfWork unitOfWork) : IRequestHandler<GetChatByProjectIdQuery, Chat>
+    IUnitOfWork unitOfWork) : IRequestHandler<GetChatByProjectIdQuery, Chat?>
 {
-    public async Task<Chat> Handle(GetChatByProjectIdQuery request, CancellationToken cancellationToken)
+    public async Task<Chat?> Handle(GetChatByProjectIdQuery request, CancellationToken cancellationToken)
     {
         logger.LogInformation("Getting chat by project ID '{ProjectId}'", request.ProjectId);
         
@@ -13,8 +13,8 @@ public class GetChatByProjectIdQueryHandler(
         if (chat is null)
         {
             logger.LogWarning("Chat with project ID '{ProjectId}' not found", request.ProjectId);
-            
-            throw new NotFoundException("Chat not found");
+
+            return null;
         }
         
         logger.LogInformation("Retrieved chat information by project ID {ChatId}", request.ProjectId);

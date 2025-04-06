@@ -1,114 +1,172 @@
 import { Injectable } from '@angular/core';
-
-export interface ChatMessage {
-  id: string;
-  senderId: string;
-  text: string;
-  timestamp: string;
-}
-
-export interface Chat {
-  id: string;
-  projectId: string;
-  messages: ChatMessage[];
-}
+import {BehaviorSubject, catchError, Observable, Subject, throwError} from "rxjs";
+import {HubConnection, HubConnectionBuilder, HubConnectionState} from "@microsoft/signalr";
+import { Chat } from '../interfaces/chat/chat.interface';
+import {Message, MessageType} from "../interfaces/chat/message.interface";
+import {HttpClient} from "@angular/common/http";
+import {AuthService} from "../../core/services/auth/auth.service";
+import {CHAT_SERVICE_API_URL, CHAT_SERVICE_HUB_URL} from "../../core/constants";
+import {PaginatedResult} from "../../core/interfaces/paginated-result.interface";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
   private hubConnection: HubConnection;
-  private messageSubject = new Subject<ChatMessage>();
-  private chatSubject = new Subject<Chat>();
-  private messageDeletedSubject = new Subject<string>();
+  private messageReceived = new Subject<Message>();
+  private chatReceived = new BehaviorSubject<Chat | null>(null); // Use BehaviorSubject with initial null
+  private messagesReceived = new Subject<PaginatedResult<Message>>();
+  private connectionEstablished = new Subject<boolean>();
 
   constructor(
     private http: HttpClient,
     private authService: AuthService
   ) {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(`${PROJECTS_SERVICE_API_URL}/chatHub`, { // Adjust URL as needed
-        accessTokenFactory: () => this.authService.getAccessToken() || ''
+      .withUrl(CHAT_SERVICE_HUB_URL, {
+        accessTokenFactory: () => {
+          const accessToken = this.authService.getAccessToken();
+          return accessToken || '';
+        },
+        withCredentials: true
       })
+      .withAutomaticReconnect()
       .build();
 
-    this.setupSignalRListeners();
-    this.startConnection();
+    this.initializeHub();
   }
 
-  private setupSignalRListeners(): void {
-    this.hubConnection.on('ReceiveTextMessage', (text: string) => {
-      const message: ChatMessage = {
-        id: new Date().toISOString(), // Temporary ID, adjust based on backend response
-        senderId: '', // Will be filled by backend
-        text,
-        timestamp: new Date().toISOString()
-      };
-      this.messageSubject.next(message);
+  private initializeHub(): void {
+    this.hubConnection.on('ReceiveChat', (chat: Chat | null) => {
+      console.log('Received chat:', chat);
+      this.chatReceived.next(chat);
     });
 
-    this.hubConnection.on('ReceiveChat', (chat: Chat) => {
-      this.chatSubject.next(chat);
-    });
-
-    this.hubConnection.on('MessageIsDeleted', (messageId: string) => {
-      this.messageDeletedSubject.next(messageId);
+    this.hubConnection.on('ReceiveTextMessage', (message: Message) => {
+      console.log('Received text message:', message);
+      this.messageReceived.next(message);
     });
 
     this.hubConnection.on('ReceiveFileMessage', (fileId: string) => {
-      // Handle file message if needed
+      const message: Message = {
+        id: '',
+        fileId,
+        createdAt: new Date().toISOString(),
+        senderId: this.authService.getUserId() || '',
+        receiverId: '',
+        chatId: '',
+        type: MessageType.File
+      };
+      console.log('Received file message:', message);
+      this.messageReceived.next(message);
     });
+
+    this.hubConnection.on('ReceiveChatMessages', (messages: PaginatedResult<Message>) => {
+      console.log('Received chat messages:', messages);
+      this.messagesReceived.next(messages);
+    });
+
+    this.hubConnection.onclose((err) => {
+      console.error('SignalR connection closed:', err);
+      this.startConnection();
+    });
+
+    this.startConnection();
   }
 
   private async startConnection(): Promise<void> {
-    try {
-      await this.hubConnection.start();
-      console.log('SignalR Connected');
-    } catch (err) {
-      console.error('Error starting SignalR connection:', err);
+    if (this.hubConnection.state === HubConnectionState.Disconnected) {
+      try {
+        console.log('Starting SignalR connection...');
+        await this.hubConnection.start();
+        console.log('SignalR connected successfully');
+        this.connectionEstablished.next(true);
+      } catch (err) {
+        console.error('Error starting SignalR connection:', err);
+        setTimeout(() => this.startConnection(), 5000);
+      }
     }
   }
 
-  getMessages(): Observable<ChatMessage> {
-    return this.messageSubject.asObservable();
+  private async ensureConnected(): Promise<void> {
+    if (this.hubConnection.state !== HubConnectionState.Connected) {
+      console.log('Ensuring SignalR connection...');
+      await new Promise<void>((resolve, reject) => {
+        const subscription = this.connectionEstablished.subscribe({
+          next: (connected) => {
+            if (connected) {
+              subscription.unsubscribe();
+              resolve();
+            }
+          },
+          error: (err) => {
+            subscription.unsubscribe();
+            reject(err);
+          }
+        });
+
+        if (this.hubConnection.state === HubConnectionState.Disconnected) {
+          this.startConnection();
+        }
+      });
+    }
   }
 
-  getChat(): Observable<Chat> {
-    return this.chatSubject.asObservable();
-  }
-
-  getDeletedMessage(): Observable<string> {
-    return this.messageDeletedSubject.asObservable();
-  }
-
-  async createChat(projectId: string): Promise<void> {
-    const request = { projectId };
-    return this.hubConnection.invoke('CreateChat', request);
+  async createChat(employerId: string, freelancerId: string, projectId: string): Promise<void> {
+    await this.ensureConnected();
+    const request = { EmployerId: employerId, FreelancerId: freelancerId, ProjectId: projectId };
+    console.log('Creating chat with:', request);
+    await this.hubConnection.invoke('CreateChat', request);
   }
 
   async getChatByProjectId(projectId: string): Promise<void> {
-    return this.hubConnection.invoke('GetChatByProjectId', projectId);
+    await this.ensureConnected();
+    console.log('Getting chat by project ID:', projectId);
+    await this.hubConnection.invoke('GetChatByProjectId', projectId);
   }
 
-  async sendMessage(receiverId: string, text: string): Promise<void> {
-    const request = { receiverId, text };
-    return this.hubConnection.invoke('SendTextMessage', request);
+  async sendTextMessage(chatId: string, receiverId: string, text: string): Promise<void> {
+    await this.ensureConnected();
+    const request = {ChatId: chatId, ReceiverId: receiverId, Text: text};
+    console.log('Sending text message:', request);
+    await this.hubConnection.invoke('SendTextMessage', request);
   }
 
-  async getChatMessages(chatId: string): Promise<void> {
-    const request = { chatId };
-    return this.hubConnection.invoke('GetChatMessages', request);
+  async getChatMessages(chatId: string, pageNo: number, pageSize: number): Promise<void> {
+    await this.ensureConnected();
+    const request = { ChatId: chatId, PageNo: pageNo, PageSize: pageSize };
+    console.log('Getting chat messages:', request);
+    await this.hubConnection.invoke('GetChatMessages', request);
   }
 
-  async deleteMessage(messageId: string, receiverId: string): Promise<void> {
-    const request = { messageId, receiverId };
-    return this.hubConnection.invoke('DeleteMessage', request);
-  }
-
-  uploadFile(receiverId: string, file: File): Observable<any> {
+  uploadFile(chatId: string, receiverId: string, file: File): Observable<any> {
     const formData = new FormData();
-    formData.append('receiverId', receiverId);
-    formData.append('file', file);
-    return this.http.post(`${PROJECTS_SERVICE_API_URL}/api/files`, formData);
+    formData.append('ChatId', chatId);
+    formData.append('ReceiverId', receiverId);
+    formData.append('File', file);
+
+    console.log('Uploading file to chat:', formData);
+    return this.http.post(`${CHAT_SERVICE_API_URL}files`, formData).pipe(
+      catchError(error => {
+        console.error('Error uploading file:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getMessageReceived(): Observable<Message> {
+    return this.messageReceived.asObservable();
+  }
+
+  getChatReceived(): Observable<Chat | null> {
+    return this.chatReceived.asObservable();
+  }
+
+  getMessagesReceived(): Observable<PaginatedResult<Message>> {
+    return this.messagesReceived.asObservable();
+  }
+
+  stopConnection(): void {
+    this.hubConnection.stop().then(() => console.log('SignalR connection stopped'));
   }
 }

@@ -55,19 +55,25 @@ export class AuthService {
     if (!token) return false;
 
     const decodedToken = this.decodeToken(token);
+    if (!decodedToken)
+      return false;
     return decodedToken && decodedToken.exp * 1000 > Date.now();
   }
 
-  private decodeToken(token: string): any {
+  private decodeToken(token: string): {exp: number, role: string, userId: string, email: string} | null {
     try {
       const decoded = jwtDecode<{
         exp: number;
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": string;
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier": string;
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress": string;
       }>(token);
 
       return {
         exp: decoded.exp,
-        role: decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
+        role: decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
+        userId: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
+        email: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"]
       };
     } catch (error) {
       console.error('Ошибка при декодировании токена:', error);
@@ -85,10 +91,36 @@ export class AuthService {
     return decodedToken?.role || null;
   }
 
+  getUserId(): string | null {
+    const token = this.getAccessToken();
+    if (!token)
+      return null;
+    const decoded = this.decodeToken(token);
+    if (!decoded)
+      return null;
+    return decoded.userId;
+  }
+
+  // getAccessToken(): string | null {
+  //   if (!this.cookieService.check('access_token')) {
+  //     return null;
+  //   }
+  //   return this.cookieService.get('access_token');
+  // }
+
   getAccessToken(): string | null {
-    if (!this.cookieService.check('access_token')) {
+    const token = this.cookieService.get('access_token');
+    if (!token) {
+      console.warn('No access token found in cookies');
       return null;
     }
-    return this.cookieService.get('access_token');
+
+    const decoded = this.decodeToken(token);
+    if (decoded && decoded.exp * 1000 < Date.now()) {
+      console.log('Token expired, attempting refresh');
+      // this.refreshToken();
+      return this.cookieService.get('access_token');
+    }
+    return token;
   }
 }

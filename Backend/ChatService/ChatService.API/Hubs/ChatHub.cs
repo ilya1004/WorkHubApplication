@@ -59,7 +59,7 @@ public class ChatHub(
     public async Task GetChatByProjectId(Guid chatId)
     {
         var result = await mediator.Send(mapper.Map<GetChatByProjectIdQuery>(chatId));
-
+        
         await Clients.Caller.ReceiveChat(result);
         
         logger.LogInformation("Chat retrieved successfully");
@@ -76,10 +76,10 @@ public class ChatHub(
     [Authorize]
     public async Task SendTextMessage(CreateTextMessageRequest request)
     {
-        await mediator.Send(mapper.Map<CreateTextMessageCommand>(request));
+        var message = await mediator.Send(mapper.Map<CreateTextMessageCommand>(request));
 
-        await Clients.Caller.ReceiveTextMessage(request.Text);
-        await Clients.User(request.ReceiverId.ToString()).ReceiveTextMessage(request.Text);
+        await Clients.Caller.ReceiveTextMessage(message);
+        await Clients.User(request.ReceiverId.ToString()).ReceiveTextMessage(message);
         
         logger.LogInformation("Text message sent successfully");
     }

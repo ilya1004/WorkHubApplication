@@ -17,7 +17,6 @@
         <nz-descriptions-item nzTitle="Work Deadline">{{project.lifecycle.workDeadline | date}}</nz-descriptions-item>
       </nz-descriptions>
 
-      <!-- Employer Information -->
       <h3 style="margin-top: 20px">Employer Information</h3>
       <nz-descriptions
         nzBordered
@@ -32,9 +31,10 @@
   </div>
 
   <div>
-    <nz-card nzTitle="Project Chat">
-      <!-- Chat implementation will go here -->
-      <p>Chat functionality to be implemented</p>
-    </nz-card>
+    <app-project-chat
+      *ngIf="project && employer"
+      [projectId]="project.id.toString()"
+      [employerId]="employer.id">
+    </app-project-chat>
   </div>
 </div>

@@ -2,6 +2,7 @@ using ChatService.API.Contracts.ChatContracts;
 using ChatService.API.HubInterfaces;
 using ChatService.API.Hubs;
 using ChatService.Application.UseCases.MessageUseCases.Commands.CreateFileMessage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -16,6 +17,7 @@ public class FilesController(
     ILogger<FilesController> logger) : ControllerBase
 {
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> UploadFile([FromForm] CreateFileMessageRequest request, 
         CancellationToken cancellationToken = default)
     {
