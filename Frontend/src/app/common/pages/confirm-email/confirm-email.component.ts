@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NzAlertComponent} from 'ng-zorro-antd/alert';
 import {NzButtonComponent} from 'ng-zorro-antd/button';
@@ -7,9 +7,9 @@ import {NzFlexDirective} from 'ng-zorro-antd/flex';
 import {NzInputDirective} from 'ng-zorro-antd/input';
 import {NzSpaceComponent, NzSpaceItemDirective} from 'ng-zorro-antd/space';
 import {EmailConfirmationService} from '../../../core/services/email-confirmation/email-confirmation.service';
-import {catchError, tap, throwError} from 'rxjs';
+import {catchError, throwError} from 'rxjs';
 import {NgIf} from '@angular/common';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 interface ConfirmEmailForm {
   email: FormControl<string>;
@@ -31,13 +31,13 @@ interface ConfirmEmailForm {
     NgIf
   ],
   templateUrl: './confirm-email.component.html',
-  styleUrl: './confirm-email.component.scss'
+  styleUrls: ['./confirm-email.component.scss'],
+  standalone: true
 })
-export class ConfirmEmailComponent {
-
+export class ConfirmEmailComponent implements OnInit {
   confirmEmailForm = new FormGroup<ConfirmEmailForm>({
     email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
-    code: new FormControl('', {  nonNullable: true, validators: [Validators.required, Validators.minLength(6), Validators.maxLength(6)] })
+    code: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(6), Validators.maxLength(6)] })
   });
 
   isSendCodeBtnDisabled: boolean = false;
@@ -46,7 +46,17 @@ export class ConfirmEmailComponent {
   constructor(
     private emailConfirmationService: EmailConfirmationService,
     private router: Router,
-    ) { }
+    private route: ActivatedRoute
+  ) {}
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const email: string = params['email'];
+      if (email) {
+        this.confirmEmailForm.patchValue({ email });
+      }
+    });
+  }
 
   onClickSendCode() {
     if (this.confirmEmailForm.controls.email.invalid) {
@@ -54,12 +64,7 @@ export class ConfirmEmailComponent {
       return;
     }
 
-    const payload: {
-      email: string;
-    } = {
-      email: this.confirmEmailForm.controls.email.value,
-    }
-
+    const payload = { email: this.confirmEmailForm.controls.email.value };
     this.emailConfirmationService.sendEmailConfirmation(payload)
       .pipe(
         catchError(error => {

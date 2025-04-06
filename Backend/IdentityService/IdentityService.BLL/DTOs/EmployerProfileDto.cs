@@ -2,6 +2,6 @@
 
 public record EmployerProfileDto(
     string CompanyName,
-    string About,
+    string? About,
     Guid? IndustryId,
     bool ResetImage);

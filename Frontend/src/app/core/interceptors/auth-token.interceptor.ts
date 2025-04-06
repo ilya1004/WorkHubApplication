@@ -8,7 +8,11 @@ export const authTokenInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, n
   const tokenService = inject(TokenService);
   const router = inject(Router);
 
-  if (req.url.includes('login') || req.url.includes('register')) {
+  console.log(req.url);
+  if (req.url.includes('login') ||
+      req.url.includes('register') ||
+      req.url.includes('resend-email-confirmation') ||
+      req.url.includes('confirm-email')) {
     return next(req);
   }
 

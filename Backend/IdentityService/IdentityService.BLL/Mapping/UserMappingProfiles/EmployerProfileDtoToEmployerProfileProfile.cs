@@ -2,9 +2,9 @@
 
 namespace IdentityService.BLL.Mapping.UserMappingProfiles;
 
-public class EmployerProfileDTOToEmployerProfileProfile : Profile
+public class EmployerProfileDtoToEmployerProfileProfile : Profile
 {
-    public EmployerProfileDTOToEmployerProfileProfile()
+    public EmployerProfileDtoToEmployerProfileProfile()
     {
         CreateMap<EmployerProfileDto, EmployerProfile>();
     }

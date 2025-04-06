@@ -145,23 +145,19 @@ export class RegisterPageComponent {
   onSubmitRegister() {
     if (this.registerUserState === 'freelancer') {
       if (this.freelancerForm.valid) {
-        const payload: {
-          userName: string,
-          firstName: string,
-          lastName: string,
-          email: string,
-          password: string
-        } = this.freelancerForm.getRawValue();
+        const payload = this.freelancerForm.getRawValue();
         this.authService.registerFreelancer(payload)
           .pipe(
             tap(response => {
-              console.log(response);
+              console.log('Freelancer registration response:', response);
               if (response.status === 201) {
-                this.router.navigate(['/login']);
+                this.router.navigate(['/confirm-email'], {
+                  queryParams: { email: payload.email }
+                });
               }
             }),
             catchError(error => {
-              console.error('Registration failed', error);
+              console.error('Freelancer registration failed:', error);
               if (error.status === 400) {
                 alert('Invalid data. Please check your input.');
               } else {
@@ -169,27 +165,24 @@ export class RegisterPageComponent {
               }
               return throwError(() => error);
             })
-          ).subscribe();
+          )
+          .subscribe();
       }
     } else {
       if (this.employerForm.valid) {
-        const payload: {
-          userName: string,
-          companyName: string,
-          email: string,
-          password: string
-        } = this.employerForm.getRawValue();
+        const payload = this.employerForm.getRawValue();
         this.authService.registerEmployer(payload)
           .pipe(
             tap(response => {
-              console.log(response);
+              console.log('Employer registration response:', response);
               if (response.status === 201) {
-                console.log('Registration successfully');
-                this.router.navigate(['/login']);
+                this.router.navigate(['/confirm-email'], {
+                  queryParams: { email: payload.email }
+                });
               }
             }),
             catchError(error => {
-              console.error('Registration failed', error);
+              console.error('Employer registration failed:', error);
               if (error.status === 400) {
                 alert('Invalid data. Please check your input.');
               } else {

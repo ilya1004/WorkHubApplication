@@ -36,7 +36,7 @@
             <input
               nz-input
               formControlName="userName"
-              placeholder="Enter your username"
+              placeholder="Enter your nickname"
               class="register-card__input">
             <div *ngIf="freelancerForm.controls.userName.invalid && freelancerForm.controls.userName.touched" class="error">
               <div *ngIf="freelancerForm.controls.userName.errors?.['required']">Username is required</div>
@@ -153,7 +153,7 @@
             <input
               nz-input
               formControlName="userName"
-              placeholder="Enter your username"
+              placeholder="Enter your nickname"
               class="register-card__input">
             <div *ngIf="employerForm.controls.userName.invalid && employerForm.controls.userName.touched" class="error">
               <div *ngIf="employerForm.controls.userName.errors?.['required']">Username is required</div>

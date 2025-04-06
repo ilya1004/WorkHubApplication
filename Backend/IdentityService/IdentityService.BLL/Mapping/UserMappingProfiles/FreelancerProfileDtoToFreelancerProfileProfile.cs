@@ -2,9 +2,9 @@
 
 namespace IdentityService.BLL.Mapping.UserMappingProfiles;
 
-public class FreelancerProfileDTOToFreelancerProfileProfile : Profile
+public class FreelancerProfileDtoToFreelancerProfileProfile : Profile
 {
-    public FreelancerProfileDTOToFreelancerProfileProfile()
+    public FreelancerProfileDtoToFreelancerProfileProfile()
     {
         CreateMap<FreelancerProfileDto, FreelancerProfile>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())

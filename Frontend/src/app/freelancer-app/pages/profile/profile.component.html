@@ -1,136 +1,143 @@
-<div
-  nz-flex
-  nzGap="80px"
-  style="margin-left: 150px">
+<div nz-flex nzGap="80px" style="margin-left: 150px">
   <div nz-flex nzVertical nzGap="large">
-    <img
-      [ngSrc]="'http://localhost:10000/devstoreaccount1/user-images/' + userData.imageUrl || 'assets/avatar-placeholder.png'"
-      width="300"
-      height="auto"
-      alt="User avatar"
-      style="border-radius: 10px; font-size: 24px"/>
+    <nz-spin [nzSpinning]="isLoadingUserData">
+      <img
+        [src]="userData.imageUrl ? 'http://localhost:10000/devstoreaccount1/user-images/' + userData.imageUrl : 'assets/avatar-placeholder.png'"
+        alt="User avatar"
+        style="border-radius: 10px; max-width: 300px; height: auto"
+        (error)="onImageError($event)"
+      />
+    </nz-spin>
     <nz-card>
-      <div>
-        Email:
-        <br/>
-        {{ userData.email }}
-      </div>
-      <br/>
-      <div>
-        Registration date:
-        <br/>
-        {{ userData.registeredAt.slice(0, 10) }}
-      </div>
+      <nz-spin [nzSpinning]="isLoadingUserData">
+        <div>
+          <strong>Email:</strong><br />
+          {{ userData.email || 'Not provided' }}
+        </div>
+        <br />
+        <div>
+          <strong>Registration date:</strong><br />
+          {{ userData.registeredAt ? (userData.registeredAt | date:'yyyy-MM-dd') : 'Unknown' }}
+        </div>
+      </nz-spin>
     </nz-card>
-    <div nz-flex>
-      <button
-        nz-button
-        (click)="onClickEdit()">
-        <nz-icon nzType="edit" />
-        Edit
+    <div nz-flex nzGap="middle">
+      <button nz-button nzType="primary" (click)="onClickEdit()">
+        <nz-icon nzType="edit" /> Edit
       </button>
     </div>
   </div>
-  <div nz-flex nzVertical nzGap="large">
-    <nz-card
-      style="min-width: 550px; min-height: 250px">
-      <h2>
-        {{ userData.firstName }} {{ userData.lastName }}
-      </h2>
 
-      <div>
-        About me:
-      </div>
-      <div>
-        {{ userData.about }}
-      </div>
-      <br/>
-      <div>
-        My skills:
-      </div>
-      <div>
-        @for (skill of userData.skills; track skill.id) {
-          <nz-tag nzColor="blue">{{ skill.name }}</nz-tag>
-        }
-      </div>
+  <div nz-flex nzVertical nzGap="large">
+    <nz-card style="min-width: 550px; min-height: 250px">
+      <nz-spin [nzSpinning]="isLoadingUserData">
+        <h2>{{ userData.firstName }} {{ userData.lastName }}</h2>
+        <div><strong>About me:</strong></div>
+        <div>{{ userData.about || 'No description provided' }}</div>
+        <br />
+        <div><strong>My skills:</strong></div>
+        <div>
+          @if (userData.skills.length > 0) {
+            @for (skill of userData.skills; track skill.id) {
+              <nz-tag nzColor="blue">{{ skill.name }}</nz-tag>
+            }
+          } @else {
+            <span>No skills added yet</span>
+          }
+        </div>
+      </nz-spin>
     </nz-card>
 
     @if (isEditing) {
       <nz-card>
-        <form
-          [formGroup]="editFreelancerForm"
-          (ngSubmit)="onSubmitEditForm()"
-          style="margin: 15px 0 0 0">
-
-          <nz-space nzSize="middle" nzDirection="vertical">
-
-            <div *nzSpaceItem>
-              <input
-                nz-input
-                formControlName="firstName"
-                placeholder="Enter your first name"
-                class="register-card__input">
-              <div *ngIf="editFreelancerForm.controls.firstName.invalid && editFreelancerForm.controls.firstName.touched" class="error">
-                <div *ngIf="editFreelancerForm.controls.firstName.errors?.['required']">First name is required</div>
-                <div *ngIf="editFreelancerForm.controls.firstName.errors?.['maxlength']">First name must be at most 100 characters</div>
+        <nz-spin [nzSpinning]="isUpdating">
+          <form
+            [formGroup]="editFreelancerForm"
+            (ngSubmit)="onSubmitEditForm()"
+            style="margin: 15px 0 0 0">
+            <nz-space nzSize="middle" nzDirection="vertical">
+              <div *nzSpaceItem>
+                <input
+                  nz-input
+                  formControlName="firstName"
+                  placeholder="Enter your first name"
+                  class="profile-input" />
+                <div *ngIf="editFreelancerForm.controls.firstName.invalid && editFreelancerForm.controls.firstName.touched" class="error">
+                  <div *ngIf="editFreelancerForm.controls.firstName.errors?.['required']">First name is required</div>
+                  <div *ngIf="editFreelancerForm.controls.firstName.errors?.['maxlength']">Max 100 characters</div>
+                </div>
               </div>
-            </div>
 
-            <div *nzSpaceItem>
-              <input
-                nz-input
-                formControlName="lastName"
-                placeholder="Enter your last name"
-                class="register-card__input">
-              <div *ngIf="editFreelancerForm.controls.lastName.invalid && editFreelancerForm.controls.lastName.touched" class="error">
-                <div *ngIf="editFreelancerForm.controls.lastName.errors?.['required']">Last name is required</div>
-                <div *ngIf="editFreelancerForm.controls.lastName.errors?.['maxlength']">Last name must be at most 100 characters</div>
+              <div *nzSpaceItem>
+                <input
+                  nz-input
+                  formControlName="lastName"
+                  placeholder="Enter your last name"
+                  class="profile-input" />
+                <div *ngIf="editFreelancerForm.controls.lastName.invalid && editFreelancerForm.controls.lastName.touched" class="error">
+                  <div *ngIf="editFreelancerForm.controls.lastName.errors?.['required']">Last name is required</div>
+                  <div *ngIf="editFreelancerForm.controls.lastName.errors?.['maxlength']">Max 100 characters</div>
+                </div>
               </div>
-            </div>
 
-            <div *nzSpaceItem>
-              <textarea
-                nz-input
-                formControlName="about"
-                placeholder="Tell about yourself"
-                rows="4"
-                class="register-card__input">
-              </textarea>
-              <div *ngIf="editFreelancerForm.controls.about.invalid && editFreelancerForm.controls.about.touched" class="error">
-                <div *ngIf="editFreelancerForm.controls.about.errors?.['maxlength']">About section must be at most 1000 characters</div>
+              <div *nzSpaceItem>
+                <textarea
+                  nz-input
+                  formControlName="about"
+                  placeholder="Tell about yourself"
+                  rows="4"
+                  class="profile-input"></textarea>
+                <div *ngIf="editFreelancerForm.controls.about.invalid && editFreelancerForm.controls.about.touched" class="error">
+                  <div *ngIf="editFreelancerForm.controls.about.errors?.['maxlength']">Max 1000 characters</div>
+                </div>
               </div>
-            </div>
 
-            <div *nzSpaceItem>
-              <nz-select
-                nzMode="multiple"
-                formControlName="skillIds"
-                nzPlaceHolder="Select your skills"
-                style="min-width: 300px; max-width: 350px;">
-                <nz-option *ngFor="let skill of availableSkills" [nzValue]="skill.id" [nzLabel]="skill.name"></nz-option>
-              </nz-select>
-            </div>
+              <div *nzSpaceItem>
+                <nz-select
+                  nzMode="multiple"
+                  formControlName="skillIds"
+                  nzPlaceHolder="Select your skills"
+                  style="min-width: 300px; max-width: 350px;"
+                  [nzLoading]="isLoadingSkills">
+                  <nz-option *ngFor="let skill of availableSkills" [nzValue]="skill.id" [nzLabel]="skill.name"></nz-option>
+                </nz-select>
+              </div>
 
-            <div *nzSpaceItem>
-              <label>
-                <input type="checkbox" formControlName="resetImage"> Reset Profile Image
-              </label>
-            </div>
+              <div *nzSpaceItem>
+                <label>
+                  <input type="checkbox" formControlName="resetImage"> Reset Profile Image
+                </label>
+              </div>
 
-            <div *nzSpaceItem>
-              <input
-                type="file"
-                [disabled]="editFreelancerForm.value.resetImage"
-                (change)="onFileSelected($event)">
-            </div>
+              <div *nzSpaceItem>
+                <input
+                  type="file"
+                  [disabled]="editFreelancerForm.value.resetImage"
+                  (change)="onFileSelected($event)"
+                  accept="image/*" />
+                <nz-progress *ngIf="uploadProgress > 0" [nzPercent]="uploadProgress" />
+              </div>
 
-            <div *nzSpaceItem>
-              <button nz-button nzType="primary" type="submit" [disabled]="editFreelancerForm.invalid" style="border-radius: 7px">Save Changes</button>
-            </div>
-
-          </nz-space>
-        </form>
+              <div *nzSpaceItem nz-flex nzGap="middle">
+                <button nz-button nzType="primary" type="submit" [disabled]="editFreelancerForm.invalid" style="border-radius: 7px">
+                  Save Changes
+                </button>
+                <button nz-button nzType="default" (click)="onCancelEdit()">Cancel</button>
+              </div>
+            </nz-space>
+          </form>
+        </nz-spin>
       </nz-card>
     }
+
+    <nz-alert
+      *ngIf="successMessage"
+      nzType="success"
+      [nzMessage]="successMessage"
+      nzShowIcon
+      nzCloseable
+      (nzOnClose)="successMessage = null"
+      style="margin-top: 20px">
+    </nz-alert>
   </div>
 </div>
