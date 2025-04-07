@@ -9,7 +9,7 @@ import {NzSpaceComponent, NzSpaceItemDirective} from 'ng-zorro-antd/space';
 import {EmailConfirmationService} from '../../../core/services/email-confirmation/email-confirmation.service';
 import {catchError, throwError} from 'rxjs';
 import {NgIf} from '@angular/common';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 
 interface ConfirmEmailForm {
   email: FormControl<string>;
@@ -28,7 +28,8 @@ interface ConfirmEmailForm {
     NzSpaceComponent,
     ReactiveFormsModule,
     NzSpaceItemDirective,
-    NgIf
+    NgIf,
+    RouterLink
   ],
   templateUrl: './confirm-email.component.html',
   styleUrls: ['./confirm-email.component.scss'],

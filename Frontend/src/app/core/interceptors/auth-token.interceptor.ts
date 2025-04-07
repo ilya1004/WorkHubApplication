@@ -12,7 +12,9 @@ export const authTokenInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, n
   if (req.url.includes('login') ||
       req.url.includes('register') ||
       req.url.includes('resend-email-confirmation') ||
-      req.url.includes('confirm-email')) {
+      req.url.includes('confirm-email') ||
+      req.url.includes('forgot-password') ||
+      req.url.includes('reset-password')) {
     return next(req);
   }
 

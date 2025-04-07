@@ -80,7 +80,7 @@ public class DbStartupService(
                 Lifecycle = new Lifecycle
                 {
                     Id = Guid.NewGuid(),
-                    CreatedAt = DateTime.UtcNow,
+                    CreatedAt = DateTime.UtcNow.AddDays(-2),
                     UpdatedAt = DateTime.UtcNow,
                     ApplicationsStartDate = DateTime.UtcNow,
                     ApplicationsDeadline = DateTime.UtcNow.AddDays(7),
@@ -88,7 +88,7 @@ public class DbStartupService(
                     WorkDeadline = DateTime.UtcNow.AddDays(40),
                     AcceptanceRequested = false,
                     AcceptanceConfirmed = false,
-                    Status = ProjectStatus.InProgress
+                    Status = ProjectStatus.AcceptingApplications
                 },
                 FreelancerApplications = new List<FreelancerApplication>
                 {

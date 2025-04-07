@@ -20,7 +20,7 @@ public class EmailSender(
         await fluentEmail
             .To(userEmail)
             .Subject("Reset password from WorkHubApplication")
-            .Body($"Click the link to reset your password: <a href='{resetUrl}'>Reset</a>", true)
+            .Body($"Click the link to reset your password: <a href='{resetUrl}'>Reset!</a>", true)
             .SendAsync(cancellationToken);
     }
 }

@@ -9,12 +9,16 @@ import {ConfirmEmailComponent} from './common/pages/confirm-email/confirm-email.
 import {ProfileComponent as FreelancerProfileComponent} from './freelancer-app/pages/profile/profile.component';
 import {ProjectInfoComponent as FreelancerProjectInfoComponent} from "./freelancer-app/pages/project-info/project-info.component";
 import {MyProjectInfoComponent as FreelancerMyProjectInfoComponent} from "./freelancer-app/pages/my-project-info/my-project-info.component";
+import {ForgotPasswordComponent} from './common/pages/forgot-password/forgot-password.component';
+import {ResetPasswordComponent} from './common/pages/reset-password/reset-password.component';
 
 
 export const routes: Routes = [
   { path: 'login', component: LoginPageComponent },
   { path: 'register', component: RegisterPageComponent },
   { path: 'confirm-email', component: ConfirmEmailComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   {
     path: 'freelancer', component: FreelancerLayoutComponent, children: [
       { path: 'home', component: FreelancerHomeComponent },

@@ -132,9 +132,7 @@ export class RegisterPageComponent {
     passwordConfirm: new FormControl('', {
       nonNullable: true
     })
-  }, {
-    validators: this.passwordsMatchValidator
-  });
+  }, { validators: this.passwordsMatchValidator });
 
   private passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
     const password = group.get('password')?.value;

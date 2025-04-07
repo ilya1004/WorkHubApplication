@@ -76,6 +76,4 @@ export class ProjectsService {
       `${PROJECTS_SERVICE_API_URL}projects/${projectId}`
     );
   }
-
-
 }

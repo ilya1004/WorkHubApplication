@@ -26,7 +26,7 @@ public class ForgotPasswordCommandHandler(
 
         logger.LogInformation("Generating password reset token for user {UserId}", user.Id);
         
-        var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+        var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
         string code;
         var random = new Random();
@@ -41,7 +41,7 @@ public class ForgotPasswordCommandHandler(
         await cachedService.SetAsync(code, token, TimeSpan.FromHours(
             int.Parse(configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Value!)));
 
-        var resetUrl = $"{request.ResetUrl}?email={user.Email}&token={token}";
+        var resetUrl = $"{request.ResetUrl}?email={user.Email}&code={code}";
         
         logger.LogInformation("Sending password reset email to {Email}", user.Email);
         

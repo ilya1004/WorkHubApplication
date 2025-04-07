@@ -31,7 +31,7 @@ export class ProjectInfoComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private homeService: ProjectsService,
+    private projectsService: ProjectsService,
     private usersService: UsersService,
   ) { }
 
@@ -44,7 +44,7 @@ export class ProjectInfoComponent implements OnInit {
 
   loadProject(projectId: string): void {
     this.loading = true;
-    this.homeService.getProjectById(projectId).subscribe({
+    this.projectsService.getProjectById(projectId).subscribe({
       next: (project: Project) => {
         this.project = project;
         this.loadEmployer(project.employerId);

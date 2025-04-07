@@ -12,7 +12,8 @@ public class GetProjectByIdQueryHandler(
             request.Id,
             cancellationToken,
             p => p.Lifecycle, 
-            p => p.Category!);
+            p => p.Category!,
+            p => p.FreelancerApplications);
 
         if (project is null)
         {
