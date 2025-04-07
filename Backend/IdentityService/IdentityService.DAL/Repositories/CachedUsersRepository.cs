@@ -17,11 +17,11 @@ public class CachedUsersRepository(
     public async Task<AppUser?> GetByIdAsync(Guid id, bool withTracking = true, CancellationToken cancellationToken = default,
         params Expression<Func<AppUser, object>>[]? includesProperties)
     {
-        // if (withTracking || true)
-        // {
-        await InvalidateCacheAsync(id); 
-        return await usersRepository.GetByIdAsync(id, withTracking, cancellationToken, includesProperties);
-        // }
+        if (withTracking)
+        {
+            await InvalidateCacheAsync(id); 
+            return await usersRepository.GetByIdAsync(id, withTracking, cancellationToken, includesProperties);
+        }
         
         var cacheKey = $"{nameof(AppUser)}:{id}";
         var cachedUser = await distributedCache.GetStringAsync(cacheKey, cancellationToken);

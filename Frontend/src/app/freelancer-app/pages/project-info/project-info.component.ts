@@ -9,6 +9,10 @@ import {ActivatedRoute, RouterLink} from "@angular/router";
 import {EmployerUserDto} from "../../../core/interfaces/employer-user-dto.interface";
 import {FreelancerUserDto} from "../../../core/interfaces/freelancer-user-dto.interface";
 import {UsersService} from "../../services/users.service";
+import {ApplicationStatus} from "../../interfaces/my-projects/freelancer-application.interface";
+import {NzAlertModule} from "ng-zorro-antd/alert";
+import {TokenService} from "../../../core/services/token/token.service";
+import {NzFlexDirective} from "ng-zorro-antd/flex";
 
 @Component({
   selector: 'app-project-info',
@@ -18,7 +22,9 @@ import {UsersService} from "../../services/users.service";
     NzCardModule,
     NzDescriptionsModule,
     NzButtonModule,
-    RouterLink
+    NzAlertModule,
+    RouterLink,
+    NzFlexDirective
   ],
   templateUrl: './project-info.component.html',
   styleUrl: './project-info.component.scss'
@@ -28,27 +34,35 @@ export class ProjectInfoComponent implements OnInit {
   employer: EmployerUserDto | null = null;
   freelancer: FreelancerUserDto | null = null;
   loading = false;
-
+  isApplying = false;
+  isCancelling = false;
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
+  currentUserId: string | null = '';
+  
   constructor(
     private route: ActivatedRoute,
     private projectsService: ProjectsService,
     private usersService: UsersService,
-  ) { }
-
+    private tokenService: TokenService
+  ) {
+    this.currentUserId = this.tokenService.getUserId();
+  }
+  
   ngOnInit(): void {
     const projectId = this.route.snapshot.paramMap.get('projectId');
     if (projectId) {
       this.loadProject(projectId);
     }
   }
-
+  
   loadProject(projectId: string): void {
     this.loading = true;
     this.projectsService.getProjectById(projectId).subscribe({
       next: (project: Project) => {
         this.project = project;
         this.loadEmployer(project.employerId);
-        if (project.freelancerId) {
+        if (project.freelancerId && project.lifecycle.status > 1) { // Загружаем фрилансера только если статус > Accepting Applications
           this.loadFreelancer(project.freelancerId);
         } else {
           this.freelancer = null;
@@ -61,7 +75,7 @@ export class ProjectInfoComponent implements OnInit {
       }
     });
   }
-
+  
   loadEmployer(employerId: string): void {
     this.usersService.getEmployerInfo(employerId).subscribe({
       next: (employer: EmployerUserDto) => {
@@ -74,7 +88,7 @@ export class ProjectInfoComponent implements OnInit {
       }
     });
   }
-
+  
   loadFreelancer(freelancerId: string): void {
     this.usersService.getFreelancerInfo(freelancerId).subscribe({
       next: (freelancer: FreelancerUserDto) => {
@@ -87,13 +101,13 @@ export class ProjectInfoComponent implements OnInit {
       }
     });
   }
-
+  
   private checkLoadingComplete(): void {
-    if (this.project && this.employer && (!this.project.freelancerId || this.freelancer)) {
+    if (this.project && this.employer && (!this.project.freelancerId || this.freelancer || this.project.lifecycle.status <= 1)) {
       this.loading = false;
     }
   }
-
+  
   getStatusLabel(status: number): string {
     const statuses = [
       'Published',
@@ -106,5 +120,54 @@ export class ProjectInfoComponent implements OnInit {
       'Cancelled'
     ];
     return statuses[status] || 'Unknown';
+  }
+  
+  canApply(): boolean {
+    if (!this.project || this.project.lifecycle.status !== 1) return false; // Только для Accepting Applications
+    return !this.hasApplication() && this.currentUserId !== this.project.employerId; // Нельзя подать заявку, если уже есть или если ты работодатель
+  }
+  
+  hasApplication(): boolean {
+    return !!this.project?.freelancerApplications.some(app =>
+      app.freelancerId === this.currentUserId && app.status === ApplicationStatus.pending);
+  }
+  
+  applyForProject(): void {
+    if (!this.project) return;
+    this.isApplying = true;
+    this.projectsService.createFreelancerApplication(this.project.id.toString()).subscribe({
+      next: () => {
+        this.isApplying = false;
+        this.successMessage = 'Application submitted successfully!';
+        this.loadProject(this.project!.id.toString()); // Перезагружаем проект
+        setTimeout(() => this.successMessage = null, 5000);
+      },
+      error: (error) => {
+        this.isApplying = false;
+        this.errorMessage = 'Failed to submit application. Please try again.';
+        console.error('Error applying for project:', error);
+      }
+    });
+  }
+  
+  cancelApplication(): void {
+    if (!this.project) return;
+    const application = this.project.freelancerApplications.find(app => app.freelancerId === this.currentUserId && app.status === ApplicationStatus.pending);
+    if (!application) return;
+    
+    this.isCancelling = true;
+    this.projectsService.cancelFreelancerApplication(application.id).subscribe({
+      next: () => {
+        this.isCancelling = false;
+        this.successMessage = 'Application cancelled successfully!';
+        this.loadProject(this.project!.id.toString()); // Перезагружаем проект
+        setTimeout(() => this.successMessage = null, 5000);
+      },
+      error: (error) => {
+        this.isCancelling = false;
+        this.errorMessage = 'Failed to cancel application. Please try again.';
+        console.error('Error cancelling application:', error);
+      }
+    });
   }
 }

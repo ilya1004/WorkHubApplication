@@ -68,6 +68,11 @@ public class CachedQueriesRepository<TEntity>(
 
     public async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[]? includesProperties)
     {
+        if (includesProperties is not null && includesProperties.Length > 0)
+        {
+            return await queriesRepository.GetByIdAsync(id, cancellationToken, includesProperties);    
+        }
+        
         var cacheKey = $"{typeof(TEntity).Name}:{id}";
         var cachedEntity = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
 

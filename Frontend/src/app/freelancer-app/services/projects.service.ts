@@ -76,4 +76,13 @@ export class ProjectsService {
       `${PROJECTS_SERVICE_API_URL}projects/${projectId}`
     );
   }
+  
+  createFreelancerApplication(projectId: string): Observable<void> {
+    const payload = { projectId };
+    return this.httpClient.post<void>(`${PROJECTS_SERVICE_API_URL}freelancer-applications`, payload);
+  }
+  
+  cancelFreelancerApplication(applicationId: string): Observable<void> {
+    return this.httpClient.delete<void>(`${PROJECTS_SERVICE_API_URL}freelancer-applications/${applicationId}`);
+  }
 }
