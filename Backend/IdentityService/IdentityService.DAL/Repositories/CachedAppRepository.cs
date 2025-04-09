@@ -17,13 +17,13 @@ public class CachedAppRepository<TEntity>(
     public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         await repository.AddAsync(entity, cancellationToken);
-        await InvalidateCacheAsync(entity.Id);
+        await InvalidateCacheAsync(entity.Id.ToString());
     }
 
     public async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         await repository.DeleteAsync(entity, cancellationToken);
-        await InvalidateCacheAsync(entity.Id);
+        await InvalidateCacheAsync(entity.Id.ToString());
     }
 
     public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
@@ -110,7 +110,7 @@ public class CachedAppRepository<TEntity>(
     public async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         await repository.UpdateAsync(entity, cancellationToken);
-        await InvalidateCacheAsync(entity.Id);
+        await InvalidateCacheAsync(entity.Id.ToString());
     }
 
     public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
@@ -135,7 +135,13 @@ public class CachedAppRepository<TEntity>(
         return count;
     }
 
-    private async Task InvalidateCacheAsync(Guid id)
+    // public async Task RemoveFromCache<TRecord>(string id)
+    // {
+    //     var cacheKey = $"{typeof(TRecord).Name}:{id}";
+    //     await distributedCache.RemoveAsync(cacheKey);
+    // } 
+
+    private async Task InvalidateCacheAsync(string id)
     {
         var cacheKey = $"{typeof(TEntity).Name}:{id}";
         await distributedCache.RemoveAsync(cacheKey);

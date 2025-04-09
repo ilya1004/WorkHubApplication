@@ -11,6 +11,7 @@ import {ProjectInfoComponent as FreelancerProjectInfoComponent} from "./freelanc
 import {MyProjectInfoComponent as FreelancerMyProjectInfoComponent} from "./freelancer-app/pages/my-project-info/my-project-info.component";
 import {ForgotPasswordComponent} from './common/pages/forgot-password/forgot-password.component';
 import {ResetPasswordComponent} from './common/pages/reset-password/reset-password.component';
+import {MyFinancesComponent as FreelancerMyFinancesComponent} from "./freelancer-app/pages/my-finances/my-finances.component";
 
 
 export const routes: Routes = [
@@ -25,6 +26,7 @@ export const routes: Routes = [
       { path: 'home/project/:projectId', component: FreelancerProjectInfoComponent },
       { path: 'my-projects', component: FreelancerMyProjectsComponent },
       { path: 'my-projects/:projectId', component: FreelancerMyProjectInfoComponent },
+      { path: 'my-finances', component: FreelancerMyFinancesComponent },
       { path: 'my-profile', component: FreelancerProfileComponent },
     ],
     canActivate: [canActivateFreelancerAuth]

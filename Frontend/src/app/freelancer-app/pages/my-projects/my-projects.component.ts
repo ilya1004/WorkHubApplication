@@ -19,6 +19,7 @@ import { PaginatedResult } from "../../../core/interfaces/paginated-result.inter
 import {PROJECT_STATUSES} from "../../../core/constants";
 import {NzWaveDirective} from "ng-zorro-antd/core/wave";
 import {Router} from "@angular/router";
+import {NzFlexDirective} from "ng-zorro-antd/flex";
 
 @Component({
   selector: 'app-my-projects',
@@ -42,7 +43,8 @@ import {Router} from "@angular/router";
     NzTbodyComponent,
     NzThMeasureDirective,
     NzTheadComponent,
-    NzTrDirective
+    NzTrDirective,
+    NzFlexDirective
   ],
   templateUrl: './my-projects.component.html',
   styleUrl: './my-projects.component.scss'

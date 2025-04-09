@@ -16,6 +16,13 @@ public class FreelancersGrpcClient(
         var response = await client.GetFreelancerByIdAsync(
             new GetFreelancerByIdRequest { Id = id }, 
             cancellationToken: cancellationToken);
+
+        if (response is null)
+        {
+            logger.LogWarning("Freelancer not found for user {UserId}", id);
+            
+            throw new NotFoundException($"Freelancer by user ID '{id}' not found.");
+        }
         
         logger.LogInformation("Successfully received freelancer with ID {FreelancerId} from gRPC service", id);
 

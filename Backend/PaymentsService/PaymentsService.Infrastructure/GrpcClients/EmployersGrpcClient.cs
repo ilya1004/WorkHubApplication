@@ -17,6 +17,13 @@ public class EmployersGrpcClient(
             new GetEmployerByIdRequest { Id = id }, 
             cancellationToken: cancellationToken);
         
+        if (response is null)
+        {
+            logger.LogWarning("Employer not found for user {UserId}", id);
+            
+            throw new NotFoundException($"Employer by user ID '{id}' not found.");
+        }
+        
         logger.LogInformation("Successfully received employer with ID {EmployerId} from gRPC service", id);
 
         var employerDto = mapper.Map<EmployerDto>(response);
