@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Project} from "../../interfaces/my-projects/project.interface";
+import {Project} from "../../../core/interfaces/project/project.interface";
 import {ProjectsService} from "../../services/projects.service";
 import {CommonModule} from "@angular/common";
 import {NzCardModule} from "ng-zorro-antd/card";
@@ -9,7 +9,7 @@ import {ActivatedRoute, RouterLink} from "@angular/router";
 import {EmployerUser} from "../../../core/interfaces/employer/employer-user.interface";
 import {FreelancerUser} from "../../../core/interfaces/freelancer/freelancer-user.interface";
 import {UsersService} from "../../services/users.service";
-import {ApplicationStatus} from "../../interfaces/my-projects/freelancer-application.interface";
+import {ApplicationStatus} from "../../../core/interfaces/project/freelancer-application.interface";
 import {NzAlertModule} from "ng-zorro-antd/alert";
 import {TokenService} from "../../../core/services/token/token.service";
 import {NzFlexDirective} from "ng-zorro-antd/flex";

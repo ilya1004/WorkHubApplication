@@ -5,7 +5,7 @@ import {CookieService} from "ngx-cookie-service";
 import {DecodedToken} from "./token.interface";
 import {jwtDecode} from "jwt-decode";
 import {AuthInterface} from "../auth/auth.interface";
-import {IDENTITY_SERVICE_API_URL} from "../../constants";
+import {IDENTITY_SERVICE_API_URL} from "../../data/constants";
 import {Router} from "@angular/router";
 
 @Injectable({

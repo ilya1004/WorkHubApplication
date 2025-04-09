@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
-import {IDENTITY_SERVICE_API_URL} from '../../constants';
+import {IDENTITY_SERVICE_API_URL} from '../../data/constants';
 import {AuthInterface} from './auth.interface';
 import {Router} from '@angular/router';
 import {Observable, tap} from 'rxjs';

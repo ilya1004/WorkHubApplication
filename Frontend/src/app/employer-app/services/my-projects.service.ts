@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import {Observable} from "rxjs";
 import {PaginatedResult} from "../../core/interfaces/common/paginated-result.interface";
-import {Project} from "../../freelancer-app/interfaces/my-projects/project.interface";
+import {Project} from "../../core/interfaces/project/project.interface";
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {PROJECTS_SERVICE_API_URL} from "../../core/constants";
+import {PROJECTS_SERVICE_API_URL} from "../../core/data/constants";
 
 @Injectable({
   providedIn: 'root'

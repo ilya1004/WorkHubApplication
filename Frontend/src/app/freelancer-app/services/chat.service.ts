@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject, catchError, Observable, Subject, throwError} from "rxjs";
 import {HubConnection, HubConnectionBuilder, HubConnectionState} from "@microsoft/signalr";
-import { Chat } from '../interfaces/chat/chat.interface';
-import {Message} from "../interfaces/chat/message.interface";
+import { Chat } from '../../core/interfaces/chat/chat.interface';
+import {Message} from "../../core/interfaces/chat/message.interface";
 import {HttpClient} from "@angular/common/http";
 import {AuthService} from "../../core/services/auth/auth.service";
-import {CHAT_SERVICE_API_URL, CHAT_SERVICE_HUB_URL} from "../../core/constants";
+import {CHAT_SERVICE_API_URL, CHAT_SERVICE_HUB_URL} from "../../core/data/constants";
 import {PaginatedResult} from "../../core/interfaces/common/paginated-result.interface";
 import {TokenService} from "../../core/services/token/token.service";
 

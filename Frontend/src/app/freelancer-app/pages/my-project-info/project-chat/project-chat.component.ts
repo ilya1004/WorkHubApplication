@@ -5,12 +5,12 @@ import {CommonModule} from "@angular/common";
 import {NzInputModule} from "ng-zorro-antd/input";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {FormsModule} from "@angular/forms";
-import {Message, MessageType} from '../../../interfaces/chat/message.interface';
+import {Message, MessageType} from '../../../../core/interfaces/chat/message.interface';
 import {ChatService} from "../../../services/chat.service";
 import {AuthService} from "../../../../core/services/auth/auth.service";
 import {NzTagModule} from "ng-zorro-antd/tag";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
-import {CHAT_SERVICE_API_URL} from "../../../../core/constants";
+import {CHAT_SERVICE_API_URL} from "../../../../core/data/constants";
 import {TokenService} from "../../../../core/services/token/token.service";
 
 @Component({

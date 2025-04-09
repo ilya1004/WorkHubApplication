@@ -1,8 +1,6 @@
 ﻿using IdentityService.BLL.Abstractions.TokenProvider;
 using IdentityService.BLL.DTOs;
-using IdentityService.BLL.Services.TokenProvider;
 using IdentityService.BLL.Settings;
-using IdentityService.DAL.Abstractions.Repositories;
 
 namespace IdentityService.BLL.UseCases.AuthUseCases.LoginUser;
 
@@ -17,7 +15,10 @@ public class LoginUserCommandHandler(
     {
         logger.LogInformation("Login attempt for email {Email}", request.Email);
 
-        var user = await unitOfWork.UsersRepository.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken, u => u.Role);
+        var user = await unitOfWork.UsersRepository.FirstOrDefaultAsync(
+            u => u.Email == request.Email, 
+            cancellationToken, 
+            u => u.Role);
 
         if (user is null)
         {

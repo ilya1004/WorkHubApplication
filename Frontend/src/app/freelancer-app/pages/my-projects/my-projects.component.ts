@@ -11,12 +11,12 @@ import {
   NzThMeasureDirective, NzTrDirective
 } from "ng-zorro-antd/table";
 import { MyProjectsService } from "../../services/my-projects.service";
-import { Project } from "../../interfaces/my-projects/project.interface";
+import { Project } from "../../../core/interfaces/project/project.interface";
 import { NzInputDirective, NzInputGroupComponent } from "ng-zorro-antd/input";
 import { NzButtonComponent } from "ng-zorro-antd/button";
 import { DatePipe, NgForOf } from "@angular/common";
 import { PaginatedResult } from "../../../core/interfaces/common/paginated-result.interface";
-import {PROJECT_STATUSES} from "../../../core/constants";
+import {PROJECT_STATUSES} from "../../../core/data/constants";
 import {NzWaveDirective} from "ng-zorro-antd/core/wave";
 import {Router} from "@angular/router";
 import {NzFlexDirective} from "ng-zorro-antd/flex";

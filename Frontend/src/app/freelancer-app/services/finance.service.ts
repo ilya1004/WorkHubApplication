@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import {PAYMENTS_SERVICE_API_URL} from "../../core/constants";
+import {PAYMENTS_SERVICE_API_URL} from "../../core/data/constants";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {FreelancerAccount} from "../interfaces/finance/freelancer-account.interface";
 import {Transfer} from "../interfaces/finance/transfer.interface";

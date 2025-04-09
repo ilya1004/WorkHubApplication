@@ -30,7 +30,7 @@ public class TokenProvider(
             options.Value.Issuer,
             options.Value.Audience,
             claims,
-            expires: DateTime.UtcNow.AddMinutes(1),
+            expires: DateTime.UtcNow.AddMinutes(options.Value.AccessTokenExpiryMinutes),
             signingCredentials: credentials);
 
         logger.LogInformation("Access token generated successfully for user {UserId}", user.Id);

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {IDENTITY_SERVICE_API_URL} from '../../constants';
+import {IDENTITY_SERVICE_API_URL} from '../../data/constants';
 
 const RESET_URL = 'http://localhost:4200/reset-password';
 
