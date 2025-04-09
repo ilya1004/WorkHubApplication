@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NzCardModule} from "ng-zorro-antd/card";
-import { EmployerUserDto } from '../../../core/interfaces/employer-user-dto.interface';
+import { EmployerUser } from '../../../core/interfaces/employer/employer-user.interface';
 import {ActivatedRoute, RouterModule} from "@angular/router";
 import {ProjectsService} from "../../services/projects.service";
 import {Project} from "../../interfaces/my-projects/project.interface";
@@ -12,6 +12,8 @@ import {PROJECT_STATUSES} from "../../../core/constants";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {ProjectChatComponent} from "./project-chat/project-chat.component";
 import {NzButtonComponent} from "ng-zorro-antd/button";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {ProjectStatus} from "../../interfaces/my-projects/project-status.interface";
 
 @Component({
   imports: [
@@ -31,13 +33,15 @@ import {NzButtonComponent} from "ng-zorro-antd/button";
 })
 export class MyProjectInfoComponent implements OnInit {
   project: Project | null = null;
-  employer: EmployerUserDto | null = null;
+  employer: EmployerUser | null = null;
   loading = false;
+  submitting = false;
 
   constructor(
     private route: ActivatedRoute,
-    private homeService: ProjectsService,
+    private projectsService: ProjectsService,
     private usersService: UsersService,
+    private message: NzMessageService
   ) {}
 
   ngOnInit(): void {
@@ -49,7 +53,7 @@ export class MyProjectInfoComponent implements OnInit {
 
   loadProject(projectId: string): void {
     this.loading = true;
-    this.homeService.getProjectById(projectId).subscribe({
+    this.projectsService.getProjectById(projectId).subscribe({
       next: (project: Project) => {
         this.project = project;
         this.loadEmployer(project.employerId);
@@ -63,7 +67,7 @@ export class MyProjectInfoComponent implements OnInit {
 
   loadEmployer(employerId: string): void {
     this.usersService.getEmployerInfo(employerId).subscribe({
-      next: (employer: EmployerUserDto) => {
+      next: (employer: EmployerUser) => {
         this.employer = employer;
         this.loading = false;
       },
@@ -87,5 +91,32 @@ export class MyProjectInfoComponent implements OnInit {
     ];
     return PROJECT_STATUSES.find(s =>
       s.value === statuses[status])?.label || 'Unknown';
+  }
+  
+  canRequestAcceptance(): boolean {
+    if (!this.project || this.project.lifecycle.acceptanceRequested)
+      return false;
+    const status = this.project.lifecycle.status;
+    return status === ProjectStatus.InProgress || status === ProjectStatus.Expired;
+  }
+  
+  requestAcceptance(): void {
+    if (!this.project) return;
+    
+    this.submitting = true;
+    this.projectsService.requestProjectAcceptance(this.project.id).subscribe({
+      next: () => {
+        this.submitting = false;
+        if (this.project) {
+          this.project.lifecycle.acceptanceRequested = true; // Обновляем локальное состояние
+        }
+        this.message.success('Acceptance request sent successfully!');
+      },
+      error: (error) => {
+        this.submitting = false;
+        console.error('Error requesting acceptance:', error);
+        this.message.error('Failed to send acceptance request.');
+      }
+    });
   }
 }

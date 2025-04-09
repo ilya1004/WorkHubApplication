@@ -1,4 +1,4 @@
-export interface EmployerUserDto {
+export interface EmployerUser {
   id: string;
   userName: string;
   companyName: string;

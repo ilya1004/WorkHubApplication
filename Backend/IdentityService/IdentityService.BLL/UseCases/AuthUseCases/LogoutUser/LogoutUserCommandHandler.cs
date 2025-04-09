@@ -11,15 +11,22 @@ public class LogoutUserCommandHandler(
     {
         var userId = userContext.GetUserId();
         
-        logger.LogInformation("Logout requested for user {UserId}", userId);
+        logger.LogInformation("Logout requested for user with ID '{UserId}'", userId);
 
         var user = await userManager.FindByIdAsync(userId.ToString());
 
         if (user is null)
         {
-            logger.LogWarning("User {UserId} not found during logout", userId);
+            logger.LogWarning("User with ID '{UserId}' not found during logout", userId);
             
             throw new NotFoundException($"User with ID '{userId}' not found");
+        }
+
+        if (user.RefreshToken is null && user.RefreshTokenExpiryTime is null)
+        {
+            logger.LogInformation("User with ID '{UserId}' has already logout", userId);
+            
+            return;
         }
 
         user.RefreshToken = null;
@@ -27,6 +34,6 @@ public class LogoutUserCommandHandler(
 
         await userManager.UpdateAsync(user);
         
-        logger.LogInformation("User {UserId} logged out successfully", userId);
+        logger.LogInformation("User with ID '{UserId}' logged out successfully", userId);
     }
 }

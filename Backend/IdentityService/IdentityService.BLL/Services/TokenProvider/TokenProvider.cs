@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using IdentityService.BLL.Abstractions.TokenProvider;
 
 namespace IdentityService.BLL.Services.TokenProvider;
 
@@ -29,7 +30,7 @@ public class TokenProvider(
             options.Value.Issuer,
             options.Value.Audience,
             claims,
-            expires: DateTime.UtcNow.AddMinutes(30),
+            expires: DateTime.UtcNow.AddMinutes(1),
             signingCredentials: credentials);
 
         logger.LogInformation("Access token generated successfully for user {UserId}", user.Id);

@@ -1,4 +1,6 @@
-export interface FreelancerUserDto {
+import {FreelancerSkill} from "./freelancer-skill.interface";
+
+export interface FreelancerUser {
   id: string;
   userName: string;
   firstName: string;
@@ -7,12 +9,8 @@ export interface FreelancerUserDto {
   email: string;
   registeredAt: string;
   stripeAccountId?: string;
-  skills: FreelancerSkillDto[];
+  skills: FreelancerSkill[];
   imageUrl?: string;
   roleName: string;
 }
 
-export interface FreelancerSkillDto {
-  id: string;
-  name: string;
-}

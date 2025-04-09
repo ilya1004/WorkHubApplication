@@ -4,7 +4,7 @@ import {PAYMENTS_SERVICE_API_URL} from "../../core/constants";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {FreelancerAccount} from "../interfaces/finance/freelancer-account.interface";
 import {Transfer} from "../interfaces/finance/transfer.interface";
-import {PaginatedResult} from "../../core/interfaces/paginated-result.interface";
+import {PaginatedResult} from "../../core/interfaces/common/paginated-result.interface";
 
 @Injectable({
   providedIn: 'root'

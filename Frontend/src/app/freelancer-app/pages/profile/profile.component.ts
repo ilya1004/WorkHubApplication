@@ -7,8 +7,8 @@ import {NzCardComponent} from 'ng-zorro-antd/card';
 import {NzTagComponent} from 'ng-zorro-antd/tag';
 import {NzButtonComponent} from 'ng-zorro-antd/button';
 import {NzIconDirective} from 'ng-zorro-antd/icon';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {NzInputDirective} from 'ng-zorro-antd/input';
+import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators} from '@angular/forms';
+import {NzInputDirective, NzInputGroupComponent} from 'ng-zorro-antd/input';
 import {NzSpaceComponent, NzSpaceItemDirective} from 'ng-zorro-antd/space';
 import {EditFreelancerForm} from '../../interfaces/profile/edit-form.interface';
 import {NzOptionComponent, NzSelectComponent} from 'ng-zorro-antd/select';
@@ -38,20 +38,31 @@ import {NzAlertComponent} from "ng-zorro-antd/alert";
     NzProgressComponent,
     NzAlertComponent,
     ReactiveFormsModule,
-    DatePipe
+    DatePipe,
+    NzInputGroupComponent
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
   availableSkills: FreelancerSkill[] = [];
+  
   isEditing: boolean = false;
+  isChangingPassword: boolean = false;
   isLoadingUserData: boolean = true;
   isLoadingSkills: boolean = true;
   isUpdating: boolean = false;
+  isChangingPasswordInProgress: boolean = false;
+  
   uploadProgress: number = 0;
   successMessage: string | null = null;
-
+  passwordChangeMessage: string | null = null;
+  passwordChangeError: string | null = null;
+  
+  currentPasswordVisible: boolean = false;
+  newPasswordVisible: boolean = false;
+  confirmPasswordVisible: boolean = false;
+  
   userData: FreelancerUser = {
     id: '',
     userName: '',
@@ -65,8 +76,8 @@ export class ProfileComponent implements OnInit {
     imageUrl: null,
     roleName: ''
   };
-
-  editFreelancerForm = new FormGroup<EditFreelancerForm>({
+  
+  editFreelancerForm = new FormGroup({
     firstName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
     lastName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
     about: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(1000)] }),
@@ -74,14 +85,20 @@ export class ProfileComponent implements OnInit {
     resetImage: new FormControl(false, { nonNullable: true }),
     image: new FormControl<File | null>(null),
   });
-
+  
+  changePasswordForm = new FormGroup({
+    currentPassword: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(6)] }),
+    newPassword: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(6)] }),
+    confirmNewPassword: new FormControl('', { nonNullable: true, validators: [Validators.required] })
+  }, { validators: this.passwordsMatchValidator });
+  
   constructor(private profileService: ProfileService) {}
-
+  
   ngOnInit(): void {
     this.loadUserData();
     this.loadAvailableSkills();
   }
-
+  
   loadUserData(): void {
     this.isLoadingUserData = true;
     this.profileService.getUserData().subscribe({
@@ -95,7 +112,7 @@ export class ProfileComponent implements OnInit {
       }
     });
   }
-
+  
   loadAvailableSkills(): void {
     this.isLoadingSkills = true;
     this.profileService.getAvailableSkill().subscribe({
@@ -109,7 +126,7 @@ export class ProfileComponent implements OnInit {
       }
     });
   }
-
+  
   onFileSelected(event: Event): void {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files.length > 0) {
@@ -117,13 +134,13 @@ export class ProfileComponent implements OnInit {
       this.editFreelancerForm.patchValue({ image: file });
     }
   }
-
+  
   onSubmitEditForm(): void {
     if (this.editFreelancerForm.valid) {
       this.isUpdating = true;
       const formData = new FormData();
       const formValue = this.editFreelancerForm.getRawValue();
-
+      
       formData.append('FreelancerProfile.FirstName', formValue.firstName);
       formData.append('FreelancerProfile.LastName', formValue.lastName);
       formData.append('FreelancerProfile.About', formValue.about);
@@ -134,22 +151,21 @@ export class ProfileComponent implements OnInit {
       if (formValue.image) {
         formData.append('ImageFile', formValue.image);
       }
-
-      // Симуляция прогресса загрузки (можно заменить реальной логикой)
+      
       this.uploadProgress = 0;
       const interval = setInterval(() => {
         this.uploadProgress += 20;
         if (this.uploadProgress >= 100) clearInterval(interval);
       }, 200);
-
+      
       this.profileService.updateFreelancerProfile(formData).subscribe({
         next: () => {
           this.isUpdating = false;
           this.uploadProgress = 0;
           this.successMessage = 'Profile updated successfully!';
-          this.loadUserData(); // Перезагружаем данные
+          this.loadUserData();
           this.isEditing = false;
-          setTimeout(() => this.successMessage = null, 5000); // Убираем уведомление через 5 сек
+          setTimeout(() => this.successMessage = null, 5000);
         },
         error: (err) => {
           console.error('Error updating profile:', err);
@@ -159,9 +175,10 @@ export class ProfileComponent implements OnInit {
       });
     }
   }
-
+  
   onClickEdit(): void {
     this.isEditing = !this.isEditing;
+    this.uploadProgress = 0;
     if (this.isEditing) {
       this.editFreelancerForm.patchValue({
         firstName: this.userData.firstName,
@@ -171,7 +188,7 @@ export class ProfileComponent implements OnInit {
       });
     }
   }
-
+  
   onCancelEdit(): void {
     this.isEditing = false;
     this.uploadProgress = 0;
@@ -184,8 +201,55 @@ export class ProfileComponent implements OnInit {
       image: null
     });
   }
-
+  
   onImageError(event: Event): void {
     (event.target as HTMLImageElement).src = 'assets/avatar-placeholder.png';
+  }
+  
+  onClickChangePassword(): void {
+    this.isChangingPassword = !this.isChangingPassword;
+    if (!this.isChangingPassword) {
+      this.changePasswordForm.reset();
+      this.passwordChangeMessage = null;
+      this.passwordChangeError = null;
+      this.currentPasswordVisible = false;
+      this.newPasswordVisible = false;
+      this.confirmPasswordVisible = false;
+    }
+  }
+  
+  onSubmitChangePassword(): void {
+    if (this.changePasswordForm.valid) {
+      this.isChangingPasswordInProgress = true;
+      this.passwordChangeError = null;
+      const formValue = this.changePasswordForm.getRawValue();
+      
+      const request = {
+        email: this.userData.email!,
+        currentPassword: formValue.currentPassword,
+        newPassword: formValue.newPassword
+      };
+      
+      this.profileService.changePassword(request).subscribe({
+        next: () => {
+          this.isChangingPasswordInProgress = false;
+          this.passwordChangeMessage = 'Password changed successfully!';
+          this.isChangingPassword = false;
+          this.changePasswordForm.reset();
+          setTimeout(() => this.passwordChangeMessage = null, 5000);
+        },
+        error: (err) => {
+          this.isChangingPasswordInProgress = false;
+          this.passwordChangeError = err.error?.message || 'Failed to change password. Please try again.';
+          console.error('Error changing password:', err);
+        }
+      });
+    }
+  }
+  
+  private passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {
+    const password = group.get('newPassword')?.value;
+    const confirmPassword = group.get('confirmNewPassword')?.value;
+    return password === confirmPassword ? null : { passwordsMismatch: true };
   }
 }

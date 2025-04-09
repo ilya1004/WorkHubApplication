@@ -6,7 +6,7 @@ import {Message} from "../interfaces/chat/message.interface";
 import {HttpClient} from "@angular/common/http";
 import {AuthService} from "../../core/services/auth/auth.service";
 import {CHAT_SERVICE_API_URL, CHAT_SERVICE_HUB_URL} from "../../core/constants";
-import {PaginatedResult} from "../../core/interfaces/paginated-result.interface";
+import {PaginatedResult} from "../../core/interfaces/common/paginated-result.interface";
 import {TokenService} from "../../core/services/token/token.service";
 
 @Injectable({

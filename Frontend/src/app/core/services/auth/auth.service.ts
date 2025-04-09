@@ -33,7 +33,19 @@ export class AuthService {
 
   logout(): void {
     this.tokenService.clearTokens();
-    this.router.navigate(['/login']);
+    this.httpClient.post<void>(
+      `${IDENTITY_SERVICE_API_URL}/auth/logout`, {})
+      .subscribe({
+        next: () => {
+          this.tokenService.clearTokens();
+          this.router.navigate(['/login']);
+        },
+        error: (error) => {
+          console.error('Logout failed:', error);
+          this.tokenService.clearTokens();
+          this.router.navigate(['/login']);
+        }
+      });
   }
 
   registerFreelancer(payload: { userName: string; firstName: string; lastName: string; email: string; password: string }): Observable<HttpResponse<any>> {

@@ -13,6 +13,7 @@ import {NzAlertComponent} from 'ng-zorro-antd/alert';
 import {routes} from '../../../app.routes';
 import {catchError, tap, throwError} from 'rxjs';
 import {CookieService} from 'ngx-cookie-service';
+import {TokenService} from "../../../core/services/token/token.service";
 
 interface LoginForm {
   email: FormControl<string>;
@@ -33,7 +34,7 @@ export class LoginPageComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private cookieService: CookieService,
+    private tokenService: TokenService,
     ) { }
 
   form = new FormGroup<LoginForm>({
@@ -57,12 +58,7 @@ export class LoginPageComponent {
         )
         .subscribe(response => {
           if (response.body && response.body.accessToken && response.body.refreshToken) {
-
-            this.cookieService.delete('access_token');
-            this.cookieService.delete('refresh_token');
-
-            this.cookieService.set('access_token', response.body.accessToken, { path: '/' });
-            this.cookieService.set('refresh_token', response.body.refreshToken, { path: '/' });
+            this.tokenService.setTokens(response.body.accessToken, response.body.refreshToken);
             this.router.navigate(['/freelancer/home']);
           }
         });

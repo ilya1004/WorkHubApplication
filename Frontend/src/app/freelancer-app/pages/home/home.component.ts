@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ProjectsService} from "../../services/projects.service";
 import {Project} from "../../interfaces/my-projects/project.interface";
-import {PaginatedResult} from "../../../core/interfaces/paginated-result.interface";
+import {PaginatedResult} from "../../../core/interfaces/common/paginated-result.interface";
 import {CommonModule} from "@angular/common";
 import {NzTableModule} from "ng-zorro-antd/table";
 import {NzFormModule} from "ng-zorro-antd/form";

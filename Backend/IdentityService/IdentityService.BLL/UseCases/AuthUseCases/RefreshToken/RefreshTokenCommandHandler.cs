@@ -3,6 +3,7 @@ using IdentityService.BLL.Services.TokenProvider;
 using IdentityService.BLL.Settings;
 using IdentityService.DAL.Abstractions.Repositories;
 using System.Security.Claims;
+using IdentityService.BLL.Abstractions.TokenProvider;
 
 namespace IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
 

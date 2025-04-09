@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace IdentityService.BLL.Services.TokenProvider;
+namespace IdentityService.BLL.Abstractions.TokenProvider;
 
 public interface ITokenProvider
 {

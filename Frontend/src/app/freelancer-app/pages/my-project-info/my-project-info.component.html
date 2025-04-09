@@ -29,7 +29,16 @@
       </nz-descriptions>
     </nz-card>
     <div nz-flex>
-    ...
+      <div style="margin-top: 20px" *ngIf="project && canRequestAcceptance()">
+        <button
+          nz-button
+          nzType="primary"
+          [nzLoading]="submitting"
+          [disabled]="project.lifecycle.acceptanceRequested"
+          (click)="requestAcceptance()">
+          {{ project.lifecycle.acceptanceRequested ? 'Acceptance Requested' : 'Request Acceptance' }}
+        </button>
+      </div>
     </div>
   </div>
 

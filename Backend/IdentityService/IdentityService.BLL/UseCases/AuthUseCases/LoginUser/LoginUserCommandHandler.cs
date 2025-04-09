@@ -1,4 +1,5 @@
-﻿using IdentityService.BLL.DTOs;
+﻿using IdentityService.BLL.Abstractions.TokenProvider;
+using IdentityService.BLL.DTOs;
 using IdentityService.BLL.Services.TokenProvider;
 using IdentityService.BLL.Settings;
 using IdentityService.DAL.Abstractions.Repositories;

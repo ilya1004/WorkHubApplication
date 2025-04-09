@@ -74,7 +74,6 @@ export class ProjectChatComponent implements OnInit {
 
   async initializeChat(): Promise<void> {
     this.loading = true;
-    // console.log('Initializing chat for project:', this.projectId);
     try {
       await this.chatService.getChatByProjectId(this.projectId);
     } catch (error) {

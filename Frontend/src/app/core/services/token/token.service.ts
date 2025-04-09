@@ -12,63 +12,77 @@ import {Router} from "@angular/router";
   providedIn: 'root',
 })
 export class TokenService {
-
+  private refreshingToken = false;
+  private tokenRefreshInProgressLogged = false;
+  
   constructor(
     private httpClient: HttpClient,
     private cookieService: CookieService,
     private router: Router,
   ) {}
-
+  
   isAuthenticated(): boolean {
     const token = this.getAccessToken();
     if (!token) return false;
-
+    
     const decodedToken = this.decodeToken(token);
     return decodedToken !== null && decodedToken.exp * 1000 > Date.now();
   }
-
+  
   getUserRole(): string | null {
     const token = this.getAccessToken();
     if (!token) return null;
-
+    
     const decodedToken = this.decodeToken(token);
     return decodedToken?.role || null;
   }
-
+  
   getUserId(): string | null {
     const token = this.getAccessToken();
     if (!token) return null;
-
+    
     const decoded = this.decodeToken(token);
     return decoded?.userId || null;
   }
-
+  
   getAccessToken(): string | null {
     const token = this.cookieService.get('access_token');
+    // console.log("getAccessToken");
+    // console.log(token);
     if (!token) {
       console.warn('No access token found in cookies');
       return null;
     }
-
+    
     const decoded = this.decodeToken(token);
     if (!decoded || decoded.exp * 1000 < Date.now()) {
-      console.log('Access token is invalid or expired');
+      if (!this.tokenRefreshInProgressLogged) {
+        console.log('Access token is invalid or expired');
+        this.tokenRefreshInProgressLogged = true;
+      }
       return null;
     }
     return token;
   }
-
+  
   setTokens(accessToken: string, refreshToken: string): void {
-    const expires = this.getTokenExpiration(accessToken);
-    this.cookieService.set('access_token', accessToken, { path: '/', expires });
-    this.cookieService.set('refresh_token', refreshToken, { path: '/', expires: 30 }); // 30 дней для refresh token
+    console.log("setTokens");
+    console.log(accessToken, refreshToken);
+    this.cookieService.set('access_token', accessToken, { path: '/' });
+    this.cookieService.set('refresh_token', refreshToken, { path: '/' });
+    console.log('Cookies after set:', {
+      access: this.cookieService.get('access_token'),
+      refresh: this.cookieService.get('refresh_token')
+    });
+    this.tokenRefreshInProgressLogged = false;
   }
-
+  
   clearTokens(): void {
     this.cookieService.delete('access_token', '/');
     this.cookieService.delete('refresh_token', '/');
+    this.tokenRefreshInProgressLogged = false;
   }
-
+  
   private decodeToken(token: string): DecodedToken | null {
     try {
       const decoded = jwtDecode<{
@@ -77,7 +91,7 @@ export class TokenService {
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier': string;
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress': string;
       }>(token);
-
+      
       return {
         exp: decoded.exp,
         role: decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'],
@@ -85,65 +99,69 @@ export class TokenService {
         email: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'],
       };
     } catch (error) {
-      console.error('Ошибка при декодировании токена:', error);
+      console.error('Error in decoding token:', error);
       return null;
     }
   }
-
+  
   private getTokenExpiration(token: string): Date | undefined {
     const decoded = this.decodeToken(token);
     return decoded ? new Date(decoded.exp * 1000) : undefined;
   }
-
+  
   refreshToken(): Observable<string> {
-
+    if (this.refreshingToken) {
+      return new Observable(observer => {
+        const interval = setInterval(() => {
+          if (!this.refreshingToken) {
+            clearInterval(interval);
+            const token = this.getAccessToken();
+            if (token) observer.next(token);
+            else observer.error(new Error('Token refresh failed'));
+            observer.complete();
+          }
+        }, 100);
+      });
+    }
+    
     const refreshToken = this.cookieService.get('refresh_token');
     const accessToken = this.cookieService.get('access_token');
-
+    
     if (!refreshToken || !accessToken) {
       this.logout();
       return throwError(() => new Error('No refresh or access token available'));
     }
-
-    const payload = {
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-    }
-
+    
+    this.refreshingToken = true;
+    const payload = { accessToken, refreshToken };
     console.log(payload);
-
+    
     return this.httpClient.post<AuthInterface>(
       `${IDENTITY_SERVICE_API_URL}auth/refresh-token`, payload
     ).pipe(
       tap(response => {
         this.setTokens(response.accessToken, response.refreshToken);
+        this.refreshingToken = false;
         console.log('Token refreshed successfully');
       }),
       map(response => response.accessToken),
       catchError(error => {
+        this.refreshingToken = false;
         this.logout();
         return throwError(() => new Error('Failed to refresh token: ' + error.message));
       })
     );
   }
-
+  
   ensureValidToken(): Observable<string> {
-    const token = this.cookieService.get('access_token');
-
-    if (!token) {
-      console.log('No access token found, attempting refresh');
-      return this.refreshToken();
+    const token = this.getAccessToken();
+    if (token) {
+      return of(token);
     }
-
-    const decoded = this.decodeToken(token);
-    if (!decoded || decoded.exp * 1000 < Date.now()) {
-      console.log('Access token expired or invalid, attempting refresh');
-      return this.refreshToken();
-    }
-
-    return of(token);
+    console.log('Access token expired or invalid, attempting refresh');
+    return this.refreshToken();
   }
-
+  
   logout(): void {
     this.clearTokens();
     this.router.navigate(['/login']);

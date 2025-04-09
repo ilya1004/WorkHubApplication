@@ -4,7 +4,7 @@ import {IDENTITY_SERVICE_API_URL} from '../../core/constants';
 import {catchError, Observable, throwError} from 'rxjs';
 import {FreelancerUser} from '../interfaces/profile/freelancer-user.interface';
 import {FreelancerSkill} from '../interfaces/profile/skill.interface';
-import {PaginatedResult} from '../../core/interfaces/paginated-result.interface';
+import {PaginatedResult} from '../../core/interfaces/common/paginated-result.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -32,5 +32,11 @@ export class ProfileService {
       `${IDENTITY_SERVICE_API_URL}users/update-freelancer`,
       formData
     );
+  }
+  
+  changePassword(request: { email: string; currentPassword: string; newPassword: string }): Observable<void> {
+    return this.httpClient.post<void>(
+      `${IDENTITY_SERVICE_API_URL}users/change-password`,
+      request);
   }
 }

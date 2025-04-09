@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Observable} from "rxjs";
-import {PaginatedResult} from "../../core/interfaces/paginated-result.interface";
+import {PaginatedResult} from "../../core/interfaces/common/paginated-result.interface";
 import {Project} from "../interfaces/my-projects/project.interface";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {PROJECTS_SERVICE_API_URL} from "../../core/constants";
@@ -84,5 +84,9 @@ export class ProjectsService {
   
   cancelFreelancerApplication(applicationId: string): Observable<void> {
     return this.httpClient.delete<void>(`${PROJECTS_SERVICE_API_URL}freelancer-applications/${applicationId}`);
+  }
+  
+  requestProjectAcceptance(projectId: number): Observable<void> {
+    return this.httpClient.patch<void>(`${PROJECTS_SERVICE_API_URL}/projects/  ${projectId}/request-acceptance`, {});
   }
 }

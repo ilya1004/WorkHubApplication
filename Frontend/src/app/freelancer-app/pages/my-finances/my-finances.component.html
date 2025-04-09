@@ -1,8 +1,7 @@
 <div nz-flex nzGap="40px" class="finance-container">
-  <!-- Левая часть: информация о счете -->
   <div nz-flex nzVertical nzGap="large" class="account-section">
     <h2>My Account</h2>
-    <nz-card [nzLoading]="isLoadingAccount">
+    <nz-card [nzLoading]="isLoadingAccount" style="min-width: 350px;">
       @if (account) {
         <nz-descriptions nzBordered [nzColumn]="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }">
           <nz-descriptions-item nzTitle="Account ID">{{ account.id }}</nz-descriptions-item>
@@ -23,11 +22,9 @@
       }
     </nz-card>
     
-    <!-- Кнопки управления -->
     @if (account) {
       <div nz-flex nzGap="middle">
         <button nz-button nzType="default" (click)="refreshAccount()">Refresh Balance</button>
-        <!-- Дополнительные кнопки можно добавить позже -->
       </div>
     }
     
@@ -49,7 +46,6 @@
     </nz-alert>
   </div>
   
-  <!-- Правая часть: список транзакций -->
   <div nz-flex nzVertical nzGap="large" class="transactions-section">
     <h2>My Transfers</h2>
     <nz-card [nzLoading]="isLoadingTransfers">

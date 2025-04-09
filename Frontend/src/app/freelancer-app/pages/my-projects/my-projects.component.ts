@@ -15,7 +15,7 @@ import { Project } from "../../interfaces/my-projects/project.interface";
 import { NzInputDirective, NzInputGroupComponent } from "ng-zorro-antd/input";
 import { NzButtonComponent } from "ng-zorro-antd/button";
 import { DatePipe, NgForOf } from "@angular/common";
-import { PaginatedResult } from "../../../core/interfaces/paginated-result.interface";
+import { PaginatedResult } from "../../../core/interfaces/common/paginated-result.interface";
 import {PROJECT_STATUSES} from "../../../core/constants";
 import {NzWaveDirective} from "ng-zorro-antd/core/wave";
 import {Router} from "@angular/router";

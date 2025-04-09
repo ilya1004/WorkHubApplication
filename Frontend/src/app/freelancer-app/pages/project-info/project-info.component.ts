@@ -6,8 +6,8 @@ import {NzCardModule} from "ng-zorro-antd/card";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzDescriptionsModule} from "ng-zorro-antd/descriptions";
 import {ActivatedRoute, RouterLink} from "@angular/router";
-import {EmployerUserDto} from "../../../core/interfaces/employer-user-dto.interface";
-import {FreelancerUserDto} from "../../../core/interfaces/freelancer-user-dto.interface";
+import {EmployerUser} from "../../../core/interfaces/employer/employer-user.interface";
+import {FreelancerUser} from "../../../core/interfaces/freelancer/freelancer-user.interface";
 import {UsersService} from "../../services/users.service";
 import {ApplicationStatus} from "../../interfaces/my-projects/freelancer-application.interface";
 import {NzAlertModule} from "ng-zorro-antd/alert";
@@ -31,8 +31,8 @@ import {NzFlexDirective} from "ng-zorro-antd/flex";
 })
 export class ProjectInfoComponent implements OnInit {
   project: Project | null = null;
-  employer: EmployerUserDto | null = null;
-  freelancer: FreelancerUserDto | null = null;
+  employer: EmployerUser | null = null;
+  freelancer: FreelancerUser | null = null;
   loading = false;
   isApplying = false;
   isCancelling = false;
@@ -78,7 +78,7 @@ export class ProjectInfoComponent implements OnInit {
   
   loadEmployer(employerId: string): void {
     this.usersService.getEmployerInfo(employerId).subscribe({
-      next: (employer: EmployerUserDto) => {
+      next: (employer: EmployerUser) => {
         this.employer = employer;
         this.checkLoadingComplete();
       },
@@ -91,7 +91,7 @@ export class ProjectInfoComponent implements OnInit {
   
   loadFreelancer(freelancerId: string): void {
     this.usersService.getFreelancerInfo(freelancerId).subscribe({
-      next: (freelancer: FreelancerUserDto) => {
+      next: (freelancer: FreelancerUser) => {
         this.freelancer = freelancer;
         this.checkLoadingComplete();
       },
