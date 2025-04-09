@@ -2,7 +2,7 @@
   <div nz-flex nzVertical nzGap="large">
     <nz-spin [nzSpinning]="isLoadingUserData">
       <img
-        [src]="userData.imageUrl ? 'http://localhost:10000/devstoreaccount1/user-images/' + userData.imageUrl : 'assets/avatar-placeholder.png'"
+        [src]="userData.imageUrl ? 'http://localhost:10000/devstoreaccount1/user-images/' + userData.imageUrl : '/assets/images/avatar-placeholder.png'"
         alt="User avatar"
         style="border-radius: 10px; max-width: 300px; height: auto"
         (error)="onImageError($event)"

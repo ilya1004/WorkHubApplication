@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {IDENTITY_SERVICE_API_URL} from '../../core/data/constants';
-import {catchError, Observable, throwError} from 'rxjs';
-import {FreelancerUser} from '../interfaces/profile/freelancer-user.interface';
-import {FreelancerSkill} from '../interfaces/profile/skill.interface';
+import {Observable} from 'rxjs';
 import {PaginatedResult} from '../../core/interfaces/common/paginated-result.interface';
+import {FreelancerUser} from "../../core/interfaces/freelancer/freelancer-user.interface";
+import {FreelancerSkill} from "../../core/interfaces/freelancer/freelancer-skill.interface";
 
 @Injectable({
   providedIn: 'root'

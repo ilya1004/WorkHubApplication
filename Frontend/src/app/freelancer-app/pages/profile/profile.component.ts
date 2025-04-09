@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ProfileService} from '../../services/profile.service';
-import {FreelancerUser} from '../../interfaces/profile/freelancer-user.interface';
 import {NzFlexDirective} from 'ng-zorro-antd/flex';
-import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from '@angular/common';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {NzCardComponent} from 'ng-zorro-antd/card';
 import {NzTagComponent} from 'ng-zorro-antd/tag';
 import {NzButtonComponent} from 'ng-zorro-antd/button';
@@ -10,12 +9,12 @@ import {NzIconDirective} from 'ng-zorro-antd/icon';
 import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators} from '@angular/forms';
 import {NzInputDirective, NzInputGroupComponent} from 'ng-zorro-antd/input';
 import {NzSpaceComponent, NzSpaceItemDirective} from 'ng-zorro-antd/space';
-import {EditFreelancerForm} from '../../interfaces/profile/edit-form.interface';
 import {NzOptionComponent, NzSelectComponent} from 'ng-zorro-antd/select';
-import {FreelancerSkill} from '../../interfaces/profile/skill.interface';
 import {NzSpinComponent} from "ng-zorro-antd/spin";
 import {NzProgressComponent} from "ng-zorro-antd/progress";
 import {NzAlertComponent} from "ng-zorro-antd/alert";
+import {FreelancerSkill} from "../../../core/interfaces/freelancer/freelancer-skill.interface";
+import {FreelancerUser} from "../../../core/interfaces/freelancer/freelancer-user.interface";
 
 
 @Component({
@@ -69,7 +68,7 @@ export class ProfileComponent implements OnInit {
     firstName: '',
     lastName: '',
     about: '',
-    email: null,
+    email: '',
     registeredAt: '',
     stripeAccountId: null,
     skills: [],
@@ -203,7 +202,7 @@ export class ProfileComponent implements OnInit {
   }
   
   onImageError(event: Event): void {
-    (event.target as HTMLImageElement).src = 'assets/avatar-placeholder.png';
+    (event.target as HTMLImageElement).src = '/assets/images/avatar-placeholder.png';
   }
   
   onClickChangePassword(): void {

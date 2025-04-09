@@ -8,9 +8,9 @@ export interface FreelancerUser {
   about: string;
   email: string;
   registeredAt: string;
-  stripeAccountId?: string;
+  stripeAccountId?: string | null;
   skills: FreelancerSkill[];
-  imageUrl?: string;
+  imageUrl: string | null;
   roleName: string;
 }
 

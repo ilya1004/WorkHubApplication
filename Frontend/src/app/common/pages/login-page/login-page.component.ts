@@ -11,7 +11,7 @@ import {NgIf} from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
 import {NzAlertComponent} from 'ng-zorro-antd/alert';
 import {routes} from '../../../app.routes';
-import {catchError, tap, throwError} from 'rxjs';
+import {catchError, of, tap, throwError} from 'rxjs';
 import {CookieService} from 'ngx-cookie-service';
 import {TokenService} from "../../../core/services/token/token.service";
 
@@ -59,7 +59,20 @@ export class LoginPageComponent {
         .subscribe(response => {
           if (response.body && response.body.accessToken && response.body.refreshToken) {
             this.tokenService.setTokens(response.body.accessToken, response.body.refreshToken);
-            this.router.navigate(['/freelancer/home']);
+            const role = this.tokenService.getUserRole();
+            switch (role) {
+              case 'Freelancer':
+                this.router.navigate(['/freelancer/home']);
+                break;
+              case 'Employer':
+                this.router.navigate(['/employer/home']);
+                break;
+              case 'Admin':
+                this.router.navigate(['/admin/home']);
+                break;
+              default:
+                this.router.navigate(['/login']);
+            }
           }
         });
     } else {
@@ -69,18 +82,5 @@ export class LoginPageComponent {
 
   onCloseMessage() {
     this.errorMessage = null;
-  }
-
-  getFormValidationErrors() {
-    const errors: any[] = [];
-
-    Object.keys(this.form.controls).forEach(key => {
-      const controlErrors = this.form.get(key)?.errors;
-      if (controlErrors) {
-        errors.push({ field: key, errors: controlErrors });
-      }
-    });
-
-    return errors;
   }
 }
