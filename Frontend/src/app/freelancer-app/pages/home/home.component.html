@@ -1,4 +1,4 @@
-<div class="filters">
+<div nz-flex nzAlign="center" nzGap="40px">
   <nz-form-item>
     <nz-form-label>Title</nz-form-label>
     <nz-input-group>
@@ -33,7 +33,7 @@
     <nz-select
       [(ngModel)]="filterForm.categoryId"
       nzPlaceHolder="Select category"
-      style="width: 180px">
+      style="width: 190px">
       <nz-option *ngFor="let category of categories" [nzValue]="category.id" [nzLabel]="category.name"></nz-option>
     </nz-select>
   </nz-form-item>
@@ -43,7 +43,7 @@
     <nz-select
       [(ngModel)]="filterForm.projectStatus"
       nzPlaceHolder="Select status"
-      style="width: 180px">
+      style="width: 190px">
       <nz-option
         *ngFor="let status of PROJECT_STATUSES"
         [nzValue]="status.value"
@@ -52,7 +52,7 @@
     </nz-select>
   </nz-form-item>
 
-  <div class="filter-actions">
+  <div style="min-width: 190px">
     <button
       nz-button
       nzType="primary"

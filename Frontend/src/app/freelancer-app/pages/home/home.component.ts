@@ -12,6 +12,7 @@ import {NzButtonModule} from "ng-zorro-antd/button";
 import {Category} from "../../../core/interfaces/project/category.interface";
 import {PROJECT_STATUSES} from "../../../core/data/constants";
 import {Router} from "@angular/router";
+import {NzFlexDirective} from "ng-zorro-antd/flex";
 
 @Component({
   selector: 'app-home',
@@ -23,7 +24,8 @@ import {Router} from "@angular/router";
     NzButtonModule,
     NzFormModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NzFlexDirective
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'

@@ -1,7 +1,7 @@
-<div nz-flex nzGap="40px" class="finance-container">
-  <div nz-flex nzVertical nzGap="large" class="account-section">
+<div nz-flex nzGap="40px">
+  <div nz-flex nzVertical nzGap="large">
     <h2>My Account</h2>
-    <nz-card [nzLoading]="isLoadingAccount" style="min-width: 350px;">
+    <nz-card [nzLoading]="isLoadingAccount" style="min-width: 360px; min-height: 300px">
       @if (account) {
         <nz-descriptions nzBordered [nzColumn]="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }">
           <nz-descriptions-item nzTitle="Account ID">{{ account.id }}</nz-descriptions-item>
@@ -46,7 +46,7 @@
     </nz-alert>
   </div>
   
-  <div nz-flex nzVertical nzGap="large" class="transactions-section">
+  <div nz-flex nzVertical nzGap="large">
     <h2>My Transfers</h2>
     <nz-card [nzLoading]="isLoadingTransfers">
       @if (transfers.length > 0) {
