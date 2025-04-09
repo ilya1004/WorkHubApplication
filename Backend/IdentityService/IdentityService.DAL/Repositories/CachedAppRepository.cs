@@ -34,6 +34,11 @@ public class CachedAppRepository<TEntity>(
     public async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default,
         params Expression<Func<TEntity, object>>[]? includesProperties)
     {
+        if (includesProperties is not null && includesProperties.Length > 0)
+        {
+            return await repository.GetByIdAsync(id, cancellationToken, includesProperties);    
+        }
+        
         var cacheKey = $"{typeof(TEntity).Name}:{id}";
         var cachedEntity = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
 
@@ -134,12 +139,6 @@ public class CachedAppRepository<TEntity>(
 
         return count;
     }
-
-    // public async Task RemoveFromCache<TRecord>(string id)
-    // {
-    //     var cacheKey = $"{typeof(TRecord).Name}:{id}";
-    //     await distributedCache.RemoveAsync(cacheKey);
-    // } 
 
     private async Task InvalidateCacheAsync(string id)
     {

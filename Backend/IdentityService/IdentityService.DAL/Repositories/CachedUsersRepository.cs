@@ -17,9 +17,8 @@ public class CachedUsersRepository(
     public async Task<AppUser?> GetByIdAsync(Guid id, bool withTracking = true, CancellationToken cancellationToken = default,
         params Expression<Func<AppUser, object>>[]? includesProperties)
     {
-        if (withTracking)
+        if (includesProperties is not null && includesProperties.Length > 0)
         {
-            await InvalidateCacheAsync(id); 
             return await usersRepository.GetByIdAsync(id, withTracking, cancellationToken, includesProperties);
         }
         

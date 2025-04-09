@@ -1,3 +1,5 @@
+import {ProjectStatus} from "./project-status.interface";
+
 export interface Lifecycle {
     id: string;
     createdAt: string;
@@ -8,5 +10,5 @@ export interface Lifecycle {
     workDeadline: string;
     acceptanceRequested: boolean;
     acceptanceConfirmed: boolean;
-    status: number;
+    status: ProjectStatus;
 }

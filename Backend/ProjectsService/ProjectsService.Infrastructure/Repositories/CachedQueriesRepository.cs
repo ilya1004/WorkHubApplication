@@ -36,8 +36,14 @@ public class CachedQueriesRepository<TEntity>(
         return entities;
     }
 
-    public async Task<IReadOnlyList<TEntity>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[]? includesProperties)
+    public async Task<IReadOnlyList<TEntity>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default, 
+        params Expression<Func<TEntity, object>>[]? includesProperties)
     {
+        if (includesProperties is not null && includesProperties.Length > 0)
+        {
+            return await queriesRepository.PaginatedListAllAsync(offset, limit, cancellationToken, includesProperties);    
+        }
+        
         var cacheKey = $"{typeof(TEntity).Name}:PaginatedListAll:{offset}:{limit}";
         var cachedEntities = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
 
@@ -56,12 +62,14 @@ public class CachedQueriesRepository<TEntity>(
         return entities;
     }
 
-    public async Task<IReadOnlyList<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? filter, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[]? includesProperties)
+    public async Task<IReadOnlyList<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? filter, CancellationToken cancellationToken = default, 
+        params Expression<Func<TEntity, object>>[]? includesProperties)
     {
         return await queriesRepository.ListAsync(filter, cancellationToken, includesProperties);
     }
 
-    public async Task<IReadOnlyList<TEntity>> PaginatedListAsync(Expression<Func<TEntity, bool>>? filter, int offset, int limit, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[]? includesProperties)
+    public async Task<IReadOnlyList<TEntity>> PaginatedListAsync(Expression<Func<TEntity, bool>>? filter, int offset, int limit, 
+        CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[]? includesProperties)
     {
         return await queriesRepository.PaginatedListAsync(filter, offset, limit, cancellationToken, includesProperties);
     }
