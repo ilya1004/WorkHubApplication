@@ -3,7 +3,7 @@ using IdentityService.API.DTOs;
 
 namespace IdentityService.API.Validators.FreelancerSkillValidators;
 
-public class FreelancerSkillDTOValidator : AbstractValidator<FreelancerSkillDto>
+public class FreelancerSkillDTOValidator : AbstractValidator<FreelancerSkillDataDto>
 {
     public FreelancerSkillDTOValidator()
     {

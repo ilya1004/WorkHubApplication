@@ -12,7 +12,7 @@
             formControlName="email"
             placeholder="Enter your email"
             class="confirm-email-card__input">
-          <div *ngIf="confirmEmailForm.controls.email.invalid && confirmEmailForm.controls.email.touched" class="error">
+          <div *ngIf="confirmEmailForm.controls.email.invalid && confirmEmailForm.controls.email.touched" class="input-error-message">
             <div *ngIf="confirmEmailForm.controls.email.errors?.['required']">Email is required</div>
             <div *ngIf="confirmEmailForm.controls.email.errors?.['email']">Invalid email format</div>
           </div>
@@ -35,7 +35,7 @@
             formControlName="code"
             placeholder="Enter code from email"
             class="confirm-email-card__input">
-          <div *ngIf="confirmEmailForm.controls.code.invalid && confirmEmailForm.controls.code.touched" class="error">
+          <div *ngIf="confirmEmailForm.controls.code.invalid && confirmEmailForm.controls.code.touched" class="input-error-message">
             <div *ngIf="confirmEmailForm.controls.code.errors?.['required']">Code is required</div>
             <div *ngIf="confirmEmailForm.controls.code.errors?.['minlength'] || confirmEmailForm.controls.code.errors?.['maxlength']">
               Code must be exactly 6 characters

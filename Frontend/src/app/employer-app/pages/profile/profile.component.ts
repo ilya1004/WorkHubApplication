@@ -1,56 +1,53 @@
 import {Component, OnInit} from '@angular/core';
-import {ProfileService} from '../../services/profile.service';
-import {NzFlexDirective} from 'ng-zorro-antd/flex';
-import {DatePipe, NgForOf, NgIf} from '@angular/common';
-import {NzCardComponent} from 'ng-zorro-antd/card';
-import {NzTagComponent} from 'ng-zorro-antd/tag';
-import {NzButtonComponent} from 'ng-zorro-antd/button';
-import {NzIconDirective} from 'ng-zorro-antd/icon';
-import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators} from '@angular/forms';
-import {NzInputDirective, NzInputGroupComponent} from 'ng-zorro-antd/input';
-import {NzSpaceComponent, NzSpaceItemDirective} from 'ng-zorro-antd/space';
-import {NzOptionComponent, NzSelectComponent} from 'ng-zorro-antd/select';
-import {NzSpinComponent} from "ng-zorro-antd/spin";
 import {NzAlertComponent} from "ng-zorro-antd/alert";
-import {FreelancerSkill} from "../../../core/interfaces/freelancer/freelancer-skill.interface";
-import {FreelancerUser} from "../../../core/interfaces/freelancer/freelancer-user.interface";
-
+import {DatePipe, NgForOf, NgIf} from "@angular/common";
+import {NzFlexDirective} from "ng-zorro-antd/flex";
+import {NzSpinComponent} from "ng-zorro-antd/spin";
+import {NzCardComponent} from "ng-zorro-antd/card";
+import {NzIconDirective} from "ng-zorro-antd/icon";
+import {NzButtonComponent} from "ng-zorro-antd/button";
+import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators} from "@angular/forms";
+import {NzSpaceComponent, NzSpaceItemDirective} from "ng-zorro-antd/space";
+import {NzInputDirective, NzInputGroupComponent} from "ng-zorro-antd/input";
+import {NzOptionComponent, NzSelectComponent} from "ng-zorro-antd/select";
+import {NzProgressComponent} from "ng-zorro-antd/progress";
+import {EmployerUser} from "../../../core/interfaces/employer/employer-user.interface";
+import { EmployerIndustry } from '../../../core/interfaces/employer/employer-industry.interface';
+import {ProfileService} from "../../services/profile.service";
 
 @Component({
   selector: 'app-profile',
-  standalone: true,
   imports: [
+    NzAlertComponent,
+    NgIf,
     NzFlexDirective,
+    NzSpinComponent,
     NzCardComponent,
-    NzTagComponent,
-    NzButtonComponent,
     NzIconDirective,
-    NzInputDirective,
+    NzButtonComponent,
+    ReactiveFormsModule,
     NzSpaceComponent,
+    NzSpaceItemDirective,
+    NzInputDirective,
     NzSelectComponent,
     NzOptionComponent,
-    NzSpaceItemDirective,
-    NgIf,
     NgForOf,
-    NzSpinComponent,
-    NzAlertComponent,
-    ReactiveFormsModule,
-    DatePipe,
-    NzInputGroupComponent
+    NzProgressComponent,
+    NzInputGroupComponent,
+    DatePipe
   ],
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+  styleUrl: './profile.component.scss'
 })
 export class ProfileComponent implements OnInit {
-  availableSkills: FreelancerSkill[] = [];
-  
+  availableIndustries: EmployerIndustry[] = [];
   isEditing: boolean = false;
   isChangingPassword: boolean = false;
   isLoadingUserData: boolean = true;
-  isLoadingSkills: boolean = true;
+  isLoadingIndustries: boolean = true;
   isUpdating: boolean = false;
   isChangingPasswordInProgress: boolean = false;
-  
+  uploadProgress: number = 0;
   successMessage: string | null = null;
   passwordChangeMessage: string | null = null;
   passwordChangeError: string | null = null;
@@ -59,32 +56,37 @@ export class ProfileComponent implements OnInit {
   newPasswordVisible: boolean = false;
   confirmPasswordVisible: boolean = false;
   
-  userData: FreelancerUser = {
+  userData: EmployerUser = {
     id: '',
     userName: '',
-    firstName: '',
-    lastName: '',
+    companyName: '',
     about: '',
     email: '',
     registeredAt: '',
-    stripeAccountId: null,
-    skills: [],
+    stripeCustomerId: null,
+    industry: null,
     imageUrl: null,
     roleName: ''
   };
   
-  editFreelancerForm = new FormGroup({
-    firstName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
-    lastName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
-    about: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(1000)] }),
-    skillIds: new FormControl<string[]>([], { nonNullable: true }),
+  editEmployerForm = new FormGroup({
+    companyName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
+    about: new FormControl<string | null>(null, { validators: [Validators.maxLength(1000)] }),
+    industryId: new FormControl<string | null>(null),
     resetImage: new FormControl(false, { nonNullable: true }),
     image: new FormControl<File | null>(null),
   });
   
   changePasswordForm = new FormGroup({
-    currentPassword: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(6)] }),
-    newPassword: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(6)] }),
+    currentPassword: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(8)] }),
+    newPassword: new FormControl('', { nonNullable: true, validators: [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern(/[a-z]/),
+        Validators.pattern(/[A-Z]/),
+        Validators.pattern(/[0-9]/),
+        Validators.pattern(/[^a-zA-Z0-9]/)
+      ] }),
     confirmNewPassword: new FormControl('', { nonNullable: true, validators: [Validators.required] })
   }, { validators: this.passwordsMatchValidator });
   
@@ -92,7 +94,7 @@ export class ProfileComponent implements OnInit {
   
   ngOnInit(): void {
     this.loadUserData();
-    this.loadAvailableSkills();
+    this.loadAvailableIndustries();
   }
   
   loadUserData(): void {
@@ -103,22 +105,22 @@ export class ProfileComponent implements OnInit {
         this.isLoadingUserData = false;
       },
       error: (err) => {
-        console.error('Error loading user data:', err);
+        console.error('Error loading employer data:', err);
         this.isLoadingUserData = false;
       }
     });
   }
   
-  loadAvailableSkills(): void {
-    this.isLoadingSkills = true;
-    this.profileService.getAvailableSkill().subscribe({
-      next: (value) => {
-        this.availableSkills = value.items;
-        this.isLoadingSkills = false;
+  loadAvailableIndustries(): void {
+    this.isLoadingIndustries = true;
+    this.profileService.getAvailableIndustries().subscribe({
+      next: (result) => {
+        this.availableIndustries = result.items;
+        this.isLoadingIndustries = false;
       },
       error: (err) => {
-        console.error('Error loading skills:', err);
-        this.isLoadingSkills = false;
+        console.error('Error loading industries:', err);
+        this.isLoadingIndustries = false;
       }
     });
   }
@@ -127,38 +129,43 @@ export class ProfileComponent implements OnInit {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files.length > 0) {
       const file = fileInput.files[0];
-      this.editFreelancerForm.patchValue({ image: file });
+      this.editEmployerForm.patchValue({ image: file });
     }
   }
   
   onSubmitEditForm(): void {
-    if (this.editFreelancerForm.valid) {
+    if (this.editEmployerForm.valid) {
       this.isUpdating = true;
       const formData = new FormData();
-      const formValue = this.editFreelancerForm.getRawValue();
+      const formValue = this.editEmployerForm.getRawValue();
       
-      formData.append('FreelancerProfile.FirstName', formValue.firstName);
-      formData.append('FreelancerProfile.LastName', formValue.lastName);
-      formData.append('FreelancerProfile.About', formValue.about);
-      formData.append('FreelancerProfile.ResetImage', String(formValue.resetImage));
-      formValue.skillIds.forEach((id, index) => {
-        formData.append(`FreelancerProfile.SkillIds[${index}]`, id);
-      });
+      formData.append('EmployerProfile.CompanyName', formValue.companyName);
+      formData.append('EmployerProfile.About', formValue.about || '');
+      formData.append('EmployerProfile.IndustryId', formValue.industryId || '');
+      formData.append('EmployerProfile.ResetImage', String(formValue.resetImage));
       if (formValue.image) {
         formData.append('ImageFile', formValue.image);
       }
       
-      this.profileService.updateFreelancerProfile(formData).subscribe({
+      // this.uploadProgress = 0;
+      const interval = setInterval(() => {
+        this.uploadProgress += 20;
+        if (this.uploadProgress >= 100) clearInterval(interval);
+      }, 100);
+      
+      this.profileService.updateEmployerProfile(formData).subscribe({
         next: () => {
           this.isUpdating = false;
+          this.uploadProgress = 0;
           this.successMessage = 'Profile updated successfully!';
           this.loadUserData();
           this.isEditing = false;
-          setTimeout(() => this.successMessage = null, 3000);
+          setTimeout(() => this.successMessage = null, 5000);
         },
         error: (err) => {
           console.error('Error updating profile:', err);
           this.isUpdating = false;
+          this.uploadProgress = 0;
         }
       });
     }
@@ -166,25 +173,25 @@ export class ProfileComponent implements OnInit {
   
   onClickEdit(): void {
     this.isEditing = !this.isEditing;
-    // this.uploadProgress = 0;
     if (this.isEditing) {
-      this.editFreelancerForm.patchValue({
-        firstName: this.userData.firstName,
-        lastName: this.userData.lastName,
+      this.uploadProgress = 0;
+      this.editEmployerForm.patchValue({
+        companyName: this.userData.companyName,
         about: this.userData.about,
-        skillIds: this.userData.skills.map(skill => skill.id)
+        industryId: this.userData.industry?.id || null,
+        resetImage: false,
+        image: null
       });
     }
   }
   
   onCancelEdit(): void {
     this.isEditing = false;
-    // this.uploadProgress = 0;
-    this.editFreelancerForm.reset({
-      firstName: this.userData.firstName,
-      lastName: this.userData.lastName,
+    this.uploadProgress = 0;
+    this.editEmployerForm.reset({
+      companyName: this.userData.companyName,
       about: this.userData.about,
-      skillIds: this.userData.skills.map(skill => skill.id),
+      industryId: this.userData.industry?.id || null,
       resetImage: false,
       image: null
     });
@@ -213,7 +220,7 @@ export class ProfileComponent implements OnInit {
       const formValue = this.changePasswordForm.getRawValue();
       
       const request = {
-        email: this.userData.email!,
+        email: this.userData.email,
         currentPassword: formValue.currentPassword,
         newPassword: formValue.newPassword
       };
@@ -224,7 +231,7 @@ export class ProfileComponent implements OnInit {
           this.passwordChangeMessage = 'Password changed successfully!';
           this.isChangingPassword = false;
           this.changePasswordForm.reset();
-          setTimeout(() => this.passwordChangeMessage = null, 5000);
+          setTimeout(() => this.passwordChangeMessage = null, 3000);
         },
         error: (err) => {
           this.isChangingPasswordInProgress = false;

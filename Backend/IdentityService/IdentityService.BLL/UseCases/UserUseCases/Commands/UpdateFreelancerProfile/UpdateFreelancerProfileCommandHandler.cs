@@ -25,8 +25,6 @@ public class UpdateFreelancerProfileCommandHandler(
 
         if (user is null)
         {
-            logger.LogWarning("User with ID {UserId} not found", userId);
-        
             throw new NotFoundException($"User with ID '{userId}' not found");
         }
         
@@ -44,7 +42,6 @@ public class UpdateFreelancerProfileCommandHandler(
         var allPotentialSkills = await unitOfWork.FreelancerSkillsRepository.ListAsync(
             s => newSkillIds.Contains(s.Id), cancellationToken);
         
-        // var currentSkillIds = .ToList();
         var skillsToAdd = allPotentialSkills.Where(s => 
             !currentSkills.Select(cs => cs.Id).Contains(s.Id)).ToList();
         
@@ -55,8 +52,6 @@ public class UpdateFreelancerProfileCommandHandler(
         
         if (request.FreelancerProfile.ResetImage)
         {
-            logger.LogInformation("Resetting user image");
-        
             user.ImageUrl = null;
         }
 

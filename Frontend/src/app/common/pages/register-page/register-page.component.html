@@ -38,7 +38,7 @@
               formControlName="userName"
               placeholder="Enter your nickname"
               class="register-card__input">
-            <div *ngIf="freelancerForm.controls.userName.invalid && freelancerForm.controls.userName.touched" class="error">
+            <div *ngIf="freelancerForm.controls.userName.invalid && freelancerForm.controls.userName.touched" class="input-error-message">
               <div *ngIf="freelancerForm.controls.userName.errors?.['required']">Username is required</div>
               <div *ngIf="freelancerForm.controls.userName.errors?.['maxlength']">Username must be at most 200 characters</div>
             </div>
@@ -50,7 +50,7 @@
               formControlName="firstName"
               placeholder="Enter your first name"
               class="register-card__input">
-            <div *ngIf="freelancerForm.controls.firstName.invalid && freelancerForm.controls.firstName.touched" class="error">
+            <div *ngIf="freelancerForm.controls.firstName.invalid && freelancerForm.controls.firstName.touched" class="input-error-message">
               <div *ngIf="freelancerForm.controls.firstName.errors?.['required']">First name is required</div>
               <div *ngIf="freelancerForm.controls.firstName.errors?.['maxlength']">First name must be at most 100 characters</div>
             </div>
@@ -62,7 +62,7 @@
               formControlName="lastName"
               placeholder="Enter your last name"
               class="register-card__input">
-            <div *ngIf="freelancerForm.controls.lastName.invalid && freelancerForm.controls.lastName.touched" class="error">
+            <div *ngIf="freelancerForm.controls.lastName.invalid && freelancerForm.controls.lastName.touched" class="input-error-message">
               <div *ngIf="freelancerForm.controls.lastName.errors?.['required']">Last name is required</div>
               <div *ngIf="freelancerForm.controls.lastName.errors?.['maxlength']">Last name must be at most 100 characters</div>
             </div>
@@ -74,7 +74,7 @@
               formControlName="email"
               placeholder="Enter your email"
               class="register-card__input">
-            <div *ngIf="freelancerForm.controls.email.invalid && freelancerForm.controls.email.touched" class="error">
+            <div *ngIf="freelancerForm.controls.email.invalid && freelancerForm.controls.email.touched" class="input-error-message">
               <div *ngIf="freelancerForm.controls.email.errors?.['required']">Email is required</div>
               <div *ngIf="freelancerForm.controls.email.errors?.['email']">Invalid email format</div>
             </div>
@@ -99,7 +99,7 @@
                 nzTheme="outline"
                 style="color: var(--white-color)"/>
             </ng-template>
-            <div *ngIf="freelancerForm.controls.password.invalid && freelancerForm.controls.password.touched" class="error">
+            <div *ngIf="freelancerForm.controls.password.invalid && freelancerForm.controls.password.touched" class="input-error-message">
               <div *ngIf="freelancerForm.controls.password.errors?.['required']" style="max-width: 300px">
                 Password is required
               </div>
@@ -131,7 +131,7 @@
                 nzTheme="outline"
                 style="color: var(--white-color)"/>
             </ng-template>
-            <div *ngIf="freelancerForm.controls.passwordConfirm.invalid && freelancerForm.controls.passwordConfirm.touched" class="error">
+            <div *ngIf="freelancerForm.controls.passwordConfirm.invalid && freelancerForm.controls.passwordConfirm.touched" class="input-error-message">
               <div *ngIf="freelancerForm.errors?.['passwordsMismatch']">Passwords do not match</div>
             </div>
           </div>
@@ -155,7 +155,7 @@
               formControlName="userName"
               placeholder="Enter your nickname"
               class="register-card__input">
-            <div *ngIf="employerForm.controls.userName.invalid && employerForm.controls.userName.touched" class="error">
+            <div *ngIf="employerForm.controls.userName.invalid && employerForm.controls.userName.touched" class="input-error-message">
               <div *ngIf="employerForm.controls.userName.errors?.['required']">Username is required</div>
               <div *ngIf="employerForm.controls.userName.errors?.['maxlength']">Username must be at most 200 characters</div>
             </div>
@@ -167,7 +167,7 @@
               formControlName="companyName"
               placeholder="Enter your company name"
               class="register-card__input">
-            <div *ngIf="employerForm.controls.companyName.invalid && employerForm.controls.companyName.touched" class="error">
+            <div *ngIf="employerForm.controls.companyName.invalid && employerForm.controls.companyName.touched" class="input-error-message">
               <div *ngIf="employerForm.controls.companyName.errors?.['required']">First name is required</div>
               <div *ngIf="employerForm.controls.companyName.errors?.['maxlength']">First name must be at most 100 characters</div>
             </div>
@@ -179,7 +179,7 @@
               formControlName="email"
               placeholder="Enter your email"
               class="register-card__input">
-            <div *ngIf="employerForm.controls.email.invalid && employerForm.controls.email.touched" class="error">
+            <div *ngIf="employerForm.controls.email.invalid && employerForm.controls.email.touched" class="input-error-message">
               <div *ngIf="employerForm.controls.email.errors?.['required']">Email is required</div>
               <div *ngIf="employerForm.controls.email.errors?.['email']">Invalid email format</div>
             </div>
@@ -204,7 +204,7 @@
                 nzTheme="outline"
                 style="color: var(--white-color)"/>
             </ng-template>
-            <div *ngIf="employerForm.controls.password.invalid && employerForm.controls.password.touched" class="error">
+            <div *ngIf="employerForm.controls.password.invalid && employerForm.controls.password.touched" class="input-error-message">
               <div *ngIf="employerForm.controls.password.errors?.['required']">Password is required</div>
               <div *ngIf="employerForm.controls.password.errors?.['minlength']">Password must be at least 8 characters</div>
               <div *ngIf="employerForm.controls.password.errors?.['pattern']">Password must contain uppercase, lowercase, digit, and special character</div>
@@ -230,7 +230,7 @@
                 nzTheme="outline"
                 style="color: var(--white-color)"/>
             </ng-template>
-            <div *ngIf="employerForm.controls.passwordConfirm.invalid && employerForm.controls.passwordConfirm.touched" class="error">
+            <div *ngIf="employerForm.controls.passwordConfirm.invalid && employerForm.controls.passwordConfirm.touched" class="input-error-message">
               <div *ngIf="employerForm.errors?.['passwordsMismatch']">Passwords do not match</div>
             </div>
           </div>

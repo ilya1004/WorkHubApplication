@@ -3,9 +3,9 @@ using IdentityService.BLL.UseCases.AuthUseCases.ResendEmailConfirmation;
 
 namespace IdentityService.API.Mapping.AuthMappingProfiles;
 
-public class ResendEmailConfirmationRequestToCommandProfile : Profile
+public class ResendEmailConfirmationRequestToCommand : Profile
 {
-    public ResendEmailConfirmationRequestToCommandProfile()
+    public ResendEmailConfirmationRequestToCommand()
     {
         CreateMap<ResendEmailConfirmationRequest, ResendEmailConfirmationCommand>();
     }

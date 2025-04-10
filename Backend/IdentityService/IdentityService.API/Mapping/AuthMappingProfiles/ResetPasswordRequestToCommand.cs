@@ -3,9 +3,9 @@ using IdentityService.BLL.UseCases.AuthUseCases.ResetPassword;
 
 namespace IdentityService.API.Mapping.AuthMappingProfiles;
 
-public class ResetPasswordRequestToCommandProfile : Profile
+public class ResetPasswordRequestToCommand : Profile
 {
-    public ResetPasswordRequestToCommandProfile()
+    public ResetPasswordRequestToCommand()
     {
         CreateMap<ResetPasswordRequest, ResetPasswordCommand>();
     }

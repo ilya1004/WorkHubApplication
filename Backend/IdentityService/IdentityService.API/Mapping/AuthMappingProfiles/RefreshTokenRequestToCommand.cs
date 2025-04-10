@@ -3,9 +3,9 @@ using IdentityService.BLL.UseCases.AuthUseCases.RefreshToken;
 
 namespace IdentityService.API.Mapping.AuthMappingProfiles;
 
-public class RefreshTokenRequestToCommandProfile : Profile
+public class RefreshTokenRequestToCommand : Profile
 {
-    public RefreshTokenRequestToCommandProfile()
+    public RefreshTokenRequestToCommand()
     {
         CreateMap<RefreshTokenRequest, RefreshTokenCommand>();
     }

@@ -3,9 +3,9 @@ using IdentityService.BLL.UseCases.UserUseCases.Commands.RegisterEmployer;
 
 namespace IdentityService.API.Mapping.UserMappingProfiles;
 
-public class RegisterEmployerRequestToCommandProfile : Profile
+public class RegisterEmployerRequestToCommand : Profile
 {
-    public RegisterEmployerRequestToCommandProfile()
+    public RegisterEmployerRequestToCommand()
     {
         CreateMap<RegisterEmployerRequest, RegisterEmployerCommand>();
     }

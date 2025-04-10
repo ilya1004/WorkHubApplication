@@ -3,12 +3,14 @@ import {Router} from "@angular/router";
 import {TokenService} from "../../../core/services/token/token.service";
 import {NzResultComponent} from "ng-zorro-antd/result";
 import {NzButtonComponent} from "ng-zorro-antd/button";
+import {NzFlexDirective} from "ng-zorro-antd/flex";
 
 @Component({
   selector: 'app-not-found',
   imports: [
     NzResultComponent,
-    NzButtonComponent
+    NzButtonComponent,
+    NzFlexDirective
   ],
   templateUrl: './not-found.component.html',
   styleUrl: './not-found.component.scss'

@@ -9,7 +9,7 @@ public record EmployerUserDto
     public string Email { get; init; }
     public DateTime RegisteredAt { get; init; }
     public string? StripeCustomerId { get; set; }
-    public string IndustryName { get; init; }
+    public EmployerIndustryDto? Industry { get; init; }
     public string? ImageUrl { get; init; }
     public string RoleName { get; init; }
 }

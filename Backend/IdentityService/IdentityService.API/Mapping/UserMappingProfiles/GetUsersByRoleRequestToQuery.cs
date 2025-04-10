@@ -3,9 +3,9 @@ using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUsersByRole;
 
 namespace IdentityService.API.Mapping.UserMappingProfiles;
 
-public class GetUsersByRoleRequestToQueryProfile : Profile
+public class GetUsersByRoleRequestToQuery : Profile
 {
-    public GetUsersByRoleRequestToQueryProfile()
+    public GetUsersByRoleRequestToQuery()
     {
         CreateMap<GetUsersByRoleRequest, GetUsersByRoleQuery>();
     }

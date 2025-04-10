@@ -3,7 +3,7 @@
     <nz-spin [nzSpinning]="isLoadingUserData">
       <img
         [src]="userData.imageUrl ? 'http://localhost:10000/devstoreaccount1/user-images/' + userData.imageUrl : '/assets/images/avatar-placeholder.png'"
-        alt="User avatar"
+        alt="Company avatar"
         style="border-radius: 10px; max-width: 300px; height: auto"
         (error)="onImageError($event)"
       />
@@ -34,20 +34,12 @@
   <div nz-flex nzVertical nzGap="large">
     <nz-card style="min-width: 550px; min-height: 250px">
       <nz-spin [nzSpinning]="isLoadingUserData">
-        <h2>{{ userData.firstName }} {{ userData.lastName }}</h2>
-        <div><strong>About me:</strong></div>
+        <h2>{{ userData.companyName }}</h2>
+        <div><strong>About company:</strong></div>
         <div>{{ userData.about || 'No description provided' }}</div>
         <br />
-        <div><strong>My skills:</strong></div>
-        <div>
-          @if (userData.skills.length > 0) {
-            @for (skill of userData.skills; track skill.id) {
-              <nz-tag nzColor="blue">{{ skill.name }}</nz-tag>
-            }
-          } @else {
-            <span>No skills added yet</span>
-          }
-        </div>
+        <div><strong>Industry:</strong></div>
+        <div>{{ userData.industry?.name || 'Not specified' }}</div>
       </nz-spin>
     </nz-card>
     
@@ -55,31 +47,19 @@
       <nz-card>
         <nz-spin [nzSpinning]="isUpdating">
           <form
-            [formGroup]="editFreelancerForm"
+            [formGroup]="editEmployerForm"
             (ngSubmit)="onSubmitEditForm()"
             style="margin: 15px 0 0 0">
             <nz-space nzSize="middle" nzDirection="vertical">
               <div *nzSpaceItem>
                 <input
                   nz-input
-                  formControlName="firstName"
-                  placeholder="Enter your first name"
+                  formControlName="companyName"
+                  placeholder="Enter company name"
                   class="profile-input" />
-                <div *ngIf="editFreelancerForm.controls.firstName.invalid && editFreelancerForm.controls.firstName.touched" class="input-error-message">
-                  <div *ngIf="editFreelancerForm.controls.firstName.errors?.['required']">First name is required</div>
-                  <div *ngIf="editFreelancerForm.controls.firstName.errors?.['maxlength']">Max 100 characters</div>
-                </div>
-              </div>
-              
-              <div *nzSpaceItem>
-                <input
-                  nz-input
-                  formControlName="lastName"
-                  placeholder="Enter your last name"
-                  class="profile-input" />
-                <div *ngIf="editFreelancerForm.controls.lastName.invalid && editFreelancerForm.controls.lastName.touched" class="input-error-message">
-                  <div *ngIf="editFreelancerForm.controls.lastName.errors?.['required']">Last name is required</div>
-                  <div *ngIf="editFreelancerForm.controls.lastName.errors?.['maxlength']">Max 100 characters</div>
+                <div *ngIf="editEmployerForm.controls.companyName.invalid && editEmployerForm.controls.companyName.touched" class="input-error-message">
+                  <div *ngIf="editEmployerForm.controls.companyName.errors?.['required']">Company name is required</div>
+                  <div *ngIf="editEmployerForm.controls.companyName.errors?.['maxlength']">Max 100 characters</div>
                 </div>
               </div>
               
@@ -87,22 +67,21 @@
                 <textarea
                   nz-input
                   formControlName="about"
-                  placeholder="Tell about yourself"
+                  placeholder="Tell about your company"
                   rows="4"
                   class="profile-input"></textarea>
-                <div *ngIf="editFreelancerForm.controls.about.invalid && editFreelancerForm.controls.about.touched" class="input-error-message">
-                  <div *ngIf="editFreelancerForm.controls.about.errors?.['maxlength']">Max 1000 characters</div>
+                <div *ngIf="editEmployerForm.controls.about.invalid && editEmployerForm.controls.about.touched" class="input-error-message">
+                  <div *ngIf="editEmployerForm.controls.about.errors?.['maxlength']">Max 1000 characters</div>
                 </div>
               </div>
               
               <div *nzSpaceItem>
                 <nz-select
-                  nzMode="multiple"
-                  formControlName="skillIds"
-                  nzPlaceHolder="Select your skills"
+                  formControlName="industryId"
+                  nzPlaceHolder="Select industry"
                   style="min-width: 300px; max-width: 350px;"
-                  [nzLoading]="isLoadingSkills">
-                  <nz-option *ngFor="let skill of availableSkills" [nzValue]="skill.id" [nzLabel]="skill.name"></nz-option>
+                  [nzLoading]="isLoadingIndustries">
+                  <nz-option *ngFor="let industry of availableIndustries" [nzValue]="industry.id" [nzLabel]="industry.name"></nz-option>
                 </nz-select>
               </div>
               
@@ -115,13 +94,14 @@
               <div *nzSpaceItem>
                 <input
                   type="file"
-                  [disabled]="editFreelancerForm.value.resetImage"
+                  [disabled]="editEmployerForm.value.resetImage"
                   (change)="onFileSelected($event)"
                   accept="image/*" />
+                <nz-progress *ngIf="uploadProgress > 0" [nzPercent]="uploadProgress" />
               </div>
               
               <div *nzSpaceItem nz-flex nzGap="middle">
-                <button nz-button nzType="primary" type="submit" [disabled]="editFreelancerForm.invalid" style="border-radius: 7px">
+                <button nz-button nzType="primary" type="submit" [disabled]="editEmployerForm.invalid" style="border-radius: 7px">
                   Save Changes
                 </button>
                 <button nz-button nzType="default" (click)="onCancelEdit()">Cancel</button>

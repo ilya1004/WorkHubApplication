@@ -6,6 +6,7 @@ import {ResetPasswordComponent} from './common/pages/reset-password/reset-passwo
 import {ConfirmEmailComponent} from './common/pages/confirm-email/confirm-email.component';
 import {NotFoundComponent} from "./common/pages/not-found/not-found.component";
 import {RootRedirectComponent} from "./common/components/root-redirect/root-redirect.component";
+
 import {canActivateFreelancerApp} from './core/guards/freelancer-auth.guard';
 import {HomeComponent as FreelancerHomeComponent} from './freelancer-app/pages/home/home.component';
 import {MyProjectsComponent as FreelancerMyProjectsComponent} from './freelancer-app/pages/my-projects/my-projects.component';
@@ -17,6 +18,7 @@ import {MyFinancesComponent as FreelancerMyFinancesComponent} from "./freelancer
 
 import {canActivateEmployerApp} from "./core/guards/employer-auth.guard";
 import {LayoutComponent as EmployerLayoutComponent} from "./employer-app/components/layout/layout.component";
+import {ProfileComponent as EmployerProfileComponent} from "./employer-app/pages/profile/profile.component";
 
 
 export const routes: Routes = [
@@ -44,7 +46,7 @@ export const routes: Routes = [
     component: EmployerLayoutComponent,
     canActivate: [canActivateEmployerApp],
     children: [
-    
+      {path: 'my-profile', component: EmployerProfileComponent}
     ]
   },
   { path: '**', component: NotFoundComponent }

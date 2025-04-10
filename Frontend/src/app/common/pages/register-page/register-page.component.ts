@@ -10,8 +10,8 @@ import {NzSpaceComponent, NzSpaceItemDirective} from 'ng-zorro-antd/space';
 import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../../core/services/auth/auth.service';
 import {NzRadioComponent, NzRadioGroupComponent} from 'ng-zorro-antd/radio';
-import {RegisterFreelancerForm} from './register-freelancer-form.interface';
-import {RegisterEmployerForm} from './register-employer-form.interface';
+import {RegisterFreelancerForm} from '../../interfaces/register/register-freelancer-form.interface';
+import {RegisterEmployerForm} from '../../interfaces/register/register-employer-form.interface';
 import {catchError, tap, throwError} from 'rxjs';
 
 
@@ -82,10 +82,10 @@ export class RegisterPageComponent {
       validators: [
         Validators.required,
         Validators.minLength(8),
-        Validators.pattern(/[a-z]/), // хотя бы одна строчная буква
-        Validators.pattern(/[A-Z]/), // хотя бы одна заглавная буква
-        Validators.pattern(/[0-9]/), // хотя бы одна цифра
-        Validators.pattern(/[^a-zA-Z0-9]/) // хотя бы один спецсимвол
+        Validators.pattern(/[a-z]/),
+        Validators.pattern(/[A-Z]/),
+        Validators.pattern(/[0-9]/),
+        Validators.pattern(/[^a-zA-Z0-9]/)
       ]
     }),
     passwordConfirm: new FormControl('',

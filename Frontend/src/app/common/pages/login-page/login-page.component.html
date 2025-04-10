@@ -12,7 +12,7 @@
             formControlName="email"
             placeholder="Enter your email"
             class="login-card__input">
-          <div *ngIf="form.controls.email.invalid && form.controls.email.touched" class="error">
+          <div *ngIf="form.controls.email.invalid && form.controls.email.touched" class="input-error-message">
             <div *ngIf="form.controls.email.errors?.['required']">Email is required</div>
             <div *ngIf="form.controls.email.errors?.['email']">Invalid email format</div>
           </div>
@@ -35,7 +35,7 @@
               (click)="passwordVisible = !passwordVisible"
               style="color: var(--white-color)"/>
           </ng-template>
-          <div *ngIf="form.controls.password.invalid && form.controls.password.touched" class="error">
+          <div *ngIf="form.controls.password.invalid && form.controls.password.touched" class="input-error-message">
             <div *ngIf="form.controls.password.errors?.['required']">Password is required</div>
             <div *ngIf="form.controls.password.errors?.['minlength']">
               Password must be at least {{ form.controls.password.errors?.['minlength'].length}} characters

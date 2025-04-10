@@ -21,8 +21,8 @@ public class AppUserToEmployerUserDto : Profile
                 opt.MapFrom(src => src.RegisteredAt))
             .ForMember(dest => dest.StripeCustomerId, opt =>
                 opt.MapFrom(src => src.EmployerProfile!.StripeCustomerId))
-            .ForMember(dest => dest.IndustryName, opt =>
-                opt.MapFrom(src => src.EmployerProfile!.Industry!.Name))
+            .ForMember(dest => dest.Industry, opt =>
+                opt.MapFrom(src => new EmployerIndustryDto(src.EmployerProfile!.Industry!.Id.ToString(), src.EmployerProfile.Industry.Name)))
             .ForMember(dest => dest.ImageUrl, opt =>
                 opt.MapFrom(src => src.ImageUrl))
             .ForMember(dest => dest.RoleName, opt =>

@@ -19,7 +19,12 @@ public class UpdateEmployerProfileCommandHandler(
         
         logger.LogInformation("Updating employer profile for user ID: {UserId}", userId);
 
-        var user = await userManager.FindByIdAsync(userId.ToString());
+        var user = await unitOfWork.UsersRepository.GetByIdAsync(
+            userId,
+            true,
+            cancellationToken,
+            u => u.EmployerProfile!,
+            u => u.EmployerProfile!.Industry!);  
 
         if (user is null)
         {
@@ -27,15 +32,33 @@ public class UpdateEmployerProfileCommandHandler(
         
             throw new NotFoundException($"User with ID '{userId}' not found");
         }
-
-        logger.LogInformation("Mapping employer profile changes");
         
         mapper.Map(request.EmployerProfile, user.EmployerProfile);
 
+        if (request.EmployerProfile.IndustryId.HasValue)
+        {
+            if (request.EmployerProfile.IndustryId.Value != user.EmployerProfile!.Industry?.Id)
+            {
+                var industry = await unitOfWork.EmployerIndustriesRepository.GetByIdAsync(
+                    request.EmployerProfile.IndustryId.Value, cancellationToken);
+
+                if (industry is null)
+                {
+                    logger.LogWarning("Industry with ID {IndustryId} not found", request.EmployerProfile.IndustryId);
+                    
+                    throw new NotFoundException($"Industry with ID '{request.EmployerProfile.IndustryId}' not found");
+                }
+
+                user.EmployerProfile!.Industry = industry;
+            }
+        }
+        else if (user.EmployerProfile!.Industry is not null)
+        {
+            user.EmployerProfile!.Industry = null;
+        }
+        
         if (request.EmployerProfile.ResetImage)
         {
-            logger.LogInformation("Resetting user image");
-        
             user.ImageUrl = null;
         }
 
@@ -65,7 +88,6 @@ public class UpdateEmployerProfileCommandHandler(
             user.ImageUrl = imageFileId.ToString();
         }
 
-        await unitOfWork.UsersRepository.UpdateAsync(user, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);
 
         logger.LogInformation("Successfully updated employer profile for user ID: {UserId}", userId);

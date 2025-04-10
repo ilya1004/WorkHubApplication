@@ -31,7 +31,7 @@
       <nz-descriptions-item nzTitle="Company Name">{{ employer.companyName }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Username">{{ employer.userName }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Email">{{ employer.email }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Industry">{{ employer.industryName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Industry">{{ employer.industry?.name || "None" }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="About" nzSpan="2">{{ employer.about }}</nz-descriptions-item>
     </nz-descriptions>
     

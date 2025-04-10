@@ -3,7 +3,7 @@ using IdentityService.API.DTOs;
 
 namespace IdentityService.API.Validators.EmployerIndustryValidators;
 
-public class EmployerIndustryDTOValidator : AbstractValidator<EmployerIndustryDto>
+public class EmployerIndustryDTOValidator : AbstractValidator<EmployerIndustryDataDto>
 {
     public EmployerIndustryDTOValidator()
     {

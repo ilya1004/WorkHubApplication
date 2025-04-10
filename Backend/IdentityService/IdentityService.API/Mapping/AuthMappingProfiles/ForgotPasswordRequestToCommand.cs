@@ -3,9 +3,9 @@ using IdentityService.BLL.UseCases.AuthUseCases.ForgotPassword;
 
 namespace IdentityService.API.Mapping.AuthMappingProfiles;
 
-public class ForgotPasswordRequestToCommandProfile : Profile
+public class ForgotPasswordRequestToCommand : Profile
 {
-    public ForgotPasswordRequestToCommandProfile()
+    public ForgotPasswordRequestToCommand()
     {
         CreateMap<ForgotPasswordRequest, ForgotPasswordCommand>();
     }

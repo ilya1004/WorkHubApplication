@@ -3,9 +3,9 @@ using IdentityService.BLL.UseCases.UserUseCases.Commands.ChangePassword;
 
 namespace IdentityService.API.Mapping.UserMappingProfiles;
 
-public class ChangePasswordRequestToCommandProfile : Profile
+public class ChangePasswordRequestToCommand : Profile
 {
-    public ChangePasswordRequestToCommandProfile()
+    public ChangePasswordRequestToCommand()
     {
         CreateMap<ChangePasswordRequest, ChangePasswordCommand>();
     }

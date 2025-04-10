@@ -1,3 +1,5 @@
+import {EmployerIndustry} from "./employer-industry.interface";
+
 export interface EmployerUser {
   id: string;
   userName: string;
@@ -5,8 +7,8 @@ export interface EmployerUser {
   about: string;
   email: string;
   registeredAt: string;
-  stripeCustomerId?: string;
-  industryName: string;
-  imageUrl?: string;
+  stripeCustomerId: string | null;
+  industry: EmployerIndustry | null;
+  imageUrl: string | null;
   roleName: string;
 }
