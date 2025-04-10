@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Project} from "../../../core/interfaces/project/project.interface";
-import {ProjectsService} from "../../services/projects.service";
+import {ProjectsService} from "../../../core/services/projects/projects.service";
 import {CommonModule} from "@angular/common";
 import {NzCardModule} from "ng-zorro-antd/card";
 import {NzButtonModule} from "ng-zorro-antd/button";

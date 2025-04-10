@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NzCardModule} from "ng-zorro-antd/card";
 import { EmployerUser } from '../../../core/interfaces/employer/employer-user.interface';
 import {ActivatedRoute, RouterModule} from "@angular/router";
-import {ProjectsService} from "../../services/projects.service";
+import {ProjectsService} from "../../../core/services/projects/projects.service";
 import {Project} from "../../../core/interfaces/project/project.interface";
 import {CommonModule} from "@angular/common";
 import {NzDescriptionsModule} from "ng-zorro-antd/descriptions";

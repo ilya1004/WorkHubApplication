@@ -8,7 +8,7 @@ import {Observable} from "rxjs";
 @Injectable({
   providedIn: 'root'
 })
-export class MyProjectsService {
+export class FreelancerProjectsService {
 
   constructor(
       private httpClient: HttpClient

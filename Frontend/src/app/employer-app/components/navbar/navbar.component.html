@@ -5,17 +5,17 @@
   <ul nz-menu nzMode="horizontal">
     <li
         nz-menu-item
-        [routerLink]="'/employer/home'"
-        [nzMatchRouter]="'/employer/home'">
-      <nz-icon nzType="home"/>
-      Home
-    </li>
-    <li
-        nz-menu-item
         [routerLink]="'/employer/my-projects'"
         [nzMatchRouter]="'/employer/my-projects'">
       <nz-icon nzType="appstore" />
       My Projects
+    </li>
+    <li
+      nz-menu-item
+      [routerLink]="'/employer/project-tools'"
+      [nzMatchRouter]="'/employer/project-tools'">
+      <nz-icon nzType="tool" />
+      Project Tools
     </li>
     <li
       nz-menu-item

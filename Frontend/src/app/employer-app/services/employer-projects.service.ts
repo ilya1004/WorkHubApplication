@@ -8,16 +8,16 @@ import {PROJECTS_SERVICE_API_URL} from "../../core/data/constants";
 @Injectable({
   providedIn: 'root'
 })
-export class MyProjectsService {
+export class EmployerProjectsService {
 
   constructor(
     private httpClient: HttpClient,
   ) { }
 
   getMyEmployerProjects(filter: {
-    updatedAtStartDate: string | null,
-    updatedAtEndDate: string | null,
-    projectStatus: number | null,
+    updatedAtStartDate: Date | null,
+    updatedAtEndDate: Date | null,
+    projectStatus: string | null,
     acceptanceRequestedAndNotConfirmed: boolean | null,
     pageNo: number,
     pageSize: number
@@ -28,19 +28,19 @@ export class MyProjectsService {
       .set('pageSize', filter.pageSize.toString());
 
     if (filter.updatedAtStartDate !== null) {
-      params = params.set('updatedAtStartDate', filter.updatedAtStartDate);
+      params = params.set('updatedAtStartDate', filter.updatedAtStartDate.toISOString());
     }
 
     if (filter.updatedAtEndDate !== null) {
-      params = params.set('updatedAtEndDate', filter.updatedAtEndDate);
+      params = params.set('updatedAtEndDate', filter.updatedAtEndDate.toISOString());
     }
 
     if (filter.projectStatus !== null) {
-      params = params.set('projectStatus', filter.projectStatus.toString());
+      params = params.set('projectStatus', filter.projectStatus);
     }
-
-    if (filter.acceptanceRequestedAndNotConfirmed !== null) {
-      params = params.set('acceptanceRequestedAndNotConfirmed', filter.acceptanceRequestedAndNotConfirmed.toString());
+    
+    if (filter.acceptanceRequestedAndNotConfirmed) {
+      params = params.set('AcceptanceRequestedAndNotConfirmed', 'true');
     }
 
     return this.httpClient.get<PaginatedResult<Project>>(

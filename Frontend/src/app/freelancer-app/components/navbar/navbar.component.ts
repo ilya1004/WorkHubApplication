@@ -8,7 +8,7 @@ import {AuthService} from "../../../core/services/auth/auth.service";
 import {TokenService} from "../../../core/services/token/token.service";
 
 @Component({
-  selector: 'app-navbar',
+  selector: 'app-freelancer-navbar',
   imports: [
     NzFlexDirective,
     NzMenuDirective,

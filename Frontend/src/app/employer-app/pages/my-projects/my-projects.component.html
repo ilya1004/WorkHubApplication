@@ -1,13 +1,20 @@
 <div nz-flex nzAlign="center" nzGap="40px">
   <nz-form-item>
-    <nz-form-label>Employer ID</nz-form-label>
-    <nz-input-group>
-      <input
-        nz-input
-        [(ngModel)]="filterForm.employerId"
-        placeholder="Enter employer ID"
-        style="width: 280px"/>
-    </nz-input-group>
+    <nz-form-label>Last updated at (From)</nz-form-label>
+    <nz-date-picker
+      [(ngModel)]="filterForm.updatedAtStartDate"
+      nzPlaceHolder="Select start date"
+      style="width: 200px">
+    </nz-date-picker>
+  </nz-form-item>
+  
+  <nz-form-item>
+    <nz-form-label>Last updated at (To)</nz-form-label>
+    <nz-date-picker
+      [(ngModel)]="filterForm.updatedAtEndDate"
+      nzPlaceHolder="Select end date"
+      style="width: 200px">
+    </nz-date-picker>
   </nz-form-item>
   
   <nz-form-item style="width: 280px">
@@ -23,7 +30,17 @@
       </nz-option>
     </nz-select>
   </nz-form-item>
-
+  
+  <nz-form-item>
+    <nz-form-label>Acceptance Requested</nz-form-label>
+      <label
+        nz-checkbox
+        [ngModel]="filterForm.acceptanceRequestedAndNotConfirmed"
+        (ngModelChange)="onAcceptanceRequestedCheck($event)">
+        Requested & Not Confirmed
+      </label>
+  </nz-form-item>
+  
   <div nz-flex nzGap="10px" nzJustify="center" style="min-width: 200px">
     <button
       nz-button
@@ -33,7 +50,8 @@
     </button>
     <button
       nz-button
-      (click)="resetFilters()">
+      (click)="resetFilters()"
+      style="margin-left: 10px">
       Reset
     </button>
   </div>
@@ -57,7 +75,7 @@
     <th>Category</th>
     <th>Status</th>
     <th>Created At</th>
-    <th>Action</th> <!-- New column -->
+    <th>Action</th>
   </tr>
   </thead>
   <tbody>
@@ -73,7 +91,7 @@
         nz-button
         nzType="primary"
         (click)="navigateToProject(project.id)">
-        Work on Project
+        View Project
       </button>
     </td>
   </tr>

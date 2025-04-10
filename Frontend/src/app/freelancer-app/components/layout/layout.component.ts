@@ -4,7 +4,7 @@ import {NavbarComponent} from '../navbar/navbar.component';
 import {NzIconDirective} from "ng-zorro-antd/icon";
 
 @Component({
-  selector: 'app-layout',
+  selector: 'app-freelancer-layout',
   imports: [
     RouterOutlet,
     NavbarComponent,

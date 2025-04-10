@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import {Observable} from "rxjs";
-import {PaginatedResult} from "../../core/interfaces/common/paginated-result.interface";
-import {Project} from "../../core/interfaces/project/project.interface";
+import {PaginatedResult} from "../../interfaces/common/paginated-result.interface";
+import {Project} from "../../interfaces/project/project.interface";
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {PROJECTS_SERVICE_API_URL} from "../../core/data/constants";
+import {PROJECTS_SERVICE_API_URL} from "../../data/constants";
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class ProjectsService {
     budgetTo: number | null,
     categoryId: string | null,
     employerId: string | null,
-    projectStatus: number | null,
+    projectStatus: string | null,
     pageNo: number,
     pageSize: number
   }): Observable<PaginatedResult<Project>> {
@@ -50,7 +50,7 @@ export class ProjectsService {
     }
 
     if (filter.projectStatus !== null) {
-      params = params.set('projectStatus', filter.projectStatus.toString());
+      params = params.set('projectStatus', filter.projectStatus);
     }
 
     return this.httpClient.get<PaginatedResult<Project>>(
@@ -86,7 +86,7 @@ export class ProjectsService {
     return this.httpClient.delete<void>(`${PROJECTS_SERVICE_API_URL}freelancer-applications/${applicationId}`);
   }
   
-  requestProjectAcceptance(projectId: number): Observable<void> {
+  requestProjectAcceptance(projectId: string): Observable<void> {
     return this.httpClient.patch<void>(`${PROJECTS_SERVICE_API_URL}/projects/  ${projectId}/request-acceptance`, {});
   }
 }

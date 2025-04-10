@@ -10,7 +10,7 @@ import {
   NzTheadComponent,
   NzThMeasureDirective, NzTrDirective
 } from "ng-zorro-antd/table";
-import { FreelancerProjectsService } from "../../services/freelancer-projects.service";
+import { EmployerProjectsService } from "../../services/employer-projects.service";
 import { Project } from "../../../core/interfaces/project/project.interface";
 import { NzInputDirective, NzInputGroupComponent } from "ng-zorro-antd/input";
 import { NzButtonComponent } from "ng-zorro-antd/button";
@@ -20,6 +20,8 @@ import {PROJECT_STATUSES} from "../../../core/data/constants";
 import {NzWaveDirective} from "ng-zorro-antd/core/wave";
 import {Router} from "@angular/router";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
+import {NzCheckboxComponent} from "ng-zorro-antd/checkbox";
+import {NzDatePickerComponent} from "ng-zorro-antd/date-picker";
 
 @Component({
   selector: 'app-my-projects',
@@ -32,34 +34,36 @@ import {NzFlexDirective} from "ng-zorro-antd/flex";
     NzColDirective,
     NzRowDirective,
     NzTableComponent,
-    NzInputDirective,
     NzButtonComponent,
     NgForOf,
     DatePipe,
     FormsModule,
-    NzInputGroupComponent,
     NzWaveDirective,
     NzTableCellDirective,
     NzTbodyComponent,
     NzThMeasureDirective,
     NzTheadComponent,
     NzTrDirective,
-    NzFlexDirective
+    NzFlexDirective,
+    NzCheckboxComponent,
+    NzDatePickerComponent
   ],
   templateUrl: './my-projects.component.html',
   styleUrl: './my-projects.component.scss'
 })
 export class MyProjectsComponent implements OnInit {
   constructor(
-    private myProjectsService: FreelancerProjectsService,
+    private myProjectsService: EmployerProjectsService,
     private router: Router
   ) { }
   
   projectStatuses = PROJECT_STATUSES;
   
   filterForm = {
+    updatedAtStartDate: null as Date | null,
+    updatedAtEndDate: null as Date | null,
     projectStatus: null as string | null,
-    employerId: null as string | null,
+    acceptanceRequestedAndNotConfirmed: false as boolean,
     pageNo: 1,
     pageSize: 10
   };
@@ -67,50 +71,56 @@ export class MyProjectsComponent implements OnInit {
   projects: Project[] = [];
   totalCount = 0;
   loading = false;
-
+  
   ngOnInit(): void {
     this.loadProjects();
   }
-
+  
   loadProjects(): void {
     this.loading = true;
-    this.myProjectsService.getMyFreelancerProjects(this.filterForm).subscribe({
+    this.myProjectsService.getMyEmployerProjects(this.filterForm).subscribe({
       next: (result: PaginatedResult<Project>) => {
         this.projects = result.items;
         this.totalCount = result.totalCount;
         this.loading = false;
       },
       error: (error: any) => {
-        console.error('Error loading freelancer projects:', error);
+        console.error('Error loading employer projects:', error);
         this.loading = false;
       }
     });
   }
-
+  
   onPageChange(page: number): void {
     this.filterForm.pageNo = page;
     this.loadProjects();
   }
-
+  
   onPageSizeChange(size: number): void {
     this.filterForm.pageSize = size;
     this.filterForm.pageNo = 1;
     this.loadProjects();
   }
-
+  
   applyFilters(): void {
     this.filterForm.pageNo = 1;
     this.loadProjects();
   }
-
+  
   resetFilters(): void {
     this.filterForm = {
+      updatedAtStartDate: null,
+      updatedAtEndDate: null,
       projectStatus: null,
-      employerId: null,
+      acceptanceRequestedAndNotConfirmed: false,
       pageNo: 1,
       pageSize: 10
     };
     this.loadProjects();
+  }
+  
+  onAcceptanceRequestedCheck(event: any) {
+    this.filterForm.acceptanceRequestedAndNotConfirmed = !this.filterForm.acceptanceRequestedAndNotConfirmed;
   }
   
   getStatusLabel(status: number): string {
@@ -127,8 +137,8 @@ export class MyProjectsComponent implements OnInit {
     return PROJECT_STATUSES.find(s =>
       s.value === statuses[status])?.label || 'Unknown';
   }
-
+  
   navigateToProject(projectId: string): void {
-    this.router.navigate(['/freelancer/my-projects', projectId]);
+    this.router.navigate(['/employer/my-projects', projectId]);
   }
 }

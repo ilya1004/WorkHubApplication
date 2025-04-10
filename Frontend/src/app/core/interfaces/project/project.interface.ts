@@ -3,7 +3,7 @@ import {Lifecycle} from "./lifecycle.interface";
 import {FreelancerApplication} from "./freelancer-application.interface";
 
 export interface Project {
-    id: number;
+    id: string;
     title: string;
     description: string;
     budget: number;

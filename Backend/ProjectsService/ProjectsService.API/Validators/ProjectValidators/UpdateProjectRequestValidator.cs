@@ -22,8 +22,7 @@ public class UpdateProjectRequestValidator : AbstractValidator<UpdateProjectRequ
 
         RuleFor(x => x.Project.Budget)
             .GreaterThan(0).WithMessage("Budget must be greater than zero.")
-            .PrecisionScale(18, 2, true)
-            .WithMessage("Budget must have up to 18 digits and 2 decimal places.");
+            .PrecisionScale(18, 2, true).WithMessage("Budget must have up to 18 digits and 2 decimal places.");
 
         RuleFor(x => x.Project.CategoryId)
             .NotEmpty().WithMessage("CategoryId is required.")
@@ -31,8 +30,7 @@ public class UpdateProjectRequestValidator : AbstractValidator<UpdateProjectRequ
 
         RuleFor(x => x.Lifecycle.ApplicationsStartDate)
             .NotEmpty().WithMessage("Applications start date is required.")
-            .GreaterThan(DateTime.UtcNow)
-            .WithMessage("Applications start date must be in the future.");
+            .GreaterThan(DateTime.UtcNow).WithMessage("Applications start date must be in the future.");
 
         RuleFor(x => x.Lifecycle.ApplicationsDeadline)
             .NotEmpty().WithMessage("Applications deadline is required.")

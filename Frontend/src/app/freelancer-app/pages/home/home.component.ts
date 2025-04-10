@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {ProjectsService} from "../../services/projects.service";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {ProjectsService} from "../../../core/services/projects/projects.service";
 import {Project} from "../../../core/interfaces/project/project.interface";
 import {PaginatedResult} from "../../../core/interfaces/common/paginated-result.interface";
 import {CommonModule} from "@angular/common";
@@ -35,20 +35,18 @@ export class HomeComponent implements OnInit {
     private homeService: ProjectsService,
     private router: Router
   ) { }
-
-  // Filter form with string status
+  
   filterForm = {
     title: null as string | null,
     budgetFrom: null as number | null,
     budgetTo: null as number | null,
     categoryId: null as string | null,
     employerId: null as string | null,
-    projectStatus: null as string | null, // Changed to string
+    projectStatus: null as string | null,
     pageNo: 1,
     pageSize: 10
   };
-
-  // Table data
+  
   projects: Project[] = [];
   totalCount = 0;
   loading = false;
@@ -61,13 +59,7 @@ export class HomeComponent implements OnInit {
 
   loadProjects(): void {
     this.loading = true;
-    // Convert filter form to match service expectations
-    const filterForService = {
-      ...this.filterForm,
-      projectStatus: this.convertStringStatusToNumber(this.filterForm.projectStatus)
-    };
-
-    this.homeService.getProjectsByFilter(filterForService).subscribe({
+    this.homeService.getProjectsByFilter(this.filterForm).subscribe({
       next: (result: PaginatedResult<Project>) => {
         this.projects = result.items;
         this.totalCount = result.totalCount;
@@ -123,22 +115,6 @@ export class HomeComponent implements OnInit {
     this.loadProjects();
   }
 
-  // Convert string status to number for backend
-  private convertStringStatusToNumber(status: string | null): number | null {
-    if (!status) return null;
-    switch (status) {
-      case 'Published': return 0;
-      case 'AcceptingApplications': return 1;
-      case 'WaitingForWorkStart': return 2;
-      case 'InProgress': return 3;
-      case 'PendingForReview': return 4;
-      case 'Completed': return 5;
-      case 'Expired': return 6;
-      case 'Cancelled': return 7;
-      default: return null;
-    }
-  }
-
   getStatusLabel(status: number): string {
     const statuses = [
       'Published',
@@ -154,9 +130,9 @@ export class HomeComponent implements OnInit {
       s.value === statuses[status])?.label || 'Unknown';
   }
 
-  navigateToProject(projectId: number): void {
+  navigateToProject(projectId: string): void {
     this.router.navigate(['/freelancer/home/project', projectId]);
   }
 
-  protected readonly PROJECT_STATUSES = PROJECT_STATUSES;
+  protected readonly projectStatuses = PROJECT_STATUSES;
 }

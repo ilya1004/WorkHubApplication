@@ -45,14 +45,14 @@
       nzPlaceHolder="Select status"
       style="width: 190px">
       <nz-option
-        *ngFor="let status of PROJECT_STATUSES"
+        *ngFor="let status of projectStatuses"
         [nzValue]="status.value"
         [nzLabel]="status.label">
       </nz-option>
     </nz-select>
   </nz-form-item>
 
-  <div style="min-width: 190px">
+  <div nz-flex nzGap="10px" nzJustify="center" style="min-width: 200px">
     <button
       nz-button
       nzType="primary"
@@ -61,8 +61,7 @@
     </button>
     <button
       nz-button
-      (click)="resetFilters()"
-      style="margin-left: 10px">
+      (click)="resetFilters()">
       Reset
     </button>
   </div>

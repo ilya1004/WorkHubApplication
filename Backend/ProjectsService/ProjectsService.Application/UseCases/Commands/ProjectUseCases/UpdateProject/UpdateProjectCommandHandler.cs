@@ -30,6 +30,23 @@ public class UpdateProjectCommandHandler(
             throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }
         
+        var lifecycle = await unitOfWork.LifecycleQueriesRepository.FirstOrDefaultAsync(
+            l => l.ProjectId == project.Id, cancellationToken);
+        
+        if (lifecycle is null)
+        {
+            logger.LogWarning("Lifecycle not found for project {ProjectId}", project.Id);
+            
+            throw new NotFoundException($"Project lifecycle with ProjectId '{project.Id}' not found");
+        }
+        
+        if (lifecycle.Status != ProjectStatus.Published)
+        {
+            logger.LogWarning("Invalid project status {Status} for update", lifecycle.Status);
+            
+            throw new BadRequestException("You cannot edit this project after the start of accepting applications");
+        }
+        
         if (request.Project.CategoryId.HasValue)
         {
             logger.LogInformation("Checking category {CategoryId} existence", request.Project.CategoryId);
@@ -45,23 +62,6 @@ public class UpdateProjectCommandHandler(
             }
         }
         
-        var lifecycle = await unitOfWork.LifecycleQueriesRepository.FirstOrDefaultAsync(
-            l => l.ProjectId == project.Id, cancellationToken);
-        
-        if (lifecycle is null)
-        {
-            logger.LogWarning("Lifecycle not found for project {ProjectId}", project.Id);
-            
-            throw new NotFoundException($"Project lifecycle with ProjectId '{project.Id}' not found");
-        }
-
-        if (lifecycle.Status != ProjectStatus.Published)
-        {
-            logger.LogWarning("Invalid project status {Status} for update", lifecycle.Status);
-            
-            throw new BadRequestException("You cannot edit this project after the start of accepting applications");
-        }
-
         mapper.Map(request.Project, project);
         mapper.Map(request.Lifecycle, lifecycle);
         

@@ -17,8 +17,10 @@ import {MyProjectInfoComponent as FreelancerMyProjectInfoComponent} from "./free
 import {MyFinancesComponent as FreelancerMyFinancesComponent} from "./freelancer-app/pages/my-finances/my-finances.component";
 
 import {canActivateEmployerApp} from "./core/guards/employer-auth.guard";
-import {LayoutComponent as EmployerLayoutComponent} from "./employer-app/components/layout/layout.component";
+import {LayoutComponent} from "./employer-app/components/layout/layout.component";
 import {ProfileComponent as EmployerProfileComponent} from "./employer-app/pages/profile/profile.component";
+import {MyProjectsComponent as EmployerMyProjectsComponent} from "./employer-app/pages/my-projects/my-projects.component";
+import { ProjectToolsComponent } from './employer-app/pages/project-tools/project-tools.component';
 
 
 export const routes: Routes = [
@@ -43,10 +45,12 @@ export const routes: Routes = [
   },
   {
     path: 'employer',
-    component: EmployerLayoutComponent,
+    component: LayoutComponent,
     canActivate: [canActivateEmployerApp],
     children: [
-      {path: 'my-profile', component: EmployerProfileComponent}
+      { path: 'my-profile', component: EmployerProfileComponent },
+      { path: 'my-projects', component: EmployerMyProjectsComponent },
+      { path: 'project-tools', component: ProjectToolsComponent },
     ]
   },
   { path: '**', component: NotFoundComponent }

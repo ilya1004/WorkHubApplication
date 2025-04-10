@@ -1,0 +1,273 @@
+<div nz-flex nzGap="30px">
+  <div nz-flex nzVertical nzGap="middle" nzAlign="start">
+    <button nz-button nzType="primary" (click)="onCreateProject()">Create</button>
+    <nz-table
+      [nzData]="projects"
+      [nzFrontPagination]="false"
+      [nzTotal]="projectTotalCount"
+      [nzPageSize]="projectPageSize"
+      [nzPageIndex]="projectPageNo"
+      (nzPageIndexChange)="onProjectPageChange($event)"
+      (nzPageSizeChange)="onProjectPageSizeChange($event)">
+      <thead>
+      <tr>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let project of projects">
+        <td>{{ project.title }}</td>
+        <td>{{ getStatusLabel(project.lifecycle.status) }}</td>
+        <td>
+          <div nz-flex nzGap="10px">
+            <button [disabled]="project.lifecycle.status !== ProjectStatus.Published" nz-button (click)="onEditProject(project)">Edit</button>
+            <button nz-button nzDanger (click)="cancelProject(project.id)">Cancel</button>
+            <button nz-button (click)="onViewApplications(project)">Applications</button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </div>
+  
+  <div nz-flex nzVertical nzGap="large">
+    <nz-card *ngIf="isCreating" style="width: 500px" nzTitle="Create New Project">
+      <form nz-form [formGroup]="createProjectForm" (ngSubmit)="submitCreateProject()" class="create-project-form">
+        <nz-form-item>
+          <nz-form-label nzRequired>Title</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="title" placeholder="Enter project title" />
+            <div *ngIf="createProjectForm.get('title')?.touched && createProjectForm.get('title')?.errors" class="input-error-message">
+              <span *ngIf="createProjectForm.get('title')?.errors?.['required']">Title is required.</span>
+              <span *ngIf="createProjectForm.get('title')?.errors?.['maxlength']">Max 200 characters.</span>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label>Description</nz-form-label>
+          <nz-form-control>
+            <textarea nz-input formControlName="description" placeholder="Enter project description" rows="4"></textarea>
+            <div *ngIf="createProjectForm.get('description')?.touched && createProjectForm.get('description')?.errors" class="input-error-message">
+              <span *ngIf="createProjectForm.get('description')?.errors?.['maxlength']">Max 1000 characters.</span>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label nzRequired>Budget ($)</nz-form-label>
+          <nz-form-control>
+            <nz-input-number formControlName="budget" nzStep="1" nzMin="0" [nzPrecision]='2' />
+            <div *ngIf="createProjectForm.get('budget')?.touched && createProjectForm.get('budget')?.errors" class="input-error-message">
+              <span *ngIf="createProjectForm.get('budget')?.errors?.['required']">Budget is required.</span>
+              <span *ngIf="createProjectForm.get('budget')?.errors?.['min']">Budget must be greater than 0.</span>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label>Category</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="categoryId" nzPlaceHolder="Select category">
+              <nz-option *ngFor="let cat of categories" [nzValue]="cat.id" [nzLabel]="cat.name"></nz-option>
+            </nz-select>
+            <div *ngIf="createProjectForm.get('categoryId')?.touched && createProjectForm.get('categoryId')?.errors" class="input-error-message">
+              <span *ngIf="createProjectForm.get('categoryId')?.errors?.['required']">Category is required.</span>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label nzRequired>Applications Start</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="applicationsStartDate" nzPlaceHolder="Select date"></nz-date-picker>
+            <div *ngIf="createProjectForm.get('applicationsStartDate')?.touched && createProjectForm.get('applicationsStartDate')?.errors" class="input-error-message">
+              <span *ngIf="createProjectForm.get('applicationsStartDate')?.errors?.['required']">Applications start date is required.</span>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label nzRequired>Applications Deadline</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="applicationsDeadline" nzPlaceHolder="Select date"></nz-date-picker>
+            <div *ngIf="createProjectForm.errors?.['applicationsDateError'] && createProjectForm.touched" class="input-error-message">
+              Deadline must be after start date.
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label nzRequired>Work Start</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="workStartDate" nzPlaceHolder="Select date"></nz-date-picker>
+            <div *ngIf="createProjectForm.errors?.['workStartDateError'] && createProjectForm.touched" class="input-error-message">
+              Work start must be after deadline.
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label nzRequired>Work Deadline</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="workDeadline" nzPlaceHolder="Select date"></nz-date-picker>
+            <div *ngIf="createProjectForm.errors?.['workEndDateError'] && createProjectForm.touched" class="input-error-message">
+              Work deadline must be after work start.
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <button nz-button nzType="primary" type="submit" [disabled]="createProjectForm.invalid" style="margin: 0 0 0 20px">Create</button>
+        </nz-form-item>
+      </form>
+    </nz-card>
+    
+    <div *ngIf="isEditing">
+      <nz-card *ngIf="isEditing" style="width: 500px" nzTitle="Edit Project">
+        <form nz-form [formGroup]="updateProjectForm" (ngSubmit)="submitUpdateProject()">
+        <nz-form-item>
+          <nz-form-label nzRequired>Title</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="title" placeholder="Enter project title" />
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label>Description</nz-form-label>
+          <nz-form-control>
+            <textarea nz-input formControlName="description" placeholder="Enter project description" rows="4"></textarea>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label nzRequired>Budget</nz-form-label>
+          <nz-form-control>
+            <input nz-input type="number" formControlName="budget" placeholder="Enter budget" step="0.01" />
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label nzRequired>Category</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="categoryId" nzPlaceHolder="Select category">
+              <nz-option *ngFor="let cat of categories" [nzValue]="cat.id" [nzLabel]="cat.name"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label nzRequired>Applications Start</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="applicationsStartDate" nzPlaceHolder="Select date"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label nzRequired>Applications Deadline</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="applicationsDeadline" nzPlaceHolder="Select date"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label nzRequired>Work Start</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="workStartDate" nzPlaceHolder="Select date"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label nzRequired>Work Deadline</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="workDeadline" nzPlaceHolder="Select date"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <button nz-button nzType="primary" type="submit" [disabled]="updateProjectForm.invalid" style="margin: 0 0 0 20px">Update</button>
+        </nz-form-item>
+      </form>
+      </nz-card>
+    </div>
+    
+    
+    <div *ngIf="isViewingApplications">
+      <h2>Applications for: {{ selectedProject?.title }}</h2>
+      <nz-table
+        [nzData]="applications"
+        [nzFrontPagination]="false"
+        [nzTotal]="applicationTotalCount"
+        [nzPageSize]="applicationPageSize"
+        [nzPageIndex]="applicationPageNo"
+        (nzPageIndexChange)="applicationPageNo = $event; loadApplications(selectedProject!.id)"
+        style="width: 500px">
+        <thead>
+        <tr>
+          <th>Created At</th>
+          <th>Status</th>
+          <th style="width: 120px">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let app of applications">
+          <td>{{ app.createdAt | date }}</td>
+          <td>{{ getApplicationStatusLabel(app.status) }}</td>
+          <td>
+            <button nz-button nzType="default" (click)="showApplicationDetails(app)">Details</button>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+      
+      <nz-card *ngIf="selectedApplication && freelancerDetails && isViewingApplicationDetails">
+        <nz-descriptions
+          nzTitle="Freelancer Details"
+          nzBordered
+          nzSize="middle"
+          [nzColumn]="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }">
+          <nz-descriptions-item nzTitle="Name">
+            {{ freelancerDetails.firstName }} {{ freelancerDetails.lastName }}
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Email">
+            {{ freelancerDetails.email }}
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="About">
+            {{ freelancerDetails.about || 'Not provided' }}
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Skills">
+            @if (freelancerDetails.skills.length > 0) {
+              @for (skill of freelancerDetails.skills; track skill.id) {
+                <nz-tag nzColor="blue">{{ skill.name }}</nz-tag>
+              }
+            } @else {
+              <span>No skills added yet</span>
+            }
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Registered At">
+            {{ freelancerDetails.registeredAt | date }}
+          </nz-descriptions-item>
+        </nz-descriptions>
+        <nz-divider></nz-divider>
+        <div nz-flex nzGap="middle">
+          <button
+            nz-button
+            nzType="primary"
+            [disabled]="hasAcceptedApplication || selectedApplication.status !== 0"
+            (click)="acceptApplication(selectedApplication.id, selectedProject!.id)">
+            Accept
+          </button>
+          <button
+            nz-button
+            nzDanger
+            [disabled]="selectedApplication.status !== 1"
+            (click)="rejectApplication(selectedApplication.id, selectedProject!.id)">
+            Reject
+          </button>
+        </div>
+      </nz-card>
+    </div>
+  </div>
+</div>
