@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NzCardModule} from "ng-zorro-antd/card";
 import { EmployerUser } from '../../../core/interfaces/employer/employer-user.interface';
-import {ActivatedRoute, RouterModule} from "@angular/router";
+import {ActivatedRoute, Router, RouterModule} from "@angular/router";
 import {ProjectsService} from "../../../core/services/projects/projects.service";
 import {Project} from "../../../core/interfaces/project/project.interface";
 import {CommonModule} from "@angular/common";
@@ -10,10 +10,10 @@ import {NzGridModule} from "ng-zorro-antd/grid";
 import {UsersService} from "../../services/users.service";
 import {PROJECT_STATUSES} from "../../../core/data/constants";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
-import {ProjectChatComponent} from "./project-chat/project-chat.component";
 import {NzButtonComponent} from "ng-zorro-antd/button";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ProjectStatus} from "../../../core/interfaces/project/project-status.interface";
+import {ProjectChatComponent} from "./project-chat/project-chat.component";
 
 @Component({
   imports: [
@@ -24,7 +24,8 @@ import {ProjectStatus} from "../../../core/interfaces/project/project-status.int
     RouterModule,
     NzFlexDirective,
     ProjectChatComponent,
-    NzButtonComponent
+    NzButtonComponent,
+    ProjectChatComponent,
   ],
   selector: 'app-my-project-info',
   standalone: true,
@@ -41,7 +42,8 @@ export class MyProjectInfoComponent implements OnInit {
     private route: ActivatedRoute,
     private projectsService: ProjectsService,
     private usersService: UsersService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -118,5 +120,9 @@ export class MyProjectInfoComponent implements OnInit {
         this.message.error('Failed to send acceptance request.');
       }
     });
+  }
+  
+  goBack(): void {
+    this.router.navigate(['/freelancer/my-projects']);
   }
 }

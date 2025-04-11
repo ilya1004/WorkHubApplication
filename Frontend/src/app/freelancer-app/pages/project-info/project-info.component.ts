@@ -13,6 +13,7 @@ import {ApplicationStatus} from "../../../core/interfaces/project/freelancer-app
 import {NzAlertModule} from "ng-zorro-antd/alert";
 import {TokenService} from "../../../core/services/token/token.service";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
+import {FreelancerApplicationsService} from "../../../core/services/freelancer-applications/freelancer-applications.service";
 
 @Component({
   selector: 'app-project-info',
@@ -43,6 +44,7 @@ export class ProjectInfoComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private projectsService: ProjectsService,
+    private freelancerApplicationsService: FreelancerApplicationsService,
     private usersService: UsersService,
     private tokenService: TokenService
   ) {
@@ -135,7 +137,7 @@ export class ProjectInfoComponent implements OnInit {
   applyForProject(): void {
     if (!this.project) return;
     this.isApplying = true;
-    this.projectsService.createFreelancerApplication(this.project.id.toString()).subscribe({
+    this.freelancerApplicationsService.createFreelancerApplication(this.project.id.toString()).subscribe({
       next: () => {
         this.isApplying = false;
         this.successMessage = 'Application submitted successfully!';
@@ -156,7 +158,7 @@ export class ProjectInfoComponent implements OnInit {
     if (!application) return;
     
     this.isCancelling = true;
-    this.projectsService.cancelFreelancerApplication(application.id).subscribe({
+    this.freelancerApplicationsService.cancelFreelancerApplication(application.id).subscribe({
       next: () => {
         this.isCancelling = false;
         this.successMessage = 'Application cancelled successfully!';

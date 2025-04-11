@@ -30,7 +30,7 @@ export class ProjectToolsService {
     request: {
       project: {
         title: string,
-        description: string | null,
+        description: string,
         budget: number,
         categoryId: string | null
       },
@@ -42,7 +42,7 @@ export class ProjectToolsService {
       }
     }): Observable<void> {
     return this.httpClient.post<void>(
-      `${PROJECTS_SERVICE_API_URL}`,
+      `${PROJECTS_SERVICE_API_URL}projects`,
       request
     );
   }

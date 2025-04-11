@@ -1,20 +1,20 @@
 import {AfterViewChecked, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {NzCardModule} from "ng-zorro-antd/card";
-import {NzListModule} from "ng-zorro-antd/list";
 import {CommonModule} from "@angular/common";
-import {NzInputModule} from "ng-zorro-antd/input";
 import {NzButtonModule} from "ng-zorro-antd/button";
+import {NzCardModule} from "ng-zorro-antd/card";
+import {NzFlexDirective} from "ng-zorro-antd/flex";
+import {NzInputModule} from "ng-zorro-antd/input";
+import {NzListModule} from "ng-zorro-antd/list";
+import {NzTagModule} from "ng-zorro-antd/tag";
 import {FormsModule} from "@angular/forms";
-import {Message, MessageType} from '../../../../core/interfaces/chat/message.interface';
+import {Message, MessageType} from "../../../../core/interfaces/chat/message.interface";
 import {ChatService} from "../../../../core/services/chat/chat.service";
 import {AuthService} from "../../../../core/services/auth/auth.service";
-import {NzTagModule} from "ng-zorro-antd/tag";
-import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {TokenService} from "../../../../core/services/token/token.service";
 import {Subscription} from "rxjs";
 
 @Component({
-  selector: 'app-freelancer-project-chat',
+  selector: 'app-employer-project-chat',
   standalone: true,
   imports: [
     CommonModule,
@@ -49,7 +49,7 @@ export class ProjectChatComponent implements OnInit, AfterViewChecked, OnDestroy
   constructor(
     private chatService: ChatService,
     private authService: AuthService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
   ) {}
   
   async ngOnInit(): Promise<void> {
@@ -147,14 +147,14 @@ export class ProjectChatComponent implements OnInit, AfterViewChecked, OnDestroy
     if (!this.chatId) return;
     
     if (this.newMessage.trim() && !this.selectedFile) {
-      this.chatService.sendTextMessage(this.chatId, this.employerId, this.newMessage)
+      this.chatService.sendTextMessage(this.chatId, this.freelancerId!, this.newMessage)
         .then(() => {
           this.newMessage = '';
           this.shouldScroll = true;
         })
         .catch(err => console.error('Error sending message:', err));
     } else if (this.selectedFile && !this.newMessage.trim()) {
-      this.chatService.uploadFile(this.chatId, this.employerId, this.selectedFile)
+      this.chatService.uploadFile(this.chatId, this.freelancerId!, this.selectedFile)
         .subscribe({
           next: () => {
             console.log('File uploaded');

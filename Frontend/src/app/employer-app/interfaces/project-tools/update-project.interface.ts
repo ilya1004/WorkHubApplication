@@ -2,7 +2,7 @@ import {FormControl} from "@angular/forms";
 
 export interface UpdateProjectForm {
   title: FormControl<string>;
-  description: FormControl<string | null>;
+  description: FormControl<string>;
   budget: FormControl<number>;
   categoryId: FormControl<string | null>;
   applicationsStartDate: FormControl<Date>;

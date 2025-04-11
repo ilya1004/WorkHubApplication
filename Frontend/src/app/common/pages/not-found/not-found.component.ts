@@ -28,7 +28,7 @@ export class NotFoundComponent {
         this.router.navigate(['/freelancer/home']);
         break;
       case 'Employer':
-        this.router.navigate(['/employer/home']);
+        this.router.navigate(['/employer/my-projects']);
         break;
       case 'Admin':
         this.router.navigate(['/admin/home']);

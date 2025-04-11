@@ -13,6 +13,7 @@ import {Category} from "../../../core/interfaces/project/category.interface";
 import {PROJECT_STATUSES} from "../../../core/data/constants";
 import {Router} from "@angular/router";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
+import {CategoriesService} from "../../../core/services/categories/categories.service";
 
 @Component({
   selector: 'app-home',
@@ -32,7 +33,8 @@ import {NzFlexDirective} from "ng-zorro-antd/flex";
 })
 export class HomeComponent implements OnInit {
   constructor(
-    private homeService: ProjectsService,
+    private projectsService: ProjectsService,
+    private categoriesService: CategoriesService,
     private router: Router
   ) { }
   
@@ -59,7 +61,7 @@ export class HomeComponent implements OnInit {
 
   loadProjects(): void {
     this.loading = true;
-    this.homeService.getProjectsByFilter(this.filterForm).subscribe({
+    this.projectsService.getProjectsByFilter(this.filterForm).subscribe({
       next: (result: PaginatedResult<Project>) => {
         this.projects = result.items;
         this.totalCount = result.totalCount;
@@ -73,11 +75,9 @@ export class HomeComponent implements OnInit {
   }
 
   loadCategories(): void {
-    this.homeService.getAllCategories().subscribe({
-      next: (result: PaginatedResult<Project>) => {
-        const allCategories = result.items.map(project => project.category);
-        this.categories = Array.from(new Set(allCategories.map(c => c.id)))
-          .map(id => allCategories.find(c => c.id === id)!);
+    this.categoriesService.getCategories(1, 100).subscribe({
+      next: (result: PaginatedResult<Category>) => {
+        this.categories = result.items;
       },
       error: (error) => {
         console.error('Error loading categories:', error);

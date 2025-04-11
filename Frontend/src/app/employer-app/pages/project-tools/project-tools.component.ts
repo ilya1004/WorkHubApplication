@@ -112,8 +112,10 @@ export class ProjectToolsComponent implements OnInit {
           Validators.maxLength(200)
         ]
       }),
-      description: new FormControl<string | null>('', {
+      description: new FormControl<string>('', {
+        nonNullable: true,
         validators: [
+          Validators.required,
           Validators.maxLength(1000)
         ]
       }),
@@ -126,7 +128,7 @@ export class ProjectToolsComponent implements OnInit {
         ]
       }),
       categoryId: new FormControl<string | null>(null, {
-        validators: [ ]
+        validators: []
       }),
       applicationsStartDate: new FormControl<Date>(null as any, {
         nonNullable: true,
@@ -152,7 +154,7 @@ export class ProjectToolsComponent implements OnInit {
           Validators.required
         ]
       })
-    }, { validators: this.dateSequenceValidator });
+    }, { validators: [this.dateSequenceValidator, this.futureDateValidator] });
     
     this.updateProjectForm = this.formBuilder.group<UpdateProjectForm>({
       title: new FormControl<string>('', {
@@ -162,8 +164,10 @@ export class ProjectToolsComponent implements OnInit {
           Validators.maxLength(200)
         ]
       }),
-      description: new FormControl<string | null>('', {
+      description: new FormControl<string>('', {
+        nonNullable: true,
         validators: [
+          Validators.required,
           Validators.maxLength(1000)
         ]
       }),
@@ -202,18 +206,41 @@ export class ProjectToolsComponent implements OnInit {
           Validators.required
         ]
       })
-    }, { validators: this.dateSequenceValidator });
+    }, { validators: [this.dateSequenceValidator, this.futureDateValidator] });
   }
   
-  // futureDateValidator() {
-  //   return (control: FormControl<Date>): { [key: string]: any } | null => {
-  //     const value = control.value;
-  //     if (value && value <= new Date()) {
-  //       return { pastDate: true };
-  //     }
-  //     return null;
-  //   };
-  // }
+  disablePastDates = (current: Date): boolean => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    today.setDate(today.getDate() + 1);
+    return current < today;
+  };
+  
+  futureDateValidator(group: AbstractControl): ValidationErrors | null {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    now.setDate(now.getDate() + 1);
+    
+    const start = group.get('applicationsStartDate')?.value;
+    const deadline = group.get('applicationsDeadline')?.value;
+    const workStart = group.get('workStartDate')?.value;
+    const workEnd = group.get('workDeadline')?.value;
+    
+    if (start && start < now) {
+      return { applicationsStartDateInPast: true };
+    }
+    if (deadline && deadline < now) {
+      return { applicationsDeadlineInPast: true }
+    }
+    if (workStart && workStart < now) {
+      return { workStartDateInPast: true };
+    }
+    if (workEnd && workEnd < now) {
+      return { workDeadlineInPast: true};
+    }
+    
+    return null;
+  }
   
   dateSequenceValidator(group: AbstractControl): ValidationErrors | null {
     const start = group.get('applicationsStartDate')?.value;
@@ -293,8 +320,13 @@ export class ProjectToolsComponent implements OnInit {
       this.message.warning('Only projects in "Published" status can be edited.');
       return;
     }
+    if (this.selectedProject != null && this.selectedProject.id === project.id) {
+      this.isEditing = !this.isEditing;
+    }
+    else {
+      this.isEditing = true;
+    }
     this.selectedProject = project;
-    this.isEditing = true;
     this.isCreating = false;
     this.isViewingApplications = false;
     this.updateProjectForm.patchValue({
@@ -351,7 +383,7 @@ export class ProjectToolsComponent implements OnInit {
   
   submitUpdateProject(): void {
     if (this.updateProjectForm.valid && this.selectedProject) {
-      const value = this.createProjectForm.getRawValue();
+      const value = this.updateProjectForm.getRawValue();
       this.projectService.updateProject(this.selectedProject.id, {
         project: {
           title: value.title,

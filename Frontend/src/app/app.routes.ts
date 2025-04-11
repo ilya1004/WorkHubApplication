@@ -21,6 +21,7 @@ import {LayoutComponent} from "./employer-app/components/layout/layout.component
 import {ProfileComponent as EmployerProfileComponent} from "./employer-app/pages/profile/profile.component";
 import {MyProjectsComponent as EmployerMyProjectsComponent} from "./employer-app/pages/my-projects/my-projects.component";
 import { ProjectToolsComponent } from './employer-app/pages/project-tools/project-tools.component';
+import {MyProjectInfoComponent as EmployerMyProjectInfoComponent} from "./employer-app/pages/my-project-info/my-project-info.component";
 
 
 export const routes: Routes = [
@@ -50,6 +51,7 @@ export const routes: Routes = [
     children: [
       { path: 'my-profile', component: EmployerProfileComponent },
       { path: 'my-projects', component: EmployerMyProjectsComponent },
+      { path: 'my-projects/:projectId', component: EmployerMyProjectInfoComponent },
       { path: 'project-tools', component: ProjectToolsComponent },
     ]
   },

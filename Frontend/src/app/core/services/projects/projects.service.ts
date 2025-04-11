@@ -58,35 +58,22 @@ export class ProjectsService {
       { params }
     );
   }
-
-  getAllCategories() {
-    const params = new HttpParams({
-      fromObject: {
-        pageNo: 1,
-        pageSize: 100,
-      }});
-    return this.httpClient.get<PaginatedResult<Project>>(
-      `${PROJECTS_SERVICE_API_URL}projects/by-filter`,
-      { params },
-    );
-  }
-
+  
   getProjectById(projectId: string): Observable<Project> {
     return this.httpClient.get<Project>(
       `${PROJECTS_SERVICE_API_URL}projects/${projectId}`
     );
   }
   
-  createFreelancerApplication(projectId: string): Observable<void> {
-    const payload = { projectId };
-    return this.httpClient.post<void>(`${PROJECTS_SERVICE_API_URL}freelancer-applications`, payload);
-  }
-  
-  cancelFreelancerApplication(applicationId: string): Observable<void> {
-    return this.httpClient.delete<void>(`${PROJECTS_SERVICE_API_URL}freelancer-applications/${applicationId}`);
-  }
-  
   requestProjectAcceptance(projectId: string): Observable<void> {
-    return this.httpClient.patch<void>(`${PROJECTS_SERVICE_API_URL}/projects/  ${projectId}/request-acceptance`, {});
+    return this.httpClient.patch<void>(
+      `${PROJECTS_SERVICE_API_URL}projects/${projectId}/request-acceptance`, {}
+    );
+  }
+  
+  setProjectAcceptanceStatus(projectId: string, status: boolean): Observable<void> {
+    return this.httpClient.post<void>(
+      `${PROJECTS_SERVICE_API_URL}projects/${projectId}/set-acceptance-status/${status}`, {}
+    );
   }
 }

@@ -1,5 +1,8 @@
 <div nz-flex nzGap="40px" nzAlign="start">
-  <div nz-flex nzVertical>
+  <div nz-flex nzVertical nzAlign="start">
+    <button nz-button nzType="default" (click)="goBack()" style="margin: 0 0 15px 10px">
+      Back
+    </button>
     <nz-card [nzLoading]="loading" nzTitle="Project Workspace">
       <h3>Project Information</h3>
       <nz-descriptions
@@ -41,12 +44,13 @@
       </div>
     </div>
   </div>
-
+  
   <div>
-    <app-project-chat
-      *ngIf="project && employer"
+    <app-freelancer-project-chat
+      *ngIf="project && project.freelancerId"
       [projectId]="project.id.toString()"
-      [employerId]="employer.id">
-    </app-project-chat>
+      [employerId]="project.employerId"
+      [freelancerId]="project.freelancerId">
+    </app-freelancer-project-chat>
   </div>
 </div>
