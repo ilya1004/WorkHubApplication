@@ -1,7 +1,7 @@
 import {inject} from '@angular/core';
 import {AuthService} from '../services/auth/auth.service';
 import {Router} from '@angular/router';
-import {TokenService} from "../services/token/token.service";
+import {TokenService} from "../services/auth/token.service";
 import {catchError, Observable, of, switchMap} from "rxjs";
 
 export const canActivateFreelancerApp = (): Observable<boolean> | boolean => {

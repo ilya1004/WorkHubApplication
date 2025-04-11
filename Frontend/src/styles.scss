@@ -50,6 +50,11 @@ body {
   border-radius: 10px;
 }
 
+.ant-modal-header {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
 .input-error-message {
   color: #ff4f4b;
   font-size: 12px;

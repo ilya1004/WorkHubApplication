@@ -1,0 +1,112 @@
+<nz-card style="width: 500px" nzTitle="Edit Project">
+  <form nz-form [formGroup]="updateProjectForm" (ngSubmit)="submitUpdateProject()" class="project-data-form">
+    <nz-form-item>
+      <nz-form-label nzRequired>Title</nz-form-label>
+      <nz-form-control>
+        <input nz-input formControlName="title" placeholder="Enter project title" style="width: 250px"/>
+        <div *ngIf="updateProjectForm.get('title')?.touched && updateProjectForm.get('title')?.errors" class="input-error-message">
+          <span *ngIf="updateProjectForm.get('title')?.errors?.['required']">Title is required.</span>
+          <span *ngIf="updateProjectForm.get('title')?.errors?.['maxlength']">Max 200 characters.</span>
+        </div>
+      </nz-form-control>
+    </nz-form-item>
+    
+    <nz-form-item>
+      <nz-form-label nzRequired>Description</nz-form-label>
+      <nz-form-control>
+        <textarea nz-input formControlName="description" placeholder="Enter project description" rows="4" style="max-height: 500px"></textarea>
+        <div *ngIf="updateProjectForm.get('description')?.touched && updateProjectForm.get('description')?.errors" class="input-error-message">
+          <span *ngIf="updateProjectForm.get('description')?.errors?.['required']">Description is required.</span>
+          <span *ngIf="updateProjectForm.get('description')?.errors?.['maxlength']">Max 1000 characters.</span>
+        </div>
+      </nz-form-control>
+    </nz-form-item>
+    
+    <nz-form-item>
+      <nz-form-label nzRequired>Budget ($)</nz-form-label>
+      <nz-form-control>
+        <nz-input-number formControlName="budget" nzStep="1" nzMin="0" [nzPrecision]="2" />
+        <div *ngIf="updateProjectForm.get('budget')?.touched && updateProjectForm.get('budget')?.errors" class="input-error-message">
+          <span *ngIf="updateProjectForm.get('budget')?.errors?.['required']">Budget is required.</span>
+          <span *ngIf="updateProjectForm.get('budget')?.errors?.['min']">Budget must be greater than 0.</span>
+          <span *ngIf="updateProjectForm.get('budget')?.errors?.['pattern']">Budget must have up to 16 digits and 2 decimal places.</span>
+        </div>
+      </nz-form-control>
+    </nz-form-item>
+    
+    <nz-form-item>
+      <nz-form-label>Category</nz-form-label>
+      <nz-form-control>
+        <nz-select formControlName="categoryId" nzPlaceHolder="Select category" style="width: 230px">
+          <nz-option *ngFor="let cat of categories" [nzValue]="cat.id" [nzLabel]="cat.name"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    
+    <nz-form-item>
+      <nz-form-label nzRequired>Applications Start</nz-form-label>
+      <nz-form-control>
+        <nz-date-picker formControlName="applicationsStartDate" nzPlaceHolder="Select date" [nzDisabledDate]="disablePastDates"></nz-date-picker>
+        <div *ngIf="updateProjectForm.get('applicationsStartDate')?.touched && updateProjectForm.get('applicationsStartDate')?.errors" class="input-error-message">
+          <span *ngIf="updateProjectForm.get('applicationsStartDate')?.errors?.['required']">Applications start date is required.</span>
+        </div>
+        <div *ngIf="updateProjectForm.errors?.['applicationsStartDateInPast'] && updateProjectForm.touched" class="input-error-message">
+          Applications start date must be in the future.
+        </div>
+      </nz-form-control>
+    </nz-form-item>
+    
+    <nz-form-item>
+      <nz-form-label nzRequired>Applications Deadline</nz-form-label>
+      <nz-form-control>
+        <nz-date-picker formControlName="applicationsDeadline" nzPlaceHolder="Select date" [nzDisabledDate]="disablePastDates"></nz-date-picker>
+        <div *ngIf="updateProjectForm.get('applicationsDeadline')?.touched && updateProjectForm.get('applicationsDeadline')?.errors" class="input-error-message">
+          <span *ngIf="updateProjectForm.get('applicationsDeadline')?.errors?.['required']">Applications deadline is required.</span>
+        </div>
+        <div *ngIf="updateProjectForm.errors?.['applicationsDeadlineInPast'] && updateProjectForm.touched" class="input-error-message">
+          Applications deadline must be in the future.
+        </div>
+        <div *ngIf="updateProjectForm.errors?.['applicationsDateError'] && updateProjectForm.touched" class="input-error-message">
+          Deadline must be after start date.
+        </div>
+      </nz-form-control>
+    </nz-form-item>
+    
+    <nz-form-item>
+      <nz-form-label nzRequired>Work Start</nz-form-label>
+      <nz-form-control>
+        <nz-date-picker formControlName="workStartDate" nzPlaceHolder="Select date" [nzDisabledDate]="disablePastDates"></nz-date-picker>
+        <div *ngIf="updateProjectForm.get('workStartDate')?.touched && updateProjectForm.get('workStartDate')?.errors" class="input-error-message">
+          <span *ngIf="updateProjectForm.get('workStartDate')?.errors?.['required']">Work start date is required.</span>
+        </div>
+        <div *ngIf="updateProjectForm.errors?.['workStartDateInPast'] && updateProjectForm.touched" class="input-error-message">
+          Work start date must be in the future.
+        </div>
+        <div *ngIf="updateProjectForm.errors?.['workStartDateError'] && updateProjectForm.touched" class="input-error-message">
+          Work start must be after deadline.
+        </div>
+      </nz-form-control>
+    </nz-form-item>
+    
+    <nz-form-item>
+      <nz-form-label nzRequired>Work Deadline</nz-form-label>
+      <nz-form-control>
+        <nz-date-picker formControlName="workDeadline" nzPlaceHolder="Select date" [nzDisabledDate]="disablePastDates"></nz-date-picker>
+        <div *ngIf="updateProjectForm.get('workDeadline')?.touched && updateProjectForm.get('workDeadline')?.errors" class="input-error-message">
+          <span *ngIf="updateProjectForm.get('workDeadline')?.errors?.['required']">Work deadline is required.</span>
+        </div>
+        <div *ngIf="updateProjectForm.errors?.['workDeadlineInPast'] && updateProjectForm.touched" class="input-error-message">
+          Work deadline must be in the future.
+        </div>
+        <div *ngIf="updateProjectForm.errors?.['workEndDateError'] && updateProjectForm.touched" class="input-error-message">
+          Work deadline must be after work start.
+        </div>
+      </nz-form-control>
+    </nz-form-item>
+    
+    <nz-form-item>
+      <button nz-button nzType="primary" type="submit" [disabled]="updateProjectForm.invalid" style="margin: 0 8px 0 20px">Update</button>
+      <button nz-button nzType="default" (click)="onCancel()">Cancel</button>
+    </nz-form-item>
+  </form>
+</nz-card>

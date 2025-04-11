@@ -1,14 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  ValidationErrors,
-  Validators
-} from "@angular/forms";
+import {ReactiveFormsModule} from "@angular/forms";
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import {NzButtonModule} from "ng-zorro-antd/button";
@@ -18,29 +9,31 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzFlexModule } from 'ng-zorro-antd/flex';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzCardModule } from 'ng-zorro-antd/card';
-import {DatePipe, NgForOf, NgIf} from '@angular/common';
+import {CommonModule, DatePipe, NgForOf, NgIf} from '@angular/common';
 import {ProjectToolsService} from "../../services/project-tools.service";
 import { NzMessageService } from 'ng-zorro-antd/message';
 import {Project} from "../../../core/interfaces/project/project.interface";
 import { Category } from '../../../core/interfaces/project/category.interface';
 import { FreelancerApplication } from '../../../core/interfaces/project/freelancer-application.interface';
 import { FreelancerUser } from '../../../core/interfaces/freelancer/freelancer-user.interface';
-import {CreateProjectForm} from "../../interfaces/project-tools/create-project.interface";
-import {UpdateProjectForm} from "../../interfaces/project-tools/update-project.interface";
 import {PROJECT_STATUSES} from "../../../core/data/constants";
 import {NzTagComponent} from "ng-zorro-antd/tag";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {ProjectStatus} from "../../../core/interfaces/project/project-status.interface";
 import {NzDescriptionsComponent, NzDescriptionsItemComponent} from "ng-zorro-antd/descriptions";
 import {PaginatedResult} from "../../../core/interfaces/common/paginated-result.interface";
-import {NzInputNumberComponent} from "ng-zorro-antd/input-number";
 import {CategoriesService} from "../../../core/services/categories/categories.service";
+import {CreateProjectComponent} from "./create-project/create-project.component";
+import {EditProjectComponent} from "./edit-project/edit-project.component";
+import {ProjectCreateData} from "../../interfaces/project-tools/create-project.interface";
+import {ProjectUpdateData} from "../../interfaces/project-tools/update-project.interface";
+import {FinanceService} from "../../services/finance.service";
 
 @Component({
   selector: 'app-project-tools',
   standalone: true,
   imports: [
-    FormsModule,
+    CommonModule,
     ReactiveFormsModule,
     NzFormModule,
     NzInputModule,
@@ -57,7 +50,8 @@ import {CategoriesService} from "../../../core/services/categories/categories.se
     NzTagComponent,
     NzDescriptionsComponent,
     NzDescriptionsItemComponent,
-    NzInputNumberComponent
+    CreateProjectComponent,
+    EditProjectComponent
   ],
   providers: [NzModalService],
   templateUrl: './project-tools.component.html',
@@ -65,9 +59,9 @@ import {CategoriesService} from "../../../core/services/categories/categories.se
 })
 export class ProjectToolsComponent implements OnInit {
   constructor(
-    private formBuilder: FormBuilder,
     private projectService: ProjectToolsService,
     private categoriesService: CategoriesService,
+    private financeService: FinanceService,
     private message: NzMessageService,
     private modal: NzModalService
   ) {}
@@ -80,9 +74,6 @@ export class ProjectToolsComponent implements OnInit {
   selectedApplication: FreelancerApplication | null = null;
   freelancerDetails: FreelancerUser | null = null;
   hasAcceptedApplication = false;
-  
-  createProjectForm!: FormGroup<CreateProjectForm>;
-  updateProjectForm!: FormGroup<UpdateProjectForm>;
   
   isCreating = false;
   isEditing = false;
@@ -100,113 +91,6 @@ export class ProjectToolsComponent implements OnInit {
   ngOnInit(): void {
     this.loadProjects();
     this.loadCategories();
-    this.initForms();
-  }
-  
-  initForms(): void {
-    this.createProjectForm = this.formBuilder.group<CreateProjectForm>({
-      title: new FormControl<string>('', {
-        nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.maxLength(200)
-        ]
-      }),
-      description: new FormControl<string>('', {
-        nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.maxLength(1000)
-        ]
-      }),
-      budget: new FormControl<number>(0, {
-        nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.min(0.01),
-          Validators.pattern(/^\d{1,10}(\.\d{1,2})?$/)
-        ]
-      }),
-      categoryId: new FormControl<string | null>(null, {
-        validators: []
-      }),
-      applicationsStartDate: new FormControl<Date>(null as any, {
-        nonNullable: true,
-        validators: [
-          Validators.required
-        ]
-      }),
-      applicationsDeadline: new FormControl<Date>(null as any, {
-        nonNullable: true,
-        validators: [
-          Validators.required
-        ]
-      }),
-      workStartDate: new FormControl<Date>(null as any, {
-        nonNullable: true,
-        validators: [
-          Validators.required
-        ]
-      }),
-      workDeadline: new FormControl<Date>(null as any, {
-        nonNullable: true,
-        validators: [
-          Validators.required
-        ]
-      })
-    }, { validators: [this.dateSequenceValidator, this.futureDateValidator] });
-    
-    this.updateProjectForm = this.formBuilder.group<UpdateProjectForm>({
-      title: new FormControl<string>('', {
-        nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.maxLength(200)
-        ]
-      }),
-      description: new FormControl<string>('', {
-        nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.maxLength(1000)
-        ]
-      }),
-      budget: new FormControl<number>(0, {
-        nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.min(0.01),
-          Validators.pattern(/^\d{1,16}(\.\d{1,2})?$/)
-        ]
-      }),
-      categoryId: new FormControl<string | null>(null, {
-        validators: []
-      }),
-      applicationsStartDate: new FormControl<Date>(null as any, {
-        nonNullable: true,
-        validators: [
-          Validators.required
-        ]
-      }),
-      applicationsDeadline: new FormControl<Date>(null as any, {
-        nonNullable: true,
-        validators: [
-          Validators.required
-        ]
-      }),
-      workStartDate: new FormControl<Date>(null as any, {
-        nonNullable: true,
-        validators: [
-          Validators.required
-        ]
-      }),
-      workDeadline: new FormControl<Date>(null as any, {
-        nonNullable: true,
-        validators: [
-          Validators.required
-        ]
-      })
-    }, { validators: [this.dateSequenceValidator, this.futureDateValidator] });
   }
   
   disablePastDates = (current: Date): boolean => {
@@ -215,50 +99,6 @@ export class ProjectToolsComponent implements OnInit {
     today.setDate(today.getDate() + 1);
     return current < today;
   };
-  
-  futureDateValidator(group: AbstractControl): ValidationErrors | null {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    now.setDate(now.getDate() + 1);
-    
-    const start = group.get('applicationsStartDate')?.value;
-    const deadline = group.get('applicationsDeadline')?.value;
-    const workStart = group.get('workStartDate')?.value;
-    const workEnd = group.get('workDeadline')?.value;
-    
-    if (start && start < now) {
-      return { applicationsStartDateInPast: true };
-    }
-    if (deadline && deadline < now) {
-      return { applicationsDeadlineInPast: true }
-    }
-    if (workStart && workStart < now) {
-      return { workStartDateInPast: true };
-    }
-    if (workEnd && workEnd < now) {
-      return { workDeadlineInPast: true};
-    }
-    
-    return null;
-  }
-  
-  dateSequenceValidator(group: AbstractControl): ValidationErrors | null {
-    const start = group.get('applicationsStartDate')?.value;
-    const deadline = group.get('applicationsDeadline')?.value;
-    const workStart = group.get('workStartDate')?.value;
-    const workEnd = group.get('workDeadline')?.value;
-    
-    if (start && deadline && start >= deadline) {
-      return { applicationsDateError: true };
-    }
-    if (deadline && workStart && deadline >= workStart) {
-      return { workStartDateError: true };
-    }
-    if (workStart && workEnd && workStart >= workEnd) {
-      return { workEndDateError: true };
-    }
-    return null;
-  }
   
   loadProjects(): void {
     this.projectService.getEmployerProjects(this.projectPageNo, this.projectPageSize).subscribe({
@@ -312,7 +152,29 @@ export class ProjectToolsComponent implements OnInit {
     this.isCreating = !this.isCreating;
     this.isEditing = false;
     this.isViewingApplications = false;
-    this.createProjectForm.reset();
+  }
+  
+  onProjectCreated(projectCreateData: ProjectCreateData ): void {
+    this.projectService.createProject(projectCreateData).subscribe({
+      next: (response: { id: string }) => {
+        const projectId = response.id;
+        this.message.success('Project created successfully!');
+        this.loadProjects();
+        
+        this.financeService.createPaymentIntent(projectId, projectCreateData.paymentMethodId).subscribe({
+          next: () => {
+            this.message.success('Payment intent created successfully!');
+            this.isCreating = false;
+          },
+          error: (err) => {
+            this.message.error('Failed to create payment intent: ' + (err.message || err));
+          }
+        });
+      },
+      error: (err) => {
+        this.message.error('Failed to create project: ' + (err.message || err));
+      }
+    });
   }
   
   onEditProject(project: Project): void {
@@ -320,84 +182,19 @@ export class ProjectToolsComponent implements OnInit {
       this.message.warning('Only projects in "Published" status can be edited.');
       return;
     }
-    if (this.selectedProject != null && this.selectedProject.id === project.id) {
+    if (this.selectedProject?.id === project.id) {
       this.isEditing = !this.isEditing;
-    }
-    else {
+    } else {
       this.isEditing = true;
     }
     this.selectedProject = project;
     this.isCreating = false;
     this.isViewingApplications = false;
-    this.updateProjectForm.patchValue({
-      title: project.title,
-      description: project.description,
-      budget: project.budget,
-      categoryId: project.categoryId,
-      applicationsStartDate: new Date(project.lifecycle.applicationsStartDate),
-      applicationsDeadline: new Date(project.lifecycle.applicationsDeadline),
-      workStartDate: new Date(project.lifecycle.workStartDate),
-      workDeadline: new Date(project.lifecycle.workDeadline)
-    });
   }
   
-  onViewApplications(project: Project): void {
-    if (this.selectedProject != null && this.selectedProject.id === project.id) {
-      this.isViewingApplications = !this.isViewingApplications;
-    }
-    else {
-      this.isViewingApplications = true;
-    }
-    this.selectedProject = project;
-    this.isCreating = false;
-    this.isEditing = false;
-    this.loadApplications(project.id);
-  }
-  
-  submitCreateProject(): void {
-    if (this.createProjectForm.valid) {
-      const value = this.createProjectForm.getRawValue();
-      this.projectService.createProject({
-        project: {
-          title: value.title,
-          description: value.description,
-          budget: value.budget,
-          categoryId: value.categoryId
-        },
-        lifecycle: {
-          applicationsStartDate: value.applicationsStartDate,
-          applicationsDeadline: value.applicationsDeadline,
-          workStartDate: value.workStartDate,
-          workDeadline: value.workDeadline
-        }
-      }).subscribe({
-        next: () => {
-          this.message.success('Project created successfully!');
-          this.loadProjects();
-          this.isCreating = false;
-        },
-        error: () => this.message.error('Failed to create project.')
-      });
-    }
-  }
-  
-  submitUpdateProject(): void {
-    if (this.updateProjectForm.valid && this.selectedProject) {
-      const value = this.updateProjectForm.getRawValue();
-      this.projectService.updateProject(this.selectedProject.id, {
-        project: {
-          title: value.title,
-          description: value.description,
-          budget: value.budget,
-          categoryId: value.categoryId
-        },
-        lifecycle: {
-          applicationsStartDate: value.applicationsStartDate,
-          applicationsDeadline: value.applicationsDeadline,
-          workStartDate: value.workStartDate,
-          workDeadline: value.workDeadline
-        }
-      }).subscribe({
+  onProjectUpdated(data: ProjectUpdateData): void {
+    if (this.selectedProject) {
+      this.projectService.updateProject(this.selectedProject.id, data).subscribe({
         next: () => {
           this.message.success('Project updated successfully!');
           this.loadProjects();
@@ -406,6 +203,18 @@ export class ProjectToolsComponent implements OnInit {
         error: () => this.message.error('Failed to update project.')
       });
     }
+  }
+  
+  onViewApplications(project: Project): void {
+    if (this.selectedProject?.id === project.id) {
+      this.isViewingApplications = !this.isViewingApplications;
+    } else {
+      this.isViewingApplications = true;
+    }
+    this.selectedProject = project;
+    this.isCreating = false;
+    this.isEditing = false;
+    this.loadApplications(project.id);
   }
   
   cancelProject(projectId: string): void {
@@ -424,10 +233,9 @@ export class ProjectToolsComponent implements OnInit {
   }
   
   showApplicationDetails(application: FreelancerApplication): void {
-    if (this.selectedApplication != null && this.selectedApplication.id === application.id) {
+    if (this.selectedApplication?.id === application.id) {
       this.isViewingApplicationDetails = !this.isViewingApplicationDetails;
-    }
-    else {
+    } else {
       this.isViewingApplicationDetails = true;
     }
     if (this.selectedApplication === null || this.selectedApplication.id !== application.id) {
@@ -467,14 +275,11 @@ export class ProjectToolsComponent implements OnInit {
       'Expired',
       'Cancelled'
     ];
-    return PROJECT_STATUSES.find(s =>
-      s.value === statuses[status])?.label || 'Unknown';
+    return PROJECT_STATUSES.find(s => s.value === statuses[status])?.label || 'Unknown';
   }
   
   getApplicationStatusLabel(status: number): string {
     return ['Pending', 'Accepted', 'Rejected'][status] || 'Unknown';
   }
-  
-  protected readonly PROJECT_STATUSES = PROJECT_STATUSES;
   protected readonly ProjectStatus = ProjectStatus;
 }

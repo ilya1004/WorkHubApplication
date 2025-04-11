@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import {PaginatedResult} from "../../core/interfaces/common/paginated-result.interface";
-import {PROJECTS_SERVICE_API_URL} from "../../core/data/constants";
 import {Project} from "../../core/interfaces/project/project.interface";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
+import {environment} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +33,7 @@ export class FreelancerProjectsService {
     }
 
     return this.httpClient.get<PaginatedResult<Project>>(
-        `${PROJECTS_SERVICE_API_URL}projects/my-freelancer-projects-filter`,
+        `${environment.PROJECTS_SERVICE_API_URL}projects/my-freelancer-projects-filter`,
         { params },
     );
   }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {IDENTITY_SERVICE_API_URL} from '../../data/constants';
+import {environment} from "../../../../environments/environment";
 
 const RESET_URL = 'http://localhost:4200/reset-password';
 
@@ -16,7 +16,7 @@ export class PasswordResetService {
       email,
       resetUrl: RESET_URL
     };
-    return this.httpClient.post<void>(`${IDENTITY_SERVICE_API_URL}auth/forgot-password`, payload);
+    return this.httpClient.post<void>(`${environment.IDENTITY_SERVICE_API_URL}auth/forgot-password`, payload);
   }
 
   resetPassword(email: string, newPassword: string, code: string): Observable<void> {
@@ -25,6 +25,6 @@ export class PasswordResetService {
       newPassword,
       code
     };
-    return this.httpClient.post<void>(`${IDENTITY_SERVICE_API_URL}auth/reset-password`, payload);
+    return this.httpClient.post<void>(`${environment.IDENTITY_SERVICE_API_URL}auth/reset-password`, payload);
   }
 }

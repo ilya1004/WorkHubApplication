@@ -8,7 +8,7 @@ import {NzButtonComponent} from 'ng-zorro-antd/button';
 import {NzSpinComponent} from 'ng-zorro-antd/spin';
 import {RouterLink} from '@angular/router';
 import {NzAlertComponent} from 'ng-zorro-antd/alert';
-import {PasswordResetService} from '../../../core/services/password-reset/password-reset.service';
+import {PasswordResetService} from '../../../core/services/auth/password-reset.service';
 import {catchError, throwError} from 'rxjs';
 import {NgIf} from '@angular/common';
 

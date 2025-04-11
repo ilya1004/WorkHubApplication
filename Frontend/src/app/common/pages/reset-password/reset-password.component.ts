@@ -15,7 +15,7 @@ import {NzButtonComponent} from 'ng-zorro-antd/button';
 import {NzAlertComponent} from 'ng-zorro-antd/alert';
 import { NzSpinComponent } from 'ng-zorro-antd/spin';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {PasswordResetService} from '../../../core/services/password-reset/password-reset.service';
+import {PasswordResetService} from '../../../core/services/auth/password-reset.service';
 import {catchError, throwError} from 'rxjs';
 import {NgIf} from '@angular/common';
 import {NzIconDirective} from 'ng-zorro-antd/icon';

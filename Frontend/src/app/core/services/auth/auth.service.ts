@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
-import {IDENTITY_SERVICE_API_URL} from '../../data/constants';
-import {AuthInterface} from './auth.interface';
+import {Tokens} from '../../interfaces/auth/tokens';
 import {Router} from '@angular/router';
 import {Observable, tap} from 'rxjs';
-import {TokenService} from "../token/token.service";
+import {TokenService} from "./token.service";
+import {environment} from "../../../../environments/environment";
 
 @Injectable({
   providedIn: 'root',
@@ -16,9 +16,9 @@ export class AuthService {
     private router: Router
   ) {}
 
-  login(payload: { email: string; password: string }): Observable<HttpResponse<AuthInterface>> {
-    return this.httpClient.post<AuthInterface>(
-      `${IDENTITY_SERVICE_API_URL}auth/login`,
+  login(payload: { email: string; password: string }): Observable<HttpResponse<Tokens>> {
+    return this.httpClient.post<Tokens>(
+      `${environment.IDENTITY_SERVICE_API_URL}auth/login`,
       payload,
       { observe: 'response' }
     ).pipe(
@@ -34,7 +34,7 @@ export class AuthService {
   logout(): void {
     this.tokenService.clearTokens();
     this.httpClient.post<void>(
-      `${IDENTITY_SERVICE_API_URL}/auth/logout`, {})
+      `${environment.IDENTITY_SERVICE_API_URL}/auth/logout`, {})
       .subscribe({
         next: () => {
           this.tokenService.clearTokens();
@@ -50,7 +50,7 @@ export class AuthService {
 
   registerFreelancer(payload: { userName: string; firstName: string; lastName: string; email: string; password: string }): Observable<HttpResponse<any>> {
     return this.httpClient.post<HttpResponse<any>>(
-      `${IDENTITY_SERVICE_API_URL}users/register-freelancer`,
+      `${environment.IDENTITY_SERVICE_API_URL}users/register-freelancer`,
       payload,
       { observe: 'response' }
     );
@@ -58,7 +58,7 @@ export class AuthService {
 
   registerEmployer(payload: { userName: string; companyName: string; email: string; password: string }): Observable<HttpResponse<any>> {
     return this.httpClient.post<HttpResponse<any>>(
-      `${IDENTITY_SERVICE_API_URL}users/register-employer`,
+      `${environment.IDENTITY_SERVICE_API_URL}users/register-employer`,
       payload,
       { observe: 'response' }
     );

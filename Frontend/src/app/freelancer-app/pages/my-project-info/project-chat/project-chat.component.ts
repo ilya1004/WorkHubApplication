@@ -10,7 +10,7 @@ import {ChatService} from "../../../../core/services/chat/chat.service";
 import {AuthService} from "../../../../core/services/auth/auth.service";
 import {NzTagModule} from "ng-zorro-antd/tag";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
-import {TokenService} from "../../../../core/services/token/token.service";
+import {TokenService} from "../../../../core/services/auth/token.service";
 import {Subscription} from "rxjs";
 
 @Component({

@@ -22,6 +22,7 @@ import {ProfileComponent as EmployerProfileComponent} from "./employer-app/pages
 import {MyProjectsComponent as EmployerMyProjectsComponent} from "./employer-app/pages/my-projects/my-projects.component";
 import { ProjectToolsComponent } from './employer-app/pages/project-tools/project-tools.component';
 import {MyProjectInfoComponent as EmployerMyProjectInfoComponent} from "./employer-app/pages/my-project-info/my-project-info.component";
+import {MyFinancesComponent as EmployerMyFinancesComponent} from "./employer-app/pages/my-finances/my-finances.component";
 
 
 export const routes: Routes = [
@@ -49,10 +50,11 @@ export const routes: Routes = [
     component: LayoutComponent,
     canActivate: [canActivateEmployerApp],
     children: [
-      { path: 'my-profile', component: EmployerProfileComponent },
       { path: 'my-projects', component: EmployerMyProjectsComponent },
       { path: 'my-projects/:projectId', component: EmployerMyProjectInfoComponent },
       { path: 'project-tools', component: ProjectToolsComponent },
+      { path: 'my-finances', component: EmployerMyFinancesComponent },
+      { path: 'my-profile', component: EmployerProfileComponent },
     ]
   },
   { path: '**', component: NotFoundComponent }

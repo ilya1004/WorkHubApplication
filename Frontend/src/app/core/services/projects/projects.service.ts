@@ -3,7 +3,7 @@ import {Observable} from "rxjs";
 import {PaginatedResult} from "../../interfaces/common/paginated-result.interface";
 import {Project} from "../../interfaces/project/project.interface";
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {PROJECTS_SERVICE_API_URL} from "../../data/constants";
+import {environment} from "../../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -54,26 +54,26 @@ export class ProjectsService {
     }
 
     return this.httpClient.get<PaginatedResult<Project>>(
-      `${PROJECTS_SERVICE_API_URL}projects/by-filter`,
+      `${environment.PROJECTS_SERVICE_API_URL}projects/by-filter`,
       { params }
     );
   }
   
   getProjectById(projectId: string): Observable<Project> {
     return this.httpClient.get<Project>(
-      `${PROJECTS_SERVICE_API_URL}projects/${projectId}`
+      `${environment.PROJECTS_SERVICE_API_URL}projects/${projectId}`
     );
   }
   
   requestProjectAcceptance(projectId: string): Observable<void> {
     return this.httpClient.patch<void>(
-      `${PROJECTS_SERVICE_API_URL}projects/${projectId}/request-acceptance`, {}
+      `${environment.PROJECTS_SERVICE_API_URL}projects/${projectId}/request-acceptance`, {}
     );
   }
   
   setProjectAcceptanceStatus(projectId: string, status: boolean): Observable<void> {
-    return this.httpClient.post<void>(
-      `${PROJECTS_SERVICE_API_URL}projects/${projectId}/set-acceptance-status/${status}`, {}
+    return this.httpClient.patch<void>(
+      `${environment.PROJECTS_SERVICE_API_URL}projects/${projectId}/set-acceptance-status/${status}`, {}
     );
   }
 }

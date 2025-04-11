@@ -4,10 +4,9 @@ import {HubConnection, HubConnectionBuilder, HubConnectionState} from "@microsof
 import { Chat } from '../../interfaces/chat/chat.interface';
 import {Message} from "../../interfaces/chat/message.interface";
 import {HttpClient} from "@angular/common/http";
-import {AuthService} from "../auth/auth.service";
-import {CHAT_SERVICE_API_URL, CHAT_SERVICE_HUB_URL} from "../../data/constants";
 import {PaginatedResult} from "../../interfaces/common/paginated-result.interface";
-import {TokenService} from "../token/token.service";
+import {TokenService} from "../auth/token.service";
+import {environment} from "../../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -22,43 +21,37 @@ export class ChatService {
   
   constructor(
     private http: HttpClient,
-    private authService: AuthService,
     private tokenService: TokenService
   ) {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(CHAT_SERVICE_HUB_URL, {
+      .withUrl(environment.CHAT_SERVICE_HUB_URL, {
         accessTokenFactory: () => this.tokenService.getAccessToken() || '',
         withCredentials: true
       })
       .withAutomaticReconnect()
       .build();
     
-    // Инициализация обработчиков только один раз при создании сервиса
     this.initializeHub();
   }
   
   private initializeHub(): void {
     if (this.isHubInitialized) {
-      return; // Предотвращаем повторную регистрацию обработчиков
+      return;
     }
     
     this.hubConnection.on('ReceiveChat', (chat: Chat | null) => {
-      console.log('Received chat:', chat);
       this.chatReceived.next(chat);
     });
     
     this.hubConnection.on('ReceiveTextMessage', (message: Message) => {
-      console.log('Received text message:', message);
       this.messageReceived.next(message);
     });
     
     this.hubConnection.on('ReceiveFileMessage', (message: Message) => {
-      console.log('Received file message:', message);
       this.messageReceived.next(message);
     });
     
     this.hubConnection.on('ReceiveChatMessages', (messages: PaginatedResult<Message>) => {
-      console.log('Received chat messages:', messages);
       this.messagesReceived.next(messages);
     });
     
@@ -66,15 +59,13 @@ export class ChatService {
       console.error('SignalR connection closed:', err);
     });
     
-    this.isHubInitialized = true; // Устанавливаем флаг после инициализации
+    this.isHubInitialized = true;
   }
   
   async startConnection(): Promise<void> {
     if (this.hubConnection.state === HubConnectionState.Disconnected) {
       try {
-        console.log('Starting SignalR connection...');
         await this.hubConnection.start();
-        console.log('SignalR connected successfully');
         this.connectionEstablished.next(true);
       } catch (err) {
         console.error('Error starting SignalR connection:', err);
@@ -98,27 +89,23 @@ export class ChatService {
   async createChat(employerId: string, freelancerId: string, projectId: string): Promise<void> {
     await this.ensureConnected();
     const request = { EmployerId: employerId, FreelancerId: freelancerId, ProjectId: projectId };
-    console.log('Creating chat with:', request);
     await this.hubConnection.invoke('CreateChat', request);
   }
   
   async getChatByProjectId(projectId: string): Promise<void> {
     await this.ensureConnected();
-    console.log('Getting chat by project ID:', projectId);
     await this.hubConnection.invoke('GetChatByProjectId', projectId);
   }
   
   async sendTextMessage(chatId: string, receiverId: string, text: string): Promise<void> {
     await this.ensureConnected();
     const request = { ChatId: chatId, ReceiverId: receiverId, Text: text };
-    console.log('Sending text message:', request);
     await this.hubConnection.invoke('SendTextMessage', request);
   }
   
   async getChatMessages(chatId: string, pageNo: number, pageSize: number): Promise<void> {
     await this.ensureConnected();
     const request = { ChatId: chatId, PageNo: pageNo, PageSize: pageSize };
-    console.log('Getting chat messages:', request);
     await this.hubConnection.invoke('GetChatMessages', request);
   }
   
@@ -128,8 +115,7 @@ export class ChatService {
     formData.append('ReceiverId', receiverId);
     formData.append('File', file);
     
-    console.log('Uploading file to chat:', formData);
-    return this.http.post(`${CHAT_SERVICE_API_URL}files`, formData).pipe(
+    return this.http.post(`${environment.CHAT_SERVICE_API_URL}files`, formData).pipe(
       catchError(error => {
         console.error('Error uploading file:', error);
         return throwError(() => error);
@@ -138,7 +124,7 @@ export class ChatService {
   }
   
   downloadFile(chatId: string, fileId: string): Observable<Blob> {
-    const url = `${CHAT_SERVICE_API_URL}files/chat/${chatId}/file/${fileId}`;
+    const url = `${environment.CHAT_SERVICE_API_URL}files/chat/${chatId}/file/${fileId}`;
     return this.http.get(url, { responseType: 'blob' });
   }
   

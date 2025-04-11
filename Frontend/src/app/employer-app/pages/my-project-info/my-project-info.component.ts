@@ -109,22 +109,24 @@ export class MyProjectInfoComponent {
     }
     const status = this.project.lifecycle.status;
     return (
-      status === ProjectStatus.PendingForReview &&
+      status === ProjectStatus.InProgress &&
       this.project.lifecycle.acceptanceRequested
     );
   }
   
-  setProjectAcceptanceStatus(status: boolean): void {
+  setProjectAcceptanceStatus(isAccepted: boolean): void {
     if (!this.project) return;
     
     this.submitting = true;
-    this.projectsService.setProjectAcceptanceStatus(this.project.id, status).subscribe({
+    this.projectsService.setProjectAcceptanceStatus(this.project.id, isAccepted).subscribe({
       next: () => {
         this.submitting = false;
         if (this.project) {
           this.project.lifecycle.status = ProjectStatus.Completed;
         }
-        this.message.success('Project marked as completed successfully!');
+        if (isAccepted) {
+          this.message.success('Project marked as completed successfully!');
+        }
       },
       error: (error) => {
         this.submitting = false;

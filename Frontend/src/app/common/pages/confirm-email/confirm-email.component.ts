@@ -6,7 +6,7 @@ import {NzCardComponent} from 'ng-zorro-antd/card';
 import {NzFlexDirective} from 'ng-zorro-antd/flex';
 import {NzInputDirective} from 'ng-zorro-antd/input';
 import {NzSpaceComponent, NzSpaceItemDirective} from 'ng-zorro-antd/space';
-import {EmailConfirmationService} from '../../../core/services/email-confirmation/email-confirmation.service';
+import {EmailConfirmationService} from '../../../core/services/auth/email-confirmation.service';
 import {catchError, throwError} from 'rxjs';
 import {NgIf} from '@angular/common';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';

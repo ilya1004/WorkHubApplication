@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
-import {TokenService} from "../../../core/services/token/token.service";
+import {TokenService} from "../../../core/services/auth/token.service";
 
 @Component({
   selector: 'app-root-redirect',

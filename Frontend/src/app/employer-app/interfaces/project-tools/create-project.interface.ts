@@ -9,4 +9,21 @@ export interface CreateProjectForm {
   applicationsDeadline: FormControl<Date>;
   workStartDate: FormControl<Date>;
   workDeadline: FormControl<Date>;
+  paymentMethodId: FormControl<string>;
+}
+
+export interface ProjectCreateData {
+  project: {
+    title: string;
+    description: string;
+    budget: number;
+    categoryId: string | null;
+  };
+  lifecycle: {
+    applicationsStartDate: Date;
+    applicationsDeadline: Date;
+    workStartDate: Date;
+    workDeadline: Date;
+  };
+  paymentMethodId: string;
 }

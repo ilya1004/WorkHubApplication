@@ -11,7 +11,7 @@ import {FreelancerUser} from "../../../core/interfaces/freelancer/freelancer-use
 import {UsersService} from "../../services/users.service";
 import {ApplicationStatus} from "../../../core/interfaces/project/freelancer-application.interface";
 import {NzAlertModule} from "ng-zorro-antd/alert";
-import {TokenService} from "../../../core/services/token/token.service";
+import {TokenService} from "../../../core/services/auth/token.service";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {FreelancerApplicationsService} from "../../../core/services/freelancer-applications/freelancer-applications.service";
 

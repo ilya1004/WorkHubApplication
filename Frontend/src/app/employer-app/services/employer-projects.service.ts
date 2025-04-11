@@ -3,7 +3,7 @@ import {Observable} from "rxjs";
 import {PaginatedResult} from "../../core/interfaces/common/paginated-result.interface";
 import {Project} from "../../core/interfaces/project/project.interface";
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {PROJECTS_SERVICE_API_URL} from "../../core/data/constants";
+import {environment} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +44,7 @@ export class EmployerProjectsService {
     }
 
     return this.httpClient.get<PaginatedResult<Project>>(
-      `${PROJECTS_SERVICE_API_URL}projects/my-employer-projects-filter`,
+      `${environment.PROJECTS_SERVICE_API_URL}projects/my-employer-projects-filter`,
       { params }
     );
   }

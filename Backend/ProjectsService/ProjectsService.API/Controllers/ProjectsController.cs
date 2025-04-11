@@ -24,9 +24,12 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
     [Authorize(Policy = AuthPolicies.EmployerPolicy)]
     public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequest request, CancellationToken cancellationToken = default)
     {
-        await mediator.Send(new CreateProjectCommand(request.Project, request.Lifecycle), cancellationToken);
+        var projectId = await mediator.Send(new CreateProjectCommand(request.Project, request.Lifecycle), cancellationToken);
         
-        return Created();
+        return CreatedAtAction(
+            nameof(GetProjectById),
+            new { id = projectId.ToString() },
+            new { Id = projectId.ToString() });
     }
 
     [HttpGet]

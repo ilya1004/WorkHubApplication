@@ -13,7 +13,7 @@ import {NzAlertComponent} from 'ng-zorro-antd/alert';
 import {routes} from '../../../app.routes';
 import {catchError, of, tap, throwError} from 'rxjs';
 import {CookieService} from 'ngx-cookie-service';
-import {TokenService} from "../../../core/services/token/token.service";
+import {TokenService} from "../../../core/services/auth/token.service";
 
 interface LoginForm {
   email: FormControl<string>;

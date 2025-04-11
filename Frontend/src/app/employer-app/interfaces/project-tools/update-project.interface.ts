@@ -10,3 +10,18 @@ export interface UpdateProjectForm {
   workStartDate: FormControl<Date>;
   workDeadline: FormControl<Date>;
 }
+
+export interface ProjectUpdateData {
+  project: {
+    title: string;
+    description: string;
+    budget: number;
+    categoryId: string | null;
+  };
+  lifecycle: {
+    applicationsStartDate: Date;
+    applicationsDeadline: Date;
+    workStartDate: Date;
+    workDeadline: Date;
+  };
+}

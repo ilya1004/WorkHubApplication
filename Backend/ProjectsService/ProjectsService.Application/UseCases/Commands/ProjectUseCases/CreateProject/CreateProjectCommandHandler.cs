@@ -6,9 +6,9 @@ public class CreateProjectCommandHandler(
     IUnitOfWork unitOfWork, 
     IMapper mapper,
     IUserContext userContext,
-    ILogger<CreateProjectCommandHandler> logger) : IRequestHandler<CreateProjectCommand>
+    ILogger<CreateProjectCommandHandler> logger) : IRequestHandler<CreateProjectCommand, Guid>
 {
-    public async Task Handle(CreateProjectCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
         var userId = userContext.GetUserId();
         
@@ -55,5 +55,7 @@ public class CreateProjectCommandHandler(
         await unitOfWork.SaveAllAsync(cancellationToken);
         
         logger.LogInformation("Successfully created project {ProjectId}", project.Id);
+
+        return project.Id;
     }
 }

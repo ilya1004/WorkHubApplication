@@ -5,7 +5,7 @@ import {NzIconDirective} from 'ng-zorro-antd/icon';
 import {RouterLink} from '@angular/router';
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {AuthService} from "../../../core/services/auth/auth.service";
-import {TokenService} from "../../../core/services/token/token.service";
+import {TokenService} from "../../../core/services/auth/token.service";
 
 @Component({
   selector: 'app-employer-navbar',

@@ -1,7 +1,7 @@
 import {HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest} from '@angular/common/http';
 import {inject} from '@angular/core';
 import {catchError, Observable, switchMap, throwError} from "rxjs";
-import {TokenService} from "../services/token/token.service";
+import {TokenService} from "../services/auth/token.service";
 import {Router} from "@angular/router";
 
 export const authTokenInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {

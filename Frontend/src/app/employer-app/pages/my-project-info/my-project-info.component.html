@@ -28,31 +28,28 @@
         <nz-descriptions-item nzTitle="Name">{{ freelancer.firstName }} {{ freelancer.lastName }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Email">{{ freelancer.email }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="About">{{ freelancer.about || 'Not provided' }}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="Registered At">{{ freelancer.registeredAt | date }}</nz-descriptions-item>
       </nz-descriptions>
       <ng-template #noFreelancer>
         <p>No freelancer assigned yet.</p>
       </ng-template>
     </nz-card>
-    <div nz-flex>
-      <div style="margin-top: 20px" *ngIf="project && canCompleteProject()">
-        <button
-          nz-button
-          nzType="primary"
-          [nzLoading]="submitting"
-          [disabled]="project.lifecycle.status === ProjectStatus.Completed"
-          (click)="setProjectAcceptanceStatus(true)">
-          {{ project.lifecycle.status === ProjectStatus.Completed ? 'Project Completed' : 'Complete Project' }}
-        </button>
-        <button
-          nz-button
-          nzType="default"
-          [nzLoading]="submitting"
-          [disabled]="project.lifecycle.status === ProjectStatus.Completed"
-          (click)="setProjectAcceptanceStatus(false)">
-          {{ project.lifecycle.status === ProjectStatus.Completed ? 'Project Completed' : 'Complete Project' }}
-        </button>
-      </div>
+    <div nz-flex *ngIf="project && canCompleteProject()" nzJustify="center" nzGap="15px" style="margin-top: 20px; width: 100%;">
+      <button
+        nz-button
+        nzType="primary"
+        [nzLoading]="submitting"
+        [disabled]="project.lifecycle.status === ProjectStatus.Completed"
+        (click)="setProjectAcceptanceStatus(true)">
+        Accept project
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        [nzLoading]="submitting"
+        [disabled]="project.lifecycle.status === ProjectStatus.Completed"
+        (click)="setProjectAcceptanceStatus(false)">
+        Reject acceptance request
+      </button>
     </div>
   </div>
   

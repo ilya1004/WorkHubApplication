@@ -1,6 +1,6 @@
 import {catchError, Observable, of, switchMap} from "rxjs";
 import {inject} from "@angular/core";
-import {TokenService} from "../services/token/token.service";
+import {TokenService} from "../services/auth/token.service";
 import {Router} from "@angular/router";
 
 export const canActivateEmployerApp = (): Observable<boolean> | boolean => {

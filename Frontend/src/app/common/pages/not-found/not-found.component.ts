@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {Router} from "@angular/router";
-import {TokenService} from "../../../core/services/token/token.service";
+import {TokenService} from "../../../core/services/auth/token.service";
 import {NzResultComponent} from "ng-zorro-antd/result";
 import {NzButtonComponent} from "ng-zorro-antd/button";
 import {NzFlexDirective} from "ng-zorro-antd/flex";

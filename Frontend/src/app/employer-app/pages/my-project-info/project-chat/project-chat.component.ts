@@ -10,7 +10,7 @@ import {FormsModule} from "@angular/forms";
 import {Message, MessageType} from "../../../../core/interfaces/chat/message.interface";
 import {ChatService} from "../../../../core/services/chat/chat.service";
 import {AuthService} from "../../../../core/services/auth/auth.service";
-import {TokenService} from "../../../../core/services/token/token.service";
+import {TokenService} from "../../../../core/services/auth/token.service";
 import {Subscription} from "rxjs";
 
 @Component({

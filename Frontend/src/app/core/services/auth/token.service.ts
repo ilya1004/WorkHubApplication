@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import {catchError, map, Observable, of, tap, throwError} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {CookieService} from "ngx-cookie-service";
-import {DecodedToken} from "./token.interface";
+import {DecodedToken} from "../../interfaces/auth/token.interface";
 import {jwtDecode} from "jwt-decode";
-import {AuthInterface} from "../auth/auth.interface";
-import {IDENTITY_SERVICE_API_URL} from "../../data/constants";
+import {Tokens} from "../../interfaces/auth/tokens";
 import {Router} from "@angular/router";
+import {environment} from "../../../../environments/environment";
 
 @Injectable({
   providedIn: 'root',
@@ -47,8 +47,6 @@ export class TokenService {
   
   getAccessToken(): string | null {
     const token = this.cookieService.get('access_token');
-    // console.log("getAccessToken");
-    // console.log(token);
     if (!token) {
       console.warn('No access token found in cookies');
       return null;
@@ -66,8 +64,6 @@ export class TokenService {
   }
   
   setTokens(accessToken: string, refreshToken: string): void {
-    console.log("setTokens");
-    console.log(accessToken, refreshToken);
     this.cookieService.set('access_token', accessToken, { path: '/' });
     this.cookieService.set('refresh_token', refreshToken, { path: '/' });
     console.log('Cookies after set:', {
@@ -136,8 +132,8 @@ export class TokenService {
     const payload = { accessToken, refreshToken };
     console.log(payload);
     
-    return this.httpClient.post<AuthInterface>(
-      `${IDENTITY_SERVICE_API_URL}auth/refresh-token`, payload
+    return this.httpClient.post<Tokens>(
+      `${environment.IDENTITY_SERVICE_API_URL}auth/refresh-token`, payload
     ).pipe(
       tap(response => {
         this.setTokens(response.accessToken, response.refreshToken);
