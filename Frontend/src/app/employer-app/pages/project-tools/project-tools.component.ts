@@ -154,14 +154,29 @@ export class ProjectToolsComponent implements OnInit {
     this.isViewingApplications = false;
   }
   
-  onProjectCreated(projectCreateData: ProjectCreateData ): void {
-    this.projectService.createProject(projectCreateData).subscribe({
-      next: (response: { id: string }) => {
-        const projectId = response.id;
+  onProjectCreated(projectCreateData: ProjectCreateData): void {
+    
+    const requestData = {
+      project: {
+        title: projectCreateData.project.title,
+        description: projectCreateData.project.description,
+        budget: projectCreateData.project.budget,
+        categoryId: projectCreateData.project.categoryId
+      },
+      lifecycle: {
+        applicationsStartDate: projectCreateData.lifecycle.applicationsStartDate.toISOString(),
+        applicationsDeadline: projectCreateData.lifecycle.applicationsDeadline.toISOString(),
+        workStartDate: projectCreateData.lifecycle.workStartDate.toISOString(),
+        workDeadline: projectCreateData.lifecycle.workDeadline.toISOString()
+      }
+    };
+    
+    this.projectService.createProject(requestData).subscribe({
+      next: (response: { projectId: string }) => {
         this.message.success('Project created successfully!');
         this.loadProjects();
         
-        this.financeService.createPaymentIntent(projectId, projectCreateData.paymentMethodId).subscribe({
+        this.financeService.createPaymentIntent(response.projectId, projectCreateData.paymentMethodId).subscribe({
           next: () => {
             this.message.success('Payment intent created successfully!');
             this.isCreating = false;
@@ -193,8 +208,22 @@ export class ProjectToolsComponent implements OnInit {
   }
   
   onProjectUpdated(data: ProjectUpdateData): void {
+    const requestData = {
+      project: {
+        title: data.project.title,
+        description: data.project.description,
+        budget: data.project.budget,
+        categoryId: data.project.categoryId
+      },
+      lifecycle: {
+        applicationsStartDate: data.lifecycle.applicationsStartDate.toISOString(),
+        applicationsDeadline: data.lifecycle.applicationsDeadline.toISOString(),
+        workStartDate: data.lifecycle.workStartDate.toISOString(),
+        workDeadline: data.lifecycle.workDeadline.toISOString()
+      }
+    };
     if (this.selectedProject) {
-      this.projectService.updateProject(this.selectedProject.id, data).subscribe({
+      this.projectService.updateProject(this.selectedProject.id, requestData).subscribe({
         next: () => {
           this.message.success('Project updated successfully!');
           this.loadProjects();
@@ -232,6 +261,26 @@ export class ProjectToolsComponent implements OnInit {
     });
   }
   
+  deleteProject(projectId: string): void {
+    this.modal.confirm({
+      nzTitle: 'Are you sure you want to delete this project?',
+      nzContent: 'This action cannot be undone.',
+      nzOkText: 'Delete',
+      nzOkDanger: true,
+      nzOnOk: () => {
+        this.projectService.deleteProject(projectId).subscribe({
+          next: () => {
+            this.message.success('Project deleted successfully!');
+            this.loadProjects();
+          },
+          error: (err) => {
+            this.message.error('Failed to delete project: ' + (err.message || err));
+          }
+        });
+      }
+    });
+  }
+  
   showApplicationDetails(application: FreelancerApplication): void {
     if (this.selectedApplication?.id === application.id) {
       this.isViewingApplicationDetails = !this.isViewingApplicationDetails;
@@ -249,6 +298,7 @@ export class ProjectToolsComponent implements OnInit {
       next: () => {
         this.message.success('Application accepted!');
         this.loadApplications(projectId);
+        this.selectedApplication = null;
       },
       error: () => this.message.error('Failed to accept application.')
     });
@@ -259,6 +309,7 @@ export class ProjectToolsComponent implements OnInit {
       next: () => {
         this.message.success('Application rejected!');
         this.loadApplications(projectId);
+        this.selectedApplication = null;
       },
       error: () => this.message.error('Failed to reject application.')
     });

@@ -10,6 +10,9 @@ public interface ITransfersService
     Task<IEnumerable<ChargeModel>> GetEmployerPaymentsAsync(Guid userId, Guid? projectId,
         CancellationToken cancellationToken);
 
+    Task<IEnumerable<PaymentIntentModel>> GetEmployerPaymentIntentsAsync(Guid userId, Guid? projectId,
+        CancellationToken cancellationToken);
+
     Task<IEnumerable<TransferModel>> GetFreelancerTransfersAsync(Guid userId, Guid? projectId,
         CancellationToken cancellationToken);
 }

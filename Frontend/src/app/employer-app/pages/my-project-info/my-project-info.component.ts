@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { Project } from '../../../core/interfaces/project/project.interface';
 import {FreelancerUser} from "../../../core/interfaces/freelancer/freelancer-user.interface";
 import {ActivatedRoute, Router, RouterModule} from "@angular/router";
@@ -13,9 +13,13 @@ import {NzCardModule} from "ng-zorro-antd/card";
 import {NzGridModule} from "ng-zorro-antd/grid";
 import {ProjectStatus} from "../../../core/interfaces/project/project-status.interface";
 import {ProjectChatComponent} from "./project-chat/project-chat.component";
+import {PROJECT_STATUSES} from "../../../core/data/constants";
+import {ChatService} from "../../../core/services/chat/chat.service";
+import {firstValueFrom} from "rxjs";
 
 @Component({
   selector: 'app-my-project-info',
+  standalone: true,
   imports: [
     CommonModule,
     NzCardModule,
@@ -24,16 +28,15 @@ import {ProjectChatComponent} from "./project-chat/project-chat.component";
     RouterModule,
     NzFlexDirective,
     NzButtonComponent,
-    NzFlexDirective,
     NzDescriptionsItemComponent,
     NzDescriptionsComponent,
     NgIf,
     ProjectChatComponent,
   ],
   templateUrl: './my-project-info.component.html',
-  styleUrl: './my-project-info.component.scss'
+  styleUrls: ['./my-project-info.component.scss']
 })
-export class MyProjectInfoComponent {
+export class MyProjectInfoComponent implements OnInit {
   project: Project | null = null;
   freelancer: FreelancerUser | null = null;
   loading = false;
@@ -45,6 +48,7 @@ export class MyProjectInfoComponent {
     private route: ActivatedRoute,
     private projectsService: ProjectsService,
     private usersService: UsersService,
+    private chatService: ChatService,
     private message: NzMessageService,
     private router: Router,
   ) {}
@@ -109,31 +113,32 @@ export class MyProjectInfoComponent {
     }
     const status = this.project.lifecycle.status;
     return (
-      status === ProjectStatus.InProgress &&
+      status === ProjectStatus.PendingForReview &&
       this.project.lifecycle.acceptanceRequested
     );
   }
   
-  setProjectAcceptanceStatus(isAccepted: boolean): void {
+  async setProjectAcceptanceStatus(isAccepted: boolean): Promise<void> {
     if (!this.project) return;
-    
     this.submitting = true;
-    this.projectsService.setProjectAcceptanceStatus(this.project.id, isAccepted).subscribe({
-      next: () => {
-        this.submitting = false;
-        if (this.project) {
-          this.project.lifecycle.status = ProjectStatus.Completed;
+    try {
+      if (isAccepted) {
+        this.project.lifecycle.status = ProjectStatus.Completed;
+        this.message.success('Project marked as completed successfully!');
+        
+        try {
+            await this.chatService.setChatInactive(this.project.id);
+        } catch (error) {
+          console.error('Error deactivating chat:', error);
+          this.message.error('Failed to deactivate chat.');
         }
-        if (isAccepted) {
-          this.message.success('Project marked as completed successfully!');
-        }
-      },
-      error: (error) => {
-        this.submitting = false;
-        console.error('Error completing project:', error);
-        this.message.error('Failed to complete project.');
       }
-    });
+    } catch (error) {
+      console.error('Error completing project:', error);
+      this.message.error('Failed to complete project.');
+    } finally {
+      this.submitting = false;
+    }
   }
   
   goBack(): void {

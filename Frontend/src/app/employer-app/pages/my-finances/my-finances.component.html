@@ -6,8 +6,8 @@
         <nz-descriptions nzBordered [nzColumn]="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }">
           <nz-descriptions-item nzTitle="Account ID">{{ account.id }}</nz-descriptions-item>
           <nz-descriptions-item nzTitle="Owner Email">{{ account.ownerEmail }}</nz-descriptions-item>
-<!--          <nz-descriptions-item nzTitle="Currency">{{ account.currency }}</nz-descriptions-item>-->
-          <nz-descriptions-item nzTitle="Balance">{{ account.balance / 100 | currency:'USD' }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Currency">EUR</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Balance">{{ account.balance / 100 | currency:'EUR' }}</nz-descriptions-item>
         </nz-descriptions>
       } @else {
         <p>No account created yet.</p>
@@ -84,9 +84,20 @@
     
     <div nz-flex nzVertical nzGap="large">
       <h2>My Payments</h2>
-      <nz-card [nzLoading]="isLoadingCharges">
+      <div *ngIf="isLoadingCharges" class="loading-container">
+        <nz-spin nzSimple></nz-spin>
+      </div>
+      <div *ngIf="!isLoadingCharges">
         @if (charges.length > 0) {
-          <nz-table #chargesTable [nzData]="charges" [nzPageSize]="10" [nzFrontPagination]="false">
+          <nz-table
+            #chargesTable
+            [nzData]="charges"
+            [nzPageSize]="chargesPageSize"
+            [nzTotal]="chargesTotalCount"
+            [nzPageIndex]="chargesPageNo"
+            (nzPageIndexChange)="onChargesPageChange($event)"
+            [nzShowPagination]="true"
+            [nzFrontPagination]="false">
             <thead>
             <tr>
               <th>ID</th>
@@ -100,7 +111,7 @@
             <tbody>
             <tr *ngFor="let charge of chargesTable.data">
               <td>{{ charge.id }}</td>
-              <td>{{ charge.amount / 100 | currency:'USD' }}</td>
+              <td>{{ charge.amount / 100 | currency:'EUR' }}</td>
               <td>{{ charge.currency }}</td>
               <td>{{ charge.status }}</td>
               <td>{{ charge.paymentMethod }}</td>
@@ -111,7 +122,50 @@
         } @else {
           <p>No payments found.</p>
         }
-      </nz-card>
+      </div>
+    </div>
+    
+    <div nz-flex nzVertical nzGap="large">
+      <h2>My Payment Intents</h2>
+      <div *ngIf="isLoadingPaymentIntents" class="loading-container">
+        <nz-spin nzSimple></nz-spin>
+      </div>
+      <div *ngIf="!isLoadingPaymentIntents">
+        @if (paymentIntents.length > 0) {
+          <nz-table
+            #paymentIntentsTable
+            [nzData]="paymentIntents"
+            [nzPageSize]="paymentIntentsPageSize"
+            [nzTotal]="paymentIntentsTotalCount"
+            [nzPageIndex]="paymentIntentsPageNo"
+            (nzPageIndexChange)="onPaymentIntentsPageChange($event)"
+            [nzShowPagination]="true"
+            [nzFrontPagination]="false">
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>Amount</th>
+              <th>Currency</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Project ID</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let intent of paymentIntentsTable.data">
+              <td>{{ intent.id }}</td>
+              <td>{{ intent.amount / 100 | currency:'EUR' }}</td>
+              <td>{{ intent.currency }}</td>
+              <td>{{ intent.status }}</td>
+              <td>{{ intent.created | date:'MM.dd.yyyy' }}</td>
+              <td>{{ intent.metadata['project_id'] || 'N/A' }}</td>
+            </tr>
+            </tbody>
+          </nz-table>
+        } @else {
+          <p>No payment intents found.</p>
+        }
+      </div>
     </div>
   </div>
 </div>

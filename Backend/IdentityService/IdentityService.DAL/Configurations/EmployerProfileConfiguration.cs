@@ -16,7 +16,8 @@ public class EmployerProfileConfiguration : IEntityTypeConfiguration<EmployerPro
             .HasMaxLength(200);
 
         builder.Property(e => e.About)
-            .HasMaxLength(1000);
+            .HasMaxLength(1000)
+            .HasDefaultValue("");
 
         builder.HasOne(e => e.Industry)
             .WithMany(i => i.EmployerProfiles)

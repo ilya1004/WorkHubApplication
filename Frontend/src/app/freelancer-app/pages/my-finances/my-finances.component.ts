@@ -50,7 +50,7 @@ export class MyFinancesComponent implements OnInit {
       },
       error: (error) => {
         if (error.status === 404) {
-          this.account = null; // Счет не создан
+          this.account = null;
         } else {
           this.accountErrorMessage = 'Failed to load account information.';
           console.error('Error loading account:', error);
@@ -80,7 +80,7 @@ export class MyFinancesComponent implements OnInit {
       next: () => {
         this.isCreatingAccount = false;
         this.accountSuccessMessage = 'Account created successfully!';
-        this.loadAccount(); // Перезагружаем информацию о счете
+        setTimeout(() => this.loadAccount(), 2000);
         setTimeout(() => this.accountSuccessMessage = null, 5000);
       },
       error: (error) => {

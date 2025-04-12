@@ -109,6 +109,14 @@ export class ChatService {
     await this.hubConnection.invoke('GetChatMessages', request);
   }
   
+  async setChatInactive(projectId: string): Promise<void> {
+    if (!this.hubConnection || this.hubConnection.state !== 'Connected') {
+      await this.startConnection();
+    }
+    const request = { chatId: projectId };
+    await this.hubConnection.invoke('SetChatInactive', request);
+  }
+  
   uploadFile(chatId: string, receiverId: string, file: File): Observable<any> {
     const formData = new FormData();
     formData.append('ChatId', chatId);
@@ -139,4 +147,5 @@ export class ChatService {
   getMessagesReceived(): Observable<PaginatedResult<Message>> {
     return this.messagesReceived.asObservable();
   }
+  
 }

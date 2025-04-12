@@ -12,7 +12,7 @@
         <nz-descriptions-item nzTitle="Title">{{ project.title }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Description">{{ project.description }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Budget">{{ project.budget }}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="Category">{{ project.category.name || 'None' }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Category">{{ project.category?.name || 'None' }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Status">{{ getStatusLabel(project.lifecycle.status) }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Applications Start">{{ project.lifecycle.applicationsStartDate | date }}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="Applications Deadline">{{ project.lifecycle.applicationsDeadline | date }}</nz-descriptions-item>
@@ -53,9 +53,8 @@
     </div>
   </div>
   
-  <div>
+  <div *ngIf="project && project.freelancerId && project.lifecycle.status !== ProjectStatus.Completed">
     <app-employer-project-chat
-      *ngIf="project && project.freelancerId"
       [projectId]="project.id.toString()"
       [employerId]="project.employerId"
       [freelancerId]="project.freelancerId">

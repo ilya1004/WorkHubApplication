@@ -8,7 +8,8 @@
       [nzPageSize]="projectPageSize"
       [nzPageIndex]="projectPageNo"
       (nzPageIndexChange)="onProjectPageChange($event)"
-      (nzPageSizeChange)="onProjectPageSizeChange($event)">
+      (nzPageSizeChange)="onProjectPageSizeChange($event)"
+      style="min-width: 600px">
       <thead>
       <tr>
         <th>Title</th>
@@ -23,8 +24,13 @@
         <td>
           <div nz-flex nzGap="10px">
             <button [disabled]="project.lifecycle.status !== ProjectStatus.Published" nz-button (click)="onEditProject(project)">Edit</button>
-            <button nz-button nzDanger (click)="cancelProject(project.id)">Cancel</button>
             <button nz-button (click)="onViewApplications(project)">Applications</button>
+            <ng-container *ngIf="project.lifecycle.status !== ProjectStatus.Cancelled">
+              <button nz-button nzDanger (click)="cancelProject(project.id)">Cancel</button>
+            </ng-container>
+            <ng-container *ngIf="project.lifecycle.status === ProjectStatus.Cancelled">
+              <button nz-button nzDanger nzType="primary" (click)="deleteProject(project.id)">Delete</button>
+            </ng-container>
           </div>
         </td>
       </tr>
@@ -102,9 +108,6 @@
             } @else {
               <span>No skills added yet</span>
             }
-          </nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Registered At">
-            {{ freelancerDetails.registeredAt | date }}
           </nz-descriptions-item>
         </nz-descriptions>
         <nz-divider></nz-divider>

@@ -14,7 +14,7 @@ public class ConfirmPaymentForProjectCommandHandler(
         logger.LogInformation("Confirming payment for project {ProjectId} by user {UserId}", 
             request.ProjectId, userId);
 
-        await employerPaymentsService.ConfirmPaymentForProjectAsync(request.ProjectId, userId, cancellationToken);
+        await employerPaymentsService.ConfirmPaymentForProjectAsync(request.ProjectId, cancellationToken);
             
         logger.LogInformation("Payment for project {ProjectId} confirmed successfully by user {UserId}", 
             request.ProjectId, userId);

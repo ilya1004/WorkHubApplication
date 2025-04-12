@@ -17,6 +17,13 @@ public class GetChatByProjectIdQueryHandler(
             return null;
         }
         
+        if (!chat.IsActive)
+        {
+            logger.LogWarning("Chat with project ID '{ProjectId}' is inactive", request.ProjectId);
+
+            return null;
+        }
+        
         logger.LogInformation("Retrieved chat information by project ID {ChatId}", request.ProjectId);
 
         return chat;

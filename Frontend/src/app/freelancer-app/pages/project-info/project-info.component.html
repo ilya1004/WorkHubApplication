@@ -15,7 +15,7 @@
       <nz-descriptions-item nzTitle="Title">{{ project.title }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Description" nzSpan="2">{{ project.description }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Budget">{{ project.budget }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="Category">{{ project.category.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Category">{{project.category?.name || 'None'}}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Status" nzSpan="2">{{ getStatusLabel(project.lifecycle.status) }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Applications Start">{{ project.lifecycle.applicationsStartDate | date }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="Applications Deadline">{{ project.lifecycle.applicationsDeadline | date }}</nz-descriptions-item>
@@ -73,6 +73,12 @@
           [nzLoading]="isCancelling">
           Cancel Application
         </button>
+      }
+      
+      @if (hasAcceptedApplication()) {
+        <nz-tag style="font-size: 16px; padding: 5px 7px" nzColor="green">
+          Accepted Application
+        </nz-tag>
       }
     </div>
     

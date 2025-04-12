@@ -3,6 +3,7 @@ using Hangfire;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using ProjectsService.API;
+using ProjectsService.API.GrpcServices;
 using ProjectsService.API.Middlewares;
 using ProjectsService.Application;
 using ProjectsService.Domain.Abstractions.StartupServices;
@@ -40,7 +41,7 @@ using (var scope = app.Services.CreateScope())
     await dbStartupService.InitializeDb();
     
     var jobInitializer = scope.ServiceProvider.GetRequiredService<IBackgroundJobsInitializer>();
-    // jobInitializer.StartBackgroundJobs();
+    jobInitializer.StartBackgroundJobs();
 }
 
 app.UseRouting();
@@ -55,6 +56,8 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapGrpcService<ProjectsGrpcService>();
 
 app.MapControllers();
 

@@ -13,3 +13,18 @@ nz-table {
 nz-descriptions {
   margin-bottom: 16px;
 }
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+}
+
+//nz-table {
+//  width: 750px;
+//  th, td {
+//    text-align: left;
+//    padding: 8px;
+//  }
+//}

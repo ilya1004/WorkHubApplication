@@ -7,8 +7,8 @@ export interface Project {
     title: string;
     description: string;
     budget: number;
-    categoryId: string;
-    category: Category;
+    categoryId: string | null;
+    category: Category | null;
     freelancerApplications: FreelancerApplication[];
     employerId: string;
     freelancerId: string;

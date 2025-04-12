@@ -22,6 +22,7 @@ import {Router} from "@angular/router";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {NzCheckboxComponent} from "ng-zorro-antd/checkbox";
 import {NzDatePickerComponent} from "ng-zorro-antd/date-picker";
+import {NzDescriptionsItemComponent} from "ng-zorro-antd/descriptions";
 
 @Component({
   selector: 'app-my-projects',

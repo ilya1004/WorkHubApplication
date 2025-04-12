@@ -1,3 +1,3 @@
 namespace ChatService.API.Contracts.ChatContracts;
 
-public sealed record SetChatInactiveRequest(Guid ChatId);
+public sealed record SetChatInactiveRequest(Guid ProjectId);

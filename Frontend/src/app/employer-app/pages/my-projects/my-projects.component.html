@@ -41,7 +41,7 @@
       </label>
   </nz-form-item>
   
-  <div nz-flex nzGap="10px" nzJustify="center" style="min-width: 200px">
+  <div nz-flex nzGap="10px" nzJustify="center" style="min-width: 200px; margin: 8px 0 0 0" >
     <button
       nz-button
       nzType="primary"
@@ -71,7 +71,7 @@
   <tr>
     <th>ID</th>
     <th>Title</th>
-    <th>Budget</th>
+    <th>Budget (EUR)</th>
     <th>Category</th>
     <th>Status</th>
     <th>Created At</th>
@@ -83,7 +83,7 @@
     <td>{{project.id}}</td>
     <td>{{project.title}}</td>
     <td>{{project.budget}}</td>
-    <td>{{project.category.name}}</td>
+    <td>{{project.category?.name || 'None'}}</td>
     <td>{{getStatusLabel(project.lifecycle.status)}}</td>
     <td>{{project.lifecycle.createdAt | date}}</td>
     <td>

@@ -31,25 +31,25 @@ public class StripeFreelancerAccountsService(
             Type = "custom",
             Email = email,
             BusinessType = "individual",
+            Country = "LT",
             Individual = new AccountIndividualOptions
             {
-                FirstName = "John",
-                LastName = "Doe",
+                FirstName = "Test",
+                LastName = "Freelancer",
                 Email = email,
-                Phone = "+37052345678",
+                Phone = "+37061234567",
                 Address = new AddressOptions
                 {
                     City = "Vilnius",
-                    Line1 = "Vilnius",
-                    Line2 = "Vilnius",
+                    Line1 = "Test Street 123",
                     Country = "LT",
-                    PostalCode = "01100"
+                    PostalCode = "LT-01100"
                 },
                 Dob = new DobOptions
                 {
                     Day = 1,
                     Month = 1,
-                    Year = 1902
+                    Year = 1990
                 },
             },
             BusinessProfile = new AccountBusinessProfileOptions

@@ -23,8 +23,8 @@
       </nz-option>
     </nz-select>
   </nz-form-item>
-
-  <div nz-flex nzGap="10px" nzJustify="center" style="min-width: 200px">
+  
+  <div nz-flex nzGap="10px" nzJustify="center" style="min-width: 200px; margin: 8px 0 0 0" >
     <button
       nz-button
       nzType="primary"
@@ -65,7 +65,7 @@
     <td>{{project.id}}</td>
     <td>{{project.title}}</td>
     <td>{{project.budget}}</td>
-    <td>{{project.category.name}}</td>
+    <td>{{project.category?.name || 'None'}}</td>
     <td>{{getStatusLabel(project.lifecycle.status)}}</td>
     <td>{{project.lifecycle.createdAt | date}}</td>
     <td>

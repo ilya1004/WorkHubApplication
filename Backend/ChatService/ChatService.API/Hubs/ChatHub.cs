@@ -70,7 +70,7 @@ public class ChatHub(
     {
         await mediator.Send(mapper.Map<SetChatInactiveCommand>(request));
         
-        logger.LogInformation("Chat {ChatId} set inactive", request.ChatId);
+        logger.LogInformation("Chat by project with ID '{ProjectId}' set inactive", request.ProjectId);
     }
     
     [Authorize]

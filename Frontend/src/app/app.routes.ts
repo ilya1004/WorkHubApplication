@@ -11,16 +11,17 @@ import {canActivateFreelancerApp} from './core/guards/freelancer-auth.guard';
 import {HomeComponent as FreelancerHomeComponent} from './freelancer-app/pages/home/home.component';
 import {MyProjectsComponent as FreelancerMyProjectsComponent} from './freelancer-app/pages/my-projects/my-projects.component';
 import {LayoutComponent as FreelancerLayoutComponent} from './freelancer-app/components/layout/layout.component';
-import {ProfileComponent as FreelancerProfileComponent} from './freelancer-app/pages/profile/profile.component';
 import {ProjectInfoComponent as FreelancerProjectInfoComponent} from "./freelancer-app/pages/project-info/project-info.component";
 import {MyProjectInfoComponent as FreelancerMyProjectInfoComponent} from "./freelancer-app/pages/my-project-info/my-project-info.component";
+import {MyApplicationsComponent} from "./freelancer-app/pages/my-applications/my-applications.component";
 import {MyFinancesComponent as FreelancerMyFinancesComponent} from "./freelancer-app/pages/my-finances/my-finances.component";
+import {ProfileComponent as FreelancerProfileComponent} from './freelancer-app/pages/profile/profile.component';
 
 import {canActivateEmployerApp} from "./core/guards/employer-auth.guard";
 import {LayoutComponent} from "./employer-app/components/layout/layout.component";
 import {ProfileComponent as EmployerProfileComponent} from "./employer-app/pages/profile/profile.component";
 import {MyProjectsComponent as EmployerMyProjectsComponent} from "./employer-app/pages/my-projects/my-projects.component";
-import { ProjectToolsComponent } from './employer-app/pages/project-tools/project-tools.component';
+import {ProjectToolsComponent} from './employer-app/pages/project-tools/project-tools.component';
 import {MyProjectInfoComponent as EmployerMyProjectInfoComponent} from "./employer-app/pages/my-project-info/my-project-info.component";
 import {MyFinancesComponent as EmployerMyFinancesComponent} from "./employer-app/pages/my-finances/my-finances.component";
 
@@ -41,6 +42,7 @@ export const routes: Routes = [
       { path: 'home/project/:projectId', component: FreelancerProjectInfoComponent },
       { path: 'my-projects', component: FreelancerMyProjectsComponent },
       { path: 'my-projects/:projectId', component: FreelancerMyProjectInfoComponent },
+      { path: 'my-applications', component: MyApplicationsComponent },
       { path: 'my-finances', component: FreelancerMyFinancesComponent },
       { path: 'my-profile', component: FreelancerProfileComponent },
     ],

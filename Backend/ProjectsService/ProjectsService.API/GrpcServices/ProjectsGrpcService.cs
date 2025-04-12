@@ -17,13 +17,13 @@ public class ProjectsGrpcService(
         var project = await mediator.Send(new GetProjectByIdQuery(Guid.Parse(request.Id)));
         
         logger.LogInformation("Successfully returned project data for {ProjectId}", request.Id);
-        
+
         return new GetProjectByIdResponse
         {
             Id = project.Id.ToString(), 
-            BudgetInCents = (int)(project.Budget * 100), 
-            PaymentIntentId = project.PaymentIntentId, 
-            FreelancerId = project.FreelancerId.ToString()
+            BudgetInCents = (int)(project.Budget * 100),
+            FreelancerId = project.FreelancerId?.ToString() ?? string.Empty,
+            PaymentIntentId = project.PaymentIntentId ?? string.Empty
         };
     }
 }

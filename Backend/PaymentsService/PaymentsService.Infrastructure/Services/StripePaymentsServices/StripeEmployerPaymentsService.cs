@@ -19,6 +19,7 @@ public class StripeEmployerPaymentsService(
     private readonly CustomerPaymentMethodService _customerPaymentMethodService = new();
     private readonly SetupIntentService _intentService = new();
     private readonly PaymentIntentService _paymentIntentService = new();
+    private readonly AccountService _accountService = new();
 
     public async Task<string> CreateSetupIntent(Guid userId, CancellationToken cancellationToken)
     {
@@ -97,16 +98,21 @@ public class StripeEmployerPaymentsService(
             var options = new PaymentIntentCreateOptions
             {
                 Amount = project.BudgetInCents,
-                Currency = "usd",
+                Currency = "eur",
                 Customer = employer.EmployerCustomerId,
                 PaymentMethod = paymentMethod.Id,
                 Confirm = true,
                 CaptureMethod = "manual",
                 TransferGroup = projectId.ToString(),
+                AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
+                {
+                    Enabled = true,
+                    AllowRedirects = "never"
+                },
                 Metadata = new Dictionary<string, string>
                 {
                     { "project_id", projectId.ToString() },
-                    { "freelancer_id", project.FreelancerId.ToString() }
+                    // { "freelancer_id", project.FreelancerId.ToString() }
                 }
             };
             
@@ -133,9 +139,9 @@ public class StripeEmployerPaymentsService(
         }
     }
 
-    public async Task ConfirmPaymentForProjectAsync(Guid userId, Guid projectId, CancellationToken cancellationToken)
+    public async Task ConfirmPaymentForProjectAsync(Guid projectId, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Confirming payment for project {ProjectId} by user {UserId}", projectId, userId);
+        logger.LogInformation("Confirming payment for project {ProjectId}", projectId);
 
         var project = await projectsGrpcClient.GetProjectByIdAsync(projectId.ToString(), cancellationToken);
 
@@ -145,14 +151,32 @@ public class StripeEmployerPaymentsService(
             
             throw new NotFoundException("This project does not have an attached Payment Intent.");
         }
+        
+        if (project.FreelancerId is null) 
+        {
+            logger.LogWarning("Freelancer user not found for project {ProjectId}", projectId);
+            
+            throw new NotFoundException("This project does not have freelancer.");
+        }
 
-        var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(project.FreelancerId.ToString(), cancellationToken);
+        var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(project.FreelancerId.ToString()!, cancellationToken);
 
         if (string.IsNullOrEmpty(freelancer.StripeAccountId))
         {
             logger.LogWarning("Freelancer account not found for project {ProjectId}", projectId);
             
             throw new NotFoundException($"Freelancer's Stripe Account to project with ID '{projectId}' not found.");
+        }
+        
+        var account = await _accountService.GetAsync(freelancer.StripeAccountId, cancellationToken: cancellationToken);
+        
+        if (!account.ChargesEnabled || !account.PayoutsEnabled)
+        {
+            logger.LogWarning("Freelancer account {AccountId} is not fully activated. " +
+                              "ChargesEnabled: {ChargesEnabled}, TransfersEnabled: {TransfersEnabled}", 
+                freelancer.StripeAccountId, account.ChargesEnabled, account.PayoutsEnabled);
+            
+            throw new BadRequestException($"Freelancer account '{freelancer.StripeAccountId}' is not fully activated for transfers.");
         }
 
         try

@@ -175,4 +175,8 @@ export class CreateProjectComponent implements OnInit {
     }
     return null;
   }
+  
+  getPaymentMethodLabel(paymentMethod: PaymentMethod): string {
+    return `${paymentMethod.card?.brand} (**** **** **** ${paymentMethod.card?.last4Digits})`;
+  }
 }

@@ -35,6 +35,9 @@
     <nz-card style="min-width: 550px; min-height: 250px">
       <nz-spin [nzSpinning]="isLoadingUserData">
         <h2>{{ userData.companyName }}</h2>
+        <div><strong>My nickname:</strong></div>
+        <div>{{ userData.userName }}</div>
+        <br />
         <div><strong>About company:</strong></div>
         <div>{{ userData.about || 'No description provided' }}</div>
         <br />

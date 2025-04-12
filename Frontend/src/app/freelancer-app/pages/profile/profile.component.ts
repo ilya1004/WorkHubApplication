@@ -15,7 +15,6 @@ import {NzAlertComponent} from "ng-zorro-antd/alert";
 import {FreelancerSkill} from "../../../core/interfaces/freelancer/freelancer-skill.interface";
 import {FreelancerUser} from "../../../core/interfaces/freelancer/freelancer-user.interface";
 
-
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -74,11 +73,24 @@ export class ProfileComponent implements OnInit {
   };
   
   editFreelancerForm = new FormGroup({
-    firstName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
-    lastName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(100)] }),
-    about: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(1000)] }),
-    skillIds: new FormControl<string[]>([], { nonNullable: true }),
-    resetImage: new FormControl(false, { nonNullable: true }),
+    firstName: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(100)]
+    }),
+    lastName: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(100)]
+    }),
+    about: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.maxLength(1000)]
+    }),
+    skillIds: new FormControl<string[]>([], {
+      nonNullable: true
+    }),
+    resetImage: new FormControl(false, {
+      nonNullable: true
+    }),
     image: new FormControl<File | null>(null),
   });
   
@@ -166,7 +178,7 @@ export class ProfileComponent implements OnInit {
   
   onClickEdit(): void {
     this.isEditing = !this.isEditing;
-    // this.uploadProgress = 0;
+    this.isChangingPassword = false;
     if (this.isEditing) {
       this.editFreelancerForm.patchValue({
         firstName: this.userData.firstName,
@@ -179,7 +191,6 @@ export class ProfileComponent implements OnInit {
   
   onCancelEdit(): void {
     this.isEditing = false;
-    // this.uploadProgress = 0;
     this.editFreelancerForm.reset({
       firstName: this.userData.firstName,
       lastName: this.userData.lastName,
@@ -196,6 +207,7 @@ export class ProfileComponent implements OnInit {
   
   onClickChangePassword(): void {
     this.isChangingPassword = !this.isChangingPassword;
+    this.isEditing = false;
     if (!this.isChangingPassword) {
       this.changePasswordForm.reset();
       this.passwordChangeMessage = null;

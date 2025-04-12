@@ -20,7 +20,8 @@ public class FreelancerProfileConfiguration : IEntityTypeConfiguration<Freelance
             .HasMaxLength(100);
 
         builder.Property(f => f.About)
-            .HasMaxLength(1000);
+            .HasMaxLength(1000)
+            .HasDefaultValue("");
 
         builder.HasMany(f => f.Skills)
             .WithMany(s => s.FreelancerProfiles);

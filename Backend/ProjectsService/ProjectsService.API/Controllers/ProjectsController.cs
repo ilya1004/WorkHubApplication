@@ -25,11 +25,8 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
     public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequest request, CancellationToken cancellationToken = default)
     {
         var projectId = await mediator.Send(new CreateProjectCommand(request.Project, request.Lifecycle), cancellationToken);
-        
-        return CreatedAtAction(
-            nameof(GetProjectById),
-            new { id = projectId.ToString() },
-            new { Id = projectId.ToString() });
+
+        return Ok(new { projectId = projectId.ToString() });
     }
 
     [HttpGet]

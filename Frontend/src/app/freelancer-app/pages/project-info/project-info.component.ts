@@ -14,6 +14,8 @@ import {NzAlertModule} from "ng-zorro-antd/alert";
 import {TokenService} from "../../../core/services/auth/token.service";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {FreelancerApplicationsService} from "../../../core/services/freelancer-applications/freelancer-applications.service";
+import {NzTagComponent} from "ng-zorro-antd/tag";
+import {ProjectStatus} from "../../../core/interfaces/project/project-status.interface";
 
 @Component({
   selector: 'app-project-info',
@@ -25,7 +27,8 @@ import {FreelancerApplicationsService} from "../../../core/services/freelancer-a
     NzButtonModule,
     NzAlertModule,
     RouterLink,
-    NzFlexDirective
+    NzFlexDirective,
+    NzTagComponent
   ],
   templateUrl: './project-info.component.html',
   styleUrl: './project-info.component.scss'
@@ -125,13 +128,18 @@ export class ProjectInfoComponent implements OnInit {
   }
   
   canApply(): boolean {
-    if (!this.project || this.project.lifecycle.status !== 1) return false; // Только для Accepting Applications
-    return !this.hasApplication() && this.currentUserId !== this.project.employerId; // Нельзя подать заявку, если уже есть или если ты работодатель
+    if (!this.project || this.project.lifecycle.status !== ProjectStatus.AcceptingApplications) return false;
+    return !this.hasApplication() && !this.hasAcceptedApplication() && this.currentUserId !== this.project.employerId;
   }
   
   hasApplication(): boolean {
     return !!this.project?.freelancerApplications.some(app =>
       app.freelancerId === this.currentUserId && app.status === ApplicationStatus.pending);
+  }
+  
+  hasAcceptedApplication(): boolean {
+    return !!this.project?.freelancerApplications.some(app =>
+      app.freelancerId === this.currentUserId && app.status === ApplicationStatus.accepted);
   }
   
   applyForProject(): void {

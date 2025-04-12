@@ -23,7 +23,7 @@
     </nz-form-item>
     
     <nz-form-item>
-      <nz-form-label nzRequired>Budget ($)</nz-form-label>
+      <nz-form-label nzRequired>Budget (EUR)</nz-form-label>
       <nz-form-control>
         <nz-input-number formControlName="budget" nzStep="1" nzMin="0" [nzPrecision]="2" />
         <div *ngIf="createProjectForm.get('budget')?.touched && createProjectForm.get('budget')?.errors" class="input-error-message">
@@ -108,7 +108,7 @@
       <nz-form-label nzRequired>Payment Method</nz-form-label>
       <nz-form-control>
         <nz-select formControlName="paymentMethodId" nzPlaceHolder="Select payment method" style="width: 230px">
-          <nz-option *ngFor="let method of paymentMethods" [nzValue]="method.id" [nzLabel]="'{{method.card.}}  {{method.card.last4}}'"></nz-option>
+          <nz-option *ngFor="let method of paymentMethods" [nzValue]="method.id" [nzLabel]="getPaymentMethodLabel(method)"></nz-option>
         </nz-select>
         <div *ngIf="createProjectForm.get('paymentMethodId')?.touched && createProjectForm.get('paymentMethodId')?.errors" class="input-error-message">
           <span *ngIf="createProjectForm.get('paymentMethodId')?.errors?.['required']">Payment method is required.</span>

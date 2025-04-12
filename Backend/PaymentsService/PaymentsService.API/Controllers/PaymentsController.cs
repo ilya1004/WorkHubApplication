@@ -2,6 +2,7 @@ using PaymentsService.API.Contracts.PaymentContracts;
 using PaymentsService.Application.UseCases.PaymentsUseCases.Commands.ConfirmPaymentForProject;
 using PaymentsService.Application.UseCases.PaymentsUseCases.Commands.CreateSetupIntent;
 using PaymentsService.Application.UseCases.PaymentsUseCases.Commands.PayForProjectWithSavedMethod;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetEmployerPaymentIntents;
 using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetEmployerPaymentsQuery;
 using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetFreelancerTransfers;
 
@@ -51,6 +52,17 @@ public class PaymentsController(
         CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(mapper.Map<GetEmployerPaymentsQuery>(request), cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    [Route("employer/my-payment-intents")]
+    [Authorize(Policy = AuthPolicies.EmployerPolicy)]
+    public async Task<IActionResult> GetEmployerPaymentIntents([FromQuery] GetOperationsRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await mediator.Send(mapper.Map<GetEmployerPaymentIntentsQuery>(request), cancellationToken);
 
         return Ok(result);
     }

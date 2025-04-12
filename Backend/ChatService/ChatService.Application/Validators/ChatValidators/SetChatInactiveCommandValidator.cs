@@ -7,7 +7,7 @@ public class SetChatInactiveCommandValidator : AbstractValidator<SetChatInactive
 {
     public SetChatInactiveCommandValidator()
     {
-        RuleFor(x => x.ChatId)
+        RuleFor(x => x.ProjectId)
             .NotEmpty().WithMessage("ChatId is required.");
     }
 }

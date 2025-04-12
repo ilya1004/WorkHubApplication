@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {CommonModule} from "@angular/common";
+import {CommonModule, DatePipe} from "@angular/common";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {NzCardComponent} from "ng-zorro-antd/card";
 import {NzDescriptionsModule} from "ng-zorro-antd/descriptions";
@@ -12,6 +12,8 @@ import {Charge} from "../../interfaces/finance/charge.interface";
 import {NzModalModule, NzModalService} from "ng-zorro-antd/modal";
 import {PaymentMethod} from "../../interfaces/finance/payment-method.interface";
 import {AddPaymentMethodModalComponent} from "./add-payment-method-modal/add-payment-method-modal.component";
+import {PaymentIntent} from "../../interfaces/finance/payment-intent.interface";
+import {NzSpinModule} from "ng-zorro-antd/spin";
 
 @Component({
   selector: 'app-my-finances',
@@ -25,6 +27,8 @@ import {AddPaymentMethodModalComponent} from "./add-payment-method-modal/add-pay
     NzAlertModule,
     NzTableModule,
     NzModalModule,
+    NzSpinModule,
+    DatePipe
   ],
   templateUrl: './my-finances.component.html',
   styleUrls: ['./my-finances.component.scss']
@@ -33,12 +37,25 @@ export class MyFinancesComponent implements OnInit {
   account: EmployerAccount | null = null;
   charges: Charge[] = [];
   paymentMethods: PaymentMethod[] = [];
+  paymentIntents: PaymentIntent[] = [];
+  
   isLoadingAccount: boolean = true;
   isLoadingCharges: boolean = true;
   isLoadingPaymentMethods: boolean = true;
+  isLoadingPaymentIntents: boolean = true;
   isCreatingAccount: boolean = false;
   accountSuccessMessage: string | null = null;
   accountErrorMessage: string | null = null;
+  
+  // Пагинация для Charges
+  chargesPageNo: number = 1;
+  chargesPageSize: number = 10;
+  chargesTotalCount: number = 0;
+  
+  // Пагинация для PaymentIntents
+  paymentIntentsPageNo: number = 1;
+  paymentIntentsPageSize: number = 10;
+  paymentIntentsTotalCount: number = 0;
   
   constructor(
     private financeService: FinanceService,
@@ -49,6 +66,7 @@ export class MyFinancesComponent implements OnInit {
     this.loadAccount();
     this.loadCharges();
     this.loadPaymentMethods();
+    this.loadPaymentIntents();
   }
   
   showAddPaymentMethodModal(): void {
@@ -56,12 +74,9 @@ export class MyFinancesComponent implements OnInit {
       nzTitle: 'Add Payment Method',
       nzContent: AddPaymentMethodModalComponent,
       nzFooter: null,
-      nzOnOk: () => {
-        // Ничего не делаем здесь, так как сохранение происходит внутри компонента
-      }
+      nzOnOk: () => { }
     });
     
-    // Подписываемся на событие успешного сохранения
     modal.componentInstance?.paymentMethodSaved.subscribe(() => {
       this.accountSuccessMessage = 'Payment method saved successfully!';
       this.loadPaymentMethods();
@@ -105,14 +120,16 @@ export class MyFinancesComponent implements OnInit {
   
   loadCharges(): void {
     this.isLoadingCharges = true;
-    this.financeService.getEmployerPayments({ pageNo: 1, pageSize: 10 }).subscribe({
+    this.financeService.getEmployerPayments({ pageNo: this.chargesPageNo, pageSize: this.chargesPageSize }).subscribe({
       next: (result) => {
         this.charges = result.items;
+        this.chargesTotalCount = result.totalCount;
         this.isLoadingCharges = false;
       },
       error: (error) => {
         console.error('Error loading charges:', error);
         this.isLoadingCharges = false;
+        this.accountErrorMessage = 'Failed to load payments.';
       }
     });
   }
@@ -127,8 +144,35 @@ export class MyFinancesComponent implements OnInit {
       error: (error) => {
         console.error('Error loading payment methods:', error);
         this.isLoadingPaymentMethods = false;
+        this.accountErrorMessage = 'Failed to load payment methods.';
       }
     });
+  }
+  
+  loadPaymentIntents(): void {
+    this.isLoadingPaymentIntents = true;
+    this.financeService.getEmployerPaymentIntents({ pageNo: this.paymentIntentsPageNo, pageSize: this.paymentIntentsPageSize }).subscribe({
+      next: (result) => {
+        this.paymentIntents = result.items;
+        this.paymentIntentsTotalCount = result.totalCount;
+        this.isLoadingPaymentIntents = false;
+      },
+      error: (error) => {
+        console.error('Error loading payment intents:', error);
+        this.isLoadingPaymentIntents = false;
+        this.accountErrorMessage = 'Failed to load payment intents.';
+      }
+    });
+  }
+  
+  onChargesPageChange(page: number): void {
+    this.chargesPageNo = page;
+    this.loadCharges();
+  }
+  
+  onPaymentIntentsPageChange(page: number): void {
+    this.paymentIntentsPageNo = page;
+    this.loadPaymentIntents();
   }
   
   createAccount(): void {

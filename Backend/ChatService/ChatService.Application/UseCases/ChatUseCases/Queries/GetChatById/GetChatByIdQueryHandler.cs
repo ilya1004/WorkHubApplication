@@ -17,6 +17,13 @@ public class GetChatByIdQueryHandler(
             throw new NotFoundException("Chat not found");
         }
         
+        if (!chat.IsActive)
+        {
+            logger.LogWarning("Chat with ID '{ChatId}' is inactive", request.Id);
+            
+            throw new NotFoundException("Chat not found");
+        }
+        
         logger.LogInformation("Retrieved chat information by ID {ChatId}", request.Id);
 
         return chat;

@@ -6,6 +6,7 @@ import {PaginatedResult} from "../../core/interfaces/common/paginated-result.int
 import {Charge} from "../interfaces/finance/charge.interface";
 import {PaymentMethod} from "../interfaces/finance/payment-method.interface";
 import {environment} from "../../../environments/environment";
+import {PaymentIntent} from "../interfaces/finance/payment-intent.interface";
 
 @Injectable({
   providedIn: 'root'
@@ -55,7 +56,17 @@ export class FinanceService {
   
   createPaymentIntent(projectId: string, paymentMethodId: string): Observable<any> {
     return this.httpClient.post(
-      `${environment.PAYMENTS_SERVICE_API_URL}/pay-for-project/${projectId}/with-method/${paymentMethodId}`, {}
+      `${environment.PAYMENTS_SERVICE_API_URL}payments/pay-for-project/${projectId}/with-method/${paymentMethodId}`, {}
+    );
+  }
+  
+  getEmployerPaymentIntents(params: { pageNo: number; pageSize: number }): Observable<PaginatedResult<PaymentIntent>> {
+    let httpParams = new HttpParams()
+      .set('PageNo', params.pageNo.toString())
+      .set('PageSize', params.pageSize.toString());
+    return this.httpClient.get<PaginatedResult<PaymentIntent>>(
+      `${environment.PAYMENTS_SERVICE_API_URL}payments/employer/my-payment-intents`,
+      { params: httpParams }
     );
   }
 }

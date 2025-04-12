@@ -40,8 +40,7 @@ public class UpdateAcceptanceStatusCommandHandler(
             throw new BadRequestException("Project acceptance is not requested yet");
         }
 
-        if (project.Lifecycle.Status != ProjectStatus.InProgress && 
-            project.Lifecycle.Status != ProjectStatus.Expired)
+        if (project.Lifecycle.Status != ProjectStatus.PendingForReview)
         {
             logger.LogWarning("Invalid project status {Status} for acceptance update", project.Lifecycle.Status);
             

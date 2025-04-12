@@ -28,14 +28,40 @@ export class ProjectToolsService {
     );
   }
   
-  createProject(data: ProjectCreateData): Observable<{ id: string }> {
-    return this.httpClient.post<{ id: string }>(
+  createProject(data: {
+    project: {
+      title: string;
+      description: string;
+      budget: number;
+      categoryId: string | null;
+    };
+    lifecycle: {
+      applicationsStartDate: string;
+      applicationsDeadline: string;
+      workStartDate: string;
+      workDeadline: string;
+    };
+  }): Observable<{ projectId: string }> {
+    return this.httpClient.post<{ projectId: string }>(
       `${environment.PROJECTS_SERVICE_API_URL}projects`,
       data
     );
   }
   
-  updateProject(projectId: string, data: ProjectUpdateData): Observable<void> {
+  updateProject(projectId: string, data: {
+    project: {
+      title: string,
+      description: string,
+      budget: number,
+      categoryId: string | null,
+    },
+    lifecycle: {
+      applicationsStartDate: string;
+      applicationsDeadline: string;
+      workStartDate: string;
+      workDeadline: string;
+    }
+  }): Observable<void> {
     return this.httpClient.put<void>(
       `${environment.PROJECTS_SERVICE_API_URL}projects/${projectId}`,
       data
@@ -73,6 +99,12 @@ export class ProjectToolsService {
   rejectApplication(projectId: string, applicationId: string): Observable<void> {
     return this.httpClient.patch<void>(
       `${environment.PROJECTS_SERVICE_API_URL}freelancer-applications/${applicationId}/reject-application/${projectId}`, {}
+    );
+  }
+  
+  deleteProject(projectId: string): Observable<void> {
+    return this.httpClient.delete<void>(
+      `${environment.PROJECTS_SERVICE_API_URL}projects/${projectId}`
     );
   }
 }

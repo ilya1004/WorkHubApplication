@@ -147,7 +147,6 @@ export class ProfileComponent implements OnInit {
         formData.append('ImageFile', formValue.image);
       }
       
-      // this.uploadProgress = 0;
       const interval = setInterval(() => {
         this.uploadProgress += 20;
         if (this.uploadProgress >= 100) clearInterval(interval);
@@ -173,6 +172,7 @@ export class ProfileComponent implements OnInit {
   
   onClickEdit(): void {
     this.isEditing = !this.isEditing;
+    this.isChangingPassword = false;
     if (this.isEditing) {
       this.uploadProgress = 0;
       this.editEmployerForm.patchValue({
@@ -203,6 +203,7 @@ export class ProfileComponent implements OnInit {
   
   onClickChangePassword(): void {
     this.isChangingPassword = !this.isChangingPassword;
+    this.isEditing = false;
     if (!this.isChangingPassword) {
       this.changePasswordForm.reset();
       this.passwordChangeMessage = null;

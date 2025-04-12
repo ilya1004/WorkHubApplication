@@ -1,0 +1,60 @@
+<div nz-flex nzVertical nzGap="large">
+  <h2>My Applications</h2>
+  
+  <div nz-flex nzAlign="center" nzGap="50px">
+    <nz-form-item style="width: 200px">
+      <nz-form-label>Start Date</nz-form-label>
+      <nz-date-picker [(ngModel)]="filter.startDate" nzFormat="yyyy-MM-dd" style="width: 180px;"></nz-date-picker>
+    </nz-form-item>
+    <nz-form-item style="width: 200px">
+      <nz-form-label>End Date</nz-form-label>
+      <nz-date-picker [(ngModel)]="filter.endDate" nzFormat="yyyy-MM-dd" style="width: 180px;"></nz-date-picker>
+    </nz-form-item>
+    <nz-form-item style="width: 200px">
+      <nz-form-label>Status</nz-form-label>
+      <nz-select [(ngModel)]="filter.status" nzPlaceHolder="Select Status" style="width: 170px;">
+        <nz-option *ngFor="let option of applicationStatusOptions" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+      </nz-select>
+    </nz-form-item>
+    <div nz-flex nzGap="10px" nzJustify="center" style="min-width: 200px; margin: 8px 0 0 0" >
+      <button nz-button nzType="primary" (click)="applyFilter()">Apply Filter</button>
+      <button nz-button nzType="default" (click)="resetFilter()">Reset</button>
+    </div>
+  </div>
+  
+  <div *ngIf="isLoading" class="loading-container">
+    <nz-spin nzSimple></nz-spin>
+  </div>
+  <div *ngIf="!isLoading">
+    <nz-table
+      #applicationsTable
+      [nzData]="applications"
+      [nzPageSize]="pageSize"
+      [nzTotal]="totalCount"
+      [nzPageIndex]="pageNo"
+      (nzPageIndexChange)="onPageChange($event)"
+      [nzShowPagination]="true"
+      [nzFrontPagination]="false">
+      <thead>
+      <tr>
+        <th>Project Title</th>
+        <th>Created At</th>
+        <th>Status</th>
+        <th>Budget</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let application of applicationsTable.data">
+        <td>{{ application.project!.title || 'N/A' }}</td>
+        <td>{{ application.createdAt | date:'MM.dd.yyyy' }}</td>
+        <td>{{ getStatusLabel(application.status) }}</td>
+        <td>{{ application.project!.budget / 100 | currency:'EUR' }}</td>
+        <td>
+          <button nz-button [routerLink]="['/freelancer/home/project', application.projectId]">View Project</button>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>

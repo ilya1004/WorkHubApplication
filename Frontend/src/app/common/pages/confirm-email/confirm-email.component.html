@@ -1,7 +1,7 @@
 <div nz-flex nzJustify="center" nzAlign="center">
-  <nz-card class="confirm-email-card">
+  <nz-card style="min-width: 355px; margin: 200px 0 0 0;">
     <div>
-      <h2 style="color: var(--white-color)">Email confirmation</h2>
+      <h2>Email confirmation</h2>
     </div>
     <form [formGroup]="confirmEmailForm">
       <nz-space nzSize="middle" nzDirection="vertical">
@@ -11,7 +11,7 @@
             nz-input
             formControlName="email"
             placeholder="Enter your email"
-            class="confirm-email-card__input">
+            style="width: 300px;">
           <div *ngIf="confirmEmailForm.controls.email.invalid && confirmEmailForm.controls.email.touched" class="input-error-message">
             <div *ngIf="confirmEmailForm.controls.email.errors?.['required']">Email is required</div>
             <div *ngIf="confirmEmailForm.controls.email.errors?.['email']">Invalid email format</div>
@@ -23,10 +23,15 @@
             nz-button
             nzType="default"
             [disabled]="isSendCodeBtnDisabled || confirmEmailForm.controls.email.invalid"
-            (click)="onClickSendCode()"
-            class="confirm-email-card__default_btn">
+            (click)="onClickSendCode()">
             Send code
           </button>
+        </div>
+        
+        <div *nzSpaceItem>
+          <a href="http://localhost:8025" target="_blank">
+            Check email
+          </a>
         </div>
 
         <div *nzSpaceItem>
@@ -34,7 +39,7 @@
             nz-input
             formControlName="code"
             placeholder="Enter code from email"
-            class="confirm-email-card__input">
+            style="width: 300px;">
           <div *ngIf="confirmEmailForm.controls.code.invalid && confirmEmailForm.controls.code.touched" class="input-error-message">
             <div *ngIf="confirmEmailForm.controls.code.errors?.['required']">Code is required</div>
             <div *ngIf="confirmEmailForm.controls.code.errors?.['minlength'] || confirmEmailForm.controls.code.errors?.['maxlength']">
@@ -48,14 +53,13 @@
             nz-button
             nzType="primary"
             [disabled]="confirmEmailForm.invalid"
-            (click)="onClickConfirmEmail()"
-            style="border-radius: 7px;">
+            (click)="onClickConfirmEmail()">
             Confirm
           </button>
         </div>
 
         @if (errorMessage) {
-          <div *nzSpaceItem style="background-color: var(--gray-color)">
+          <div *nzSpaceItem>
             <nz-alert
               nzType="error"
               [nzMessage]="errorMessage"
@@ -71,8 +75,8 @@
             nz-button
             nzType="link"
             nzSize="small"
-            style="padding: 0 0 0 0"
-            [routerLink]="'/login'">
+            [routerLink]="'/login'"
+            style="padding: 0">
             Back to Login
           </button>
         </div>

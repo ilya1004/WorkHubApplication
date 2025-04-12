@@ -8,7 +8,7 @@
           <nz-descriptions-item nzTitle="Owner Email">{{ account.ownerEmail }}</nz-descriptions-item>
           <nz-descriptions-item nzTitle="Account Type">{{ account.accountType }}</nz-descriptions-item>
           <nz-descriptions-item nzTitle="Country">{{ account.country }}</nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Balance">{{ account.balance / 100 | currency:'USD' }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Balance">{{ account.balance / 100 | currency:'EUR' }}</nz-descriptions-item>
         </nz-descriptions>
       } @else {
         <p>No account created yet.</p>
@@ -63,7 +63,7 @@
           <tbody>
           <tr *ngFor="let transfer of transfersTable.data">
             <td>{{ transfer.id }}</td>
-            <td>{{ transfer.amount / 100 | currency:'USD' }}</td>
+            <td>{{ transfer.amount / 100 | currency:'EUR' }}</td>
             <td>{{ transfer.currency }}</td>
             <td>{{ transfer.transferGroup }}</td>
             <td>{{ formatMetadata(transfer.metadata) }}</td>
