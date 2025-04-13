@@ -1,0 +1,47 @@
+<div style="width: 100%;">
+  <h2 style="margin-bottom: 20px;">Users View</h2>
+  <nz-table
+    #userTable
+    [nzData]="users"
+    [nzLoading]="loading"
+    [nzFrontPagination]="false"
+    [nzTotal]="totalCount"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageNo"
+    (nzPageIndexChange)="onPageChange($event)"
+    (nzPageSizeChange)="onPageSizeChange($event)"
+    style="width: 100%;"
+  >
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Registered At</th>
+      <th>Profile Type</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let user of userTable.data">
+      <td>{{ user.id }}</td>
+      <td>{{ user.userName }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.role.name }}</td>
+      <td>{{ user.registeredAt | date }}</td>
+      <td>
+        {{ user.freelancerProfile ? 'Freelancer' : user.employerProfile ? 'Employer' : 'None' }}
+      </td>
+      <td>
+        <button
+          nz-button
+          nzType="default"
+          [routerLink]="['/admin/identity-service-tools/user', user.id]">
+          Details
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

@@ -6,6 +6,7 @@ import {environment} from "../../../../../environments/environment";
 
 @Component({
   selector: 'app-add-payment-method-modal',
+  standalone: true,
   imports: [
     NzButtonComponent
   ],

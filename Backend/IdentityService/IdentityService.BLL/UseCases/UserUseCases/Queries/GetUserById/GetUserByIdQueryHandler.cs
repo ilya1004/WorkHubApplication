@@ -15,6 +15,7 @@ public class GetUserByIdQueryHandler(
             cancellationToken,
             u => u.FreelancerProfile!,
             u => u.EmployerProfile!,
+            u => u.Role,
             u => u.FreelancerProfile == null ? null! : u.FreelancerProfile.Skills,
             u => u.EmployerProfile == null ? null! : u.EmployerProfile.Industry!);
 

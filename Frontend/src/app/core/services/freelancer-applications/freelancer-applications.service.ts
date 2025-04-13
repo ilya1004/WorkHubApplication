@@ -54,4 +54,31 @@ export class FreelancerApplicationsService {
       { params: httpParams }
     );
   }
+  
+  getFreelancerApplicationsByFilter(filter: {
+    startDate?: string | null;
+    endDate?: string | null;
+    applicationStatus?: number | null;
+    pageNo: number;
+    pageSize: number;
+  }): Observable<PaginatedResult<FreelancerApplication>> {
+    let params = new HttpParams()
+      .set('PageNo', filter.pageNo.toString())
+      .set('PageSize', filter.pageSize.toString());
+    
+    if (filter.startDate) {
+      params = params.set('StartDate', filter.startDate);
+    }
+    if (filter.endDate) {
+      params = params.set('EndDate', filter.endDate);
+    }
+    if (filter.applicationStatus !== null && filter.applicationStatus !== undefined) {
+      params = params.set('ApplicationStatus', filter.applicationStatus.toString());
+    }
+    
+    return this.httpClient.get<PaginatedResult<FreelancerApplication>>(
+      `${environment.PROJECTS_SERVICE_API_URL}freelancer-applications/by-filter`,
+      { params }
+    );
+  }
 }

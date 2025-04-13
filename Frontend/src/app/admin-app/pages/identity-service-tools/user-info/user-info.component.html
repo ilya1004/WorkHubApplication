@@ -1,0 +1,55 @@
+<div style="padding: 20px; max-width: 800px; margin: 0 auto;">
+  <button nz-button nzType="default" (click)="goBack()" style="margin-bottom: 20px;">
+    Back
+  </button>
+  
+  <nz-card [nzLoading]="loading" nzTitle="User Information">
+    <nz-descriptions
+      nzBordered
+      *ngIf="user"
+      [nzColumn]="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }"
+    >
+      <nz-descriptions-item nzTitle="ID">{{ user.id }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Username">{{ user.userName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Email">{{ user.email }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Role">{{ user.role.name }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Registered At">{{ user.registeredAt | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Image URL">{{ user.imageUrl || 'None' }}</nz-descriptions-item>
+    </nz-descriptions>
+    
+    <h3 style="margin-top: 20px;" *ngIf="user?.freelancerProfile">Freelancer Profile</h3>
+    <nz-descriptions
+      nzBordered
+      *ngIf="user?.freelancerProfile"
+      [nzColumn]="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }"
+    >
+      <nz-descriptions-item nzTitle="First Name">{{ user!.freelancerProfile!.firstName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Last Name">{{ user!.freelancerProfile!.lastName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="About">{{ user!.freelancerProfile!.about || 'None' }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Skills">
+        <div>
+          @if (user!.freelancerProfile!.skills.length > 0) {
+            @for (skill of user!.freelancerProfile!.skills; track skill.id) {
+              <nz-tag nzColor="blue">{{ skill.name }}</nz-tag>
+            }
+          } @else {
+            <span>No skills added yet</span>
+          }
+        </div>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Stripe Account ID">{{ user!.freelancerProfile?.stripeAccountId || 'None' }}</nz-descriptions-item>
+    </nz-descriptions>
+    
+    <h3 style="margin-top: 20px;" *ngIf="user?.employerProfile">Employer Profile</h3>
+    <nz-descriptions
+      nzBordered
+      *ngIf="user?.employerProfile"
+      [nzColumn]="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }"
+    >
+      <nz-descriptions-item nzTitle="Company Name">{{ user!.employerProfile!.companyName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="About">{{ user!.employerProfile?.about || 'None' }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Industry">{{ user!.employerProfile!.industry?.name || 'None' }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Stripe Customer ID">{{ user!.employerProfile?.stripeCustomerId || 'None' }}</nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+</div>

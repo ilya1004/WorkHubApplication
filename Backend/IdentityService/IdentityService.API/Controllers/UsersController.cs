@@ -39,7 +39,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     }
 
     [HttpGet]
-    // [Authorize(Policy = AuthPolicies.AdminPolicy)]
+    [Authorize(Policy = AuthPolicies.AdminPolicy)]
     public async Task<IActionResult> GetAllUsers([FromQuery] GetPaginatedListRequest request, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new GetAllUsersQuery(request.PageNo, request.PageSize), cancellationToken);
@@ -59,7 +59,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
 
     [HttpGet]
     [Route("{userId:guid}")]
-    // [Authorize(Policy = AuthPolicies.AdminPolicy)]
+    [Authorize(Policy = AuthPolicies.AdminPolicy)]
     public async Task<IActionResult> GetUserById([FromRoute] Guid userId, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new GetUserByIdQuery(userId), cancellationToken);
@@ -79,7 +79,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     
     [HttpGet]
     [Route("employer-info/{userId:guid}")]
-    [Authorize(Policy = AuthPolicies.FreelancerPolicy)]
+    [Authorize]
     public async Task<IActionResult> GetEmployerUserInfoById([FromRoute] Guid userId, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new GetEmployerUserInfoByIdQuery(userId), cancellationToken);

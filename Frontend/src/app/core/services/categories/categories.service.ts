@@ -9,8 +9,7 @@ import {environment} from "../../../../environments/environment";
   providedIn: 'root'
 })
 export class CategoriesService {
-
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient) {}
   
   getCategories(pageNo: number, pageSize: number): Observable<PaginatedResult<Category>> {
     const params = new HttpParams()
@@ -19,6 +18,32 @@ export class CategoriesService {
     return this.httpClient.get<PaginatedResult<Category>>(
       `${environment.PROJECTS_SERVICE_API_URL}categories`,
       { params }
+    );
+  }
+  
+  getCategoryById(categoryId: string): Observable<Category> {
+    return this.httpClient.get<Category>(
+      `${environment.PROJECTS_SERVICE_API_URL}categories/${categoryId}`
+    );
+  }
+  
+  createCategory(name: string): Observable<void> {
+    return this.httpClient.post<void>(
+      `${environment.PROJECTS_SERVICE_API_URL}categories`,
+      { name }
+    );
+  }
+  
+  updateCategory(categoryId: string, name: string): Observable<void> {
+    return this.httpClient.put<void>(
+      `${environment.PROJECTS_SERVICE_API_URL}categories/${categoryId}`,
+      { name }
+    );
+  }
+  
+  deleteCategory(categoryId: string): Observable<void> {
+    return this.httpClient.delete<void>(
+      `${environment.PROJECTS_SERVICE_API_URL}categories/${categoryId}`
     );
   }
 }

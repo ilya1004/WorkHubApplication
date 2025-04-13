@@ -17,6 +17,7 @@ import {ProfileService} from "../../services/profile.service";
 
 @Component({
   selector: 'app-profile',
+  standalone: true,
   imports: [
     NzAlertComponent,
     NgIf,

@@ -56,9 +56,9 @@ export class MyApplicationsComponent implements OnInit {
   };
   
   applicationStatusOptions = [
-    { label: 'Pending', value: ApplicationStatus.pending },
-    { label: 'Accepted', value: ApplicationStatus.accepted },
-    { label: 'Rejected', value: ApplicationStatus.rejected }
+    { label: 'Pending', value: ApplicationStatus.Pending },
+    { label: 'Accepted', value: ApplicationStatus.Accepted },
+    { label: 'Rejected', value: ApplicationStatus.Rejected }
   ];
   
   constructor(
@@ -116,11 +116,11 @@ export class MyApplicationsComponent implements OnInit {
   
   getStatusLabel(status: ApplicationStatus): string {
     switch (status) {
-      case ApplicationStatus.pending:
+      case ApplicationStatus.Pending:
         return 'Pending';
-      case ApplicationStatus.accepted:
+      case ApplicationStatus.Accepted:
         return 'Accepted';
-      case ApplicationStatus.rejected:
+      case ApplicationStatus.Rejected:
         return 'Rejected';
       default:
         return 'Unknown';

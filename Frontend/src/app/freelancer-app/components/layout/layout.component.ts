@@ -5,6 +5,7 @@ import {NzIconDirective} from "ng-zorro-antd/icon";
 
 @Component({
   selector: 'app-freelancer-layout',
+  standalone: true,
   imports: [
     RouterOutlet,
     NavbarComponent,

@@ -32,10 +32,16 @@ public class UsersRepository(ApplicationDbContext context) : IUsersRepository
         return await query.FirstOrDefaultAsync(filter, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<AppUser>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<AppUser>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default, 
+        params Expression<Func<AppUser, object>>[]? includesProperties)
     {
-        return await context.AppUsers
-            .AsNoTracking()
+        var query = context.AppUsers.AsQueryable().AsNoTracking();
+        
+        if (includesProperties != null)
+            foreach (var includeProperty in includesProperties)
+                query = query.Include(includeProperty);
+        
+        return await query
             .OrderBy(x => x.RegisteredAt)
             .Skip(offset)
             .Take(limit)

@@ -7,15 +7,17 @@ import {Project} from "../../../core/interfaces/project/project.interface";
 import {CommonModule} from "@angular/common";
 import {NzDescriptionsModule} from "ng-zorro-antd/descriptions";
 import {NzGridModule} from "ng-zorro-antd/grid";
-import {UsersService} from "../../services/users.service";
+import {UsersService} from "../../../core/services/users/users.service";
 import {PROJECT_STATUSES} from "../../../core/data/constants";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {NzButtonComponent} from "ng-zorro-antd/button";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {ProjectStatus} from "../../../core/interfaces/project/project-status.interface";
 import {ProjectChatComponent} from "./project-chat/project-chat.component";
+import {ProjectStatus} from "../../../core/interfaces/project/lifecycle.interface";
 
 @Component({
+  selector: 'app-my-project-info',
+  standalone: true,
   imports: [
     CommonModule,
     NzCardModule,
@@ -27,8 +29,6 @@ import {ProjectChatComponent} from "./project-chat/project-chat.component";
     NzButtonComponent,
     ProjectChatComponent,
   ],
-  selector: 'app-my-project-info',
-  standalone: true,
   styleUrl: './my-project-info.component.scss',
   templateUrl: './my-project-info.component.html'
 })
@@ -110,7 +110,7 @@ export class MyProjectInfoComponent implements OnInit {
       next: () => {
         this.submitting = false;
         if (this.project) {
-          this.project.lifecycle.acceptanceRequested = true; // Обновляем локальное состояние
+          this.project.lifecycle.acceptanceRequested = true;
         }
         this.message.success('Acceptance request sent successfully!');
       },

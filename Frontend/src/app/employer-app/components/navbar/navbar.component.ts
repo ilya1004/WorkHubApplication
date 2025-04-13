@@ -9,6 +9,7 @@ import {TokenService} from "../../../core/services/auth/token.service";
 
 @Component({
   selector: 'app-employer-navbar',
+  standalone: true,
   imports: [
     NzFlexDirective,
     NzMenuDirective,

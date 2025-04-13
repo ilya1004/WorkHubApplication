@@ -1,5 +1,8 @@
+using PaymentsService.API.Contracts.CommonContracts;
 using PaymentsService.Application.UseCases.AccountUseCases.Commands.CreateEmployerAccount;
 using PaymentsService.Application.UseCases.AccountUseCases.Commands.CreateFreelancerAccount;
+using PaymentsService.Application.UseCases.AccountUseCases.Queries.GetAllEmployerAccounts;
+using PaymentsService.Application.UseCases.AccountUseCases.Queries.GetAllFreelancerAccounts;
 using PaymentsService.Application.UseCases.AccountUseCases.Queries.GetEmployerAccount;
 using PaymentsService.Application.UseCases.AccountUseCases.Queries.GetFreelancerAccount;
 
@@ -39,11 +42,32 @@ public class AccountsController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("freelancer/my-account")]
+    [HttpGet]
+    [Route("freelancer/my-account")]
     [Authorize(Policy = AuthPolicies.FreelancerPolicy)]
     public async Task<IActionResult> GetFreelancerAccount(CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(new GetFreelancerAccountQuery(), cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    [Route("by-employer")]
+    [Authorize(Policy = AuthPolicies.AdminPolicy)]
+    public async Task<IActionResult> GetAllEmployerAccount(GetPaginatedListRequest request, CancellationToken cancellationToken = default)
+    {
+        var result = await mediator.Send(new GetAllEmployerAccountsQuery(request.PageNo, request.PageSize), cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    [Route("by-freelancer")]
+    [Authorize(Policy = AuthPolicies.AdminPolicy)]
+    public async Task<IActionResult> GetAllFreelancersAccount(GetPaginatedListRequest request, CancellationToken cancellationToken = default)
+    {
+        var result = await mediator.Send(new GetAllFreelancerAccountsQuery(request.PageNo, request.PageSize), cancellationToken);
 
         return Ok(result);
     }

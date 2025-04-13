@@ -1,25 +1,19 @@
-using ProjectsService.Application.Models;
+﻿using ProjectsService.Application.Models;
 using ProjectsService.Application.Specifications.FreelancerApplicationSpecifications;
-using ProjectsService.Domain.Abstractions.UserContext;
 
 namespace ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationsByFilter;
 
 public class GetFreelancerApplicationsByFilterQueryHandler(
     IUnitOfWork unitOfWork,
-    IUserContext userContext,
     ILogger<GetFreelancerApplicationsByFilterQueryHandler> logger) : IRequestHandler<GetFreelancerApplicationsByFilterQuery, PaginatedResultModel<FreelancerApplication>>
 {
     public async Task<PaginatedResultModel<FreelancerApplication>> Handle(GetFreelancerApplicationsByFilterQuery request, CancellationToken cancellationToken)
     {
-        var userId = userContext.GetUserId();
-        
-        logger.LogInformation("User {UserId} getting filtered freelancer applications with filters: {@Filters}", 
-            userId, request);
+        logger.LogInformation("Getting filtered freelancer applications with filters: {@Filters}", request);
 
         var offset = (request.PageNo - 1) * request.PageSize;
 
         var specification = new GetFreelancerApplicationsByFilterSpecification(
-            userId,
             request.StartDate,
             request.EndDate,
             request.ApplicationStatus,
@@ -32,8 +26,7 @@ public class GetFreelancerApplicationsByFilterQueryHandler(
         var applicationsCount = await unitOfWork.FreelancerApplicationQueriesRepository.CountByFilterAsync(
             specification, cancellationToken);
 
-        logger.LogInformation("Retrieved {Count} filtered applications out of {TotalCount} for user {UserId}", 
-            applications.Count, applicationsCount, userId);
+        logger.LogInformation("Retrieved {Count} filtered applications out of {TotalCount}", applications.Count, applicationsCount);
 
         return new PaginatedResultModel<FreelancerApplication>
         {

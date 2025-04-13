@@ -1,11 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {HealthCheckEntry, HealthCheckResponse, ServiceHealth} from "../../interfaces/health-checks.interface";
-import {HealthChecksService} from "../../services/health-checks.service";
+import {HealthCheckEntry, HealthCheckResponse, ServiceHealth} from "../../interfaces/health-checks/health-checks.interface";
+import {HealthChecksService} from "../../services/health-checks/health-checks.service";
 import {forkJoin} from "rxjs";
-import {NzSpinComponent} from "ng-zorro-antd/spin";
-import {NzCardComponent} from "ng-zorro-antd/card";
-import {CommonModule, NgForOf, NgIf} from "@angular/common";
-import {NzTableComponent, NzTableModule} from "ng-zorro-antd/table";
+import {CommonModule} from "@angular/common";
+import {NzTableModule} from "ng-zorro-antd/table";
 import {NzTagComponent} from "ng-zorro-antd/tag";
 import {NzInputModule} from "ng-zorro-antd/input";
 import {NzSelectModule} from "ng-zorro-antd/select";
@@ -13,18 +11,12 @@ import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzFormModule} from "ng-zorro-antd/form";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
-import {ProjectsService} from "../../../core/services/projects/projects.service";
-import {CategoriesService} from "../../../core/services/categories/categories.service";
-import {Router} from "@angular/router";
-import {Project} from "../../../core/interfaces/project/project.interface";
-import {Category} from "../../../core/interfaces/project/category.interface";
-import {PaginatedResult} from "../../../core/interfaces/common/paginated-result.interface";
-import {PROJECT_STATUSES} from "../../../core/data/constants";
 import {NzIconDirective} from "ng-zorro-antd/icon";
 
 
 @Component({
   selector: 'app-home',
+  standalone: true,
   imports: [
     CommonModule,
     NzTableModule,
@@ -41,7 +33,7 @@ import {NzIconDirective} from "ng-zorro-antd/icon";
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent{
+export class HomeComponent implements OnInit {
   
   projectsService: ServiceHealth = { name: 'Projects Service', response: null, error: null };
   identityService: ServiceHealth = { name: 'Identity Service', response: null, error: null };
@@ -88,32 +80,4 @@ export class HomeComponent{
   getEntryKeys(response: HealthCheckResponse | null): string[] {
     return response?.entries ? Object.keys(response.entries) : [];
   }
-  
-  listOfData: Person[] = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park'
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park'
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park'
-    }
-  ];
-}
-
-interface Person {
-  key: string;
-  name: string;
-  age: number;
-  address: string;
 }

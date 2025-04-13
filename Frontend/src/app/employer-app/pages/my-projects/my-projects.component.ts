@@ -26,6 +26,7 @@ import {NzDescriptionsItemComponent} from "ng-zorro-antd/descriptions";
 
 @Component({
   selector: 'app-my-projects',
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     NzFormItemComponent,

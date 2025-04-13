@@ -10,7 +10,7 @@ export interface FreelancerApplication {
 }
 
 export enum ApplicationStatus {
-  pending = 0,
-  accepted = 1,
-  rejected = 2,
+  Pending = 0,
+  Accepted = 1,
+  Rejected = 2,
 }

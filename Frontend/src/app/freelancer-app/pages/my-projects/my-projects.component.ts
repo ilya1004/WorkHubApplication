@@ -23,6 +23,7 @@ import {NzFlexDirective} from "ng-zorro-antd/flex";
 
 @Component({
   selector: 'app-my-projects',
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     NzFormItemComponent,

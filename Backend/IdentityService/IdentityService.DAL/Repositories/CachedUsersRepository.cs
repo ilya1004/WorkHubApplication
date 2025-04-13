@@ -49,9 +49,10 @@ public class CachedUsersRepository(
         return await usersRepository.FirstOrDefaultAsync(filter, cancellationToken, includesProperties);
     }
 
-    public async Task<IReadOnlyList<AppUser>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<AppUser>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default,
+        params Expression<Func<AppUser, object>>[]? includesProperties)
     {
-        return await usersRepository.PaginatedListAllAsync(offset, limit, cancellationToken);
+        return await usersRepository.PaginatedListAllAsync(offset, limit, cancellationToken, includesProperties);
     }
 
     public async Task<IReadOnlyList<AppUser>> PaginatedListAsync(Expression<Func<AppUser, bool>>? filter, int offset, int limit,
@@ -79,7 +80,6 @@ public class CachedUsersRepository(
 
     private async Task InvalidateCacheAsync(Guid userId)
     {
-        var cacheKey = $"{nameof(AppUser)}:{userId}";
-        await distributedCache.RemoveAsync(cacheKey);
+        await distributedCache.RemoveAsync($"{nameof(AppUser)}:{userId}");
     }
 }

@@ -8,14 +8,14 @@ import {NzDescriptionsModule} from "ng-zorro-antd/descriptions";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {EmployerUser} from "../../../core/interfaces/employer/employer-user.interface";
 import {FreelancerUser} from "../../../core/interfaces/freelancer/freelancer-user.interface";
-import {UsersService} from "../../services/users.service";
+import {UsersService} from "../../../core/services/users/users.service";
 import {ApplicationStatus} from "../../../core/interfaces/project/freelancer-application.interface";
 import {NzAlertModule} from "ng-zorro-antd/alert";
 import {TokenService} from "../../../core/services/auth/token.service";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {FreelancerApplicationsService} from "../../../core/services/freelancer-applications/freelancer-applications.service";
 import {NzTagComponent} from "ng-zorro-antd/tag";
-import {ProjectStatus} from "../../../core/interfaces/project/project-status.interface";
+import {ProjectStatus} from "../../../core/interfaces/project/lifecycle.interface";
 
 @Component({
   selector: 'app-project-info',
@@ -67,7 +67,7 @@ export class ProjectInfoComponent implements OnInit {
       next: (project: Project) => {
         this.project = project;
         this.loadEmployer(project.employerId);
-        if (project.freelancerId && project.lifecycle.status > 1) { // Загружаем фрилансера только если статус > Accepting Applications
+        if (project.freelancerId && project.lifecycle.status > ProjectStatus.AcceptingApplications) {
           this.loadFreelancer(project.freelancerId);
         } else {
           this.freelancer = null;
@@ -134,12 +134,12 @@ export class ProjectInfoComponent implements OnInit {
   
   hasApplication(): boolean {
     return !!this.project?.freelancerApplications.some(app =>
-      app.freelancerId === this.currentUserId && app.status === ApplicationStatus.pending);
+      app.freelancerId === this.currentUserId && app.status === ApplicationStatus.Pending);
   }
   
   hasAcceptedApplication(): boolean {
     return !!this.project?.freelancerApplications.some(app =>
-      app.freelancerId === this.currentUserId && app.status === ApplicationStatus.accepted);
+      app.freelancerId === this.currentUserId && app.status === ApplicationStatus.Accepted);
   }
   
   applyForProject(): void {
@@ -162,7 +162,7 @@ export class ProjectInfoComponent implements OnInit {
   
   cancelApplication(): void {
     if (!this.project) return;
-    const application = this.project.freelancerApplications.find(app => app.freelancerId === this.currentUserId && app.status === ApplicationStatus.pending);
+    const application = this.project.freelancerApplications.find(app => app.freelancerId === this.currentUserId && app.status === ApplicationStatus.Pending);
     if (!application) return;
     
     this.isCancelling = true;

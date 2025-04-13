@@ -3,7 +3,7 @@ import { Project } from '../../../core/interfaces/project/project.interface';
 import {FreelancerUser} from "../../../core/interfaces/freelancer/freelancer-user.interface";
 import {ActivatedRoute, Router, RouterModule} from "@angular/router";
 import {ProjectsService} from "../../../core/services/projects/projects.service";
-import {UsersService} from "../../../freelancer-app/services/users.service";
+import {UsersService} from "../../../core/services/users/users.service";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzButtonComponent} from "ng-zorro-antd/button";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
@@ -11,11 +11,9 @@ import {NzDescriptionsComponent, NzDescriptionsItemComponent, NzDescriptionsModu
 import {CommonModule, NgIf} from "@angular/common";
 import {NzCardModule} from "ng-zorro-antd/card";
 import {NzGridModule} from "ng-zorro-antd/grid";
-import {ProjectStatus} from "../../../core/interfaces/project/project-status.interface";
 import {ProjectChatComponent} from "./project-chat/project-chat.component";
-import {PROJECT_STATUSES} from "../../../core/data/constants";
 import {ChatService} from "../../../core/services/chat/chat.service";
-import {firstValueFrom} from "rxjs";
+import { ProjectStatus } from '../../../core/interfaces/project/lifecycle.interface';
 
 @Component({
   selector: 'app-my-project-info',

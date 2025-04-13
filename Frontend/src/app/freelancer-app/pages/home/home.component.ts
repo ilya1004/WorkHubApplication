@@ -3,20 +3,24 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ProjectsService} from "../../../core/services/projects/projects.service";
 import {Project} from "../../../core/interfaces/project/project.interface";
 import {PaginatedResult} from "../../../core/interfaces/common/paginated-result.interface";
-import {CommonModule} from "@angular/common";
-import {NzTableModule} from "ng-zorro-antd/table";
-import {NzFormModule} from "ng-zorro-antd/form";
-import {NzInputModule} from "ng-zorro-antd/input";
-import {NzSelectModule} from "ng-zorro-antd/select";
-import {NzButtonModule} from "ng-zorro-antd/button";
+import {CommonModule, DatePipe, NgForOf} from "@angular/common";
+import {NzTableComponent, NzTableModule} from "ng-zorro-antd/table";
+import {NzFormItemComponent, NzFormLabelComponent, NzFormModule} from "ng-zorro-antd/form";
+import {NzInputDirective, NzInputModule} from "ng-zorro-antd/input";
+import {NzOptionComponent, NzSelectComponent, NzSelectModule} from "ng-zorro-antd/select";
+import {NzButtonComponent, NzButtonModule} from "ng-zorro-antd/button";
 import {Category} from "../../../core/interfaces/project/category.interface";
 import {PROJECT_STATUSES} from "../../../core/data/constants";
 import {Router} from "@angular/router";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {CategoriesService} from "../../../core/services/categories/categories.service";
+import {NzColDirective, NzRowDirective} from "ng-zorro-antd/grid";
+import {NzWaveDirective} from "ng-zorro-antd/core/wave";
+import {CategoriesComponent} from "../../../admin-app/pages/projects-service-tools/categories/categories.component";
 
 @Component({
   selector: 'app-home',
+  standalone: true,
   imports: [
     CommonModule,
     NzTableModule,
@@ -26,7 +30,21 @@ import {CategoriesService} from "../../../core/services/categories/categories.se
     NzFormModule,
     FormsModule,
     ReactiveFormsModule,
-    NzFlexDirective
+    NzFlexDirective,
+    NzTableComponent,
+    NzTableModule,
+    NzButtonComponent,
+    NgForOf,
+    DatePipe,
+    NzFlexDirective,
+    NzFormItemComponent,
+    NzFormLabelComponent,
+    NzInputDirective,
+    FormsModule,
+    NzSelectComponent,
+    NzOptionComponent,
+    NzColDirective,
+    NzRowDirective,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'

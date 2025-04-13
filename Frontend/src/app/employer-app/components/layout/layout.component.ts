@@ -5,6 +5,7 @@ import {NavbarComponent} from "../navbar/navbar.component";
 
 @Component({
   selector: 'app-employer-layout',
+  standalone: true,
   imports: [
     RouterOutlet,
     NavbarComponent,

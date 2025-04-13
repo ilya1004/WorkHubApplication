@@ -1,3 +1,9 @@
+export interface ServiceHealth {
+  name: string;
+  response: HealthCheckResponse | null;
+  error: string | null;
+}
+
 export interface HealthCheckResponse {
   status: string;
   totalDuration: string;
@@ -9,10 +15,4 @@ export interface HealthCheckEntry {
   duration: string;
   status: string;
   tags: string[];
-}
-
-export interface ServiceHealth {
-  name: string;
-  response: HealthCheckResponse | null;
-  error: string | null;
 }

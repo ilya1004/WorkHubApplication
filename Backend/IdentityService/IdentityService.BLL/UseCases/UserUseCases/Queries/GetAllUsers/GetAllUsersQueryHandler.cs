@@ -10,7 +10,15 @@ public class GetAllUsersQueryHandler(IUnitOfWork unitOfWork, ILogger<GetAllUsers
 
         var offset = (request.PageNo - 1) * request.PageSize;
 
-        var users = await unitOfWork.UsersRepository.PaginatedListAllAsync(offset, request.PageSize, cancellationToken);
+        var users = await unitOfWork.UsersRepository.PaginatedListAllAsync(
+            offset, 
+            request.PageSize, 
+            cancellationToken,
+            u => u.FreelancerProfile!,
+            u => u.EmployerProfile!,
+            u => u.Role,
+            u => u.FreelancerProfile == null ? null! : u.FreelancerProfile.Skills,
+            u => u.EmployerProfile == null ? null! : u.EmployerProfile.Industry!);
         
         logger.LogInformation("Retrieved {Count} users from repository", users.Count);
 

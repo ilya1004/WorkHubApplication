@@ -1,4 +1,4 @@
-using ProjectsService.Application.Models;
+﻿using ProjectsService.Application.Models;
 
 namespace ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationsByFilter;
 

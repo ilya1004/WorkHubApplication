@@ -1,4 +1,5 @@
 using PaymentsService.Application.Constants;
+using PaymentsService.Application.Models;
 using PaymentsService.Domain.Abstractions.AccountsServices;
 using PaymentsService.Infrastructure.DTOs;
 using PaymentsService.Domain.Models;
@@ -163,6 +164,63 @@ public class StripeFreelancerAccountsService(
             logger.LogError(ex, "Error getting Stripe account {AccountId}", freelancer.StripeAccountId);
             
             throw new BadRequestException($"Stripe account with ID '{freelancer.StripeAccountId}' not found or cannot get its balance.");
+        }
+    }
+    
+    public async Task<IEnumerable<FreelancerAccountModel>> GetAllFreelancerAccountsAsync(CancellationToken cancellationToken = default)
+    {
+        logger.LogInformation("Retrieving all Stripe freelancer accounts");
+
+        try
+        {
+            var options = new AccountListOptions
+            {
+                Limit = 100,
+            };
+
+            var accounts = await _accountService.ListAsync(options, cancellationToken: cancellationToken);
+
+            var accountModels = new List<FreelancerAccountModel>();
+
+            foreach (var account in accounts)
+            {
+                try
+                {
+                    var balance = await _balanceService.GetAsync(
+                        new BalanceGetOptions(),
+                        new RequestOptions { StripeAccount = account.Id },
+                        cancellationToken);
+
+                    accountModels.Add(new FreelancerAccountModel
+                    {
+                        Id = account.Id,
+                        OwnerEmail = account.Email,
+                        AccountType = account.Type,
+                        Country = account.Country,
+                        Balance = balance.Available.Where(x => x.Currency == "eur").Sum(x => x.Amount)
+                    });
+                }
+                catch (StripeException ex)
+                {
+                    logger.LogWarning(ex, "Failed to retrieve balance for account {AccountId}: {ErrorMessage}", account.Id, ex.Message);
+                }
+            }
+
+            logger.LogInformation("Successfully retrieved {Count} freelancer accounts", accountModels.Count);
+
+            return accountModels;
+        }
+        catch (StripeException ex)
+        {
+            logger.LogError(ex, "Stripe error while retrieving freelancer accounts: {ErrorMessage}", ex.Message);
+            
+            throw new BadRequestException($"Stripe error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error retrieving freelancer accounts");
+            
+            throw new BadRequestException("Could not retrieve freelancer accounts.");
         }
     }
 }

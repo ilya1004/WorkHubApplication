@@ -19,7 +19,6 @@ import { FreelancerUser } from '../../../core/interfaces/freelancer/freelancer-u
 import {PROJECT_STATUSES} from "../../../core/data/constants";
 import {NzTagComponent} from "ng-zorro-antd/tag";
 import {NzModalService} from "ng-zorro-antd/modal";
-import {ProjectStatus} from "../../../core/interfaces/project/project-status.interface";
 import {NzDescriptionsComponent, NzDescriptionsItemComponent} from "ng-zorro-antd/descriptions";
 import {PaginatedResult} from "../../../core/interfaces/common/paginated-result.interface";
 import {CategoriesService} from "../../../core/services/categories/categories.service";
@@ -28,6 +27,7 @@ import {EditProjectComponent} from "./edit-project/edit-project.component";
 import {ProjectCreateData} from "../../interfaces/project-tools/create-project.interface";
 import {ProjectUpdateData} from "../../interfaces/project-tools/update-project.interface";
 import {FinanceService} from "../../services/finance.service";
+import { ProjectStatus } from '../../../core/interfaces/project/lifecycle.interface';
 
 @Component({
   selector: 'app-project-tools',

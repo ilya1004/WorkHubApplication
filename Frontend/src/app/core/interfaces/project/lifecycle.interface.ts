@@ -1,5 +1,3 @@
-import {ProjectStatus} from "./project-status.interface";
-
 export interface Lifecycle {
     id: string;
     createdAt: string;
@@ -11,4 +9,15 @@ export interface Lifecycle {
     acceptanceRequested: boolean;
     acceptanceConfirmed: boolean;
     status: ProjectStatus;
+}
+
+export enum ProjectStatus {
+    Published = 0,
+    AcceptingApplications = 1,
+    WaitingForWorkStart = 2,
+    InProgress = 3,
+    PendingForReview = 4,
+    Completed = 5,
+    Expired = 6,
+    Cancelled = 7
 }

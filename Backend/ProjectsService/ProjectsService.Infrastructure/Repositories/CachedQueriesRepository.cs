@@ -39,27 +39,7 @@ public class CachedQueriesRepository<TEntity>(
     public async Task<IReadOnlyList<TEntity>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default, 
         params Expression<Func<TEntity, object>>[]? includesProperties)
     {
-        if (includesProperties is not null && includesProperties.Length > 0)
-        {
-            return await queriesRepository.PaginatedListAllAsync(offset, limit, cancellationToken, includesProperties);    
-        }
-        
-        var cacheKey = $"{typeof(TEntity).Name}:PaginatedListAll:{offset}:{limit}";
-        var cachedEntities = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
-
-        if (cachedEntities != null)
-        {
-            return JsonSerializer.Deserialize<IReadOnlyList<TEntity>>(cachedEntities) ?? [];
-        }
-
-        var entities = await queriesRepository.PaginatedListAllAsync(offset, limit, cancellationToken, includesProperties);
-
-        await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(entities, _serializerOptions), new DistributedCacheEntryOptions
-        {
-            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(options.Value.RecordExpirationTimeInMinutes)
-        }, cancellationToken);
-
-        return entities;
+        return await queriesRepository.PaginatedListAllAsync(offset, limit, cancellationToken, includesProperties);
     }
 
     public async Task<IReadOnlyList<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? filter, CancellationToken cancellationToken = default, 

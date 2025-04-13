@@ -25,9 +25,15 @@ import {ProjectToolsComponent} from './employer-app/pages/project-tools/project-
 import {MyProjectInfoComponent as EmployerMyProjectInfoComponent} from "./employer-app/pages/my-project-info/my-project-info.component";
 import {MyFinancesComponent as EmployerMyFinancesComponent} from "./employer-app/pages/my-finances/my-finances.component";
 
+import {canActivateAdminApp} from "./core/guards/admin-auth.guard";
 import {LayoutComponent as AdminLayoutComponent} from "./admin-app/components/layout/layout.component";
 import {HomeComponent as AdminHomeComponent} from "./admin-app/pages/home/home.component";
-import {canActivateAdminApp} from "./core/guards/admin-auth.guard";
+import {ProjectsServiceToolsComponent} from "./admin-app/pages/projects-service-tools/projects-service-tools.component";
+import {IdentityServiceToolsComponent} from "./admin-app/pages/identity-service-tools/identity-service-tools.component";
+import {PaymentsServiceToolsComponent} from "./admin-app/pages/payments-service-tools/payments-service-tools.component";
+import {ChatServiceToolsComponent} from "./admin-app/pages/chat-service-tools/chat-service-tools.component";
+import {ProjectInfoComponent as AdminProjectInfoComponent} from "./admin-app/pages/projects-service-tools/project-info/project-info.component";
+import {UserInfoComponent} from "./admin-app/pages/identity-service-tools/user-info/user-info.component";
 
 
 export const routes: Routes = [
@@ -69,6 +75,12 @@ export const routes: Routes = [
     canActivate: [canActivateAdminApp],
     children: [
       { path: 'home', component: AdminHomeComponent },
+      { path: 'projects-service-tools', component: ProjectsServiceToolsComponent},
+      { path: 'projects-service-tools/project/:projectId', component: AdminProjectInfoComponent },
+      { path: 'identity-service-tools', component: IdentityServiceToolsComponent},
+      { path: 'identity-service-tools/user/:userId', component: UserInfoComponent},
+      { path: 'payments-service-tools', component: PaymentsServiceToolsComponent},
+      { path: 'chat-service-tools', component: ChatServiceToolsComponent}
     ]
   },
   { path: '**', component: NotFoundComponent }

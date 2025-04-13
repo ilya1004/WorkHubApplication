@@ -10,7 +10,8 @@ public interface IUsersRepository
     Task<AppUser?> FirstOrDefaultAsync(Expression<Func<AppUser, bool>> filter, CancellationToken cancellationToken = default,
         params Expression<Func<AppUser, object>>[]? includesProperties);
 
-    Task<IReadOnlyList<AppUser>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<AppUser>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default, 
+        params Expression<Func<AppUser, object>>[]? includesProperties);
 
     Task<IReadOnlyList<AppUser>> PaginatedListAsync(Expression<Func<AppUser, bool>>? filter, int offset, int limit,
         CancellationToken cancellationToken = default, params Expression<Func<AppUser, object>>[]? includesProperties);
