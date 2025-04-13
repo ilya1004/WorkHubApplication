@@ -1,8 +1,6 @@
 using PaymentsService.Domain.Abstractions.KafkaProducerServices;
 using PaymentsService.Domain.Abstractions.PaymentsServices;
 using PaymentsService.Domain.Abstractions.TransfersServices;
-using PaymentsService.Infrastructure.DTOs;
-using PaymentsService.Domain.Models;
 using PaymentsService.Infrastructure.Interfaces;
 
 namespace PaymentsService.Infrastructure.Services.StripePaymentsServices;
@@ -17,52 +15,8 @@ public class StripeEmployerPaymentsService(
     ILogger<StripeEmployerPaymentsService> logger) : IEmployerPaymentsService
 {
     private readonly CustomerPaymentMethodService _customerPaymentMethodService = new();
-    private readonly SetupIntentService _intentService = new();
     private readonly PaymentIntentService _paymentIntentService = new();
     private readonly AccountService _accountService = new();
-
-    public async Task<string> CreateSetupIntent(Guid userId, CancellationToken cancellationToken)
-    {
-        logger.LogInformation("Creating setup intent for user {UserId}", userId);
-
-        var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken); 
-
-        if (string.IsNullOrEmpty(employer.EmployerCustomerId)) 
-        {
-            logger.LogWarning("Employer account not found for user {UserId}", userId);
-            
-            throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
-        }
-
-        try
-        {
-            var options = new SetupIntentCreateOptions
-            {
-                Customer = employer.EmployerCustomerId,
-                PaymentMethodTypes = ["card"]
-            };
-
-            logger.LogInformation("Creating setup intent with options: {@Options}", options);
-            
-            var setupIntent = await _intentService.CreateAsync(options, cancellationToken: cancellationToken);
-
-            logger.LogInformation("Setup intent created successfully for user {UserId}", userId);
-            
-            return setupIntent.ClientSecret;
-        }
-        catch (StripeException ex)
-        {
-            logger.LogError(ex, "Stripe error creating setup intent for user {UserId}: {ErrorMessage}", userId, ex.Message);
-            
-            throw new BadRequestException($"Stripe error: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error creating setup intent for user {UserId}", userId);
-            
-            throw new BadRequestException($"Could not create Setup intent for user with ID '{userId}'.");
-        }
-    }
 
     public async Task CreatePaymentIntentWithSavedMethodAsync(Guid userId, Guid projectId, string paymentMethodId,
         CancellationToken cancellationToken)
@@ -112,7 +66,6 @@ public class StripeEmployerPaymentsService(
                 Metadata = new Dictionary<string, string>
                 {
                     { "project_id", projectId.ToString() },
-                    // { "freelancer_id", project.FreelancerId.ToString() }
                 }
             };
             

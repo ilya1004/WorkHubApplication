@@ -3,9 +3,8 @@ import {CommonModule, DatePipe} from "@angular/common";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {NzCardComponent} from "ng-zorro-antd/card";
 import {NzDescriptionsModule} from "ng-zorro-antd/descriptions";
-import {NzAlertModule} from "ng-zorro-antd/alert";
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzTableModule } from 'ng-zorro-antd/table';
+import {NzButtonModule} from 'ng-zorro-antd/button';
+import {NzTableModule} from 'ng-zorro-antd/table';
 import {FinanceService} from "../../services/finance.service";
 import {EmployerAccount} from "../../interfaces/finance/employer-account.interface";
 import {Charge} from "../../interfaces/finance/charge.interface";
@@ -14,6 +13,7 @@ import {PaymentMethod} from "../../interfaces/finance/payment-method.interface";
 import {AddPaymentMethodModalComponent} from "./add-payment-method-modal/add-payment-method-modal.component";
 import {PaymentIntent} from "../../interfaces/finance/payment-intent.interface";
 import {NzSpinModule} from "ng-zorro-antd/spin";
+import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
   selector: 'app-my-finances',
@@ -24,14 +24,14 @@ import {NzSpinModule} from "ng-zorro-antd/spin";
     NzCardComponent,
     NzDescriptionsModule,
     NzButtonModule,
-    NzAlertModule,
     NzTableModule,
     NzModalModule,
     NzSpinModule,
     DatePipe
   ],
   templateUrl: './my-finances.component.html',
-  styleUrls: ['./my-finances.component.scss']
+  styleUrls: ['./my-finances.component.scss'],
+  providers: [NzMessageService]
 })
 export class MyFinancesComponent implements OnInit {
   account: EmployerAccount | null = null;
@@ -44,22 +44,19 @@ export class MyFinancesComponent implements OnInit {
   isLoadingPaymentMethods: boolean = true;
   isLoadingPaymentIntents: boolean = true;
   isCreatingAccount: boolean = false;
-  accountSuccessMessage: string | null = null;
-  accountErrorMessage: string | null = null;
   
-  // Пагинация для Charges
   chargesPageNo: number = 1;
   chargesPageSize: number = 10;
   chargesTotalCount: number = 0;
   
-  // Пагинация для PaymentIntents
   paymentIntentsPageNo: number = 1;
   paymentIntentsPageSize: number = 10;
   paymentIntentsTotalCount: number = 0;
   
   constructor(
     private financeService: FinanceService,
-    private modalService: NzModalService
+    private modalService: NzModalService,
+    private message: NzMessageService
   ) {}
   
   ngOnInit(): void {
@@ -78,22 +75,20 @@ export class MyFinancesComponent implements OnInit {
     });
     
     modal.componentInstance?.paymentMethodSaved.subscribe(() => {
-      this.accountSuccessMessage = 'Payment method saved successfully!';
+      this.message.success('Payment method saved successfully!', { nzDuration: 3000 });
       this.loadPaymentMethods();
       modal.close();
-      setTimeout(() => this.accountSuccessMessage = null, 5000);
     });
   }
   
   deletePaymentMethod(paymentMethodId: string): void {
     this.financeService.deletePaymentMethod(paymentMethodId).subscribe({
       next: () => {
-        this.accountSuccessMessage = 'Payment method deleted successfully!';
+        this.message.success('Payment method deleted successfully!', { nzDuration: 3000 });
         this.loadPaymentMethods();
-        setTimeout(() => this.accountSuccessMessage = null, 5000);
       },
       error: (error) => {
-        this.accountErrorMessage = 'Failed to delete payment method.';
+        this.message.error('Failed to delete payment method.', { nzDuration: 3000 });
         console.error('Error deleting payment method:', error);
       }
     });
@@ -110,7 +105,7 @@ export class MyFinancesComponent implements OnInit {
         if (error.status === 404) {
           this.account = null;
         } else {
-          this.accountErrorMessage = 'Failed to load account information.';
+          this.message.error('Failed to load account information.', { nzDuration: 3000 });
           console.error('Error loading account:', error);
         }
         this.isLoadingAccount = false;
@@ -128,8 +123,8 @@ export class MyFinancesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading charges:', error);
+        this.message.error('Failed to load payments.', { nzDuration: 3000 });
         this.isLoadingCharges = false;
-        this.accountErrorMessage = 'Failed to load payments.';
       }
     });
   }
@@ -143,8 +138,8 @@ export class MyFinancesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading payment methods:', error);
+        this.message.error('Failed to load payment methods.', { nzDuration: 3000 });
         this.isLoadingPaymentMethods = false;
-        this.accountErrorMessage = 'Failed to load payment methods.';
       }
     });
   }
@@ -159,8 +154,8 @@ export class MyFinancesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading payment intents:', error);
+        this.message.error('Failed to load payment intents.', { nzDuration: 3000 });
         this.isLoadingPaymentIntents = false;
-        this.accountErrorMessage = 'Failed to load payment intents.';
       }
     });
   }
@@ -180,13 +175,12 @@ export class MyFinancesComponent implements OnInit {
     this.financeService.createEmployerAccount().subscribe({
       next: () => {
         this.isCreatingAccount = false;
-        this.accountSuccessMessage = 'Account created successfully!';
+        this.message.success('Account created successfully!', { nzDuration: 3000 });
         this.loadAccount();
-        setTimeout(() => this.accountSuccessMessage = null, 5000);
       },
       error: (error) => {
         this.isCreatingAccount = false;
-        this.accountErrorMessage = 'Failed to create account. Please try again.';
+        this.message.error('Failed to create account. Please try again.', { nzDuration: 3000 });
         console.error('Error creating account:', error);
       }
     });

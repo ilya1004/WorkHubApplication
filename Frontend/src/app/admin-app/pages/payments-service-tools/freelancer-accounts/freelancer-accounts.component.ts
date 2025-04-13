@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {PaymentsService} from "../../../services/payments/payments.service";
 import {PaginatedResult} from "../../../../core/interfaces/common/paginated-result.interface";
 import {FreelancerAccount} from "../../../../freelancer-app/interfaces/finance/freelancer-account.interface";
-import {NzCardComponent} from "ng-zorro-antd/card";
 import {NzTableComponent, NzTableModule} from "ng-zorro-antd/table";
 import {NgForOf} from "@angular/common";
 

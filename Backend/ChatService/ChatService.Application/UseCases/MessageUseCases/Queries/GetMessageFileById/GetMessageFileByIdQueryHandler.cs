@@ -1,4 +1,3 @@
-using ChatService.Application.DTOs;
 using ChatService.Domain.Abstractions.BlobService;
 
 namespace ChatService.Application.UseCases.MessageUseCases.Queries.GetMessageFileById;

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {PaginatedResult} from "../../core/interfaces/common/paginated-result.interface";
@@ -6,8 +6,6 @@ import {Project} from "../../core/interfaces/project/project.interface";
 import {FreelancerApplication} from "../../core/interfaces/project/freelancer-application.interface";
 import {FreelancerUser} from "../../core/interfaces/freelancer/freelancer-user.interface";
 import {environment} from "../../../environments/environment";
-import {ProjectCreateData} from "../interfaces/project-tools/create-project.interface";
-import {ProjectUpdateData} from "../interfaces/project-tools/update-project.interface";
 
 @Injectable({
   providedIn: 'root'

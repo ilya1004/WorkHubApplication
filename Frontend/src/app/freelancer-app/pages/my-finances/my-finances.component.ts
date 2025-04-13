@@ -1,14 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from "@angular/common";
-import { NzFlexDirective } from 'ng-zorro-antd/flex';
+import {NzFlexDirective} from 'ng-zorro-antd/flex';
 import {NzCardComponent} from "ng-zorro-antd/card";
 import {NzDescriptionsModule} from "ng-zorro-antd/descriptions";
 import {NzButtonModule} from "ng-zorro-antd/button";
-import {NzAlertModule} from "ng-zorro-antd/alert";
 import {NzTableModule} from "ng-zorro-antd/table";
 import {FreelancerAccount} from "../../interfaces/finance/freelancer-account.interface";
 import {Transfer} from "../../interfaces/finance/transfer.interface";
 import {FinanceService} from "../../services/finance.service";
+import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
   selector: 'app-my-finances',
@@ -19,11 +19,11 @@ import {FinanceService} from "../../services/finance.service";
     NzCardComponent,
     NzDescriptionsModule,
     NzButtonModule,
-    NzAlertModule,
     NzTableModule
   ],
   templateUrl: './my-finances.component.html',
-  styleUrls: ['./my-finances.component.scss']
+  styleUrls: ['./my-finances.component.scss'],
+  providers: [NzMessageService]
 })
 export class MyFinancesComponent implements OnInit {
   account: FreelancerAccount | null = null;
@@ -31,10 +31,11 @@ export class MyFinancesComponent implements OnInit {
   isLoadingAccount: boolean = true;
   isLoadingTransfers: boolean = true;
   isCreatingAccount: boolean = false;
-  accountSuccessMessage: string | null = null;
-  accountErrorMessage: string | null = null;
   
-  constructor(private financeService: FinanceService) {}
+  constructor(
+    private financeService: FinanceService,
+    private message: NzMessageService
+  ) {}
   
   ngOnInit(): void {
     this.loadAccount();
@@ -52,7 +53,7 @@ export class MyFinancesComponent implements OnInit {
         if (error.status === 404) {
           this.account = null;
         } else {
-          this.accountErrorMessage = 'Failed to load account information.';
+          this.message.error('Failed to load account information.', { nzDuration: 3000 });
           console.error('Error loading account:', error);
         }
         this.isLoadingAccount = false;
@@ -68,6 +69,7 @@ export class MyFinancesComponent implements OnInit {
         this.isLoadingTransfers = false;
       },
       error: (error) => {
+        this.message.error('Failed to load transfers.', { nzDuration: 3000 });
         console.error('Error loading transfers:', error);
         this.isLoadingTransfers = false;
       }
@@ -79,13 +81,12 @@ export class MyFinancesComponent implements OnInit {
     this.financeService.createFreelancerAccount().subscribe({
       next: () => {
         this.isCreatingAccount = false;
-        this.accountSuccessMessage = 'Account created successfully!';
+        this.message.success('Account created successfully!', { nzDuration: 3000 });
         setTimeout(() => this.loadAccount(), 2000);
-        setTimeout(() => this.accountSuccessMessage = null, 5000);
       },
       error: (error) => {
         this.isCreatingAccount = false;
-        this.accountErrorMessage = 'Failed to create account. Please try again.';
+        this.message.error('Failed to create account. Please try again.', { nzDuration: 3000 });
         console.error('Error creating account:', error);
       }
     });

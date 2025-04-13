@@ -1,14 +1,14 @@
-import { CommonModule } from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators} from "@angular/forms";
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzCardModule } from 'ng-zorro-antd/card';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { Project } from '../../../../core/interfaces/project/project.interface';
-import { Category } from '../../../../core/interfaces/project/category.interface';
+import {NzButtonModule} from 'ng-zorro-antd/button';
+import {NzCardModule} from 'ng-zorro-antd/card';
+import {NzFormModule} from 'ng-zorro-antd/form';
+import {NzInputModule} from 'ng-zorro-antd/input';
+import {Project} from '../../../../core/interfaces/project/project.interface';
+import {Category} from '../../../../core/interfaces/project/category.interface';
 import {NzSelectModule} from "ng-zorro-antd/select";
-import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import {NzDatePickerModule} from 'ng-zorro-antd/date-picker';
 import {NzInputNumberModule} from "ng-zorro-antd/input-number";
 import {ProjectUpdateData, UpdateProjectForm} from "../../../interfaces/project-tools/update-project.interface";
 

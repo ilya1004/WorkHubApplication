@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Project} from "../../../../core/interfaces/project/project.interface";
 import {EmployerUser} from "../../../../core/interfaces/employer/employer-user.interface";
 import {ActivatedRoute, Router} from "@angular/router";
-import { ProjectsService } from '../../../../core/services/projects/projects.service';
+import {ProjectsService} from '../../../../core/services/projects/projects.service';
 import {UsersService} from "../../../../core/services/users/users.service";
 import {FreelancerUser} from "../../../../core/interfaces/freelancer/freelancer-user.interface";
 import {NzButtonComponent} from "ng-zorro-antd/button";

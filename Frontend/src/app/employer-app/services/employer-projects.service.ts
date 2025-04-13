@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {PaginatedResult} from "../../core/interfaces/common/paginated-result.interface";
 import {Project} from "../../core/interfaces/project/project.interface";

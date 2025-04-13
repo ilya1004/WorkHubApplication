@@ -81,24 +81,5 @@
         </nz-tag>
       }
     </div>
-    
-    <nz-alert
-      *ngIf="successMessage"
-      nzType="success"
-      [nzMessage]="successMessage"
-      nzShowIcon
-      nzCloseable
-      (nzOnClose)="successMessage = null"
-      style="margin-top: 20px">
-    </nz-alert>
-    <nz-alert
-      *ngIf="errorMessage"
-      nzType="error"
-      [nzMessage]="errorMessage"
-      nzShowIcon
-      nzCloseable
-      (nzOnClose)="errorMessage = null"
-      style="margin-top: 20px">
-    </nz-alert>
   </nz-card>
 </div>

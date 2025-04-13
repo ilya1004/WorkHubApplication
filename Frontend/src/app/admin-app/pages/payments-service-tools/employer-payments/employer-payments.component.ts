@@ -3,7 +3,7 @@ import {CommonModule} from "@angular/common";
 import {NzTableModule} from "ng-zorro-antd/table";
 import {NzSpinModule} from "ng-zorro-antd/spin";
 import {NzMessageService} from "ng-zorro-antd/message";
-import { Charge } from '../../../../employer-app/interfaces/finance/charge.interface';
+import {Charge} from '../../../../employer-app/interfaces/finance/charge.interface';
 import {PaymentsService} from "../../../services/payments/payments.service";
 import {PaginatedResult} from "../../../../core/interfaces/common/paginated-result.interface";
 

@@ -5,7 +5,6 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using ProjectsService.Domain.Abstractions.Specification;
 using ProjectsService.Domain.Primitives;
-using ProjectsService.Infrastructure.Settings;
 
 namespace ProjectsService.Infrastructure.Repositories;
 

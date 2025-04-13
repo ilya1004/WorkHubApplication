@@ -10,12 +10,12 @@ import {EmployerUser} from "../../../core/interfaces/employer/employer-user.inte
 import {FreelancerUser} from "../../../core/interfaces/freelancer/freelancer-user.interface";
 import {UsersService} from "../../../core/services/users/users.service";
 import {ApplicationStatus} from "../../../core/interfaces/project/freelancer-application.interface";
-import {NzAlertModule} from "ng-zorro-antd/alert";
 import {TokenService} from "../../../core/services/auth/token.service";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {FreelancerApplicationsService} from "../../../core/services/freelancer-applications/freelancer-applications.service";
 import {NzTagComponent} from "ng-zorro-antd/tag";
 import {ProjectStatus} from "../../../core/interfaces/project/lifecycle.interface";
+import {NzMessageService} from "ng-zorro-antd/message";
 
 @Component({
   selector: 'app-project-info',
@@ -25,13 +25,13 @@ import {ProjectStatus} from "../../../core/interfaces/project/lifecycle.interfac
     NzCardModule,
     NzDescriptionsModule,
     NzButtonModule,
-    NzAlertModule,
     RouterLink,
     NzFlexDirective,
     NzTagComponent
   ],
   templateUrl: './project-info.component.html',
-  styleUrl: './project-info.component.scss'
+  styleUrl: './project-info.component.scss',
+  providers: [NzMessageService]
 })
 export class ProjectInfoComponent implements OnInit {
   project: Project | null = null;
@@ -40,8 +40,6 @@ export class ProjectInfoComponent implements OnInit {
   loading = false;
   isApplying = false;
   isCancelling = false;
-  successMessage: string | null = null;
-  errorMessage: string | null = null;
   currentUserId: string | null = '';
   
   constructor(
@@ -49,7 +47,8 @@ export class ProjectInfoComponent implements OnInit {
     private projectsService: ProjectsService,
     private freelancerApplicationsService: FreelancerApplicationsService,
     private usersService: UsersService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private message: NzMessageService
   ) {
     this.currentUserId = this.tokenService.getUserId();
   }
@@ -75,6 +74,7 @@ export class ProjectInfoComponent implements OnInit {
         }
       },
       error: (error) => {
+        this.message.error('Failed to load project details.', { nzDuration: 3000 });
         console.error('Error loading project:', error);
         this.loading = false;
       }
@@ -88,6 +88,7 @@ export class ProjectInfoComponent implements OnInit {
         this.checkLoadingComplete();
       },
       error: (error) => {
+        this.message.error('Failed to load employer information.', { nzDuration: 3000 });
         console.error('Error loading employer:', error);
         this.checkLoadingComplete();
       }
@@ -101,6 +102,7 @@ export class ProjectInfoComponent implements OnInit {
         this.checkLoadingComplete();
       },
       error: (error) => {
+        this.message.error('Failed to load freelancer information.', { nzDuration: 3000 });
         console.error('Error loading freelancer:', error);
         this.checkLoadingComplete();
       }
@@ -148,13 +150,12 @@ export class ProjectInfoComponent implements OnInit {
     this.freelancerApplicationsService.createFreelancerApplication(this.project.id.toString()).subscribe({
       next: () => {
         this.isApplying = false;
-        this.successMessage = 'Application submitted successfully!';
-        this.loadProject(this.project!.id.toString()); // Перезагружаем проект
-        setTimeout(() => this.successMessage = null, 5000);
+        this.message.success('Application submitted successfully!', { nzDuration: 3000 });
+        this.loadProject(this.project!.id.toString());
       },
       error: (error) => {
         this.isApplying = false;
-        this.errorMessage = 'Failed to submit application. Please try again.';
+        this.message.error('Failed to submit application. Please try again.', { nzDuration: 3000 });
         console.error('Error applying for project:', error);
       }
     });
@@ -169,13 +170,12 @@ export class ProjectInfoComponent implements OnInit {
     this.freelancerApplicationsService.cancelFreelancerApplication(application.id).subscribe({
       next: () => {
         this.isCancelling = false;
-        this.successMessage = 'Application cancelled successfully!';
-        this.loadProject(this.project!.id.toString()); // Перезагружаем проект
-        setTimeout(() => this.successMessage = null, 5000);
+        this.message.success('Application cancelled successfully!', { nzDuration: 3000 });
+        this.loadProject(this.project!.id.toString());
       },
       error: (error) => {
         this.isCancelling = false;
-        this.errorMessage = 'Failed to cancel application. Please try again.';
+        this.message.error('Failed to cancel application. Please try again.', { nzDuration: 3000 });
         console.error('Error cancelling application:', error);
       }
     });

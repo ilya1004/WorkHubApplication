@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import { Project } from '../../../core/interfaces/project/project.interface';
+import {Project} from '../../../core/interfaces/project/project.interface';
 import {FreelancerUser} from "../../../core/interfaces/freelancer/freelancer-user.interface";
 import {ActivatedRoute, Router, RouterModule} from "@angular/router";
 import {ProjectsService} from "../../../core/services/projects/projects.service";
@@ -13,7 +13,7 @@ import {NzCardModule} from "ng-zorro-antd/card";
 import {NzGridModule} from "ng-zorro-antd/grid";
 import {ProjectChatComponent} from "./project-chat/project-chat.component";
 import {ChatService} from "../../../core/services/chat/chat.service";
-import { ProjectStatus } from '../../../core/interfaces/project/lifecycle.interface';
+import {ProjectStatus} from '../../../core/interfaces/project/lifecycle.interface';
 
 @Component({
   selector: 'app-my-project-info',

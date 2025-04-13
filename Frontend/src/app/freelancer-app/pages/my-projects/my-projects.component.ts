@@ -1,21 +1,22 @@
 import {Component, OnInit} from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { NzFormItemComponent, NzFormLabelComponent } from "ng-zorro-antd/form";
-import { NzOptionComponent, NzSelectComponent } from "ng-zorro-antd/select";
-import { NzColDirective, NzRowDirective } from "ng-zorro-antd/grid";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {NzFormItemComponent, NzFormLabelComponent} from "ng-zorro-antd/form";
+import {NzOptionComponent, NzSelectComponent} from "ng-zorro-antd/select";
+import {NzColDirective, NzRowDirective} from "ng-zorro-antd/grid";
 import {
   NzTableCellDirective,
   NzTableComponent,
   NzTbodyComponent,
   NzTheadComponent,
-  NzThMeasureDirective, NzTrDirective
+  NzThMeasureDirective,
+  NzTrDirective
 } from "ng-zorro-antd/table";
-import { FreelancerProjectsService } from "../../services/freelancer-projects.service";
-import { Project } from "../../../core/interfaces/project/project.interface";
-import { NzInputDirective, NzInputGroupComponent } from "ng-zorro-antd/input";
-import { NzButtonComponent } from "ng-zorro-antd/button";
-import { DatePipe, NgForOf } from "@angular/common";
-import { PaginatedResult } from "../../../core/interfaces/common/paginated-result.interface";
+import {FreelancerProjectsService} from "../../services/freelancer-projects.service";
+import {Project} from "../../../core/interfaces/project/project.interface";
+import {NzInputDirective, NzInputGroupComponent} from "ng-zorro-antd/input";
+import {NzButtonComponent} from "ng-zorro-antd/button";
+import {DatePipe, NgForOf} from "@angular/common";
+import {PaginatedResult} from "../../../core/interfaces/common/paginated-result.interface";
 import {PROJECT_STATUSES} from "../../../core/data/constants";
 import {NzWaveDirective} from "ng-zorro-antd/core/wave";
 import {Router} from "@angular/router";

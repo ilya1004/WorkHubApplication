@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import {Routes} from '@angular/router';
 import {LoginPageComponent} from './common/pages/login-page/login-page.component';
 import {RegisterPageComponent} from './common/pages/register-page/register-page.component';
 import {ForgotPasswordComponent} from './common/pages/forgot-password/forgot-password.component';
@@ -32,7 +32,9 @@ import {ProjectsServiceToolsComponent} from "./admin-app/pages/projects-service-
 import {IdentityServiceToolsComponent} from "./admin-app/pages/identity-service-tools/identity-service-tools.component";
 import {PaymentsServiceToolsComponent} from "./admin-app/pages/payments-service-tools/payments-service-tools.component";
 import {ChatServiceToolsComponent} from "./admin-app/pages/chat-service-tools/chat-service-tools.component";
-import {ProjectInfoComponent as AdminProjectInfoComponent} from "./admin-app/pages/projects-service-tools/project-info/project-info.component";
+import {
+  ProjectInfoComponent as AdminProjectInfoComponent
+} from "./admin-app/pages/projects-service-tools/project-info/project-info.component";
 import {UserInfoComponent} from "./admin-app/pages/identity-service-tools/user-info/user-info.component";
 
 

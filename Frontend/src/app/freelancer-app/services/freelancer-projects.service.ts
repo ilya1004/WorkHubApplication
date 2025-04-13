@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {PaginatedResult} from "../../core/interfaces/common/paginated-result.interface";
 import {Project} from "../../core/interfaces/project/project.interface";
 import {HttpClient, HttpParams} from "@angular/common/http";

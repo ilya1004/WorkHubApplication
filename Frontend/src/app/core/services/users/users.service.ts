@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
 import {FreelancerUser} from "../../interfaces/freelancer/freelancer-user.interface";
 import {EmployerUser} from "../../interfaces/employer/employer-user.interface";
@@ -41,6 +41,12 @@ export class UsersService {
   
   getUserById(userId: string): Observable<AppUser> {
     return this.httpClient.get<AppUser>(
+      `${environment.IDENTITY_SERVICE_API_URL}users/${userId}`
+    );
+  }
+  
+  deleteUser(userId: string): Observable<void> {
+    return this.httpClient.delete<void>(
       `${environment.IDENTITY_SERVICE_API_URL}users/${userId}`
     );
   }

@@ -93,16 +93,6 @@ public class ChatHub(
         
         logger.LogInformation("Retrieved {MessageCount} messages", result.TotalCount);
     }
-
-    [Authorize(Policy = AuthPolicies.AdminPolicy)]
-    public async Task GetAllChats(GetAllChatsRequest request)
-    {
-        var result = await mediator.Send(mapper.Map<GetAllChatsQuery>(request));
-
-        await Clients.Caller.ReceiveAllChats(result);
-        
-        logger.LogInformation("Retrieved {ChatCount} chats", result.TotalCount);
-    }
     
     [Authorize]
     public async Task DeleteMessage(DeleteMessageRequest request)

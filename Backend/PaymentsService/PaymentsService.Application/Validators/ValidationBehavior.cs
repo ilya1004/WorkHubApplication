@@ -1,5 +1,4 @@
 using FluentValidation;
-using PaymentsService.Application.Exceptions;
 
 namespace PaymentsService.Application.Validators;
 

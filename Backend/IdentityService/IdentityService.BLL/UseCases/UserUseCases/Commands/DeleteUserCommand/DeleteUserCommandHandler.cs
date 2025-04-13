@@ -1,6 +1,4 @@
 ﻿using IdentityService.BLL.Abstractions.BlobService;
-using IdentityService.BLL.Services.BlobService;
-using IdentityService.DAL.Abstractions.Repositories;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.DeleteUserCommand;
 

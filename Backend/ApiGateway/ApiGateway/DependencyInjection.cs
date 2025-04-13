@@ -4,7 +4,6 @@ using System.Threading.RateLimiting;
 using ApiGateway.Services;
 using ApiGateway.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 

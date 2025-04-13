@@ -1,6 +1,4 @@
-﻿using IdentityService.DAL.Abstractions.Repositories;
-
-namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.CreateEmployerIndustry;
+﻿namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.CreateEmployerIndustry;
 
 public class CreateEmployerIndustryCommandHandler(
     IUnitOfWork unitOfWork,

@@ -1,21 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ReactiveFormsModule} from "@angular/forms";
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
+import {NzFormModule} from 'ng-zorro-antd/form';
+import {NzInputModule} from 'ng-zorro-antd/input';
 import {NzButtonModule} from "ng-zorro-antd/button";
-import {NzSelectModule } from 'ng-zorro-antd/select';
-import { NzTableModule } from 'ng-zorro-antd/table';
-import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
-import { NzFlexModule } from 'ng-zorro-antd/flex';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { NzCardModule } from 'ng-zorro-antd/card';
+import {NzSelectModule} from 'ng-zorro-antd/select';
+import {NzTableModule} from 'ng-zorro-antd/table';
+import {NzDatePickerModule} from 'ng-zorro-antd/date-picker';
+import {NzFlexModule} from 'ng-zorro-antd/flex';
+import {NzDividerModule} from 'ng-zorro-antd/divider';
+import {NzCardModule} from 'ng-zorro-antd/card';
 import {CommonModule, DatePipe, NgForOf, NgIf} from '@angular/common';
 import {ProjectToolsService} from "../../services/project-tools.service";
-import { NzMessageService } from 'ng-zorro-antd/message';
+import {NzMessageService} from 'ng-zorro-antd/message';
 import {Project} from "../../../core/interfaces/project/project.interface";
-import { Category } from '../../../core/interfaces/project/category.interface';
-import { FreelancerApplication } from '../../../core/interfaces/project/freelancer-application.interface';
-import { FreelancerUser } from '../../../core/interfaces/freelancer/freelancer-user.interface';
+import {Category} from '../../../core/interfaces/project/category.interface';
+import {ApplicationStatus, FreelancerApplication} from '../../../core/interfaces/project/freelancer-application.interface';
+import {FreelancerUser} from '../../../core/interfaces/freelancer/freelancer-user.interface';
 import {PROJECT_STATUSES} from "../../../core/data/constants";
 import {NzTagComponent} from "ng-zorro-antd/tag";
 import {NzModalService} from "ng-zorro-antd/modal";
@@ -27,7 +27,7 @@ import {EditProjectComponent} from "./edit-project/edit-project.component";
 import {ProjectCreateData} from "../../interfaces/project-tools/create-project.interface";
 import {ProjectUpdateData} from "../../interfaces/project-tools/update-project.interface";
 import {FinanceService} from "../../services/finance.service";
-import { ProjectStatus } from '../../../core/interfaces/project/lifecycle.interface';
+import {ProjectStatus} from '../../../core/interfaces/project/lifecycle.interface';
 
 @Component({
   selector: 'app-project-tools',
@@ -135,7 +135,7 @@ export class ProjectToolsComponent implements OnInit {
       next: (result) => {
         this.applications = result.items;
         this.applicationTotalCount = result.totalCount;
-        this.hasAcceptedApplication = this.applications.some(app => app.status === 1); // Accepted
+        this.hasAcceptedApplication = this.applications.some(app => app.status === ApplicationStatus.Accepted);
       },
       error: () => this.message.error('Failed to load applications.')
     });

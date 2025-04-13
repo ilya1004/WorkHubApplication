@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {FreelancerAccount} from "../interfaces/finance/freelancer-account.interface";
 import {Transfer} from "../interfaces/finance/transfer.interface";

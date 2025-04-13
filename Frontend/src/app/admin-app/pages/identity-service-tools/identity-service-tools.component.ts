@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import {NzTableComponent} from "ng-zorro-antd/table";
+import {Component} from '@angular/core';
 import {UsersComponent} from "./users/users.component";
 import {EmployerIndustriesComponent} from "./employer-industries/employer-industries.component";
 import {FreelancerSkillsComponent} from "./freelancer-skills/freelancer-skills.component";

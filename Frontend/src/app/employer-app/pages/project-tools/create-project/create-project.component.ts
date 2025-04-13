@@ -1,13 +1,13 @@
-import { CommonModule } from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators} from '@angular/forms';
-import { NzCardModule } from 'ng-zorro-antd/card';
-import {NzInputModule } from 'ng-zorro-antd/input';
-import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
-import {NzSelectModule } from 'ng-zorro-antd/select';
+import {NzCardModule} from 'ng-zorro-antd/card';
+import {NzInputModule} from 'ng-zorro-antd/input';
+import {NzInputNumberModule} from 'ng-zorro-antd/input-number';
+import {NzSelectModule} from 'ng-zorro-antd/select';
 import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
 import {NzButtonModule} from "ng-zorro-antd/button";
-import { Category } from '../../../../core/interfaces/project/category.interface';
+import {Category} from '../../../../core/interfaces/project/category.interface';
 import {CreateProjectForm, ProjectCreateData} from '../../../interfaces/project-tools/create-project.interface';
 import {NzFormModule} from "ng-zorro-antd/form";
 import {PaymentMethod} from "../../../interfaces/finance/payment-method.interface";
@@ -88,7 +88,7 @@ export class CreateProjectComponent implements OnInit {
       }),
       paymentMethodId: new FormControl<string>('', {
         nonNullable: true,
-        validators: [Validators.required] // Метод оплаты обязателен
+        validators: [Validators.required]
       })
     }, { validators: [this.dateSequenceValidator, this.futureDateValidator] });
   }
@@ -98,7 +98,7 @@ export class CreateProjectComponent implements OnInit {
       next: (methods) => {
         this.paymentMethods = methods;
         if (methods.length > 0) {
-          this.createProjectForm.patchValue({ paymentMethodId: methods[0].id }); // Устанавливаем первый метод по умолчанию
+          this.createProjectForm.patchValue({ paymentMethodId: methods[0].id });
         }
       },
       error: (err) => {

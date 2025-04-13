@@ -1,5 +1,3 @@
-using PaymentsService.Infrastructure.DTOs;
-
 namespace PaymentsService.Infrastructure.Interfaces;
 
 public interface IEmployersGrpcClient

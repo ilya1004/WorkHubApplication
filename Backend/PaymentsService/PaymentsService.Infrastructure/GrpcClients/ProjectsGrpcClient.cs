@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using PaymentsService.Infrastructure.Interfaces;
 using Projects;
 

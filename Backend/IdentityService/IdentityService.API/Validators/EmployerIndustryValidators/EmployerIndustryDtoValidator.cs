@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using IdentityService.API.DTOs;
 
-namespace IdentityService.API.Validators.FreelancerSkillValidators;
+namespace IdentityService.API.Validators.EmployerIndustryValidators;
 
-public class FreelancerSkillDTOValidator : AbstractValidator<FreelancerSkillDataDto>
+public class EmployerIndustryDtoValidator : AbstractValidator<EmployerIndustryDataDto>
 {
-    public FreelancerSkillDTOValidator()
+    public EmployerIndustryDtoValidator()
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Name is required")

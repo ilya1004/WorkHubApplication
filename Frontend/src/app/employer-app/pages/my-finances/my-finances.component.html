@@ -1,3 +1,4 @@
+<!-- src/app/my-finances.component.html -->
 <div nz-flex nzGap="40px">
   <div nz-flex nzVertical nzGap="large">
     <h2>My Account</h2>
@@ -26,23 +27,6 @@
         <button nz-button nzType="default" (click)="refreshAccount()">Refresh Balance</button>
       </div>
     }
-    
-    <nz-alert
-      *ngIf="accountSuccessMessage"
-      nzType="success"
-      [nzMessage]="accountSuccessMessage"
-      nzShowIcon
-      nzCloseable
-      (nzOnClose)="accountSuccessMessage = null">
-    </nz-alert>
-    <nz-alert
-      *ngIf="accountErrorMessage"
-      nzType="error"
-      [nzMessage]="accountErrorMessage"
-      nzShowIcon
-      nzCloseable
-      (nzOnClose)="accountErrorMessage = null">
-    </nz-alert>
   </div>
   
   <div nz-flex nzVertical nzGap="large">

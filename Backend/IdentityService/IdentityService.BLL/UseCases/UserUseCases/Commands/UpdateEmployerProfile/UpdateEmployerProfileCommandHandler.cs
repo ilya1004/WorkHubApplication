@@ -1,12 +1,9 @@
 ﻿using IdentityService.BLL.Abstractions.BlobService;
 using IdentityService.BLL.Abstractions.UserContext;
-using IdentityService.BLL.Services.BlobService;
-using IdentityService.DAL.Abstractions.Repositories;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateEmployerProfile;
 
 public class UpdateEmployerProfileCommandHandler(
-    UserManager<AppUser> userManager,
     IUnitOfWork unitOfWork,
     IMapper mapper,
     IBlobService blobService,

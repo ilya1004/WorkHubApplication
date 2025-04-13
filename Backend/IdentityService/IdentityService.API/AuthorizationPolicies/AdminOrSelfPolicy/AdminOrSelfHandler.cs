@@ -1,5 +1,4 @@
 ﻿using IdentityService.DAL.Constants;
-using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
 namespace IdentityService.API.AuthorizationPolicies.AdminOrSelfPolicy;

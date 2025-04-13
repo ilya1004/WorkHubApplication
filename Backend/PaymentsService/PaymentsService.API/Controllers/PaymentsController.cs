@@ -1,7 +1,6 @@
 using PaymentsService.API.Contracts.CommonContracts;
 using PaymentsService.API.Contracts.PaymentContracts;
 using PaymentsService.Application.UseCases.PaymentsUseCases.Commands.ConfirmPaymentForProject;
-using PaymentsService.Application.UseCases.PaymentsUseCases.Commands.CreateSetupIntent;
 using PaymentsService.Application.UseCases.PaymentsUseCases.Commands.PayForProjectWithSavedMethod;
 using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetAllEmployerPayments;
 using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetAllFreelancerTransfers;
@@ -17,16 +16,6 @@ public class PaymentsController(
     IMediator mediator,
     IMapper mapper) : ControllerBase
 {
-    // [HttpPost]
-    // [Route("setup-intent")]
-    // [Authorize(Policy = AuthPolicies.EmployerPolicy)]
-    // public async Task<IActionResult> CreateSetupIntent(CancellationToken cancellationToken = default)
-    // {
-    //     var result = await mediator.Send(new CreateSetupIntentCommand(), cancellationToken);
-    //
-    //     return Ok(result);
-    // }
-
     [HttpPost]
     [Route("pay-for-project/{projectId:guid}/with-method/{paymentMethodId}")]
     [Authorize(Policy = AuthPolicies.EmployerPolicy)]

@@ -1,5 +1,4 @@
 ﻿using IdentityService.BLL.Exceptions;
-using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 namespace IdentityService.API.Middlewares;

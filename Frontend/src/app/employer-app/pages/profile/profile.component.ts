@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {NzAlertComponent} from "ng-zorro-antd/alert";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {NzSpinComponent} from "ng-zorro-antd/spin";
@@ -12,15 +11,17 @@ import {NzInputDirective, NzInputGroupComponent} from "ng-zorro-antd/input";
 import {NzOptionComponent, NzSelectComponent} from "ng-zorro-antd/select";
 import {NzProgressComponent} from "ng-zorro-antd/progress";
 import {EmployerUser} from "../../../core/interfaces/employer/employer-user.interface";
-import { EmployerIndustry } from '../../../core/interfaces/employer/employer-industry.interface';
+import {EmployerIndustry} from '../../../core/interfaces/employer/employer-industry.interface';
 import {ProfileService} from "../../services/profile.service";
+import {Router, RouterModule} from "@angular/router";
+import {NzMessageService} from "ng-zorro-antd/message";
+import {NzModalService} from "ng-zorro-antd/modal";
+import {UsersService} from "../../../core/services/users/users.service";
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [
-    NzAlertComponent,
-    NgIf,
     NzFlexDirective,
     NzSpinComponent,
     NzCardComponent,
@@ -32,11 +33,14 @@ import {ProfileService} from "../../services/profile.service";
     NzInputDirective,
     NzSelectComponent,
     NzOptionComponent,
+    NgIf,
     NgForOf,
     NzProgressComponent,
     NzInputGroupComponent,
-    DatePipe
+    DatePipe,
+    RouterModule
   ],
+  providers: [NzMessageService, NzModalService],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
@@ -49,9 +53,6 @@ export class ProfileComponent implements OnInit {
   isUpdating: boolean = false;
   isChangingPasswordInProgress: boolean = false;
   uploadProgress: number = 0;
-  successMessage: string | null = null;
-  passwordChangeMessage: string | null = null;
-  passwordChangeError: string | null = null;
   
   currentPasswordVisible: boolean = false;
   newPasswordVisible: boolean = false;
@@ -91,7 +92,13 @@ export class ProfileComponent implements OnInit {
     confirmNewPassword: new FormControl('', { nonNullable: true, validators: [Validators.required] })
   }, { validators: this.passwordsMatchValidator });
   
-  constructor(private profileService: ProfileService) {}
+  constructor(
+    private profileService: ProfileService,
+    private usersService: UsersService,
+    private message: NzMessageService,
+    private modal: NzModalService,
+    private router: Router
+  ) {}
   
   ngOnInit(): void {
     this.loadUserData();
@@ -107,6 +114,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading employer data:', err);
+        this.message.error('Failed to load user data', { nzDuration: 3000 });
         this.isLoadingUserData = false;
       }
     });
@@ -121,6 +129,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading industries:', err);
+        this.message.error('Failed to load industries', { nzDuration: 3000 });
         this.isLoadingIndustries = false;
       }
     });
@@ -157,13 +166,13 @@ export class ProfileComponent implements OnInit {
         next: () => {
           this.isUpdating = false;
           this.uploadProgress = 0;
-          this.successMessage = 'Profile updated successfully!';
+          this.message.success('Profile updated successfully!', { nzDuration: 3000 });
           this.loadUserData();
           this.isEditing = false;
-          setTimeout(() => this.successMessage = null, 5000);
         },
         error: (err) => {
           console.error('Error updating profile:', err);
+          this.message.error('Failed to update profile', { nzDuration: 3000 });
           this.isUpdating = false;
           this.uploadProgress = 0;
         }
@@ -207,8 +216,6 @@ export class ProfileComponent implements OnInit {
     this.isEditing = false;
     if (!this.isChangingPassword) {
       this.changePasswordForm.reset();
-      this.passwordChangeMessage = null;
-      this.passwordChangeError = null;
       this.currentPasswordVisible = false;
       this.newPasswordVisible = false;
       this.confirmPasswordVisible = false;
@@ -218,7 +225,6 @@ export class ProfileComponent implements OnInit {
   onSubmitChangePassword(): void {
     if (this.changePasswordForm.valid) {
       this.isChangingPasswordInProgress = true;
-      this.passwordChangeError = null;
       const formValue = this.changePasswordForm.getRawValue();
       
       const request = {
@@ -230,18 +236,41 @@ export class ProfileComponent implements OnInit {
       this.profileService.changePassword(request).subscribe({
         next: () => {
           this.isChangingPasswordInProgress = false;
-          this.passwordChangeMessage = 'Password changed successfully!';
+          this.message.success('Password changed successfully!', { nzDuration: 3000 });
           this.isChangingPassword = false;
           this.changePasswordForm.reset();
-          setTimeout(() => this.passwordChangeMessage = null, 3000);
         },
         error: (err) => {
           this.isChangingPasswordInProgress = false;
-          this.passwordChangeError = err.error?.message || 'Failed to change password. Please try again.';
+          this.message.error(err.error?.message || 'Failed to change password', { nzDuration: 3000 });
           console.error('Error changing password:', err);
         }
       });
     }
+  }
+  
+  onClickDeleteAccount(): void {
+    this.modal.confirm({
+      nzTitle: 'Delete Account',
+      nzContent: 'Are you sure you want to delete your account? This action cannot be undone.',
+      nzOkText: 'Delete',
+      nzCancelText: 'Cancel',
+      nzOnOk: () => this.deleteAccount()
+    });
+  }
+  
+  private deleteAccount(): void {
+    this.usersService.deleteUser(this.userData.id).subscribe({
+      next: () => {
+        this.message.success('Account deleted successfully', { nzDuration: 3000 });
+        localStorage.removeItem('jwt_token');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error('Error deleting account:', err);
+        this.message.error(err.error?.message || 'Failed to delete account', { nzDuration: 3000 });
+      }
+    });
   }
   
   private passwordsMatchValidator(group: AbstractControl): ValidationErrors | null {

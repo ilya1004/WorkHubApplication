@@ -20,10 +20,6 @@ body {
   color: var(--white-color);
 }
 
-.ant-alert-error {
-  border-radius: 7px;
-}
-
 .ant-card {
   border-radius: 10px;
   background-color: var(--dark-gray-color);
@@ -42,8 +38,8 @@ body {
   border-radius: 7px;
 }
 
-.ant-alert {
-  border-radius: 5px;
+.ant-input-affix-wrapper {
+  border-radius: 7px;
 }
 
 .ant-modal-content {

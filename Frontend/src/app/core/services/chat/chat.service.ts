@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {BehaviorSubject, catchError, Observable, Subject, throwError} from "rxjs";
 import {HubConnection, HubConnectionBuilder, HubConnectionState} from "@microsoft/signalr";
-import { Chat } from '../../interfaces/chat/chat.interface';
+import {Chat} from '../../interfaces/chat/chat.interface';
 import {Message} from "../../interfaces/chat/message.interface";
 import {HttpClient} from "@angular/common/http";
 import {PaginatedResult} from "../../interfaces/common/paginated-result.interface";
@@ -17,7 +17,7 @@ export class ChatService {
   private chatReceived = new BehaviorSubject<Chat | null>(null);
   private messagesReceived = new Subject<PaginatedResult<Message>>();
   private connectionEstablished = new Subject<boolean>();
-  private isHubInitialized = false; // Флаг для предотвращения повторной инициализации
+  private isHubInitialized = false;
   
   constructor(
     private http: HttpClient,

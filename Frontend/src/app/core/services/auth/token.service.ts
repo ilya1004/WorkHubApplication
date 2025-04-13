@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {catchError, map, Observable, of, tap, throwError} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {CookieService} from "ngx-cookie-service";

@@ -2,16 +2,16 @@ import {Component, OnInit} from '@angular/core';
 import {Project} from "../../../core/interfaces/project/project.interface";
 import {Category} from "../../../core/interfaces/project/category.interface";
 import {ProjectsService} from "../../../core/services/projects/projects.service";
-import { CategoriesService } from '../../../core/services/categories/categories.service';
+import {CategoriesService} from '../../../core/services/categories/categories.service';
 import {Router} from "@angular/router";
 import {PaginatedResult} from "../../../core/interfaces/common/paginated-result.interface";
 import {NzTableComponent, NzTableModule} from "ng-zorro-antd/table";
 import {CommonModule, DatePipe, NgForOf} from "@angular/common";
 import {NzButtonComponent, NzButtonModule} from "ng-zorro-antd/button";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
-import {NzFormItemComponent, NzFormLabelComponent, NzFormModule} from "ng-zorro-antd/form";
+import {NzFormItemComponent, NzFormLabelComponent} from "ng-zorro-antd/form";
 import {NzInputDirective, NzInputModule} from "ng-zorro-antd/input";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {FormsModule} from "@angular/forms";
 import {NzOptionComponent, NzSelectComponent, NzSelectModule} from "ng-zorro-antd/select";
 import {CategoriesComponent} from "./categories/categories.component";
 import {FreelancerApplicationsComponent} from "./freelancer-applications/freelancer-applications.component";
@@ -30,9 +30,6 @@ import {FreelancerApplicationsComponent} from "./freelancer-applications/freelan
     FormsModule,
     NzSelectComponent,
     NzOptionComponent,
-    // NzColDirective,
-    // NzRowDirective,
-    // NzWaveDirective,
     CategoriesComponent,
     CommonModule,
     NzInputModule,
@@ -41,7 +38,6 @@ import {FreelancerApplicationsComponent} from "./freelancer-applications/freelan
     NzFormItemComponent,
     NzFormLabelComponent,
     FreelancerApplicationsComponent,
-    // NzFormModule,
   ],
   templateUrl: './projects-service-tools.component.html',
   styleUrl: './projects-service-tools.component.scss'

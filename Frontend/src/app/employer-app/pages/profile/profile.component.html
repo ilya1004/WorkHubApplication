@@ -1,3 +1,4 @@
+<!-- src/app/profile.component.html -->
 <div nz-flex nzGap="80px" style="margin-left: 150px">
   <div nz-flex nzVertical nzGap="large">
     <nz-spin [nzSpinning]="isLoadingUserData">
@@ -27,6 +28,11 @@
       </button>
       <button nz-button nzType="default" (click)="onClickChangePassword()">
         <nz-icon nzType="lock" /> Change Password
+      </button>
+    </div>
+    <div nz-flex nzJustify="center">
+      <button nz-button nzDanger (click)="onClickDeleteAccount()">
+        <nz-icon nzType="delete" /> Delete Account
       </button>
     </div>
   </div>
@@ -140,7 +146,7 @@
                 </ng-template>
                 <div *ngIf="changePasswordForm.controls.currentPassword.invalid && changePasswordForm.controls.currentPassword.touched" class="input-error-message">
                   <div *ngIf="changePasswordForm.controls.currentPassword.errors?.['required']">Current password is required</div>
-                  <div *ngIf="changePasswordForm.controls.currentPassword.errors?.['minlength']">Minimum 6 characters</div>
+                  <div *ngIf="changePasswordForm.controls.currentPassword.errors?.['minlength']">Minimum 8 characters</div>
                 </div>
               </div>
               
@@ -161,7 +167,8 @@
                 </ng-template>
                 <div *ngIf="changePasswordForm.controls.newPassword.invalid && changePasswordForm.controls.newPassword.touched" class="input-error-message">
                   <div *ngIf="changePasswordForm.controls.newPassword.errors?.['required']">New password is required</div>
-                  <div *ngIf="changePasswordForm.controls.newPassword.errors?.['minlength']">Minimum 6 characters</div>
+                  <div *ngIf="changePasswordForm.controls.newPassword.errors?.['minlength']">Minimum 8 characters</div>
+                  <div *ngIf="changePasswordForm.controls.newPassword.errors?.['pattern']">Must include uppercase, lowercase, number, and special character</div>
                 </div>
               </div>
               
@@ -180,7 +187,7 @@
                     (click)="confirmPasswordVisible = !confirmPasswordVisible"
                     style="color: var(--white-color)" />
                 </ng-template>
-                <div *ngIf="changePasswordForm.errors?.['mismatch'] && changePasswordForm.controls.confirmNewPassword.touched" class="input-error-message">
+                <div *ngIf="changePasswordForm.errors?.['passwordsMismatch'] && changePasswordForm.controls.confirmNewPassword.touched" class="input-error-message">
                   Passwords do not match
                 </div>
                 <div *ngIf="changePasswordForm.controls.confirmNewPassword.invalid && changePasswordForm.controls.confirmNewPassword.touched" class="input-error-message">
@@ -199,32 +206,5 @@
         </nz-spin>
       </nz-card>
     }
-    
-    <nz-alert
-      *ngIf="successMessage"
-      nzType="success"
-      [nzMessage]="successMessage"
-      nzShowIcon
-      nzCloseable
-      (nzOnClose)="successMessage = null">
-    </nz-alert>
-    
-    <nz-alert
-      *ngIf="passwordChangeMessage"
-      nzType="success"
-      [nzMessage]="passwordChangeMessage"
-      nzShowIcon
-      nzCloseable
-      (nzOnClose)="passwordChangeMessage = null">
-    </nz-alert>
-    
-    <nz-alert
-      *ngIf="passwordChangeError"
-      nzType="error"
-      [nzMessage]="passwordChangeError"
-      nzShowIcon
-      nzCloseable
-      (nzOnClose)="passwordChangeError = null">
-    </nz-alert>
   </div>
 </div>

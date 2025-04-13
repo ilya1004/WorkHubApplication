@@ -5,7 +5,7 @@
     </div>
     <form [formGroup]="confirmEmailForm">
       <nz-space nzSize="middle" nzDirection="vertical">
-
+        
         <div *nzSpaceItem>
           <input
             nz-input
@@ -17,7 +17,7 @@
             <div *ngIf="confirmEmailForm.controls.email.errors?.['email']">Invalid email format</div>
           </div>
         </div>
-
+        
         <div *nzSpaceItem>
           <button
             nz-button
@@ -33,7 +33,7 @@
             Check email
           </a>
         </div>
-
+        
         <div *nzSpaceItem>
           <input
             nz-input
@@ -47,7 +47,7 @@
             </div>
           </div>
         </div>
-
+        
         <div *nzSpaceItem>
           <button
             nz-button
@@ -57,19 +57,7 @@
             Confirm
           </button>
         </div>
-
-        @if (errorMessage) {
-          <div *nzSpaceItem>
-            <nz-alert
-              nzType="error"
-              [nzMessage]="errorMessage"
-              nzShowIcon
-              nzCloseable
-              (nzOnClose)="onCloseMessage()">
-            </nz-alert>
-          </div>
-        }
-
+        
         <div *nzSpaceItem>
           <button
             nz-button
@@ -80,7 +68,7 @@
             Back to Login
           </button>
         </div>
-
+      
       </nz-space>
     </form>
   </nz-card>

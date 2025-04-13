@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {catchError, Observable, throwError} from 'rxjs';
-import { PaginatedResult } from '../../../core/interfaces/common/paginated-result.interface';
+import {Observable} from 'rxjs';
+import {PaginatedResult} from '../../../core/interfaces/common/paginated-result.interface';
 import {EmployerAccount} from "../../../employer-app/interfaces/finance/employer-account.interface";
 import {environment} from "../../../../environments/environment";
 import {FreelancerAccount} from "../../../freelancer-app/interfaces/finance/freelancer-account.interface";
@@ -42,12 +42,6 @@ export class PaymentsService {
     return this.httpClient.get<PaginatedResult<Charge>>(
       `${environment.PAYMENTS_SERVICE_API_URL}payments/employer-payments`,
       { params });
-      // .pipe(
-      //   catchError(error => {
-      //     console.error('Error fetching employer payments:', error);
-      //     return throwError(() => new Error('Failed to load employer payments'));
-      //   })
-      // );
   }
   
   getAllFreelancerTransfers(pageNo: number, pageSize: number): Observable<PaginatedResult<Transfer>> {
@@ -58,11 +52,5 @@ export class PaymentsService {
       `${environment.PAYMENTS_SERVICE_API_URL}payments/freelancer-transfers`,
       { params }
     );
-      // .pipe(
-      //   catchError(error => {
-      //     console.error('Error fetching freelancer transfers:', error);
-      //     return throwError(() => new Error('Failed to load freelancer transfers'));
-      //   })
-      // );
   }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {NzFlexDirective} from 'ng-zorro-antd/flex';
 import {NzMenuDirective, NzMenuItemComponent} from 'ng-zorro-antd/menu';
 import {NzIconDirective} from 'ng-zorro-antd/icon';

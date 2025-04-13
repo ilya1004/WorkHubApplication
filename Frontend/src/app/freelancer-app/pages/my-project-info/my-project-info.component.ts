@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NzCardModule} from "ng-zorro-antd/card";
-import { EmployerUser } from '../../../core/interfaces/employer/employer-user.interface';
+import {EmployerUser} from '../../../core/interfaces/employer/employer-user.interface';
 import {ActivatedRoute, Router, RouterModule} from "@angular/router";
 import {ProjectsService} from "../../../core/services/projects/projects.service";
 import {Project} from "../../../core/interfaces/project/project.interface";

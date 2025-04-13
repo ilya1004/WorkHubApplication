@@ -7,7 +7,6 @@ using IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateEmployerProfile;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateFreelancerProfile;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetAllUsers;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUserById;
-using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUsersByRole;
 using IdentityService.API.Contracts.CommonContracts;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetCurrentEmployerUser;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetCurrentFreelancerUser;
@@ -43,16 +42,6 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     public async Task<IActionResult> GetAllUsers([FromQuery] GetPaginatedListRequest request, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new GetAllUsersQuery(request.PageNo, request.PageSize), cancellationToken);
-
-        return Ok(result);
-    }
-
-    [HttpGet]
-    [Route("by-role")]
-    [Authorize(Policy = AuthPolicies.AdminPolicy)]
-    public async Task<IActionResult> GetUsersByRole([FromQuery] GetUsersByRoleRequest request, CancellationToken cancellationToken)
-    {
-        var result = await mediator.Send(mapper.Map<GetUsersByRoleQuery>(request), cancellationToken);
 
         return Ok(result);
     }

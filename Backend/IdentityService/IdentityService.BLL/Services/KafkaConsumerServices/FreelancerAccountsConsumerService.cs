@@ -2,7 +2,6 @@ using System.Text.Json;
 using Confluent.Kafka;
 using IdentityService.BLL.DTOs;
 using IdentityService.BLL.Settings;
-using IdentityService.DAL.Abstractions.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

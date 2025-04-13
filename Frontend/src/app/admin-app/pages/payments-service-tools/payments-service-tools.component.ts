@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {EmployerAccountsComponent} from "./employer-accounts/employer-accounts.component";
 import {FreelancerAccountsComponent} from "./freelancer-accounts/freelancer-accounts.component";
 import {EmployerPaymentsComponent} from "./employer-payments/employer-payments.component";

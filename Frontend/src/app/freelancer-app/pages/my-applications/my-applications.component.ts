@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ApplicationStatus, FreelancerApplication} from '../../../core/interfaces/project/freelancer-application.interface';
 import {CommonModule, DatePipe} from "@angular/common";
-import { FormsModule } from '@angular/forms';
+import {FormsModule} from '@angular/forms';
 import {NzTableModule} from "ng-zorro-antd/table";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzDatePickerModule} from "ng-zorro-antd/date-picker";
@@ -9,7 +9,6 @@ import {NzSpinModule} from "ng-zorro-antd/spin";
 import {NzFormModule} from "ng-zorro-antd/form";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {NzSelectModule} from "ng-zorro-antd/select";
-import {ProjectsService} from "../../../core/services/projects/projects.service";
 import {FreelancerApplicationsService} from "../../../core/services/freelancer-applications/freelancer-applications.service";
 import {RouterLink} from "@angular/router";
 

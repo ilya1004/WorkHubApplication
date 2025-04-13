@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {NavbarComponent} from '../navbar/navbar.component';
 import {NzIconDirective} from "ng-zorro-antd/icon";

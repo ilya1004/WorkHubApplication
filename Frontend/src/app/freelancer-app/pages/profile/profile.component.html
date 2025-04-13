@@ -29,6 +29,11 @@
         <nz-icon nzType="lock" /> Change Password
       </button>
     </div>
+    <div nz-flex nzJustify="center">
+      <button nz-button nzDanger (click)="onClickDeleteAccount()" style="width: fit-content">
+        <nz-icon nzType="delete" /> Delete Account
+      </button>
+    </div>
   </div>
   
   <div nz-flex nzVertical nzGap="large">
@@ -200,7 +205,7 @@
                     (click)="confirmPasswordVisible = !confirmPasswordVisible"
                     style="color: var(--white-color)" />
                 </ng-template>
-                <div *ngIf="changePasswordForm.errors?.['mismatch'] && changePasswordForm.controls.confirmNewPassword.touched" class="input-error-message">
+                <div *ngIf="changePasswordForm.errors?.['passwordsMismatch'] && changePasswordForm.controls.confirmNewPassword.touched" class="input-error-message">
                   Passwords do not match
                 </div>
                 <div *ngIf="changePasswordForm.controls.confirmNewPassword.invalid && changePasswordForm.controls.confirmNewPassword.touched" class="input-error-message">
@@ -219,32 +224,5 @@
         </nz-spin>
       </nz-card>
     }
-    
-    <nz-alert
-      *ngIf="successMessage"
-      nzType="success"
-      [nzMessage]="successMessage"
-      nzShowIcon
-      nzCloseable
-      (nzOnClose)="successMessage = null">
-    </nz-alert>
-    
-    <nz-alert
-      *ngIf="passwordChangeMessage"
-      nzType="success"
-      [nzMessage]="passwordChangeMessage"
-      nzShowIcon
-      nzCloseable
-      (nzOnClose)="passwordChangeMessage = null">
-    </nz-alert>
-    
-    <nz-alert
-      *ngIf="passwordChangeError"
-      nzType="error"
-      [nzMessage]="passwordChangeError"
-      nzShowIcon
-      nzCloseable
-      (nzOnClose)="passwordChangeError = null">
-    </nz-alert>
   </div>
 </div>

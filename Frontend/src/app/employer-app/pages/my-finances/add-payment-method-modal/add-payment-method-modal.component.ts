@@ -14,7 +14,7 @@ import {environment} from "../../../../../environments/environment";
   styleUrl: './add-payment-method-modal.component.scss'
 })
 export class AddPaymentMethodModalComponent implements OnInit {
-  @Output() paymentMethodSaved = new EventEmitter<void>(); // Для уведомления родительского компонента
+  @Output() paymentMethodSaved = new EventEmitter<void>();
   private stripe: Stripe | null = null;
   private cardElement: StripeCardElement | null = null;
   
@@ -54,7 +54,7 @@ export class AddPaymentMethodModalComponent implements OnInit {
     if (paymentMethod) {
       this.financeService.savePaymentMethod(paymentMethod.id).subscribe({
         next: () => {
-          this.paymentMethodSaved.emit(); // Уведомляем родителя об успешном сохранении
+          this.paymentMethodSaved.emit();
         },
         error: (err) => {
           console.error('Error saving payment method:', err);

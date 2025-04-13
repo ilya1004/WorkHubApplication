@@ -15,8 +15,6 @@ import {Router} from "@angular/router";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {CategoriesService} from "../../../core/services/categories/categories.service";
 import {NzColDirective, NzRowDirective} from "ng-zorro-antd/grid";
-import {NzWaveDirective} from "ng-zorro-antd/core/wave";
-import {CategoriesComponent} from "../../../admin-app/pages/projects-service-tools/categories/categories.component";
 
 @Component({
   selector: 'app-home',
