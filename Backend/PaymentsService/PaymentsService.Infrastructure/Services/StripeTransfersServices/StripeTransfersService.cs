@@ -100,7 +100,38 @@ public class StripeTransfersService(
             throw new BadRequestException($"Could not get Payments by employer with ID '{userId}'.");
         }
     }
-    
+
+    public async Task<IEnumerable<ChargeModel>> GetAllEmployerPaymentsAsync(CancellationToken cancellationToken)
+    {
+        logger.LogInformation("Getting all employer payments");
+
+        var chargeListOptions = new ChargeListOptions
+        {
+            Limit = 100
+        };
+
+        try
+        {
+            logger.LogInformation("Listing all charges with options: {@Options}", chargeListOptions);
+
+            var charges = await _chargeService.ListAsync(chargeListOptions, cancellationToken: cancellationToken);
+
+            logger.LogInformation("Retrieved {Count} employer charges", charges.Count());
+
+            return charges.Select(mapper.Map<ChargeModel>);
+        }
+        catch (StripeException ex)
+        {
+            logger.LogError(ex, "Stripe error getting all employer payments: {ErrorMessage}", ex.Message);
+            throw new BadRequestException($"Stripe error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error getting all employer payments");
+            throw new BadRequestException("Could not retrieve all employer payments.");
+        }
+    }
+
     public async Task<IEnumerable<PaymentIntentModel>> GetEmployerPaymentIntentsAsync(Guid userId, Guid? projectId, 
         CancellationToken cancellationToken)
     {
@@ -192,6 +223,37 @@ public class StripeTransfersService(
             logger.LogError(ex, "Error getting freelancer transfers for user {UserId}", userId);
             
             throw new BadRequestException($"Could not get Payments by freelancer with ID '{userId}'.");
+        }
+    }
+
+    public async Task<IEnumerable<TransferModel>> GetAllFreelancerTransfersAsync(CancellationToken cancellationToken)
+    {
+        logger.LogInformation("Getting all freelancer transfers");
+
+        var transferListOptions = new TransferListOptions
+        {
+            Limit = 100
+        };
+
+        try
+        {
+            logger.LogInformation("Listing all transfers with options: {@Options}", transferListOptions);
+
+            var transfers = await _transferService.ListAsync(transferListOptions, cancellationToken: cancellationToken);
+
+            logger.LogInformation("Retrieved {Count} freelancer transfers", transfers.Count());
+
+            return transfers.Select(mapper.Map<TransferModel>);
+        }
+        catch (StripeException ex)
+        {
+            logger.LogError(ex, "Stripe error getting all freelancer transfers: {ErrorMessage}", ex.Message);
+            throw new BadRequestException($"Stripe error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error getting all freelancer transfers");
+            throw new BadRequestException("Could not retrieve all freelancer transfers.");
         }
     }
 }

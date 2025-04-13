@@ -2,14 +2,14 @@ using PaymentsService.Application.Models;
 using PaymentsService.Domain.Abstractions.TransfersServices;
 using PaymentsService.Domain.Models;
 
-namespace PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetFreelancerTransfers;
+namespace PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetFreelancerMyTransfers;
 
-public class GetFreelancerTransferQueryHandler(
+public class GetFreelancerMyTransfersQueryHandler(
     ITransfersService transfersService,
     IUserContext userContext,
-    ILogger<GetFreelancerTransferQueryHandler> logger) : IRequestHandler<GetFreelancerTransferQuery, PaginatedResultModel<TransferModel>>
+    ILogger<GetFreelancerMyTransfersQueryHandler> logger) : IRequestHandler<GetFreelancerMyTransfersQuery, PaginatedResultModel<TransferModel>>
 {
-    public async Task<PaginatedResultModel<TransferModel>> Handle(GetFreelancerTransferQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedResultModel<TransferModel>> Handle(GetFreelancerMyTransfersQuery request, CancellationToken cancellationToken)
     {
         var userId = userContext.GetUserId();
         

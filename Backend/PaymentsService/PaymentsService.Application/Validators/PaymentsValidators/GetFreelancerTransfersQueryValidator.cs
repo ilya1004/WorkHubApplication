@@ -1,11 +1,11 @@
 using FluentValidation;
-using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetFreelancerTransfers;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetFreelancerMyTransfers;
 
 namespace PaymentsService.Application.Validators.PaymentsValidators;
 
-public class GetFreelancerTransferQueryValidator : AbstractValidator<GetFreelancerTransferQuery>
+public class GetFreelancerTransfersQueryValidator : AbstractValidator<GetFreelancerMyTransfersQuery>
 {
-    public GetFreelancerTransferQueryValidator()
+    public GetFreelancerTransfersQueryValidator()
     {
         RuleFor(x => x.ProjectId)
             .Must(id => id == null || id.Value != Guid.Empty)

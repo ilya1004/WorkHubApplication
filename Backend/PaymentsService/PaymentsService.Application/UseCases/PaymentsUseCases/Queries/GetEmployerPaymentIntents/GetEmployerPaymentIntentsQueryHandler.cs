@@ -1,5 +1,5 @@
 ﻿using PaymentsService.Application.Models;
-using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetEmployerPaymentsQuery;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetEmployerMyPaymentsQuery;
 using PaymentsService.Domain.Abstractions.TransfersServices;
 using PaymentsService.Domain.Models;
 
@@ -8,7 +8,7 @@ namespace PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetEmplo
 public class GetEmployerPaymentIntentsQueryHandler(
     IUserContext userContext,
     ITransfersService transfersService,
-    ILogger<GetEmployerPaymentsQueryHandler> logger) : IRequestHandler<GetEmployerPaymentIntentsQuery, PaginatedResultModel<PaymentIntentModel>>
+    ILogger<GetEmployerMyPaymentsQueryHandler> logger) : IRequestHandler<GetEmployerPaymentIntentsQuery, PaginatedResultModel<PaymentIntentModel>>
 {
     public async Task<PaginatedResultModel<PaymentIntentModel>> Handle(GetEmployerPaymentIntentsQuery request, CancellationToken cancellationToken)
     {

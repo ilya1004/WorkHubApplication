@@ -2,14 +2,14 @@ using PaymentsService.Application.Models;
 using PaymentsService.Domain.Abstractions.TransfersServices;
 using PaymentsService.Domain.Models;
 
-namespace PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetEmployerPaymentsQuery;
+namespace PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetEmployerMyPaymentsQuery;
 
-public class GetEmployerPaymentsQueryHandler(
+public class GetEmployerMyPaymentsQueryHandler(
     IUserContext userContext,
     ITransfersService transfersService,
-    ILogger<GetEmployerPaymentsQueryHandler> logger) : IRequestHandler<GetEmployerPaymentsQuery, PaginatedResultModel<ChargeModel>>
+    ILogger<GetEmployerMyPaymentsQueryHandler> logger) : IRequestHandler<GetEmployerMyPaymentsQuery, PaginatedResultModel<ChargeModel>>
 {
-    public async Task<PaginatedResultModel<ChargeModel>> Handle(GetEmployerPaymentsQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedResultModel<ChargeModel>> Handle(GetEmployerMyPaymentsQuery request, CancellationToken cancellationToken)
     {
         var userId = userContext.GetUserId();
         

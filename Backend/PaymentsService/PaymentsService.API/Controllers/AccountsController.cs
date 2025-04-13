@@ -55,7 +55,8 @@ public class AccountsController(IMediator mediator) : ControllerBase
     [HttpGet]
     [Route("by-employer")]
     [Authorize(Policy = AuthPolicies.AdminPolicy)]
-    public async Task<IActionResult> GetAllEmployerAccount(GetPaginatedListRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAllEmployerAccount([FromQuery] GetPaginatedListRequest request, 
+        CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(new GetAllEmployerAccountsQuery(request.PageNo, request.PageSize), cancellationToken);
 
@@ -65,7 +66,8 @@ public class AccountsController(IMediator mediator) : ControllerBase
     [HttpGet]
     [Route("by-freelancer")]
     [Authorize(Policy = AuthPolicies.AdminPolicy)]
-    public async Task<IActionResult> GetAllFreelancersAccount(GetPaginatedListRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAllFreelancersAccount([FromQuery] GetPaginatedListRequest request,
+        CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(new GetAllFreelancerAccountsQuery(request.PageNo, request.PageSize), cancellationToken);
 

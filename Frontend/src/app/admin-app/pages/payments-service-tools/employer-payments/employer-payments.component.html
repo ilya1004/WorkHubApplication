@@ -1,0 +1,35 @@
+<div style="width: 100%;">
+  <h2>Employer Payments View</h2>
+  <nz-table
+    #paymentTable
+    [nzData]="payments"
+    [nzLoading]="loading"
+    [nzFrontPagination]="false"
+    [nzTotal]="totalCount"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageNo"
+    (nzPageIndexChange)="onPageChange($event)"
+    (nzPageSizeChange)="onPageSizeChange($event)"
+  >
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Amount</th>
+      <th>Currency</th>
+      <th>Captured</th>
+      <th>Status</th>
+      <th>Payment Method</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let payment of paymentTable.data">
+      <td>{{ payment.id }}</td>
+      <td>{{ payment.amount / 100 | number:'1.2-2' }}</td>
+      <td>{{ payment.currency.toUpperCase() }}</td>
+      <td>{{ payment.captured ? 'Yes' : 'No' }}</td>
+      <td>{{ payment.status | titlecase }}</td>
+      <td>{{ payment.paymentMethod || 'N/A' }}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>
