@@ -18,7 +18,6 @@ export const canActivateEmployerApp = (): Observable<boolean> | boolean => {
     switchMap(() => {
       const updatedRole = tokenService.getUserRole();
       if (updatedRole === 'Employer') {
-        console.log('Token refreshed successfully, access granted');
         return of(true);
       } else {
         console.warn('User role is not Employer after token refresh, redirecting to login');

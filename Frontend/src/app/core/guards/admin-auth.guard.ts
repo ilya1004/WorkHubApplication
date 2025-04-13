@@ -1,27 +1,26 @@
-import {inject} from '@angular/core';
-import {AuthService} from '../services/auth/auth.service';
-import {Router} from '@angular/router';
-import {TokenService} from "../services/auth/token.service";
 import {catchError, Observable, of, switchMap} from "rxjs";
+import {inject} from "@angular/core";
+import {TokenService} from "../services/auth/token.service";
+import {Router} from "@angular/router";
 
-export const canActivateFreelancerApp = (): Observable<boolean> | boolean => {
+export const canActivateAdminApp = (): Observable<boolean> | boolean => {
   const tokenService = inject(TokenService);
   const router = inject(Router);
   
   const isAuthenticated = tokenService.isAuthenticated();
   const role = tokenService.getUserRole();
   
-  if (isAuthenticated && role === 'Freelancer') {
+  if (isAuthenticated && role === 'Admin') {
     return true;
   }
   
   return tokenService.ensureValidToken().pipe(
     switchMap(() => {
       const updatedRole = tokenService.getUserRole();
-      if (updatedRole === 'Freelancer') {
+      if (updatedRole === 'Admin') {
         return of(true);
       } else {
-        console.warn('User role is not Freelancer after token refresh, redirecting to login');
+        console.warn('User role is not Admin after token refresh, redirecting to login');
         router.navigate(['/login']);
         return of(false);
       }

@@ -18,12 +18,16 @@ import {MyFinancesComponent as FreelancerMyFinancesComponent} from "./freelancer
 import {ProfileComponent as FreelancerProfileComponent} from './freelancer-app/pages/profile/profile.component';
 
 import {canActivateEmployerApp} from "./core/guards/employer-auth.guard";
-import {LayoutComponent} from "./employer-app/components/layout/layout.component";
+import {LayoutComponent as EmployerLayoutComponent} from "./employer-app/components/layout/layout.component";
 import {ProfileComponent as EmployerProfileComponent} from "./employer-app/pages/profile/profile.component";
 import {MyProjectsComponent as EmployerMyProjectsComponent} from "./employer-app/pages/my-projects/my-projects.component";
 import {ProjectToolsComponent} from './employer-app/pages/project-tools/project-tools.component';
 import {MyProjectInfoComponent as EmployerMyProjectInfoComponent} from "./employer-app/pages/my-project-info/my-project-info.component";
 import {MyFinancesComponent as EmployerMyFinancesComponent} from "./employer-app/pages/my-finances/my-finances.component";
+
+import {LayoutComponent as AdminLayoutComponent} from "./admin-app/components/layout/layout.component";
+import {HomeComponent as AdminHomeComponent} from "./admin-app/pages/home/home.component";
+import {canActivateAdminApp} from "./core/guards/admin-auth.guard";
 
 
 export const routes: Routes = [
@@ -49,7 +53,7 @@ export const routes: Routes = [
   },
   {
     path: 'employer',
-    component: LayoutComponent,
+    component: EmployerLayoutComponent,
     canActivate: [canActivateEmployerApp],
     children: [
       { path: 'my-projects', component: EmployerMyProjectsComponent },
@@ -57,6 +61,14 @@ export const routes: Routes = [
       { path: 'project-tools', component: ProjectToolsComponent },
       { path: 'my-finances', component: EmployerMyFinancesComponent },
       { path: 'my-profile', component: EmployerProfileComponent },
+    ]
+  },
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    canActivate: [canActivateAdminApp],
+    children: [
+      { path: 'home', component: AdminHomeComponent },
     ]
   },
   { path: '**', component: NotFoundComponent }

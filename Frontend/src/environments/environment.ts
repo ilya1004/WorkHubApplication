@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  BASE_URL: 'http://localhost:5000/',
   IDENTITY_SERVICE_API_URL: "http://localhost:5000/identity-service/api/",
   PROJECTS_SERVICE_API_URL: "http://localhost:5000/projects-service/api/",
   PAYMENTS_SERVICE_API_URL: "http://localhost:5000/payments-service/api/",
