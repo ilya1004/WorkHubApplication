@@ -19,7 +19,7 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
     public async Task<IReadOnlyList<TEntity>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default, 
         params Expression<Func<TEntity, object>>[]? includesProperties)
     {
-        IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
+        var query = _entities.AsQueryable().AsNoTracking();
 
         query = query.AddIncludes(includesProperties);
 
@@ -33,7 +33,7 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
     public async Task<IReadOnlyList<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? filter, CancellationToken cancellationToken = default,
         params Expression<Func<TEntity, object>>[]? includesProperties)
     {
-        IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
+        var query = _entities.AsQueryable().AsNoTracking();
 
         if (filter is not null)
         {
@@ -48,7 +48,7 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
     public async Task<IReadOnlyList<TEntity>> PaginatedListAsync(Expression<Func<TEntity, bool>>? filter, int offset, int limit, CancellationToken cancellationToken = default,
         params Expression<Func<TEntity, object>>[]? includesProperties)
     {
-        IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
+        var query = _entities.AsQueryable().AsNoTracking();
 
         if (filter is not null)
         {
@@ -66,7 +66,7 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
 
     public async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[]? includesProperties)
     {
-        IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
+        var query = _entities.AsQueryable().AsNoTracking();
 
         query = query.AddIncludes(includesProperties);
 

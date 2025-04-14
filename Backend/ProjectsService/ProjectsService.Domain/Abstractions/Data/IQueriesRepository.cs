@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using ProjectsService.Domain.Abstractions.Specification;
+using ProjectsService.Domain.Entities;
 using ProjectsService.Domain.Primitives;
 
 namespace ProjectsService.Domain.Abstractions.Data;

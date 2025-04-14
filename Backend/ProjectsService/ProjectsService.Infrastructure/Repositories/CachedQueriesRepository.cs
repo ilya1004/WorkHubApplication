@@ -13,8 +13,8 @@ public class CachedQueriesRepository<TEntity>(
     IDistributedCache distributedCache,
     IOptions<CacheOptions> options) : IQueriesRepository<TEntity> where TEntity : Entity
 {
-    private readonly JsonSerializerOptions _serializerOptions = 
-        new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles };
+    private readonly JsonSerializerOptions _serializerOptions = new() 
+        { ReferenceHandler = ReferenceHandler.IgnoreCycles };
     public async Task<IReadOnlyList<TEntity>> ListAllAsync(CancellationToken cancellationToken = default)
     {
         var cacheKey = $"{typeof(TEntity).Name}:ListAll";

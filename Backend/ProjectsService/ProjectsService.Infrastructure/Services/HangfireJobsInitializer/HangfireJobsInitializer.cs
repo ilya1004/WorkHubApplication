@@ -23,4 +23,3 @@ public class HangfireJobsInitializer(
         logger.LogInformation("Recurring job 'update_project_statuses' scheduled to run every minute");
     }
 }
-
