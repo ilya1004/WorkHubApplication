@@ -52,12 +52,6 @@ public class UpdateProjectStatusesCommandHandler(
                 
                 logger.LogInformation("Project {ProjectId} marked as Expired (Passed work deadline)", project.Id);
             }
-            else if (now > lifecycle.WorkStartDate && project.FreelancerId is null)
-            {
-                lifecycle.Status = ProjectStatus.Cancelled;
-                
-                logger.LogInformation("Project {ProjectId} marked as Cancelled (No freelancer assigned)", project.Id);
-            }
             else if (now > lifecycle.WorkStartDate &&
                      IsProjectHasAcceptedFreelancerApplications(project))
             {
@@ -66,6 +60,12 @@ public class UpdateProjectStatusesCommandHandler(
                 logger.LogInformation("Project {ProjectId} marked as InProgress (Work started)", project.Id);
                 
                 UpdateProjectWhenInProgressAsync(project);
+            }
+            else if (now > lifecycle.WorkStartDate && project.FreelancerId is null)
+            {
+                lifecycle.Status = ProjectStatus.Cancelled;
+                
+                logger.LogInformation("Project {ProjectId} marked as Cancelled (No freelancer assigned)", project.Id);
             }
             else if (now > lifecycle.ApplicationsDeadline)
             {
