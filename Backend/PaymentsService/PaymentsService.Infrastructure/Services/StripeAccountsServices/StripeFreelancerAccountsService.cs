@@ -160,7 +160,7 @@ public class StripeFreelancerAccountsService(
         {
             logger.LogError(ex, "Error getting Stripe account {AccountId}", freelancer.StripeAccountId);
             
-            throw new BadRequestException($"Stripe account with ID '{freelancer.StripeAccountId}' not found or cannot get its balance.");
+            throw new BadRequestException($"Error getting Stripe account {freelancer.StripeAccountId}");
         }
     }
     

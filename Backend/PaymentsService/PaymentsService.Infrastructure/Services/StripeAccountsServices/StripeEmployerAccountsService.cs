@@ -106,7 +106,7 @@ public class StripeEmployerAccountsService(
         {
             logger.LogError(ex, "Error getting Stripe account {CustomerId}", employer.EmployerCustomerId);
             
-            throw new BadRequestException($"Stripe customer with ID '{employer.EmployerCustomerId}' not found.");
+            throw new BadRequestException($"Error getting Stripe account with ID '{employer.EmployerCustomerId}'.");
         }
     }
     
