@@ -314,6 +314,21 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+  
+  workhub_frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: workhub_frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      - /app/node_modules
+    restart: unless-stopped
+    networks:
+      - workhub_network
+    depends_on:
+      - workhub_apigateway
 
 volumes:
   redis_data:

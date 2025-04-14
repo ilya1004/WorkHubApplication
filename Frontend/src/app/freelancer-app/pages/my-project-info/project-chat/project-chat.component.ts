@@ -62,7 +62,6 @@ export class ProjectChatComponent implements OnInit, AfterViewChecked, OnDestroy
           this.chatId = chat.id;
           this.loadMessages();
         } else {
-          console.log('No chat found, creating one');
           this.createAndFetchChat();
         }
       }),
@@ -114,7 +113,6 @@ export class ProjectChatComponent implements OnInit, AfterViewChecked, OnDestroy
   private async createAndFetchChat(): Promise<void> {
     try {
       const freelancerId = this.tokenService.getUserId() || '';
-      console.log('Creating new chat with employer:', this.employerId, 'freelancer:', freelancerId);
       await this.chatService.createChat(this.employerId, freelancerId, this.projectId);
     } catch (error) {
       console.error('Error creating chat:', error);
@@ -157,7 +155,6 @@ export class ProjectChatComponent implements OnInit, AfterViewChecked, OnDestroy
       this.chatService.uploadFile(this.chatId, this.employerId, this.selectedFile)
         .subscribe({
           next: () => {
-            console.log('File uploaded');
             this.selectedFile = null;
             if (this.fileInput) {
               this.fileInput.nativeElement.value = '';
