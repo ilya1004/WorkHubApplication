@@ -102,10 +102,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     public async Task<IActionResult> UpdateFreelancerProfile([FromForm] UpdateFreelancerProfileRequest request,
         CancellationToken cancellationToken)
     {
-        await mediator.Send(new UpdateFreelancerProfileCommand(
-            request.FreelancerProfile,
-            request.ImageFile?.OpenReadStream(),
-            request.ImageFile?.ContentType), cancellationToken);
+        await mediator.Send(mapper.Map<UpdateFreelancerProfileCommand>(request), cancellationToken);
 
         return NoContent();
     }

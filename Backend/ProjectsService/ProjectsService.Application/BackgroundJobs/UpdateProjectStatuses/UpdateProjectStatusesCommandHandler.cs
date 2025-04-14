@@ -52,8 +52,7 @@ public class UpdateProjectStatusesCommandHandler(
                 
                 logger.LogInformation("Project {ProjectId} marked as Expired (Passed work deadline)", project.Id);
             }
-            else if (now > lifecycle.WorkStartDate.AddDays(options.Value.MaxWorkStartExpirationTimeInDays) &&
-                     project.FreelancerId is null)
+            else if (now > lifecycle.WorkStartDate && project.FreelancerId is null)
             {
                 lifecycle.Status = ProjectStatus.Cancelled;
                 

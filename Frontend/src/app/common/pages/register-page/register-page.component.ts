@@ -150,7 +150,6 @@ export class RegisterPageComponent {
       this.authService.registerFreelancer(payload)
         .pipe(
           tap(response => {
-            console.log('Freelancer registration response:', response);
             if (response.status === 201) {
               this.message.success('Registration successful! Please confirm your email.', { nzDuration: 3000 });
               this.router.navigate(['/confirm-email'], {
@@ -178,7 +177,6 @@ export class RegisterPageComponent {
       this.authService.registerEmployer(payload)
         .pipe(
           tap(response => {
-            console.log('Employer registration response:', response);
             if (response.status === 201) {
               this.message.success('Registration successful! Please confirm your email.', { nzDuration: 3000 });
               this.router.navigate(['/confirm-email'], {

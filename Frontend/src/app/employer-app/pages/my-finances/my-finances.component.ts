@@ -105,7 +105,7 @@ export class MyFinancesComponent implements OnInit {
         if (error.status === 404) {
           this.account = null;
         } else {
-          this.message.error('Failed to load account information.', { nzDuration: 3000 });
+          this.message.warning('Failed to load account information. Maybe you don\'t have one', { nzDuration: 3000 });
           console.error('Error loading account:', error);
         }
         this.isLoadingAccount = false;
@@ -123,7 +123,6 @@ export class MyFinancesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading charges:', error);
-        this.message.error('Failed to load payments.', { nzDuration: 3000 });
         this.isLoadingCharges = false;
       }
     });
@@ -138,7 +137,6 @@ export class MyFinancesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading payment methods:', error);
-        this.message.error('Failed to load payment methods.', { nzDuration: 3000 });
         this.isLoadingPaymentMethods = false;
       }
     });
@@ -154,7 +152,6 @@ export class MyFinancesComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading payment intents:', error);
-        this.message.error('Failed to load payment intents.', { nzDuration: 3000 });
         this.isLoadingPaymentIntents = false;
       }
     });

@@ -8,7 +8,6 @@ export const authTokenInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, n
   const tokenService = inject(TokenService);
   const router = inject(Router);
   
-  console.log(req.url);
   if (req.url.includes('login') ||
     req.url.includes('register') ||
     req.url.includes('refresh-token') ||

@@ -53,6 +53,7 @@ export class ConfirmEmailComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       const email: string = params['email'];
       if (email) {
+        this.isSendCodeBtnDisabled = true;
         this.confirmEmailForm.patchValue({ email });
       }
     });

@@ -53,7 +53,7 @@ export class MyFinancesComponent implements OnInit {
         if (error.status === 404) {
           this.account = null;
         } else {
-          this.message.error('Failed to load account information.', { nzDuration: 3000 });
+          this.message.warning('Failed to load account information. Maybe you don\'t have one', { nzDuration: 3000 });
           console.error('Error loading account:', error);
         }
         this.isLoadingAccount = false;
@@ -69,7 +69,6 @@ export class MyFinancesComponent implements OnInit {
         this.isLoadingTransfers = false;
       },
       error: (error) => {
-        this.message.error('Failed to load transfers.', { nzDuration: 3000 });
         console.error('Error loading transfers:', error);
         this.isLoadingTransfers = false;
       }

@@ -29,27 +29,39 @@ public class UpdateFreelancerProfileCommandHandler(
         }
         
         mapper.Map(request.FreelancerProfile, user.FreelancerProfile);
-        
-        var newSkillIds = request.FreelancerProfile.SkillIds.ToList();
-        var currentSkills = user.FreelancerProfile!.Skills.ToList();
-        
-        var skillsToRemove = currentSkills.Where(s => !newSkillIds.Contains(s.Id)).ToList();
-        foreach (var skill in skillsToRemove)
+
+        if (request.FreelancerProfile.SkillIds is not null)
         {
-            user.FreelancerProfile.Skills.Remove(skill);
+            var newSkillIds = request.FreelancerProfile.SkillIds.ToList();
+            var currentSkills = user.FreelancerProfile!.Skills.ToList();
+
+            var skillsToRemove = currentSkills.Where(s => !newSkillIds.Contains(s.Id)).ToList();
+            foreach (var skill in skillsToRemove)
+            {
+                user.FreelancerProfile.Skills.Remove(skill);
+            }
+
+            var allPotentialSkills = await unitOfWork.FreelancerSkillsRepository.ListAsync(
+                s => newSkillIds.Contains(s.Id), cancellationToken);
+
+            var skillsToAdd = allPotentialSkills.Where(s =>
+                !currentSkills.Select(cs => cs.Id).Contains(s.Id)).ToList();
+
+            foreach (var skill in skillsToAdd)
+            {
+                user.FreelancerProfile.Skills.Add(skill);
+            }
         }
-        
-        var allPotentialSkills = await unitOfWork.FreelancerSkillsRepository.ListAsync(
-            s => newSkillIds.Contains(s.Id), cancellationToken);
-        
-        var skillsToAdd = allPotentialSkills.Where(s => 
-            !currentSkills.Select(cs => cs.Id).Contains(s.Id)).ToList();
-        
-        foreach (var skill in skillsToAdd)
+        else
         {
-            user.FreelancerProfile.Skills.Add(skill);
+            var skillsToRemove = user.FreelancerProfile!.Skills.ToList();
+            
+            foreach (var skill in skillsToRemove)
+            {
+                user.FreelancerProfile.Skills.Remove(skill);
+            }
         }
-        
+
         if (request.FreelancerProfile.ResetImage)
         {
             user.ImageUrl = null;

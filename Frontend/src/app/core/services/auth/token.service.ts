@@ -55,7 +55,6 @@ export class TokenService {
     const decoded = this.decodeToken(token);
     if (!decoded || decoded.exp * 1000 < Date.now()) {
       if (!this.tokenRefreshInProgressLogged) {
-        console.log('Access token is invalid or expired');
         this.tokenRefreshInProgressLogged = true;
       }
       return null;
@@ -66,10 +65,6 @@ export class TokenService {
   setTokens(accessToken: string, refreshToken: string): void {
     this.cookieService.set('access_token', accessToken, { path: '/' });
     this.cookieService.set('refresh_token', refreshToken, { path: '/' });
-    console.log('Cookies after set:', {
-      access: this.cookieService.get('access_token'),
-      refresh: this.cookieService.get('refresh_token')
-    });
     this.tokenRefreshInProgressLogged = false;
   }
   
@@ -130,7 +125,6 @@ export class TokenService {
     
     this.refreshingToken = true;
     const payload = { accessToken, refreshToken };
-    console.log(payload);
     
     return this.httpClient.post<Tokens>(
       `${environment.IDENTITY_SERVICE_API_URL}auth/refresh-token`, payload
@@ -138,7 +132,6 @@ export class TokenService {
       tap(response => {
         this.setTokens(response.accessToken, response.refreshToken);
         this.refreshingToken = false;
-        console.log('Token refreshed successfully');
       }),
       map(response => response.accessToken),
       catchError(error => {
@@ -154,7 +147,6 @@ export class TokenService {
     if (token) {
       return of(token);
     }
-    console.log('Access token expired or invalid, attempting refresh');
     return this.refreshToken();
   }
   
