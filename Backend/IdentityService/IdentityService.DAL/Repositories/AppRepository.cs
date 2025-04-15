@@ -29,7 +29,7 @@ public class AppRepository<TEntity>(ApplicationDbContext context) : IRepository<
     public async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default,
         params Expression<Func<TEntity, object>>[]? includesProperties)
     {
-        IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
+        var query = _entities.AsQueryable().AsNoTracking();
 
         if (includesProperties != null)
             foreach (var includeProperty in includesProperties)
@@ -56,7 +56,7 @@ public class AppRepository<TEntity>(ApplicationDbContext context) : IRepository<
     public async Task<IReadOnlyList<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? filter,
         CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[]? includesProperties)
     {
-        IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
+        var query = _entities.AsQueryable().AsNoTracking();
 
         if (filter != null) query = query.Where(filter);
 
@@ -70,7 +70,7 @@ public class AppRepository<TEntity>(ApplicationDbContext context) : IRepository<
     public async Task<IReadOnlyList<TEntity>> PaginatedListAsync(Expression<Func<TEntity, bool>>? filter, int offset, int limit,
         CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[]? includesProperties)
     {
-        IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
+        var query = _entities.AsQueryable().AsNoTracking();
 
         if (filter != null) query = query.Where(filter);
 

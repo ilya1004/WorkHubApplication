@@ -11,23 +11,22 @@ namespace ProjectsService.Tests.UnitTests.Tests.Services.InfrastructureServices;
 
 public class DbStartupServiceTests
 {
-    private readonly Mock<IServiceProvider> _serviceProviderMock;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<ILogger<DbStartupService>> _loggerMock;
     private readonly DbStartupService _service;
 
     public DbStartupServiceTests()
     {
-        _serviceProviderMock = new Mock<IServiceProvider>();
+        var serviceProviderMock = new Mock<IServiceProvider>();
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _loggerMock = new Mock<ILogger<DbStartupService>>();
-        Mock<IServiceScope> scopeMock = new Mock<IServiceScope>();
-        Mock<IServiceScopeFactory> scopeFactoryMock = new Mock<IServiceScopeFactory>();
+        var scopeMock = new Mock<IServiceScope>();
+        var scopeFactoryMock = new Mock<IServiceScopeFactory>();
 
-        _serviceProviderMock.Setup(sp => sp.GetService(typeof(IServiceScopeFactory)))
+        serviceProviderMock.Setup(sp => sp.GetService(typeof(IServiceScopeFactory)))
             .Returns(scopeFactoryMock.Object);
         scopeFactoryMock.Setup(sf => sf.CreateScope()).Returns(scopeMock.Object);
-        scopeMock.Setup(s => s.ServiceProvider).Returns(_serviceProviderMock.Object);
+        scopeMock.Setup(s => s.ServiceProvider).Returns(serviceProviderMock.Object);
 
         _unitOfWorkMock.Setup(u => u.CategoryQueriesRepository)
             .Returns(new Mock<IQueriesRepository<Category>>().Object);
@@ -40,7 +39,7 @@ public class DbStartupServiceTests
         _unitOfWorkMock.Setup(u => u.FreelancerApplicationCommandsRepository)
             .Returns(new Mock<ICommandsRepository<FreelancerApplication>>().Object);
 
-        _service = new DbStartupService(_serviceProviderMock.Object, _unitOfWorkMock.Object, _loggerMock.Object);
+        _service = new DbStartupService(serviceProviderMock.Object, _unitOfWorkMock.Object, _loggerMock.Object);
     }
     
     [Fact]
