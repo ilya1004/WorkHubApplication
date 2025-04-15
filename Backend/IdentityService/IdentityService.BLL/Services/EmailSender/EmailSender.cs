@@ -3,8 +3,7 @@ using IdentityService.BLL.Abstractions.EmailSender;
 
 namespace IdentityService.BLL.Services.EmailSender;
 
-public class EmailSender(
-    IFluentEmail fluentEmail) : IEmailSender
+public class EmailSender(IFluentEmail fluentEmail) : IEmailSender
 {
     public async Task SendEmailConfirmation(string userEmail, string code, CancellationToken cancellationToken)
     {

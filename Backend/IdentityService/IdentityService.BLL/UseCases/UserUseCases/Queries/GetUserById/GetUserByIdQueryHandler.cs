@@ -1,6 +1,5 @@
 ﻿namespace IdentityService.BLL.UseCases.UserUseCases.Queries.GetUserById;
 
-
 public class GetUserByIdQueryHandler(
     IUnitOfWork unitOfWork,
     ILogger<GetUserByIdQueryHandler> logger) : IRequestHandler<GetUserByIdQuery, AppUser>

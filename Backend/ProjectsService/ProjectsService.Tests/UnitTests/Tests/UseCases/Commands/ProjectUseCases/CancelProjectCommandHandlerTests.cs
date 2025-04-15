@@ -101,7 +101,7 @@ public class CancelProjectCommandHandlerTests
             .ReturnsAsync((Project?)null);
 
         // Act
-        Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
+        var act = async () => await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         await act.Should().ThrowAsync<NotFoundException>().WithMessage($"Project with ID '{projectId}' not found");
@@ -125,7 +125,7 @@ public class CancelProjectCommandHandlerTests
             .ReturnsAsync(project);
 
         // Act
-        Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
+        var act = async () => await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         await act.Should().ThrowAsync<ForbiddenException>().WithMessage($"You do not have access to project with ID '{projectId}'");

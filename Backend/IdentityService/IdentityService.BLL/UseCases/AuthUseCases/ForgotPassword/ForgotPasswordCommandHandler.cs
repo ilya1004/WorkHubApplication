@@ -34,12 +34,12 @@ public class ForgotPasswordCommandHandler(
         {
             code = random.Next(100000, 999999).ToString();
         } 
-        while (await cachedService.ExistsAsync(code));
+        while (await cachedService.ExistsAsync(code, cancellationToken));
 
         logger.LogInformation("Storing reset code {Code} in cache", code);
         
         await cachedService.SetAsync(code, token, TimeSpan.FromHours(
-            int.Parse(configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Value!)));
+            int.Parse(configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Value!)), cancellationToken);
 
         var resetUrl = $"{request.ResetUrl}?email={user.Email}&code={code}";
         
