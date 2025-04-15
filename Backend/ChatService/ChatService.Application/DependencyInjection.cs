@@ -1,4 +1,5 @@
 using System.Reflection;
+using ChatService.Application.Validators;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +16,8 @@ public static class DependencyInjection
         });
         
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         return services;

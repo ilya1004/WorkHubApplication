@@ -51,6 +51,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentsService.Tests", "Pa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityService.Tests", "IdentityService\IdentityService.Tests\IdentityService.Tests.csproj", "{F63F61D7-0546-46B4-91D1-3250F5B627A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatService.Tests", "ChatService\ChatService.Tests\ChatService.Tests.csproj", "{68426C6E-AA7D-4B61-A367-8E76E3064F83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -289,6 +291,18 @@ Global
 		{F63F61D7-0546-46B4-91D1-3250F5B627A9}.Release|x64.Build.0 = Release|Any CPU
 		{F63F61D7-0546-46B4-91D1-3250F5B627A9}.Release|x86.ActiveCfg = Release|Any CPU
 		{F63F61D7-0546-46B4-91D1-3250F5B627A9}.Release|x86.Build.0 = Release|Any CPU
+		{68426C6E-AA7D-4B61-A367-8E76E3064F83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68426C6E-AA7D-4B61-A367-8E76E3064F83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68426C6E-AA7D-4B61-A367-8E76E3064F83}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{68426C6E-AA7D-4B61-A367-8E76E3064F83}.Debug|x64.Build.0 = Debug|Any CPU
+		{68426C6E-AA7D-4B61-A367-8E76E3064F83}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{68426C6E-AA7D-4B61-A367-8E76E3064F83}.Debug|x86.Build.0 = Debug|Any CPU
+		{68426C6E-AA7D-4B61-A367-8E76E3064F83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68426C6E-AA7D-4B61-A367-8E76E3064F83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68426C6E-AA7D-4B61-A367-8E76E3064F83}.Release|x64.ActiveCfg = Release|Any CPU
+		{68426C6E-AA7D-4B61-A367-8E76E3064F83}.Release|x64.Build.0 = Release|Any CPU
+		{68426C6E-AA7D-4B61-A367-8E76E3064F83}.Release|x86.ActiveCfg = Release|Any CPU
+		{68426C6E-AA7D-4B61-A367-8E76E3064F83}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -313,5 +327,6 @@ Global
 		{C6488D1B-7F3C-4A35-9B22-A98CCC1B20B2} = {B21CEFE1-E003-701E-A028-B6B1C38594D6}
 		{FCE66328-4EAC-494E-BE80-282A4C1A2B85} = {9D336D58-06C2-9902-02CD-1CE8C0AA54EA}
 		{F63F61D7-0546-46B4-91D1-3250F5B627A9} = {C92C2A6C-C7DF-3B17-8CE7-85FC08468CCF}
+		{68426C6E-AA7D-4B61-A367-8E76E3064F83} = {6A765473-19D7-87CC-0D83-AAE493E069B1}
 	EndGlobalSection
 EndGlobal

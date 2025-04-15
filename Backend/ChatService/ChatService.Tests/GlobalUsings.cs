@@ -1,0 +1,9 @@
+﻿global using MediatR;
+global using AutoMapper;
+global using FluentAssertions;
+global using Moq;
+global using ChatService.Application.Models;
+global using ChatService.Domain.Enums;
+global using ChatService.Domain.Entities;
+global using ChatService.Application.DTOs;
+global using Microsoft.Extensions.Logging;

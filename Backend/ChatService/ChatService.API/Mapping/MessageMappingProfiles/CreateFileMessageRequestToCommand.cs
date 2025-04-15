@@ -12,6 +12,7 @@ public class CreateFileMessageRequestToCommand : Profile
                 request.ChatId,
                 request.ReceiverId,
                 request.File.OpenReadStream(),
-                request.File.ContentType));
+                request.File.ContentType))
+            .ForAllMembers(opt => opt.Ignore());
     }
 }

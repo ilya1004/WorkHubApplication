@@ -1,9 +1,7 @@
-using ChatService.API.Constants;
 using ChatService.API.Contracts.ChatContracts;
 using ChatService.API.HubInterfaces;
 using ChatService.Application.UseCases.ChatUseCases.Commands.CreateChat;
 using ChatService.Application.UseCases.ChatUseCases.Commands.SetChatInactive;
-using ChatService.Application.UseCases.ChatUseCases.Queries.GetAllChats;
 using ChatService.Application.UseCases.ChatUseCases.Queries.GetChatById;
 using ChatService.Application.UseCases.ChatUseCases.Queries.GetChatByProjectId;
 using ChatService.Application.UseCases.MessageUseCases.Commands.CreateTextMessage;
