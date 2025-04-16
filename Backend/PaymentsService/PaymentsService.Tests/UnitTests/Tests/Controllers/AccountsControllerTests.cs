@@ -34,8 +34,6 @@ public class AccountsControllerTests
 
         // Assert
         result.Should().BeOfType<CreatedResult>();
-        var createdResult = (CreatedResult)result;
-        // createdResult.StatusCode.Should().Be(201);
         _mediatorMock.Verify(m => m.Send(It.IsAny<CreateEmployerAccountCommand>(), It.IsAny<CancellationToken>()), Times.Once());
     }
 
@@ -51,8 +49,6 @@ public class AccountsControllerTests
 
         // Assert
         result.Should().BeOfType<CreatedResult>();
-        var createdResult = (CreatedResult)result;
-        // createdResult.StatusCode.Should().Be(201);
         _mediatorMock.Verify(m => m.Send(It.IsAny<CreateFreelancerAccountCommand>(), It.IsAny<CancellationToken>()), Times.Once());
     }
 

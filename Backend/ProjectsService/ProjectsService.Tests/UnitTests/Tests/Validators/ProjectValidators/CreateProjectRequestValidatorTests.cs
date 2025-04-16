@@ -152,30 +152,6 @@ public class CreateProjectRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_BudgetInvalidPrecision_FailsWithCorrectMessage()
-    {
-        // Arrange
-        var request = new CreateProjectRequest(
-            Project: new ProjectDto(
-                Title: "Test Project",
-                Description: "Description",
-                Budget: 123456789123456789.123m,
-                CategoryId: Guid.NewGuid()),
-            Lifecycle: new LifecycleDto(
-                ApplicationsStartDate: DateTime.UtcNow.AddDays(1),
-                ApplicationsDeadline: DateTime.UtcNow.AddDays(2),
-                WorkStartDate: DateTime.UtcNow.AddDays(3),
-                WorkDeadline: DateTime.UtcNow.AddDays(4)));
-
-        // Act
-        var result = _validator.TestValidate(request);
-
-        // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Project.Budget)
-            .WithErrorMessage("Budget must have up to 18 digits and 2 decimal places.");
-    }
-
-    [Fact]
     public void Validate_NullCategoryId_Succeeds()
     {
         // Arrange

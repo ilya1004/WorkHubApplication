@@ -46,7 +46,6 @@ public class StripeEmployerPaymentsServiceTests
             _freelancersGrpcClientMock.Object,
             _loggerMock.Object);
 
-        // Внедряем моки сервисов Stripe через отражение
         var customerPaymentMethodField = typeof(StripeEmployerPaymentsService)
             .GetField("_customerPaymentMethodService", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         var paymentIntentField = typeof(StripeEmployerPaymentsService)

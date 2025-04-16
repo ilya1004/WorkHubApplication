@@ -27,7 +27,7 @@ public class GlobalHubExceptionFilterTests
             new Mock<IMapper>().Object,
             new Mock<ILogger<ChatHub>>().Object)
         {
-            CallBase = true // Allow calling virtual methods
+            CallBase = true
         };
         
         var user = new ClaimsPrincipal(new ClaimsIdentity(

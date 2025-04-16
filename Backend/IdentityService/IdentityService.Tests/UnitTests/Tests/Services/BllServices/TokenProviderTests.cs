@@ -97,8 +97,11 @@ public class TokenProviderTests
         // Arrange
         var token = "invalid_token";
 
-        // Act & Assert
-        Assert.Throws<SecurityTokenMalformedException>(() => _service.GetPrincipalFromExpiredToken(token));
+        // Act
+        var act = () => _service.GetPrincipalFromExpiredToken(token);
+
+        // Assert
+        act.Should().Throw<SecurityTokenMalformedException>();
     }
 
     private string GenerateTestToken(AppUser user, DateTime expires)

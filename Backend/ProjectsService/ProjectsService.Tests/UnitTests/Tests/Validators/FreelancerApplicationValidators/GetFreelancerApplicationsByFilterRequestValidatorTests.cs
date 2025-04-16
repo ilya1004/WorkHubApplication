@@ -89,7 +89,7 @@ public class GetFreelancerApplicationsByFilterRequestValidatorTests
         var request = new GetMyFreelancerApplicationsByFilterRequest(
             StartDate: null,
             EndDate: null,
-            ApplicationStatus: (ApplicationStatus)999, // Некорректное значение
+            ApplicationStatus: (ApplicationStatus)999,
             PageNo: 1,
             PageSize: 10);
 

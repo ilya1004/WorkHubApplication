@@ -35,7 +35,6 @@ public class StripeTransfersServiceTests
             _freelancersGrpcClientMock.Object,
             _loggerMock.Object);
 
-        // Внедряем моки сервисов Stripe через отражение
         var chargeServiceField = typeof(StripeTransfersService)
             .GetField("_chargeService", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         var transferServiceField = typeof(StripeTransfersService)
