@@ -13,20 +13,17 @@ public abstract class MongoTestBase : IDisposable
     protected readonly IMongoDatabase Database;
     protected readonly IMongoClient Client;
 
-    // Static constructor to register GuidSerializer once
     static MongoTestBase()
     {
-        // Register GuidSerializer globally, ensuring no duplicates
         try
         {
             BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
         }
         catch (BsonSerializationException)
         {
-            // Ignore if already registered
+
         }
 
-        // Configure BsonClassMap for Chat
         if (!BsonClassMap.IsClassMapRegistered(typeof(Chat)))
         {
             BsonClassMap.RegisterClassMap<Chat>(cm =>
@@ -48,7 +45,6 @@ public abstract class MongoTestBase : IDisposable
             });
         }
 
-        // Configure BsonClassMap for Message
         if (!BsonClassMap.IsClassMapRegistered(typeof(Message)))
         {
             BsonClassMap.RegisterClassMap<Message>(cm =>

@@ -44,11 +44,11 @@ public class GetFreelancerMyTransfersQueryHandlerTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Items.Should().HaveCount(2); // Ожидаем 2 элемента: offset = (2-1)*2 = 2, берём tr_3 и tr_4
+        result.Items.Should().HaveCount(2);
         result.Items.Should().BeEquivalentTo(transfers.Skip(2).Take(2));
         result.PageNo.Should().Be(query.PageNo);
         result.PageSize.Should().Be(query.PageSize);
-        result.TotalCount.Should().Be(2); // В текущей реализации TotalCount = Items.Count
+        result.TotalCount.Should().Be(2);
         _transfersServiceMock.Verify(s => s.GetFreelancerTransfersAsync(userId, projectId, It.IsAny<CancellationToken>()), Times.Once());
         _loggerMock.VerifyLog(LogLevel.Information, $"Retrieving transfers for freelancer {userId}, project {projectId}, page {query.PageNo}, size {query.PageSize}", Times.Once());
         _loggerMock.VerifyLog(LogLevel.Information, $"Retrieved {result.Items.Count} transfers for freelancer {userId}, project {projectId}", Times.Once());
@@ -74,7 +74,7 @@ public class GetFreelancerMyTransfersQueryHandlerTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Items.Should().HaveCount(2); // Ожидаем 2 элемента: offset = (1-1)*3 = 0, берём все
+        result.Items.Should().HaveCount(2);
         result.Items.Should().BeEquivalentTo(transfers);
         result.PageNo.Should().Be(query.PageNo);
         result.PageSize.Should().Be(query.PageSize);

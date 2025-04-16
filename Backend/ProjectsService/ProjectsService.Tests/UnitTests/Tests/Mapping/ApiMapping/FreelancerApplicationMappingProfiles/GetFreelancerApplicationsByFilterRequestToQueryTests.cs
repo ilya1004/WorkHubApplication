@@ -82,7 +82,7 @@ public class GetFreelancerApplicationsByFilterRequestToQueryTests
         query.StartDate.Should().Be(new DateTime(2025, 1, 1));
         query.EndDate.Should().BeNull();
         query.ApplicationStatus.Should().Be(ApplicationStatus.Pending);
-        query.PageNo.Should().Be(1); // Значение по умолчанию
-        query.PageSize.Should().Be(10); // Значение по умолчанию
+        query.PageNo.Should().Be(1);
+        query.PageSize.Should().Be(10);
     }
 }

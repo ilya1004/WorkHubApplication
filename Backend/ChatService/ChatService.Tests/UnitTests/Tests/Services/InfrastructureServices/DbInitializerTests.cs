@@ -87,7 +87,7 @@ public class DbInitializerTests : IDisposable
         // Arrange
         _optionsMock.Setup(o => o.Value).Returns(new MongoDbSettings
         {
-            ConnectionString = "mongodb://invalid:27017", // Invalid connection string
+            ConnectionString = "mongodb://invalid:27017",
             DatabaseName = "TestDatabase"
         });
 

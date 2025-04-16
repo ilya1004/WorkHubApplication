@@ -54,7 +54,7 @@ public class DeleteProjectCommandHandlerTests
         // Assert
         _unitOfWorkMock.Verify(u => u.ProjectCommandsRepository.DeleteAsync(project, It.IsAny<CancellationToken>()), Times.Once());
         _unitOfWorkMock.Verify(u => u.SaveAllAsync(It.IsAny<CancellationToken>()), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Deleting project {projectId}", Times.Exactly(2)); // Дважды из-за повторного логирования
+        _loggerMock.VerifyLog(LogLevel.Information, $"Deleting project {projectId}", Times.Exactly(2));
         _loggerMock.VerifyLog(LogLevel.Information, $"Successfully deleted project {projectId}", Times.Once());
     }
 
@@ -68,7 +68,7 @@ public class DeleteProjectCommandHandlerTests
         var project = new Project
         {
             Id = projectId,
-            EmployerId = Guid.NewGuid(), // Другой пользователь
+            EmployerId = Guid.NewGuid(),
             Lifecycle = new Lifecycle { Status = ProjectStatus.Cancelled }
         };
 
@@ -120,7 +120,7 @@ public class DeleteProjectCommandHandlerTests
         var project = new Project
         {
             Id = projectId,
-            EmployerId = Guid.NewGuid(), // Другой пользователь
+            EmployerId = Guid.NewGuid(),
             Lifecycle = new Lifecycle { Status = ProjectStatus.Cancelled }
         };
 

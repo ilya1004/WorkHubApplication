@@ -52,7 +52,7 @@ public class AppUnitOfWorkTests
     [Fact]
     public void RepositoryProperties_ReturnInitializedRepositories()
     {
-        // Act & Assert
+        // Assert
         _unitOfWork.CategoryCommandsRepository.Should().NotBeNull();
         _unitOfWork.CategoryQueriesRepository.Should().NotBeNull();
         _unitOfWork.FreelancerApplicationCommandsRepository.Should().NotBeNull();

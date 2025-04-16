@@ -33,7 +33,6 @@ public class CreateTextMessageCommandToMessageTests
         message.Text.Should().Be(command.Text);
         message.FileId.Should().BeNull();
         message.SenderId.Should().Be(Guid.Empty);
-        // message.Id.Should().Be(Guid.Empty);
         message.Type.Should().Be(MessageType.Text);
         message.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }

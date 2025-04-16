@@ -26,7 +26,6 @@ public class ForgotPasswordCommandHandlerTests
         _configurationMock = new Mock<IConfiguration>();
         _loggerMock = new Mock<ILogger<ForgotPasswordCommandHandler>>();
 
-        // Mock IConfigurationSection for GetRequiredSection
         var configSectionMock = new Mock<IConfigurationSection>();
         configSectionMock.Setup(s => s.Value).Returns("24");
         _configurationMock.Setup(c => c.GetSection("IdentityTokenExpirationTimeInHours")).Returns(configSectionMock.Object);

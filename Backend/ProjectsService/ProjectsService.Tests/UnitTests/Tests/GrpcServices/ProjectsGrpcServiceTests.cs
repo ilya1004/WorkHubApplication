@@ -43,7 +43,7 @@ public class ProjectsGrpcServiceTests
         // Assert
         response.Should().NotBeNull();
         response.Id.Should().Be(projectId.ToString());
-        response.BudgetInCents.Should().Be(100050); // 1000.50 * 100
+        response.BudgetInCents.Should().Be(100050);
         response.FreelancerId.Should().Be(project.FreelancerId.ToString());
         response.PaymentIntentId.Should().Be(project.PaymentIntentId);
 
@@ -74,7 +74,7 @@ public class ProjectsGrpcServiceTests
         // Assert
         response.Should().NotBeNull();
         response.Id.Should().Be(projectId.ToString());
-        response.BudgetInCents.Should().Be(50025); // 500.25 * 100
+        response.BudgetInCents.Should().Be(50025);
         response.FreelancerId.Should().BeEmpty();
         response.PaymentIntentId.Should().BeEmpty();
 

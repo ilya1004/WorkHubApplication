@@ -94,7 +94,7 @@ public class UserContextTests
     public void GetUserRole_MissingRoleClaim_ThrowsUnauthorizedException()
     {
         // Arrange
-        var claims = new Claim[] { }; // Нет ClaimTypes.Role
+        var claims = new Claim[] { };
         var identity = new ClaimsIdentity(claims, "TestAuthType");
         var user = new ClaimsPrincipal(identity);
         var httpContext = new DefaultHttpContext { User = user };

@@ -39,7 +39,6 @@ public class CreateFileMessageCommandToMessageTests
         message.Text.Should().BeNull();
         message.FileId.Should().BeNull();
         message.SenderId.Should().Be(Guid.Empty);
-        // message.Id.Should().Be(Guid.Empty);
         message.Type.Should().Be(MessageType.File);
         message.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
     }
