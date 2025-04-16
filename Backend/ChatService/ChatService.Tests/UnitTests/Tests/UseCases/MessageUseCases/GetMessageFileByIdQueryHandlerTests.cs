@@ -46,8 +46,8 @@ public class GetMessageFileByIdQueryHandlerTests
         result.Should().Be(fileResponse);
         _chatRepositoryMock.Verify(r => r.GetByIdAsync(query.ChatId, It.IsAny<CancellationToken>()), Times.Once());
         _blobServiceMock.Verify(b => b.DownloadAsync(query.FileId, It.IsAny<CancellationToken>()), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Getting file by ID: {query.FileId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Successfully retrieved file with ID: {query.FileId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Getting file by ID: {query.FileId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Successfully retrieved file with ID: {query.FileId}", Times.Once());
     }
 
     [Fact]
@@ -68,8 +68,8 @@ public class GetMessageFileByIdQueryHandlerTests
             .WithMessage("Chat not found");
         _chatRepositoryMock.Verify(r => r.GetByIdAsync(query.ChatId, It.IsAny<CancellationToken>()), Times.Once());
         _blobServiceMock.Verify(b => b.DownloadAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Getting file by ID: {query.FileId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"Chat with ID '{query.ChatId}' not found", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Getting file by ID: {query.FileId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"Chat with ID '{query.ChatId}' not found", Times.Once());
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class GetMessageFileByIdQueryHandlerTests
             .WithMessage("You do not have access to this chat");
         _chatRepositoryMock.Verify(r => r.GetByIdAsync(query.ChatId, It.IsAny<CancellationToken>()), Times.Once());
         _blobServiceMock.Verify(b => b.DownloadAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Getting file by ID: {query.FileId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"You do not have access to chat with ID '{query.ChatId}'", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Getting file by ID: {query.FileId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"You do not have access to chat with ID '{query.ChatId}'", Times.Once());
     }
 }

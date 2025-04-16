@@ -44,8 +44,8 @@ public class CreateChatCommandHandlerTests
             Times.Once());
         _mapperMock.Verify(m => m.Map<Chat>(command), Times.Once());
         _chatRepositoryMock.Verify(r => r.InsertAsync(newChat, It.IsAny<CancellationToken>()), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Creating new chat for project {command.ProjectId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Successfully created chat {newChat.Id} for project {command.ProjectId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Creating new chat for project {command.ProjectId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Successfully created chat {newChat.Id} for project {command.ProjectId}", Times.Once());
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class CreateChatCommandHandlerTests
             Times.Once());
         _mapperMock.Verify(m => m.Map<Chat>(It.IsAny<CreateChatCommand>()), Times.Never());
         _chatRepositoryMock.Verify(r => r.InsertAsync(It.IsAny<Chat>(), It.IsAny<CancellationToken>()), Times.Never());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Creating new chat for project {command.ProjectId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"Chat already exists for project {command.ProjectId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Creating new chat for project {command.ProjectId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"Chat already exists for project {command.ProjectId}", Times.Once());
     }
 }

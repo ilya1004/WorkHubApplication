@@ -49,7 +49,7 @@ public class ChatHubTests
         await _hub.OnConnectedAsync();
 
         // Assert
-        _loggerMock.VerifyLog(LogLevel.Information, "User user123 connected with connection ID conn123", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, "User user123 connected with connection ID conn123", Times.Once());
     }
 
     [Fact]
@@ -59,8 +59,8 @@ public class ChatHubTests
         await _hub.OnDisconnectedAsync(null);
 
         // Assert
-        _loggerMock.VerifyLog(LogLevel.Information, "User user123 disconnected (Connection ID: conn123)", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Error, It.IsAny<string>(), Times.Never());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, "User user123 disconnected (Connection ID: conn123)", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Error, It.IsAny<string>(), Times.Never());
     }
 
     [Fact]
@@ -73,8 +73,8 @@ public class ChatHubTests
         await _hub.OnDisconnectedAsync(exception);
 
         // Assert
-        _loggerMock.VerifyLog(LogLevel.Information, "User user123 disconnected (Connection ID: conn123)", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Error, "Disconnection error for user user123", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, "User user123 disconnected (Connection ID: conn123)", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Error, "Disconnection error for user user123", Times.Once());
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class ChatHubTests
 
         // Assert
         _mediatorMock.Verify(m => m.Send(command, It.IsAny<CancellationToken>()), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, "Chat created successfully", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, "Chat created successfully", Times.Once());
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class ChatHubTests
         // Assert
         _mediatorMock.Verify(m => m.Send(query, It.IsAny<CancellationToken>()), Times.Once());
         _callerClientMock.Verify(c => c.ReceiveChat(chat), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, "Chat retrieved successfully", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, "Chat retrieved successfully", Times.Once());
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public class ChatHubTests
         // Assert
         _mediatorMock.Verify(m => m.Send(query, It.IsAny<CancellationToken>()), Times.Once());
         _callerClientMock.Verify(c => c.ReceiveChat(chat), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, "Chat retrieved successfully", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, "Chat retrieved successfully", Times.Once());
     }
 
     [Fact]
@@ -146,7 +146,7 @@ public class ChatHubTests
 
         // Assert
         _mediatorMock.Verify(m => m.Send(command, It.IsAny<CancellationToken>()), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Chat by project with ID '{request.ProjectId}' set inactive", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Chat by project with ID '{request.ProjectId}' set inactive", Times.Once());
     }
 
     [Fact]
@@ -166,7 +166,7 @@ public class ChatHubTests
         _mediatorMock.Verify(m => m.Send(command, It.IsAny<CancellationToken>()), Times.Once());
         _callerClientMock.Verify(c => c.ReceiveTextMessage(message), Times.Once());
         _userClientMock.Verify(c => c.ReceiveTextMessage(message), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, "Text message sent successfully", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, "Text message sent successfully", Times.Once());
     }
 
     [Fact]
@@ -189,7 +189,7 @@ public class ChatHubTests
         // Assert
         _mediatorMock.Verify(m => m.Send(query, It.IsAny<CancellationToken>()), Times.Once());
         _callerClientMock.Verify(c => c.ReceiveChatMessages(result), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, "Retrieved 1 messages", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, "Retrieved 1 messages", Times.Once());
     }
 
     [Fact]
@@ -207,6 +207,6 @@ public class ChatHubTests
         _mediatorMock.Verify(m => m.Send(command, It.IsAny<CancellationToken>()), Times.Once());
         _callerClientMock.Verify(c => c.MessageIsDeleted(request.MessageId), Times.Once());
         _userClientMock.Verify(c => c.MessageIsDeleted(request.MessageId), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Message with ID '{request.MessageId}' deleted successfully", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Message with ID '{request.MessageId}' deleted successfully", Times.Once());
     }
 }

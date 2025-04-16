@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Moq;
-
-namespace ChatService.Tests.UnitTests.Extensions;
+﻿namespace ChatService.Tests.UnitTests.Extensions;
 
 public static class LoggerMockExtensions
 {

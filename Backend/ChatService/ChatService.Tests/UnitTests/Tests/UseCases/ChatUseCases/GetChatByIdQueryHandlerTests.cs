@@ -35,8 +35,8 @@ public class GetChatByIdQueryHandlerTests
         // Assert
         result.Should().Be(chat);
         _chatRepositoryMock.Verify(r => r.GetByIdAsync(query.Id, It.IsAny<CancellationToken>()), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Getting chat by ID '{query.Id}'", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Retrieved chat information by ID {query.Id}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Getting chat by ID '{query.Id}'", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Retrieved chat information by ID {query.Id}", Times.Once());
     }
 
     [Fact]
@@ -56,8 +56,8 @@ public class GetChatByIdQueryHandlerTests
         await act.Should().ThrowAsync<NotFoundException>()
             .WithMessage("Chat not found");
         _chatRepositoryMock.Verify(r => r.GetByIdAsync(query.Id, It.IsAny<CancellationToken>()), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Getting chat by ID '{query.Id}'", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"Chat with ID '{query.Id}' not found", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Getting chat by ID '{query.Id}'", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"Chat with ID '{query.Id}' not found", Times.Once());
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class GetChatByIdQueryHandlerTests
         await act.Should().ThrowAsync<NotFoundException>()
             .WithMessage("Chat not found");
         _chatRepositoryMock.Verify(r => r.GetByIdAsync(query.Id, It.IsAny<CancellationToken>()), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Getting chat by ID '{query.Id}'", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"Chat with ID '{query.Id}' is inactive", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Getting chat by ID '{query.Id}'", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"Chat with ID '{query.Id}' is inactive", Times.Once());
     }
 }

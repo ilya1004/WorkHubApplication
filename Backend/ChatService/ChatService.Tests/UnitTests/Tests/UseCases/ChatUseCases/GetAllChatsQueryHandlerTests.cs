@@ -47,7 +47,7 @@ public class GetAllChatsQueryHandlerTests
         result.TotalCount.Should().Be(totalCount);
         _chatRepositoryMock.Verify(r => r.PaginatedListAllAsync((query.PageNo - 1) * query.PageSize, query.PageSize, It.IsAny<CancellationToken>()), Times.Once());
         _chatRepositoryMock.Verify(r => r.CountAllAsync(It.IsAny<CancellationToken>()), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Getting paginated chats list. Page {query.PageNo}, Size {query.PageSize}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Retrieved {chats.Count} chats out of {totalCount}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Getting paginated chats list. Page {query.PageNo}, Size {query.PageSize}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Retrieved {chats.Count} chats out of {totalCount}", Times.Once());
     }
 }

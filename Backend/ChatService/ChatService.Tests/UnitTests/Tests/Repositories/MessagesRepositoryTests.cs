@@ -28,7 +28,7 @@ public class MessagesRepositoryTests : MongoTestBase
             SenderId = Guid.NewGuid(),
             ReceiverId = Guid.NewGuid(),
             Text = "Hello",
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow.TruncateToMilliseconds(),
             Type = MessageType.Text
         };
 
@@ -102,13 +102,13 @@ public class MessagesRepositoryTests : MongoTestBase
         var chatId = Guid.NewGuid();
         var messages = new[]
         {
-            new Message { Id = Guid.NewGuid(), ChatId = chatId, CreatedAt = DateTime.UtcNow.AddMinutes(-2) },
-            new Message { Id = Guid.NewGuid(), ChatId = chatId, CreatedAt = DateTime.UtcNow.AddMinutes(-1) },
-            new Message { Id = Guid.NewGuid(), ChatId = chatId, CreatedAt = DateTime.UtcNow }
+            new Message { Id = Guid.NewGuid(), ChatId = chatId, CreatedAt = DateTime.UtcNow.AddMinutes(-2).TruncateToMilliseconds() },
+            new Message { Id = Guid.NewGuid(), ChatId = chatId, CreatedAt = DateTime.UtcNow.AddMinutes(-1).TruncateToMilliseconds() },
+            new Message { Id = Guid.NewGuid(), ChatId = chatId, CreatedAt = DateTime.UtcNow.TruncateToMilliseconds() }
         };
         await _collection.InsertManyAsync(messages);
-        int offset = 1;
-        int limit = 2;
+        var offset = 1;
+        var limit = 2;
 
         // Act
         var result = await _repository.GetMessagesByChatIdAsync(chatId, offset, limit);

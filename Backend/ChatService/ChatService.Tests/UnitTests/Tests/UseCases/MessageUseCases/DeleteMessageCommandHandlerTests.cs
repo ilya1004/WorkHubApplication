@@ -45,8 +45,8 @@ public class DeleteMessageCommandHandlerTests
         _messagesRepositoryMock.Verify(r => r.GetByIdAsync(command.MessageId, It.IsAny<CancellationToken>()), Times.Once());
         _messagesRepositoryMock.Verify(r => r.DeleteAsync(command.MessageId, It.IsAny<CancellationToken>()), Times.Once());
         _blobServiceMock.Verify(b => b.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Deleting message {command.MessageId} by user {userId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Message {command.MessageId} deleted successfully", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Deleting message {command.MessageId} by user {userId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Message {command.MessageId} deleted successfully", Times.Once());
     }
 
     [Fact]
@@ -70,9 +70,9 @@ public class DeleteMessageCommandHandlerTests
         _messagesRepositoryMock.Verify(r => r.GetByIdAsync(command.MessageId, It.IsAny<CancellationToken>()), Times.Once());
         _blobServiceMock.Verify(b => b.DeleteAsync(fileId, It.IsAny<CancellationToken>()), Times.Once());
         _messagesRepositoryMock.Verify(r => r.DeleteAsync(command.MessageId, It.IsAny<CancellationToken>()), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Deleting message {command.MessageId} by user {userId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Deleting file {fileId} from blob storage", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Message {command.MessageId} deleted successfully", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Deleting message {command.MessageId} by user {userId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Deleting file {fileId} from blob storage", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Message {command.MessageId} deleted successfully", Times.Once());
     }
 
     [Fact]
@@ -94,8 +94,8 @@ public class DeleteMessageCommandHandlerTests
         _messagesRepositoryMock.Verify(r => r.GetByIdAsync(command.MessageId, It.IsAny<CancellationToken>()), Times.Once());
         _blobServiceMock.Verify(b => b.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never());
         _messagesRepositoryMock.Verify(r => r.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Deleting message {command.MessageId} by user {userId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"Message {command.MessageId} not found", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Deleting message {command.MessageId} by user {userId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"Message {command.MessageId} not found", Times.Once());
     }
 
     [Fact]
@@ -119,7 +119,7 @@ public class DeleteMessageCommandHandlerTests
         _messagesRepositoryMock.Verify(r => r.GetByIdAsync(command.MessageId, It.IsAny<CancellationToken>()), Times.Once());
         _blobServiceMock.Verify(b => b.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never());
         _messagesRepositoryMock.Verify(r => r.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Deleting message {command.MessageId} by user {userId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"User {userId} tried to delete message {command.MessageId} of user {senderId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Deleting message {command.MessageId} by user {userId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"User {userId} tried to delete message {command.MessageId} of user {senderId}", Times.Once());
     }
 }

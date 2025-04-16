@@ -39,8 +39,8 @@ public class GetChatByProjectIdQueryHandlerTests
                 It.Is<Expression<Func<Chat, bool>>>(expr => expr.Compile()(new Chat { ProjectId = query.ProjectId })),
                 It.IsAny<CancellationToken>()),
             Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Getting chat by project ID '{query.ProjectId}'", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Retrieved chat information by project ID {query.ProjectId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Getting chat by project ID '{query.ProjectId}'", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Retrieved chat information by project ID {query.ProjectId}", Times.Once());
     }
 
     [Fact]
@@ -63,8 +63,8 @@ public class GetChatByProjectIdQueryHandlerTests
                 It.Is<Expression<Func<Chat, bool>>>(expr => expr.Compile()(new Chat { ProjectId = query.ProjectId })),
                 It.IsAny<CancellationToken>()),
             Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Getting chat by project ID '{query.ProjectId}'", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"Chat with project ID '{query.ProjectId}' not found", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Getting chat by project ID '{query.ProjectId}'", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"Chat with project ID '{query.ProjectId}' not found", Times.Once());
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public class GetChatByProjectIdQueryHandlerTests
                 It.Is<Expression<Func<Chat, bool>>>(expr => expr.Compile()(new Chat { ProjectId = query.ProjectId })),
                 It.IsAny<CancellationToken>()),
             Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Getting chat by project ID '{query.ProjectId}'", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"Chat with project ID '{query.ProjectId}' is inactive", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Getting chat by project ID '{query.ProjectId}'", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"Chat with project ID '{query.ProjectId}' is inactive", Times.Once());
     }
 }

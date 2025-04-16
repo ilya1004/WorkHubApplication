@@ -42,8 +42,8 @@ public class SetChatInactiveCommandHandlerTests
                 It.IsAny<CancellationToken>()),
             Times.Once());
         _chatRepositoryMock.Verify(r => r.ReplaceAsync(chat, It.IsAny<CancellationToken>()), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Setting chat by project ID '{command.ProjectId}' to inactive", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Chat by project ID '{command.ProjectId}' successfully set to inactive", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Setting chat by project ID '{command.ProjectId}' to inactive", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Chat by project ID '{command.ProjectId}' successfully set to inactive", Times.Once());
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class SetChatInactiveCommandHandlerTests
                 It.IsAny<CancellationToken>()),
             Times.Once());
         _chatRepositoryMock.Verify(r => r.ReplaceAsync(It.IsAny<Chat>(), It.IsAny<CancellationToken>()), Times.Never());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Setting chat by project ID '{command.ProjectId}' to inactive", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Error, $"Chat with by project ID '{command.ProjectId}' not found", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Setting chat by project ID '{command.ProjectId}' to inactive", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Error, $"Chat with by project ID '{command.ProjectId}' not found", Times.Once());
     }
 }

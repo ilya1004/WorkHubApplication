@@ -74,7 +74,7 @@ public class FilesControllerTests
         _chatClientMock.Verify(
             c => c.ReceiveFileMessage(message),
             Times.Exactly(2));
-        _loggerMock.VerifyLog(LogLevel.Information, $"File uploaded for receiver with ID '{request.ReceiverId}'", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"File uploaded for receiver with ID '{request.ReceiverId}'", Times.Once());
     }
 
     [Fact]

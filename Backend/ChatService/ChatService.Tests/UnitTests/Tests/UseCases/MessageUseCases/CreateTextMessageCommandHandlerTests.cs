@@ -50,8 +50,8 @@ public class CreateTextMessageCommandHandlerTests
         _chatRepositoryMock.Verify(r => r.GetByIdAsync(command.ChatId, It.IsAny<CancellationToken>()), Times.Once());
         _mapperMock.Verify(m => m.Map<Message>(command), Times.Once());
         _messagesRepositoryMock.Verify(r => r.InsertAsync(message, It.IsAny<CancellationToken>()), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Creating text message in chat {command.ChatId} by user {userId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Text message created successfully. Message ID: {message.Id}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Creating text message in chat {command.ChatId} by user {userId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Text message created successfully. Message ID: {message.Id}", Times.Once());
     }
 
     [Fact]
@@ -73,8 +73,8 @@ public class CreateTextMessageCommandHandlerTests
         _chatRepositoryMock.Verify(r => r.GetByIdAsync(command.ChatId, It.IsAny<CancellationToken>()), Times.Once());
         _mapperMock.Verify(m => m.Map<Message>(It.IsAny<CreateTextMessageCommand>()), Times.Never());
         _messagesRepositoryMock.Verify(r => r.InsertAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Creating text message in chat {command.ChatId} by user {userId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"Chat {command.ChatId} not found", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Creating text message in chat {command.ChatId} by user {userId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"Chat {command.ChatId} not found", Times.Once());
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public class CreateTextMessageCommandHandlerTests
         _chatRepositoryMock.Verify(r => r.GetByIdAsync(command.ChatId, It.IsAny<CancellationToken>()), Times.Once());
         _mapperMock.Verify(m => m.Map<Message>(It.IsAny<CreateTextMessageCommand>()), Times.Never());
         _messagesRepositoryMock.Verify(r => r.InsertAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Creating text message in chat {command.ChatId} by user {userId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"User {userId} has no access to chat {command.ChatId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Creating text message in chat {command.ChatId} by user {userId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"User {userId} has no access to chat {command.ChatId}", Times.Once());
     }
 }

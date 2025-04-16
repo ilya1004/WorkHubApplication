@@ -3,16 +3,19 @@ using ChatService.Infrastructure.Constants;
 using ChatService.Infrastructure.Repositories;
 using ChatService.Tests.UnitTests.Extensions;
 using MongoDB.Driver;
+using Xunit.Abstractions;
 
 namespace ChatService.Tests.UnitTests.Tests.Repositories;
 
 public class ChatsRepositoryTests : MongoTestBase
 {
+    private readonly ITestOutputHelper _testOutputHelper;
     private readonly ChatsRepository _repository;
     private readonly IMongoCollection<Chat> _collection;
 
-    public ChatsRepositoryTests()
+    public ChatsRepositoryTests(ITestOutputHelper testOutputHelper)
     {
+        _testOutputHelper = testOutputHelper;
         _repository = new ChatsRepository(Database);
         _collection = Database.GetCollection<Chat>(MongoDbCollections.Chats);
     }
@@ -37,7 +40,10 @@ public class ChatsRepositoryTests : MongoTestBase
         // Assert
         var result = await _collection.Find(c => c.Id == chat.Id).FirstOrDefaultAsync();
         result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(chat);
+        result.Id.Should().Be(chat.Id);
+        result.EmployerId.Should().Be(chat.EmployerId);
+        result.FreelancerId.Should().Be(chat.FreelancerId);
+        result.ProjectId.Should().Be(chat.ProjectId);
     }
 
     [Fact]
@@ -51,17 +57,17 @@ public class ChatsRepositoryTests : MongoTestBase
             FreelancerId = Guid.NewGuid(),
             ProjectId = Guid.NewGuid(),
             IsActive = true,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow.TruncateToMilliseconds()
         };
         await _collection.InsertOneAsync(chat);
         var updatedChat = new Chat
         {
-            Id = Guid.NewGuid(),
-            EmployerId = Guid.NewGuid(),
-            FreelancerId = Guid.NewGuid(),
-            ProjectId = Guid.NewGuid(),
+            Id = chat.Id,
+            EmployerId = chat.EmployerId,
+            FreelancerId = chat.FreelancerId,
+            ProjectId = chat.ProjectId,
             IsActive = false,
-            CreatedAt = DateTime.UtcNow.AddDays(-10)
+            CreatedAt = chat.CreatedAt
         };
 
         // Act

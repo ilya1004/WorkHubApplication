@@ -61,8 +61,8 @@ public class CreateFileMessageCommandHandlerTests
         _mapperMock.Verify(m => m.Map<Message>(command), Times.Once());
         _blobServiceMock.Verify(b => b.UploadAsync(command.FileStream, command.ContentType, It.IsAny<CancellationToken>()), Times.Once());
         _messagesRepositoryMock.Verify(r => r.InsertAsync(message, It.IsAny<CancellationToken>()), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Creating file message in chat {command.ChatId} by user {userId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"File message created successfully. File ID: {fileId}, Message ID: {message.Id}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Creating file message in chat {command.ChatId} by user {userId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"File message created successfully. File ID: {fileId}, Message ID: {message.Id}", Times.Once());
     }
 
     [Fact]
@@ -85,8 +85,8 @@ public class CreateFileMessageCommandHandlerTests
         _mapperMock.Verify(m => m.Map<Message>(It.IsAny<CreateFileMessageCommand>()), Times.Never());
         _blobServiceMock.Verify(b => b.UploadAsync(It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never());
         _messagesRepositoryMock.Verify(r => r.InsertAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Creating file message in chat {command.ChatId} by user {userId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"Chat {command.ChatId} not found", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Creating file message in chat {command.ChatId} by user {userId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"Chat {command.ChatId} not found", Times.Once());
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class CreateFileMessageCommandHandlerTests
         _mapperMock.Verify(m => m.Map<Message>(It.IsAny<CreateFileMessageCommand>()), Times.Never());
         _blobServiceMock.Verify(b => b.UploadAsync(It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never());
         _messagesRepositoryMock.Verify(r => r.InsertAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()), Times.Never());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Creating file message in chat {command.ChatId} by user {userId}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"User {userId} has no access to chat {command.ChatId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Creating file message in chat {command.ChatId} by user {userId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"User {userId} has no access to chat {command.ChatId}", Times.Once());
     }
 }

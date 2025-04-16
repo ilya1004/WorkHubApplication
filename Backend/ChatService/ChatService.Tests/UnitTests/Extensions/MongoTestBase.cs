@@ -13,17 +13,18 @@ public abstract class MongoTestBase : IDisposable
     protected readonly IMongoDatabase Database;
     protected readonly IMongoClient Client;
 
-    protected MongoTestBase()
+    // Static constructor to register GuidSerializer once
+    static MongoTestBase()
     {
-        Runner = MongoDbRunner.Start();
-        Client = new MongoClient(Runner.ConnectionString);
-        Database = Client.GetDatabase("TestDatabase");
-
-        // Apply global GuidSerializer configuration
-        // if (!BsonSerializer.IsSerializerRegistered(typeof(Guid)))
-        // {
-            // BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
-        // }
+        // Register GuidSerializer globally, ensuring no duplicates
+        try
+        {
+            BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+        }
+        catch (BsonSerializationException)
+        {
+            // Ignore if already registered
+        }
 
         // Configure BsonClassMap for Chat
         if (!BsonClassMap.IsClassMapRegistered(typeof(Chat)))
@@ -34,6 +35,12 @@ public abstract class MongoTestBase : IDisposable
                 cm.SetIgnoreExtraElements(true);
                 cm.MapIdMember(c => c.Id)
                     .SetIdGenerator(GuidGenerator.Instance)
+                    .SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
+                cm.MapMember(c => c.EmployerId)
+                    .SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
+                cm.MapMember(c => c.FreelancerId)
+                    .SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
+                cm.MapMember(c => c.ProjectId)
                     .SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
                 cm.MapMember(c => c.CreatedAt)
                     .SetDefaultValue(() => DateTime.UtcNow)
@@ -51,13 +58,28 @@ public abstract class MongoTestBase : IDisposable
                 cm.MapIdMember(m => m.Id)
                     .SetIdGenerator(GuidGenerator.Instance)
                     .SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
+                cm.MapMember(m => m.ChatId)
+                    .SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
+                cm.MapMember(m => m.SenderId)
+                    .SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
+                cm.MapMember(m => m.ReceiverId)
+                    .SetSerializer(new GuidSerializer(GuidRepresentation.Standard));
+                cm.MapMember(m => m.FileId)
+                    .SetIgnoreIfNull(true);
+                cm.MapMember(m => m.Text)
+                    .SetIgnoreIfNull(true);
                 cm.MapMember(m => m.CreatedAt)
                     .SetDefaultValue(() => DateTime.UtcNow)
                     .SetSerializer(new DateTimeSerializer(BsonType.DateTime));
-                cm.MapMember(m => m.FileId).SetIgnoreIfNull(true);
-                cm.MapMember(m => m.Text).SetIgnoreIfNull(true);
             });
         }
+    }
+
+    protected MongoTestBase()
+    {
+        Runner = MongoDbRunner.Start();
+        Client = new MongoClient(Runner.ConnectionString);
+        Database = Client.GetDatabase("TestDatabase");
     }
 
     public void Dispose()

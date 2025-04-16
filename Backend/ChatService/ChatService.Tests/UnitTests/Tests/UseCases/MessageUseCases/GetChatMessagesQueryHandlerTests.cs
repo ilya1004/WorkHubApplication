@@ -58,8 +58,8 @@ public class GetChatMessagesQueryHandlerTests
         _chatRepositoryMock.Verify(r => r.GetByIdAsync(query.ChatId, It.IsAny<CancellationToken>()), Times.Once());
         _messagesRepositoryMock.Verify(r => r.GetMessagesByChatIdAsync(query.ChatId, (query.PageNo - 1) * query.PageSize, query.PageSize, It.IsAny<CancellationToken>()), Times.Once());
         _messagesRepositoryMock.Verify(r => r.CountAsync(It.Is<Expression<Func<Message, bool>>>(expr => expr.Compile()(new Message { ChatId = query.ChatId })), It.IsAny<CancellationToken>()), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Getting messages for chat {query.ChatId}. Page {query.PageNo}, Size {query.PageSize}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Retrieved {messages.Count} messages from chat {query.ChatId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Getting messages for chat {query.ChatId}. Page {query.PageNo}, Size {query.PageSize}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Retrieved {messages.Count} messages from chat {query.ChatId}", Times.Once());
     }
 
     [Fact]
@@ -81,8 +81,8 @@ public class GetChatMessagesQueryHandlerTests
         _chatRepositoryMock.Verify(r => r.GetByIdAsync(query.ChatId, It.IsAny<CancellationToken>()), Times.Once());
         _messagesRepositoryMock.Verify(r => r.GetMessagesByChatIdAsync(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never());
         _messagesRepositoryMock.Verify(r => r.CountAsync(It.IsAny<Expression<Func<Message, bool>>>(), It.IsAny<CancellationToken>()), Times.Never());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Getting messages for chat {query.ChatId}. Page {query.PageNo}, Size {query.PageSize}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"Chat {query.ChatId} not found", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Getting messages for chat {query.ChatId}. Page {query.PageNo}, Size {query.PageSize}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"Chat {query.ChatId} not found", Times.Once());
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class GetChatMessagesQueryHandlerTests
         _chatRepositoryMock.Verify(r => r.GetByIdAsync(query.ChatId, It.IsAny<CancellationToken>()), Times.Once());
         _messagesRepositoryMock.Verify(r => r.GetMessagesByChatIdAsync(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never());
         _messagesRepositoryMock.Verify(r => r.CountAsync(It.IsAny<Expression<Func<Message, bool>>>(), It.IsAny<CancellationToken>()), Times.Never());
-        _loggerMock.VerifyLog(LogLevel.Information, $"Getting messages for chat {query.ChatId}. Page {query.PageNo}, Size {query.PageSize}", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Warning, $"User {userId} has no access to chat {query.ChatId}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Information, $"Getting messages for chat {query.ChatId}. Page {query.PageNo}, Size {query.PageSize}", Times.Once());
+        LoggerMockExtensions.VerifyLog(_loggerMock, LogLevel.Warning, $"User {userId} has no access to chat {query.ChatId}", Times.Once());
     }
 }
