@@ -6,7 +6,7 @@
 <h2>Projects Service</h2>
 <nz-table
   #projectsTable
-  [nzData]="getEntries(projectsService.response)"
+  [nzData]="getEntryValues(projectsService.response)"
   [nzShowPagination]="false"
   [nzLoading]="loading">
   <thead>
@@ -32,7 +32,7 @@
 <h2>Identity Service</h2>
 <nz-table
   #identityTable
-  [nzData]="getEntries(identityService.response)"
+  [nzData]="getEntryValues(identityService.response)"
   [nzShowPagination]="false"
   [nzLoading]="loading">
   <thead>
@@ -58,7 +58,7 @@
 <h2>Payments Service</h2>
 <nz-table
   #paymentsTable
-  [nzData]="getEntries(paymentsService.response)"
+  [nzData]="getEntryValues(paymentsService.response)"
   [nzShowPagination]="false"
   [nzLoading]="loading">
   <thead>
@@ -84,7 +84,7 @@
 <h2>Chat Service</h2>
 <nz-table
   #chatTable
-  [nzData]="getEntries(chatService.response)"
+  [nzData]="getEntryValues(chatService.response)"
   [nzShowPagination]="false"
   [nzLoading]="loading">
   <thead>

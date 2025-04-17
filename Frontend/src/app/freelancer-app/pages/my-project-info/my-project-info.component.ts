@@ -125,4 +125,6 @@ export class MyProjectInfoComponent implements OnInit {
   goBack(): void {
     this.router.navigate(['/freelancer/my-projects']);
   }
+  
+  protected readonly ProjectStatus = ProjectStatus;
 }

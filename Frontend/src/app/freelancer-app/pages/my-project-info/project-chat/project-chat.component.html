@@ -9,7 +9,7 @@
       nzSize="small">
       <nz-list-item *ngFor="let message of messages">
         <div>
-          <nz-tag [nzColor]="getMessageSender(message) === 'You' ? 'green' : 'blue'">
+          <nz-tag [nzColor]="getMessageSender(message) === 'You' ? TagColor.Green : TagColor.Blue">
             <strong>
               {{ getMessageSender(message) }} ({{ message.createdAt | date:'MM.dd.yyyy, hh:mm:ss' }})
             </strong>

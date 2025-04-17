@@ -47,7 +47,7 @@
   
   <div>
     <app-freelancer-project-chat
-      *ngIf="project && project.freelancerId"
+      *ngIf="project && project.freelancerId && project.lifecycle.status !== ProjectStatus.Completed"
       [projectId]="project.id.toString()"
       [employerId]="project.employerId"
       [freelancerId]="project.freelancerId">

@@ -125,9 +125,7 @@ public class StripeEmployerPaymentsService(
         
         if (!account.ChargesEnabled || !account.PayoutsEnabled)
         {
-            logger.LogWarning("Freelancer account {AccountId} is not fully activated. " +
-                              "ChargesEnabled: {ChargesEnabled}, TransfersEnabled: {TransfersEnabled}", 
-                freelancer.StripeAccountId, account.ChargesEnabled, account.PayoutsEnabled);
+            logger.LogWarning("Freelancer account {AccountId} is not fully activated.", freelancer.StripeAccountId);
             
             throw new BadRequestException($"Freelancer account '{freelancer.StripeAccountId}' is not fully activated for transfers.");
         }

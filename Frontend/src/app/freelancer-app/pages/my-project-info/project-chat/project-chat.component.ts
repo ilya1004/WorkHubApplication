@@ -12,6 +12,7 @@ import {NzTagModule} from "ng-zorro-antd/tag";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {TokenService} from "../../../../core/services/auth/token.service";
 import {Subscription} from "rxjs";
+import {TagColor} from "../../../../core/data/tag-color";
 
 @Component({
   selector: 'app-freelancer-project-chat',
@@ -210,4 +211,6 @@ export class ProjectChatComponent implements OnInit, AfterViewChecked, OnDestroy
       }
     });
   }
+  
+  protected readonly TagColor = TagColor;
 }

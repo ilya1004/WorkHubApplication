@@ -12,6 +12,7 @@ import {ChatService} from "../../../../core/services/chat/chat.service";
 import {AuthService} from "../../../../core/services/auth/auth.service";
 import {TokenService} from "../../../../core/services/auth/token.service";
 import {Subscription} from "rxjs";
+import {TagColor} from "../../../../core/data/tag-color";
 
 @Component({
   selector: 'app-employer-project-chat',
@@ -210,4 +211,6 @@ export class ProjectChatComponent implements OnInit, AfterViewChecked, OnDestroy
       }
     });
   }
+  
+  protected readonly TagColor = TagColor;
 }

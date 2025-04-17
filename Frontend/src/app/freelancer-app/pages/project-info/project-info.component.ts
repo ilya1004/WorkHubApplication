@@ -16,6 +16,8 @@ import {FreelancerApplicationsService} from "../../../core/services/freelancer-a
 import {NzTagComponent} from "ng-zorro-antd/tag";
 import {ProjectStatus} from "../../../core/interfaces/project/lifecycle.interface";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {FinanceService} from "../../services/finance.service";
+import {NzAlertModule} from "ng-zorro-antd/alert";
 
 @Component({
   selector: 'app-project-info',
@@ -27,11 +29,12 @@ import {NzMessageService} from "ng-zorro-antd/message";
     NzButtonModule,
     RouterLink,
     NzFlexDirective,
-    NzTagComponent
+    NzTagComponent,
+    NzAlertModule
   ],
+  providers: [NzMessageService],
   templateUrl: './project-info.component.html',
-  styleUrl: './project-info.component.scss',
-  providers: [NzMessageService]
+  styleUrl: './project-info.component.scss'
 })
 export class ProjectInfoComponent implements OnInit {
   project: Project | null = null;
@@ -41,6 +44,8 @@ export class ProjectInfoComponent implements OnInit {
   isApplying = false;
   isCancelling = false;
   currentUserId: string | null = '';
+  hasFreelancerAccount: boolean = true;
+  isCheckingAccount: boolean = false;
   
   constructor(
     private route: ActivatedRoute,
@@ -48,6 +53,7 @@ export class ProjectInfoComponent implements OnInit {
     private freelancerApplicationsService: FreelancerApplicationsService,
     private usersService: UsersService,
     private tokenService: TokenService,
+    private financeService: FinanceService,
     private message: NzMessageService
   ) {
     this.currentUserId = this.tokenService.getUserId();
@@ -57,6 +63,7 @@ export class ProjectInfoComponent implements OnInit {
     const projectId = this.route.snapshot.paramMap.get('projectId');
     if (projectId) {
       this.loadProject(projectId);
+      this.checkFreelancerAccount();
     }
   }
   
@@ -115,6 +122,25 @@ export class ProjectInfoComponent implements OnInit {
     }
   }
   
+  checkFreelancerAccount(): void {
+    this.isCheckingAccount = true;
+    this.financeService.getFreelancerAccount().subscribe({
+      next: () => {
+        this.hasFreelancerAccount = true;
+        this.isCheckingAccount = false;
+      },
+      error: (error) => {
+        if (error.status === 404) {
+          this.hasFreelancerAccount = false;
+        } else {
+          this.message.error('Failed to check account status.', { nzDuration: 3000 });
+          console.error('Error checking account:', error);
+        }
+        this.isCheckingAccount = false;
+      }
+    });
+  }
+  
   getStatusLabel(status: number): string {
     const statuses = [
       'Published',
@@ -131,7 +157,10 @@ export class ProjectInfoComponent implements OnInit {
   
   canApply(): boolean {
     if (!this.project || this.project.lifecycle.status !== ProjectStatus.AcceptingApplications) return false;
-    return !this.hasApplication() && !this.hasAcceptedApplication() && this.currentUserId !== this.project.employerId;
+    return !this.hasApplication() &&
+      !this.hasAcceptedApplication() &&
+      this.currentUserId !== this.project.employerId &&
+      this.hasFreelancerAccount;
   }
   
   hasApplication(): boolean {

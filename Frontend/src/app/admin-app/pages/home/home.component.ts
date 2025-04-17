@@ -12,6 +12,7 @@ import {NzFormModule} from "ng-zorro-antd/form";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {NzFlexDirective} from "ng-zorro-antd/flex";
 import {NzIconDirective} from "ng-zorro-antd/icon";
+import {TagColor} from "../../../core/data/tag-color";
 
 
 @Component({
@@ -70,10 +71,10 @@ export class HomeComponent implements OnInit {
   }
   
   getStatusColor(status: string): string {
-    return status === 'Healthy' ? 'green' : 'red';
+    return status === 'Healthy' ? TagColor.Green : TagColor.Red;
   }
   
-  getEntries(response: HealthCheckResponse | null): HealthCheckEntry[] {
+  getEntryValues(response: HealthCheckResponse | null): HealthCheckEntry[] {
     return response?.entries ? Object.values(response.entries) : [];
   }
   

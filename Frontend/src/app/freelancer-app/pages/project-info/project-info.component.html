@@ -54,6 +54,15 @@
       }
     </div>
     
+    @if (!hasFreelancerAccount && !isCheckingAccount && canApply()) {
+      <nz-alert
+        nzType="warning"
+        nzMessage="To apply for this project, you need to create a freelancer account."
+        nzShowIcon
+        style="margin-top: 20px">
+      </nz-alert>
+    }
+    
     <div nz-flex nzGap="middle" style="margin-top: 20px">
       @if (canApply()) {
         <button
