@@ -24,7 +24,6 @@ public class KafkaIntegrationTestsFixture : IAsyncLifetime
         {
             builder.ConfigureServices(services =>
             {
-                // Remove existing hosted services to prevent background service interference
                 var descriptor = services.FirstOrDefault(d => d.ServiceType == typeof(IHostedService));
                 while (descriptor != null)
                 {

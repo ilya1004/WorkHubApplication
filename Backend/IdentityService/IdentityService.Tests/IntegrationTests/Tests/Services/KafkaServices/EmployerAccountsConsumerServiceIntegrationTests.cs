@@ -50,7 +50,6 @@ public class EmployerAccountsConsumerServiceIntegrationTests(
             Value = message
         });
 
-        // Verify message in Kafka
         bool messageReceived = false;
         for (int i = 0; i < 10; i++)
         {
@@ -65,7 +64,6 @@ public class EmployerAccountsConsumerServiceIntegrationTests(
 
         messageReceived.Should().BeTrue("Message should be received in Kafka topic");
 
-        // Wait for consumer to process
         await Task.Delay(2000);
 
         // Assert
@@ -101,11 +99,9 @@ public class EmployerAccountsConsumerServiceIntegrationTests(
             Value = message
         });
 
-        // Wait for consumer to process
         await Task.Delay(1000);
 
         // Assert
-        // No exception thrown, consumer continues running
         Assert.True(true);
     }
 
@@ -131,11 +127,9 @@ public class EmployerAccountsConsumerServiceIntegrationTests(
             Value = invalidMessage
         });
 
-        // Wait for consumer to process
         await Task.Delay(1000);
 
         // Assert
-        // No exception thrown, consumer continues running
         Assert.True(true);
     }
 }

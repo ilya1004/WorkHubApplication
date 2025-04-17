@@ -45,7 +45,6 @@ public class StripeEmployerAccountsServiceIntegrationTests : IClassFixture<Strip
         customer.Metadata.Should().ContainKey("UserId").WhoseValue.Should().Be(userId.ToString());
         customer.Metadata.Should().ContainKey("Role").WhoseValue.Should().Be(AppRoles.EmployerRole);
 
-        // Cleanup
         await customerService.DeleteAsync(customerId);
     }
 
@@ -103,7 +102,6 @@ public class StripeEmployerAccountsServiceIntegrationTests : IClassFixture<Strip
         accountModel.Currency.Should().Be(customer.Currency);
         accountModel.Balance.Should().Be(customer.Balance);
 
-        // Cleanup
         await customerService.DeleteAsync(customer.Id);
     }
 
@@ -168,7 +166,6 @@ public class StripeEmployerAccountsServiceIntegrationTests : IClassFixture<Strip
                 a.Balance == customer.Balance);
         }
 
-        // Cleanup
         foreach (var customer in customers)
         {
             await customerService.DeleteAsync(customer.Id);
@@ -188,8 +185,6 @@ public class StripeEmployerAccountsServiceIntegrationTests : IClassFixture<Strip
         // Assert
         var employerAccountModels = accounts.ToList();
         employerAccountModels.Should().NotBeNull();
-        // Note: Stripe's test environment may return existing test data, so we can't assert empty
-        // Instead, ensure the result is a valid enumerable
         employerAccountModels.Should().BeAssignableTo<IEnumerable<EmployerAccountModel>>();
     }
 }

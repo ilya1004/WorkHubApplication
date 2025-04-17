@@ -54,7 +54,6 @@ public class CategoryQueriesRepositoryIntegrationTests(
         var result = await unitOfWork.CategoryQueriesRepository.ListAllAsync();
 
         // Assert
-        // Assert.Equal(23, result.Count);
         Assert.All(categories, c => Assert.Contains(result, r => r.Id == c.Id && r.Name == c.Name));
     }
     

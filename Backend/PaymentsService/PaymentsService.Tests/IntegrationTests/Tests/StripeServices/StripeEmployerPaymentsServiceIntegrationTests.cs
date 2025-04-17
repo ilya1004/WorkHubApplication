@@ -28,7 +28,7 @@ public class StripeEmployerPaymentsServiceIntegrationTests(
         await paymentMethodService.AttachAsync(paymentMethod.Id, new PaymentMethodAttachOptions { Customer = customer.Id });
 
         var employerDto = new EmployerDto { Id = userId.ToString(), EmployerCustomerId = customer.Id };
-        var projectDto = new ProjectDto { Id = projectId, BudgetInCents = 10000 }; // 100 EUR
+        var projectDto = new ProjectDto { Id = projectId, BudgetInCents = 10000 };
 
         fixture.EmployersGrpcClientMock
             .Setup(c => c.GetEmployerByIdAsync(userId.ToString(), It.IsAny<CancellationToken>()))

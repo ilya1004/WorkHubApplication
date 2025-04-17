@@ -135,7 +135,7 @@ public class MessagesRepositoryIntegrationTests(
 
         // Assert
         result.Should().HaveCount(2);
-        result.Select(m => m.Text).Should().BeEquivalentTo(new[] { "Message 2", "Message 1" }); // Sorted by CreatedAt descending
+        result.Select(m => m.Text).Should().BeEquivalentTo(new[] { "Message 2", "Message 1" });
     }
 
     [Fact]

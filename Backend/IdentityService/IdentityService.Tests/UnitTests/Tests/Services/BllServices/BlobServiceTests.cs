@@ -11,7 +11,6 @@ namespace IdentityService.Tests.UnitTests.Tests.Services.BllServices;
 
 public class BlobServiceTests
 {
-    private readonly Mock<ILogger<BlobService>> _loggerMock;
     private readonly Mock<BlobContainerClient> _containerClientMock;
     private readonly Mock<BlobClient> _blobClientMock;
     private readonly BlobService _service;
@@ -19,7 +18,7 @@ public class BlobServiceTests
     public BlobServiceTests()
     {
         var blobServiceClientMock = new Mock<BlobServiceClient>();
-        _loggerMock = new Mock<ILogger<BlobService>>();
+        var loggerMock = new Mock<ILogger<BlobService>>();
         var optionsMock = new Mock<IOptions<AzuriteSettings>>();
         _containerClientMock = new Mock<BlobContainerClient>();
         _blobClientMock = new Mock<BlobClient>();
@@ -31,7 +30,7 @@ public class BlobServiceTests
         });
         blobServiceClientMock.Setup(c => c.GetBlobContainerClient("images")).Returns(_containerClientMock.Object);
 
-        _service = new BlobService(blobServiceClientMock.Object, optionsMock.Object, _loggerMock.Object);
+        _service = new BlobService(blobServiceClientMock.Object, optionsMock.Object, loggerMock.Object);
     }
 
     [Fact]
@@ -64,9 +63,12 @@ public class BlobServiceTests
         _containerClientMock.Setup(c => c.GetBlobClient(fileId.ToString())).Returns(_blobClientMock.Object);
         _blobClientMock.Setup(b => b.UploadAsync(It.IsAny<Stream>(), It.IsAny<BlobHttpHeaders>(), null, null, null, null, default, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new RequestFailedException(404, "Container not found", "ContainerNotFound", null));
-
-        // Act & Assert
-        await Assert.ThrowsAsync<BadRequestException>(() => _service.UploadAsync(stream, contentType));
+        
+        // Act
+        var act = () => _service.UploadAsync(stream, contentType);
+        
+        // Assert
+        await act.Should().ThrowAsync<BadRequestException>();
     }
 
     [Fact]
@@ -97,8 +99,11 @@ public class BlobServiceTests
         _blobClientMock.Setup(b => b.DownloadContentAsync(It.IsAny<CancellationToken>()))
             .ThrowsAsync(new RequestFailedException(404, "Blob not found", "BlobNotFound", null));
 
-        // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => _service.DownloadAsync(fileId));
+        // Act
+        var act = () => _service.DownloadAsync(fileId);
+        
+        // Assert
+        await act.Should().ThrowAsync<NotFoundException>();
     }
 
     [Fact]

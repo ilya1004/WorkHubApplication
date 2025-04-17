@@ -29,7 +29,6 @@ public class BlobServiceIntegrationTests(
         // Assert
         fileId.Should().NotBeEmpty();
 
-        // Verify the file exists in Azurite
         var blobServiceClient = scope.ServiceProvider.GetRequiredService<BlobServiceClient>();
         var containerClient = blobServiceClient.GetBlobContainerClient("user-images");
         var blobClient = containerClient.GetBlobClient(fileId.ToString());
@@ -43,7 +42,7 @@ public class BlobServiceIntegrationTests(
         // Arrange
         using var scope = fixture.Factory.Services.CreateScope();
         var blobService = scope.ServiceProvider.GetRequiredService<IBlobService>();
-        var imageContent = new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }; // Mock JPEG header
+        var imageContent = new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 };
         using var stream = new MemoryStream(imageContent);
         var contentType = "image/jpeg";
 
@@ -53,7 +52,6 @@ public class BlobServiceIntegrationTests(
         // Assert
         fileId.Should().NotBeEmpty();
 
-        // Verify content type
         var blobServiceClient = scope.ServiceProvider.GetRequiredService<BlobServiceClient>();
         var containerClient = blobServiceClient.GetBlobContainerClient("user-images");
         var blobClient = containerClient.GetBlobClient(fileId.ToString());

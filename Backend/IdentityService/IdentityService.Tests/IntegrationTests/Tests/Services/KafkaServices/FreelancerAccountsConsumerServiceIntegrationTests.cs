@@ -41,7 +41,6 @@ public class FreelancerAccountsConsumerServiceIntegrationTests(
             Value = message
         });
 
-        // Wait for consumer to process
         await Task.Delay(1000);
 
         // Assert
@@ -77,11 +76,9 @@ public class FreelancerAccountsConsumerServiceIntegrationTests(
             Value = message
         });
 
-        // Wait for consumer to process
         await Task.Delay(1000);
 
         // Assert
-        // No exception thrown, consumer continues running
         Assert.True(true);
     }
 
@@ -107,11 +104,9 @@ public class FreelancerAccountsConsumerServiceIntegrationTests(
             Value = invalidMessage
         });
 
-        // Wait for consumer to process
         await Task.Delay(1000);
 
         // Assert
-        // No exception thrown, consumer continues running
         Assert.True(true);
     }
 }

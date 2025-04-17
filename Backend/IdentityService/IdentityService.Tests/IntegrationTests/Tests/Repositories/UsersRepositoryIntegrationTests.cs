@@ -184,7 +184,7 @@ public class UsersRepositoryIntegrationTests : IClassFixture<IntegrationTestsFix
         var count = await unitOfWork.UsersRepository.CountAsync(filter);
 
         // Assert
-        count.Should().BeGreaterThanOrEqualTo(1); // At least Moonlight
+        count.Should().BeGreaterThanOrEqualTo(1);
     }
 
     [Fact]
@@ -220,7 +220,7 @@ public class UsersRepositoryIntegrationTests : IClassFixture<IntegrationTestsFix
         var distributedCache = scope.ServiceProvider.GetRequiredService<IDistributedCache>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
         var user = await userManager.FindByNameAsync("Pavlusha");
-        await unitOfWork.UsersRepository.GetByIdAsync(IntegrationTestsFixture.EmployerId, withTracking: false); // Populate cache
+        await unitOfWork.UsersRepository.GetByIdAsync(IntegrationTestsFixture.EmployerId, withTracking: false);
 
         // Act
         user!.Email = "updated.pavlusha@gmail.com";
@@ -255,7 +255,7 @@ public class UsersRepositoryIntegrationTests : IClassFixture<IntegrationTestsFix
             RoleId = (await scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>().FindByNameAsync("Freelancer"))!.Id
         };
         await userManager.CreateAsync(user, "ToDeleteCache_123");
-        await unitOfWork.UsersRepository.GetByIdAsync(user.Id, withTracking: false); // Populate cache
+        await unitOfWork.UsersRepository.GetByIdAsync(user.Id, withTracking: false);
         await unitOfWork.SaveAllAsync();
 
         // Act

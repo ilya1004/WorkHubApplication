@@ -32,7 +32,6 @@ public class StripeIntegrationTestsFixture : IAsyncLifetime
         {
             builder.ConfigureServices(services =>
             {
-                // Remove existing registrations to prevent interference
                 var descriptorsToRemove = services.Where(d =>
                     d.ServiceType == typeof(IHostedService) ||
                     d.ServiceType == typeof(IEmployersGrpcClient) ||
@@ -46,7 +45,6 @@ public class StripeIntegrationTestsFixture : IAsyncLifetime
                     services.Remove(descriptor);
                 }
 
-                // Register mocked services
                 services.AddScoped(_ => EmployersGrpcClientMock.Object);
                 services.AddScoped(_ => FreelancersGrpcClientMock.Object);
                 services.AddScoped(_ => ProjectsGrpcClientMock.Object);
