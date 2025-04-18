@@ -141,7 +141,7 @@ export class ProjectsServiceToolsComponent implements OnInit {
   }
   
   navigateToProject(projectId: string): void {
-    this.router.navigate(['/admin/project-info', projectId]);
+    this.router.navigate(['/admin/projects-service-tools/project', projectId]);
   }
   
   onCategoryChange(): void {
