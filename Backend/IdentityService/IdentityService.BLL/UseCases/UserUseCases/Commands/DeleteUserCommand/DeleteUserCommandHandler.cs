@@ -1,6 +1,4 @@
 ﻿using IdentityService.BLL.Abstractions.BlobService;
-using IdentityService.BLL.Services.BlobService;
-using IdentityService.DAL.Abstractions.Repositories;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.DeleteUserCommand;
 
@@ -15,6 +13,7 @@ public class DeleteUserCommandHandler(
 
         var user = await unitOfWork.UsersRepository.GetByIdAsync(
             request.UserId,
+            false,
             cancellationToken,
             u => u.FreelancerProfile!,
             u => u.EmployerProfile!);

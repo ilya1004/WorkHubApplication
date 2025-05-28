@@ -3,8 +3,7 @@ using IdentityService.BLL.Abstractions.EmailSender;
 
 namespace IdentityService.BLL.Services.EmailSender;
 
-public class EmailSender(
-    IFluentEmail fluentEmail) : IEmailSender
+public class EmailSender(IFluentEmail fluentEmail) : IEmailSender
 {
     public async Task SendEmailConfirmation(string userEmail, string code, CancellationToken cancellationToken)
     {
@@ -20,7 +19,7 @@ public class EmailSender(
         await fluentEmail
             .To(userEmail)
             .Subject("Reset password from WorkHubApplication")
-            .Body($"Click the link to reset your password: <a href='{resetUrl}'>Reset</a>", true)
+            .Body($"Click the link to reset your password: <a href='{resetUrl}'>Reset!</a>", true)
             .SendAsync(cancellationToken);
     }
 }

@@ -1,0 +1,63 @@
+<div nz-flex nzGap="40px" nzAlign="start">
+  <div nz-flex nzVertical nzAlign="start">
+    <button nz-button nzType="default" (click)="goBack()" style="margin: 0 0 15px 10px">
+      Back
+    </button>
+    <nz-card [nzLoading]="loading" nzTitle="Employer Project Workspace">
+      <h3>Project Information</h3>
+      <nz-descriptions
+        nzBordered
+        *ngIf="project"
+        [nzColumn]="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }">
+        <nz-descriptions-item nzTitle="Title">{{ project.title }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Description">{{ project.description }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Budget">{{ project.budget }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Category">{{ project.category?.name || 'None' }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Status">{{ getStatusLabel(project.lifecycle.status) }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Applications Start">{{ project.lifecycle.applicationsStartDate | date }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Applications Deadline">{{ project.lifecycle.applicationsDeadline | date }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Work Start">{{ project.lifecycle.workStartDate | date }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Work Deadline">{{ project.lifecycle.workDeadline | date }}</nz-descriptions-item>
+      </nz-descriptions>
+      
+      <h3 style="margin-top: 20px">Freelancer Information</h3>
+      <nz-descriptions
+        nzBordered
+        *ngIf="freelancer; else noFreelancer"
+        [nzColumn]="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }">
+        <nz-descriptions-item nzTitle="Name">{{ freelancer.firstName }} {{ freelancer.lastName }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Email">{{ freelancer.email }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="About">{{ freelancer.about || 'Not provided' }}</nz-descriptions-item>
+      </nz-descriptions>
+      <ng-template #noFreelancer>
+        <p>No freelancer assigned yet.</p>
+      </ng-template>
+    </nz-card>
+    <div nz-flex *ngIf="project && canCompleteProject()" nzJustify="center" nzGap="15px" style="margin-top: 20px; width: 100%;">
+      <button
+        nz-button
+        nzType="primary"
+        [nzLoading]="submitting"
+        [disabled]="project.lifecycle.status === ProjectStatus.Completed"
+        (click)="setProjectAcceptanceStatus(true)">
+        Accept project
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        [nzLoading]="submitting"
+        [disabled]="project.lifecycle.status === ProjectStatus.Completed"
+        (click)="setProjectAcceptanceStatus(false)">
+        Reject acceptance request
+      </button>
+    </div>
+  </div>
+  
+  <div *ngIf="project && project.freelancerId && project.lifecycle.status !== ProjectStatus.Completed">
+    <app-employer-project-chat
+      [projectId]="project.id.toString()"
+      [employerId]="project.employerId"
+      [freelancerId]="project.freelancerId">
+    </app-employer-project-chat>
+  </div>
+</div>

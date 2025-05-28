@@ -1,8 +1,8 @@
-using ProjectsService.Domain.Enums;
+﻿using ProjectsService.Domain.Enums;
 
 namespace ProjectsService.API.Contracts.FreelancerApplicationContracts;
 
-public record GetFreelancerApplicationsByFilterRequest(
+public sealed record GetFreelancerApplicationsByFilterRequest(
     DateTime? StartDate,
     DateTime? EndDate,
     ApplicationStatus? ApplicationStatus,

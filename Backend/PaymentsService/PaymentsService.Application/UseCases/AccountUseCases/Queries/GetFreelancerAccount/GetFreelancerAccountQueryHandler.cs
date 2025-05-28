@@ -8,8 +8,7 @@ public class GetFreelancerAccountQueryHandler(
     IUserContext userContext,
     ILogger<GetFreelancerAccountQueryHandler> logger) : IRequestHandler<GetFreelancerAccountQuery, FreelancerAccountModel>
 {
-    public async Task<FreelancerAccountModel> Handle(GetFreelancerAccountQuery request,
-        CancellationToken cancellationToken)
+    public async Task<FreelancerAccountModel> Handle(GetFreelancerAccountQuery request, CancellationToken cancellationToken)
     {
         var userId = userContext.GetUserId();
         

@@ -9,7 +9,7 @@ namespace ProjectsService.Infrastructure.Repositories;
 
 public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepository<TEntity> where TEntity : Entity
 {
-    protected readonly DbSet<TEntity> _entities = context.Set<TEntity>();
+    private readonly DbSet<TEntity> _entities = context.Set<TEntity>();
     
     public async Task<IReadOnlyList<TEntity>> ListAllAsync(CancellationToken cancellationToken = default)
     {
@@ -19,9 +19,9 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
     public async Task<IReadOnlyList<TEntity>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default, 
         params Expression<Func<TEntity, object>>[]? includesProperties)
     {
-        IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
+        var query = _entities.AsQueryable().AsNoTracking();
 
-        query.AddIncludes(includesProperties);
+        query = query.AddIncludes(includesProperties);
 
         return await query
             .OrderBy(x => x.Id)
@@ -33,14 +33,14 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
     public async Task<IReadOnlyList<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? filter, CancellationToken cancellationToken = default,
         params Expression<Func<TEntity, object>>[]? includesProperties)
     {
-        IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
+        var query = _entities.AsQueryable().AsNoTracking();
 
         if (filter is not null)
         {
             query = query.Where(filter);
         }
 
-        query.AddIncludes(includesProperties);
+        query = query.AddIncludes(includesProperties);
 
         return await query.ToListAsync(cancellationToken);
     }
@@ -48,14 +48,14 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
     public async Task<IReadOnlyList<TEntity>> PaginatedListAsync(Expression<Func<TEntity, bool>>? filter, int offset, int limit, CancellationToken cancellationToken = default,
         params Expression<Func<TEntity, object>>[]? includesProperties)
     {
-        IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
+        var query = _entities.AsQueryable().AsNoTracking();
 
         if (filter is not null)
         {
             query = query.Where(filter);
         }
 
-        query.AddIncludes(includesProperties);
+        query = query.AddIncludes(includesProperties);
 
         return await query
             .OrderBy(x => x.Id)
@@ -66,9 +66,9 @@ public class QueriesRepository<TEntity>(QueriesDbContext context) : IQueriesRepo
 
     public async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default, params Expression<Func<TEntity, object>>[]? includesProperties)
     {
-        IQueryable<TEntity> query = _entities.AsQueryable().AsNoTracking();
+        var query = _entities.AsQueryable().AsNoTracking();
 
-        query.AddIncludes(includesProperties);
+        query = query.AddIncludes(includesProperties);
 
         return await query.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
     }

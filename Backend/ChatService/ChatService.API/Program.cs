@@ -2,6 +2,7 @@ using ChatService.API;
 using ChatService.API.Hubs;
 using ChatService.API.Middlewares;
 using ChatService.Application;
+using ChatService.Domain.Abstractions.AzuriteStartupService;
 using ChatService.Domain.Abstractions.DbInitializer;
 using ChatService.Infrastructure;
 using HealthChecks.UI.Client;
@@ -21,6 +22,9 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
+    var azuriteStartupService = scope.ServiceProvider.GetRequiredService<IAzuriteStartupService>();
+    await azuriteStartupService.CreateContainerIfNotExistAsync();
+
     var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
     await dbInitializer.InitializeDbAsync(builder.Configuration);
 }

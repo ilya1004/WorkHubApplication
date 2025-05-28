@@ -3,7 +3,7 @@ using ProjectsService.API.Contracts.FreelancerApplicationContracts;
 
 namespace ProjectsService.API.Validators.FreelancerApplicationValidators;
 
-public class GetFreelancerApplicationsByFilterRequestValidator : AbstractValidator<GetFreelancerApplicationsByFilterRequest>
+public class GetFreelancerApplicationsByFilterRequestValidator : AbstractValidator<GetMyFreelancerApplicationsByFilterRequest>
 {
     public GetFreelancerApplicationsByFilterRequestValidator()
     {

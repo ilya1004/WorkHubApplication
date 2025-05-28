@@ -1,0 +1,77 @@
+<div style="width: 100%;">
+  <h2 style="margin-bottom: 20px;">Freelancer Applications View</h2>
+  
+  <div nz-flex nzAlign="center" nzGap="40px">
+    <nz-form-item style="width: 230px;">
+      <nz-form-label>Start Date</nz-form-label>
+      <nz-date-picker
+        [(ngModel)]="filterForm.startDate"
+        nzPlaceHolder="Select start date"
+        style="width: 200px"
+      ></nz-date-picker>
+    </nz-form-item>
+    
+    <nz-form-item style="width: 230px;">
+      <nz-form-label>End Date</nz-form-label>
+      <nz-date-picker
+        [(ngModel)]="filterForm.endDate"
+        nzPlaceHolder="Select end date"
+        style="width: 200px"
+      ></nz-date-picker>
+    </nz-form-item>
+    
+    <nz-form-item style="width: 230px;">
+      <nz-form-label>Status</nz-form-label>
+      <nz-select
+        [(ngModel)]="filterForm.applicationStatus"
+        nzPlaceHolder="Select status"
+        style="width: 180px"
+      >
+        <nz-option
+          *ngFor="let status of applicationStatuses"
+          [nzValue]="status.value"
+          [nzLabel]="status.label"
+        ></nz-option>
+      </nz-select>
+    </nz-form-item>
+    
+    <div nz-flex nzGap="10px">
+      <button nz-button nzType="primary" (click)="applyFilters()">
+        Apply Filters
+      </button>
+      <button nz-button (click)="resetFilters()">Reset</button>
+    </div>
+  </div>
+  
+  <nz-table
+    #applicationTable
+    [nzData]="applications"
+    [nzLoading]="loading"
+    [nzFrontPagination]="false"
+    [nzTotal]="totalCount"
+    [nzPageSize]="filterForm.pageSize"
+    [nzPageIndex]="filterForm.pageNo"
+    (nzPageIndexChange)="onPageChange($event)"
+    (nzPageSizeChange)="onPageSizeChange($event)"
+    style="width: 100%;"
+  >
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Project Title</th>
+      <th>Freelancer ID</th>
+      <th>Status</th>
+      <th>Created At</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let application of applicationTable.data">
+      <td>{{ application.id }}</td>
+      <td>{{ application.project?.title || 'N/A' }}</td>
+      <td>{{ application.freelancerId }}</td>
+      <td>{{ getStatusLabel(application.status) }}</td>
+      <td>{{ application.createdAt | date }}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

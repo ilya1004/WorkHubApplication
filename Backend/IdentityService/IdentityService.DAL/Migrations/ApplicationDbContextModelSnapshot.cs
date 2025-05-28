@@ -150,9 +150,10 @@ namespace IdentityService.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("About")
-                        .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("character varying(1000)")
+                        .HasDefaultValue("");
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
@@ -186,9 +187,10 @@ namespace IdentityService.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("About")
-                        .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("character varying(1000)")
+                        .HasDefaultValue("");
 
                     b.Property<string>("FirstName")
                         .IsRequired()

@@ -27,8 +27,7 @@ public class CachedCommandsRepository<TEntity>(
 
     private async Task InvalidateCacheAsync(Guid id)
     {
-        var cacheKey = $"{typeof(TEntity).Name}:{id}";
-        await distributedCache.RemoveAsync(cacheKey);
+        await distributedCache.RemoveAsync($"{typeof(TEntity).Name}:{id}");
         await distributedCache.RemoveAsync($"{typeof(TEntity).Name}:ListAll");
         await distributedCache.RemoveAsync($"{typeof(TEntity).Name}:CountAll");
     }

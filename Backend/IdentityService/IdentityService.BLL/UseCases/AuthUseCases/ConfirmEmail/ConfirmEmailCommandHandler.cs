@@ -1,6 +1,5 @@
 ﻿using IdentityService.DAL.Abstractions.RedisService;
 
-
 namespace IdentityService.BLL.UseCases.AuthUseCases.ConfirmEmail;
 
 public class ConfirmEmailCommandHandler(

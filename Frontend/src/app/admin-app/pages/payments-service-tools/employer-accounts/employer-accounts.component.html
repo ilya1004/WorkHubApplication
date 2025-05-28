@@ -1,0 +1,31 @@
+<div style="width: 100%;">
+  <h2>Employer Accounts View</h2>
+  <nz-table
+    #accountTable
+    [nzData]="accounts"
+    [nzLoading]="loading"
+    [nzFrontPagination]="false"
+    [nzTotal]="totalCount"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageNo"
+    (nzPageIndexChange)="onPageChange($event)"
+    (nzPageSizeChange)="onPageSizeChange($event)"
+  >
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Email</th>
+      <th>Currency</th>
+      <th>Balance</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let account of accountTable.data">
+      <td>{{ account.id }}</td>
+      <td>{{ account.ownerEmail || 'N/A' }}</td>
+      <td>{{ account.currency || 'N/A' }}</td>
+      <td>{{ account.balance }}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

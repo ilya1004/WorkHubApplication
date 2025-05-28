@@ -1,0 +1,228 @@
+<div nz-flex nzGap="80px" style="margin-left: 150px">
+  <div nz-flex nzVertical nzGap="large">
+    <nz-spin [nzSpinning]="isLoadingUserData">
+      <img
+        [src]="userData.imageUrl ? 'http://localhost:10000/devstoreaccount1/user-images/' + userData.imageUrl : '/assets/images/avatar-placeholder.png'"
+        alt="User avatar"
+        style="border-radius: 10px; max-width: 300px; height: auto"
+        (error)="onImageError($event)"
+      />
+    </nz-spin>
+    <nz-card>
+      <nz-spin [nzSpinning]="isLoadingUserData">
+        <div>
+          <strong>Email:</strong><br />
+          {{ userData.email || 'Not provided' }}
+        </div>
+        <br />
+        <div>
+          <strong>Registration date:</strong><br />
+          {{ userData.registeredAt ? (userData.registeredAt | date:'yyyy-MM-dd') : 'Unknown' }}
+        </div>
+      </nz-spin>
+    </nz-card>
+    <div nz-flex nzGap="middle" nzJustify="center">
+      <button nz-button nzType="primary" (click)="onClickEdit()">
+        <nz-icon nzType="edit" /> Edit
+      </button>
+      <button nz-button nzType="default" (click)="onClickChangePassword()">
+        <nz-icon nzType="lock" /> Change Password
+      </button>
+    </div>
+    <div nz-flex nzJustify="center">
+      <button nz-button nzDanger (click)="onClickDeleteAccount()" style="width: fit-content">
+        <nz-icon nzType="delete" /> Delete Account
+      </button>
+    </div>
+  </div>
+  
+  <div nz-flex nzVertical nzGap="large">
+    <nz-card style="min-width: 550px; min-height: 250px">
+      <nz-spin [nzSpinning]="isLoadingUserData">
+        <h2>{{ userData.firstName }} {{ userData.lastName }}</h2>
+        <div><strong>My nickname:</strong></div>
+        <div>{{ userData.userName }}</div>
+        <br />
+        <div><strong>About me:</strong></div>
+        <div>{{ userData.about || 'No description provided' }}</div>
+        <br />
+        <div><strong>My skills:</strong></div>
+        <div>
+          @if (userData.skills.length > 0) {
+            @for (skill of userData.skills; track skill.id) {
+              <nz-tag nzColor="blue">{{ skill.name }}</nz-tag>
+            }
+          } @else {
+            <span>No skills added yet</span>
+          }
+        </div>
+      </nz-spin>
+    </nz-card>
+    
+    @if (isEditing) {
+      <nz-card>
+        <nz-spin [nzSpinning]="isUpdating">
+          <form
+            [formGroup]="editFreelancerForm"
+            (ngSubmit)="onSubmitEditForm()"
+            style="margin: 15px 0 0 0">
+            <nz-space nzSize="middle" nzDirection="vertical">
+              <div *nzSpaceItem>
+                <input
+                  nz-input
+                  formControlName="firstName"
+                  placeholder="Enter your first name"
+                  class="profile-input" />
+                <div *ngIf="editFreelancerForm.controls.firstName.invalid && editFreelancerForm.controls.firstName.touched" class="input-error-message">
+                  <div *ngIf="editFreelancerForm.controls.firstName.errors?.['required']">First name is required</div>
+                  <div *ngIf="editFreelancerForm.controls.firstName.errors?.['maxlength']">Max 100 characters</div>
+                </div>
+              </div>
+              
+              <div *nzSpaceItem>
+                <input
+                  nz-input
+                  formControlName="lastName"
+                  placeholder="Enter your last name"
+                  class="profile-input" />
+                <div *ngIf="editFreelancerForm.controls.lastName.invalid && editFreelancerForm.controls.lastName.touched" class="input-error-message">
+                  <div *ngIf="editFreelancerForm.controls.lastName.errors?.['required']">Last name is required</div>
+                  <div *ngIf="editFreelancerForm.controls.lastName.errors?.['maxlength']">Max 100 characters</div>
+                </div>
+              </div>
+              
+              <div *nzSpaceItem>
+                <textarea
+                  nz-input
+                  formControlName="about"
+                  placeholder="Tell about yourself"
+                  rows="4"
+                  class="profile-input"></textarea>
+                <div *ngIf="editFreelancerForm.controls.about.invalid && editFreelancerForm.controls.about.touched" class="input-error-message">
+                  <div *ngIf="editFreelancerForm.controls.about.errors?.['maxlength']">Max 1000 characters</div>
+                </div>
+              </div>
+              
+              <div *nzSpaceItem>
+                <nz-select
+                  nzMode="multiple"
+                  formControlName="skillIds"
+                  nzPlaceHolder="Select your skills"
+                  style="min-width: 300px; max-width: 350px;"
+                  [nzLoading]="isLoadingSkills">
+                  <nz-option *ngFor="let skill of availableSkills" [nzValue]="skill.id" [nzLabel]="skill.name"></nz-option>
+                </nz-select>
+              </div>
+              
+              <div *nzSpaceItem>
+                <label>
+                  <input type="checkbox" formControlName="resetImage"> Reset Profile Image
+                </label>
+              </div>
+              
+              <div *nzSpaceItem>
+                <input
+                  type="file"
+                  [disabled]="editFreelancerForm.value.resetImage"
+                  (change)="onFileSelected($event)"
+                  accept="image/*" />
+              </div>
+              
+              <div *nzSpaceItem nz-flex nzGap="middle">
+                <button nz-button nzType="primary" type="submit" [disabled]="editFreelancerForm.invalid" style="border-radius: 7px">
+                  Save Changes
+                </button>
+                <button nz-button nzType="default" (click)="onCancelEdit()">Cancel</button>
+              </div>
+            </nz-space>
+          </form>
+        </nz-spin>
+      </nz-card>
+    }
+    
+    @if (isChangingPassword) {
+      <nz-card>
+        <nz-spin [nzSpinning]="isChangingPasswordInProgress">
+          <form
+            [formGroup]="changePasswordForm"
+            (ngSubmit)="onSubmitChangePassword()"
+            style="margin: 15px 0 0 0">
+            <nz-space nzSize="middle" nzDirection="vertical">
+              <div *nzSpaceItem>
+                <nz-input-group [nzSuffix]="currentPasswordSuffixTemplate" class="profile-input">
+                  <input
+                    nz-input
+                    [type]="currentPasswordVisible ? 'text' : 'password'"
+                    formControlName="currentPassword"
+                    placeholder="Enter current password" />
+                </nz-input-group>
+                <ng-template #currentPasswordSuffixTemplate>
+                  <nz-icon
+                    [nzType]="currentPasswordVisible ? 'eye-invisible' : 'eye'"
+                    nzTheme="outline"
+                    (click)="currentPasswordVisible = !currentPasswordVisible"
+                    style="color: var(--white-color)" />
+                </ng-template>
+                <div *ngIf="changePasswordForm.controls.currentPassword.invalid && changePasswordForm.controls.currentPassword.touched" class="input-error-message">
+                  <div *ngIf="changePasswordForm.controls.currentPassword.errors?.['required']">Current password is required</div>
+                  <div *ngIf="changePasswordForm.controls.currentPassword.errors?.['minlength']">Minimum 6 characters</div>
+                </div>
+              </div>
+              
+              <div *nzSpaceItem>
+                <nz-input-group [nzSuffix]="newPasswordSuffixTemplate" class="profile-input">
+                  <input
+                    nz-input
+                    [type]="newPasswordVisible ? 'text' : 'password'"
+                    formControlName="newPassword"
+                    placeholder="Enter new password" />
+                </nz-input-group>
+                <ng-template #newPasswordSuffixTemplate>
+                  <nz-icon
+                    [nzType]="newPasswordVisible ? 'eye-invisible' : 'eye'"
+                    nzTheme="outline"
+                    (click)="newPasswordVisible = !newPasswordVisible"
+                    style="color: var(--white-color)" />
+                </ng-template>
+                <div *ngIf="changePasswordForm.controls.newPassword.invalid && changePasswordForm.controls.newPassword.touched" class="input-error-message">
+                  <div *ngIf="changePasswordForm.controls.newPassword.errors?.['required']">New password is required</div>
+                  <div *ngIf="changePasswordForm.controls.newPassword.errors?.['minlength']">Minimum 6 characters</div>
+                </div>
+              </div>
+              
+              <div *nzSpaceItem>
+                <nz-input-group [nzSuffix]="confirmPasswordSuffixTemplate" class="profile-input">
+                  <input
+                    nz-input
+                    [type]="confirmPasswordVisible ? 'text' : 'password'"
+                    formControlName="confirmNewPassword"
+                    placeholder="Confirm new password" />
+                </nz-input-group>
+                <ng-template #confirmPasswordSuffixTemplate>
+                  <nz-icon
+                    [nzType]="confirmPasswordVisible ? 'eye-invisible' : 'eye'"
+                    nzTheme="outline"
+                    (click)="confirmPasswordVisible = !confirmPasswordVisible"
+                    style="color: var(--white-color)" />
+                </ng-template>
+                <div *ngIf="changePasswordForm.errors?.['passwordsMismatch'] && changePasswordForm.controls.confirmNewPassword.touched" class="input-error-message">
+                  Passwords do not match
+                </div>
+                <div *ngIf="changePasswordForm.controls.confirmNewPassword.invalid && changePasswordForm.controls.confirmNewPassword.touched" class="input-error-message">
+                  <div *ngIf="changePasswordForm.controls.confirmNewPassword.errors?.['required']">Confirmation is required</div>
+                </div>
+              </div>
+              
+              <div *nzSpaceItem nz-flex nzGap="middle">
+                <button nz-button nzType="primary" type="submit" [disabled]="changePasswordForm.invalid" style="border-radius: 7px">
+                  Change Password
+                </button>
+                <button nz-button nzType="default" (click)="onClickChangePassword()">Cancel</button>
+              </div>
+            </nz-space>
+          </form>
+        </nz-spin>
+      </nz-card>
+    }
+  </div>
+</div>

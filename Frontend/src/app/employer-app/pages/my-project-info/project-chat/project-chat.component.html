@@ -1,0 +1,58 @@
+<nz-card
+  nzTitle="Project Chat"
+  [nzLoading]="loading"
+  style="width: 560px">
+  <div #messageListContainer style="height: 500px; overflow-y: auto; margin-bottom: 20px;">
+    <nz-list
+      [nzDataSource]="messages"
+      nzBordered
+      nzSize="small">
+      <nz-list-item *ngFor="let message of messages">
+        <div>
+          <nz-tag [nzColor]="getMessageSender(message) === 'You' ? TagColor.Green : TagColor.Blue">
+            <strong>
+              {{ getMessageSender(message) }} ({{ message.createdAt | date:'MM.dd.yyyy, hh:mm:ss' }})
+            </strong>
+          </nz-tag>
+          <div *ngIf="message.type === 0">
+            {{ message.text }}
+          </div>
+          <div *ngIf="message.type === 1">
+            File:
+            <a (click)="downloadFile(message)" href="javascript:void(0)">
+              {{ message.fileId }}
+            </a>
+          </div>
+        </div>
+      </nz-list-item>
+    </nz-list>
+  </div>
+  
+  <div nz-flex nzVertical nzAlign="start" nzGap="15px">
+    <div nz-flex nzAlign="center" nzGap="middle">
+      <input
+        nz-input
+        [(ngModel)]="newMessage"
+        placeholder="Type a message"
+        (keyup.enter)="sendMessage()"
+        [disabled]="isTextInputDisabled()"
+        style="width: 240px">
+      <input
+        #fileInput
+        type="file"
+        (change)="onFileSelected($event)"
+        [disabled]="isFileInputDisabled()"
+        style="width: 240px;">
+    </div>
+    <div nz-flex nzAlign="center" nzGap="middle">
+      <button
+        nz-button
+        nzType="primary"
+        (click)="sendMessage()"
+        [disabled]="!newMessage.trim() && !selectedFile">
+        Send
+      </button>
+      <nz-tag nzColor="pink">{{ getMessageTypeLabel() }}</nz-tag>
+    </div>
+  </div>
+</nz-card>

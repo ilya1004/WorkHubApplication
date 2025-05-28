@@ -1,0 +1,45 @@
+<div
+    nz-flex
+    nzAlign="center"
+    nzJustify="center">
+  <ul nz-menu nzMode="horizontal">
+    <li
+        nz-menu-item
+        [routerLink]="'/employer/my-projects'"
+        [nzMatchRouter]="'/employer/my-projects'">
+      <nz-icon nzType="appstore" />
+      My Projects
+    </li>
+    <li
+      nz-menu-item
+      [routerLink]="'/employer/project-tools'"
+      [nzMatchRouter]="'/employer/project-tools'">
+      <nz-icon nzType="tool" />
+      Project Tools
+    </li>
+    <li
+      nz-menu-item
+      [routerLink]="'/employer/my-finances'"
+      [nzMatchRouter]="'/employer/my-finances'">
+      <nz-icon nzType="dollar"/>
+      My Finances
+    </li>
+    <li
+        nz-menu-item
+        [routerLink]="'/employer/my-profile'"
+        [nzMatchRouter]="'/employer/my-profile'">
+      <nz-icon nzType="user" />
+      My Profile
+    </li>
+  </ul>
+
+  <div class="auth-buttons">
+    <button
+        nz-button
+        [nzType]="isAuthenticated() ? 'default' : 'primary'"
+        [routerLink]="isAuthenticated() ? null : '/login'"
+        (click)="isAuthenticated() ? logout() : null">
+      {{ isAuthenticated() ? 'Logout' : 'Login' }}
+    </button>
+  </div>
+</div>

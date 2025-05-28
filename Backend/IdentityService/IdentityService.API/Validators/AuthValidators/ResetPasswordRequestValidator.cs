@@ -19,7 +19,7 @@ public class ResetPasswordRequestValidator : AbstractValidator<ResetPasswordRequ
             .Matches("[0-9]").WithMessage("Password must contain at least one digit.")
             .Matches("[^a-zA-Z0-9]").WithMessage("Password must contain at least one special character.");
 
-        RuleFor(x => x.Token)
+        RuleFor(x => x.Code)
             .NotEmpty().WithMessage("Token is required.");
     }
 }

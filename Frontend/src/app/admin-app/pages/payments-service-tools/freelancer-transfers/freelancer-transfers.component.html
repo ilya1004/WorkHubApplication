@@ -1,0 +1,33 @@
+<div style="width: 100%;">
+  <h2>Freelancer Transfers View</h2>
+  <nz-table
+    #transferTable
+    [nzData]="transfers"
+    [nzLoading]="loading"
+    [nzFrontPagination]="false"
+    [nzTotal]="totalCount"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageNo"
+    (nzPageIndexChange)="onPageChange($event)"
+    (nzPageSizeChange)="onPageSizeChange($event)"
+  >
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Amount</th>
+      <th>Currency</th>
+      <th>Transfer Group</th>
+      <th>Project ID</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let transfer of transferTable.data">
+      <td>{{ transfer.id }}</td>
+      <td>{{ transfer.amount / 100 | number:'1.2-2' }}</td>
+      <td>{{ transfer.currency.toUpperCase() }}</td>
+      <td>{{ transfer.transferGroup || 'N/A' }}</td>
+      <td>{{ transfer.metadata['project_id'] || 'N/A' }}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

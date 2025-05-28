@@ -1,0 +1,37 @@
+<div style="margin: 0 auto;">
+  <h2 style="margin-bottom: 20px;">Chats View</h2>
+  <div style="width: 100%;">
+    <nz-table
+      #chatTable
+      [nzData]="chats"
+      [nzLoading]="loading"
+      [nzFrontPagination]="false"
+      [nzTotal]="totalCount"
+      [nzPageSize]="pageSize"
+      [nzPageIndex]="pageNo"
+      (nzPageIndexChange)="onPageChange($event)"
+      (nzPageSizeChange)="onPageSizeChange($event)"
+    >
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Employer ID</th>
+        <th>Freelancer ID</th>
+        <th>Project ID</th>
+        <th>Active</th>
+        <th style="width: 200px">Created At</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let chat of chatTable.data">
+        <td>{{ chat.id }}</td>
+        <td>{{ chat.employerId }}</td>
+        <td>{{ chat.freelancerId }}</td>
+        <td>{{ chat.projectId }}</td>
+        <td>{{ chat.isActive ? 'Yes' : 'No' }}</td>
+        <td>{{ chat.createdAt | date:'medium' }}</td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>

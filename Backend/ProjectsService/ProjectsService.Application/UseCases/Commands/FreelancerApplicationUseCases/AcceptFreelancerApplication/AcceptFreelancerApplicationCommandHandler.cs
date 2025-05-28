@@ -28,8 +28,7 @@ public class AcceptFreelancerApplicationCommandHandler(
         
         if (project.EmployerId != userId)
         {
-            logger.LogWarning("User {UserId} attempted to access project {ProjectId} without permission", 
-                userId, request.ProjectId);
+            logger.LogWarning("User {UserId} attempted to access project {ProjectId} without permission", userId, request.ProjectId);
             
             throw new ForbiddenException($"You do not have access to project with ID '{request.ProjectId}'");
         }
@@ -46,6 +45,16 @@ public class AcceptFreelancerApplicationCommandHandler(
             logger.LogWarning("Invalid project status {Status} for accepting applications", project.Lifecycle.Status);
             
             throw new BadRequestException("You can accept applications to this project only during accepting applications stage");
+        }
+
+        var hasAcceptedApplication = await unitOfWork.FreelancerApplicationQueriesRepository.AnyAsync(
+            fa => fa.Status == ApplicationStatus.Accepted, cancellationToken);
+
+        if (hasAcceptedApplication)
+        {
+            logger.LogWarning("You already has accepted freelancer application to this project with ID '{ProjectId}'", project.Id);
+            
+            throw new BadRequestException($"You already has accepted freelancer application to this project with ID '{project.Id}'");
         }
         
         var freelancerApplication = await unitOfWork.FreelancerApplicationQueriesRepository.GetByIdAsync(
@@ -67,8 +76,6 @@ public class AcceptFreelancerApplicationCommandHandler(
             throw new BadRequestException("Freelancer application status is not pending");
         }
 
-        logger.LogInformation("Accepting freelancer application {ApplicationId}", request.ApplicationId);
-        
         freelancerApplication.Status = ApplicationStatus.Accepted;
 
         await unitOfWork.FreelancerApplicationCommandsRepository.UpdateAsync(freelancerApplication, cancellationToken);

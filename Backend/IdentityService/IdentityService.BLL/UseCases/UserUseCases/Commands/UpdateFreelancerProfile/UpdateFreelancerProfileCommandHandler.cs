@@ -1,7 +1,5 @@
 ﻿using IdentityService.BLL.Abstractions.BlobService;
 using IdentityService.BLL.Abstractions.UserContext;
-using IdentityService.BLL.Services.BlobService;
-using IdentityService.DAL.Abstractions.Repositories;
 
 namespace IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateFreelancerProfile;
 
@@ -17,34 +15,55 @@ public class UpdateFreelancerProfileCommandHandler(
         var userId = userContext.GetUserId();
         
         logger.LogInformation("Updating freelancer profile for user ID: {UserId}", userId);
-
+        
         var user = await unitOfWork.UsersRepository.GetByIdAsync(
             userId,
+            true,
             cancellationToken,
             u => u.FreelancerProfile!,
-            u => u.FreelancerProfile!.Skills);
+            u => u.FreelancerProfile!.Skills);  
 
         if (user is null)
         {
-            logger.LogWarning("User with ID {UserId} not found", userId);
             throw new NotFoundException($"User with ID '{userId}' not found");
         }
-
-        logger.LogInformation("Mapping freelancer profile changes");
         
         mapper.Map(request.FreelancerProfile, user.FreelancerProfile);
 
-        logger.LogInformation("Updating freelancer skills");
-        
-        var skills = await unitOfWork.FreelancerSkillsRepository.ListAsync(
-            s => request.FreelancerProfile.SkillIds.Contains(s.Id), cancellationToken);
+        if (request.FreelancerProfile.SkillIds is not null)
+        {
+            var newSkillIds = request.FreelancerProfile.SkillIds.ToList();
+            var currentSkills = user.FreelancerProfile!.Skills.ToList();
 
-        user.FreelancerProfile!.Skills = skills.ToList();
+            var skillsToRemove = currentSkills.Where(s => !newSkillIds.Contains(s.Id)).ToList();
+            foreach (var skill in skillsToRemove)
+            {
+                user.FreelancerProfile.Skills.Remove(skill);
+            }
+
+            var allPotentialSkills = await unitOfWork.FreelancerSkillsRepository.ListAsync(
+                s => newSkillIds.Contains(s.Id), cancellationToken);
+
+            var skillsToAdd = allPotentialSkills.Where(s =>
+                !currentSkills.Select(cs => cs.Id).Contains(s.Id)).ToList();
+
+            foreach (var skill in skillsToAdd)
+            {
+                user.FreelancerProfile.Skills.Add(skill);
+            }
+        }
+        else
+        {
+            var skillsToRemove = user.FreelancerProfile!.Skills.ToList();
+            
+            foreach (var skill in skillsToRemove)
+            {
+                user.FreelancerProfile.Skills.Remove(skill);
+            }
+        }
 
         if (request.FreelancerProfile.ResetImage)
         {
-            logger.LogInformation("Resetting user image");
-        
             user.ImageUrl = null;
         }
 
@@ -56,7 +75,7 @@ public class UpdateFreelancerProfileCommandHandler(
             
                 throw new BadRequestException("Only image files are allowed.");
             }
-            
+
             if (!string.IsNullOrEmpty(user.ImageUrl) && Guid.TryParse(user.ImageUrl, out var imageId))
             {
                 logger.LogInformation("Deleting old image with ID: {ImageId}", imageId);
@@ -68,13 +87,12 @@ public class UpdateFreelancerProfileCommandHandler(
             
             var imageFileId = await blobService.UploadAsync(
                 request.FileStream,
-                request.ContentType!,
+                request.ContentType,
                 cancellationToken);
 
             user.ImageUrl = imageFileId.ToString();
         }
-
-        await unitOfWork.UsersRepository.UpdateAsync(user, cancellationToken);
+        
         await unitOfWork.SaveAllAsync(cancellationToken);
 
         logger.LogInformation("Successfully updated freelancer profile for user ID: {UserId}", userId);

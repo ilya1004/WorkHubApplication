@@ -1,6 +1,4 @@
-﻿using IdentityService.DAL.Abstractions.Repositories;
-
-namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.UpdateEmployerIndustry;
+﻿namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.UpdateEmployerIndustry;
 
 public class UpdateEmployerIndustryCommandHandler(
     IUnitOfWork unitOfWork,

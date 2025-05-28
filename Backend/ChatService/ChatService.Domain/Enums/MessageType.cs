@@ -2,6 +2,6 @@ namespace ChatService.Domain.Enums;
 
 public enum MessageType
 {
-    Text,
-    File
+    Text = 0,
+    File = 1
 }

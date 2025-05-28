@@ -22,12 +22,11 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
 {
     [HttpPost]
     [Authorize(Policy = AuthPolicies.EmployerPolicy)]
-    public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequest request, 
-        CancellationToken cancellationToken = default)
+    public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequest request, CancellationToken cancellationToken = default)
     {
-        await mediator.Send(new CreateProjectCommand(request.Project, request.Lifecycle), cancellationToken);
-        
-        return Created();
+        var projectId = await mediator.Send(new CreateProjectCommand(request.Project, request.Lifecycle), cancellationToken);
+
+        return Ok(new { projectId = projectId.ToString() });
     }
 
     [HttpGet]
@@ -75,8 +74,7 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetAllProjects([FromQuery] GetPaginatedListRequest request, 
-        CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAllProjects([FromQuery] GetPaginatedListRequest request, CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(new GetAllProjectsQuery(request.PageNo, request.PageSize), cancellationToken);
 
@@ -97,8 +95,7 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
     [HttpPatch]
     [Route("{projectId:guid}/cancel-project")]
     [Authorize(Policy = AuthPolicies.EmployerPolicy)]
-    public async Task<IActionResult> UpdateProjectStatus([FromRoute] Guid projectId, 
-        CancellationToken cancellationToken = default)
+    public async Task<IActionResult> UpdateProjectStatus([FromRoute] Guid projectId, CancellationToken cancellationToken = default)
     {
         await mediator.Send(new CancelProjectCommand(projectId), cancellationToken);
 
@@ -106,10 +103,9 @@ public class ProjectsController(IMediator mediator, IMapper mapper) : Controller
     }
 
     [HttpPatch]
-    [Route("{projectId:guid}/send-acceptance-request")]
+    [Route("{projectId:guid}/request-acceptance")]
     [Authorize(Policy = AuthPolicies.FreelancerPolicy)]
-    public async Task<IActionResult> UpdateAcceptanceRequest([FromRoute] Guid projectId, 
-        CancellationToken cancellationToken = default)
+    public async Task<IActionResult> UpdateAcceptanceRequest([FromRoute] Guid projectId, CancellationToken cancellationToken = default)
     {
         await mediator.Send(new UpdateAcceptanceRequestCommand(projectId), cancellationToken);
 

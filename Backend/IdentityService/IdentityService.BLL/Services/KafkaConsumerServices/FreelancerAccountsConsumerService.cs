@@ -2,7 +2,6 @@ using System.Text.Json;
 using Confluent.Kafka;
 using IdentityService.BLL.DTOs;
 using IdentityService.BLL.Settings;
-using IdentityService.DAL.Abstractions.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -84,7 +83,7 @@ public class FreelancerAccountsConsumerService(
 
     private async Task ProcessMessageAsync(SaveFreelancerAccountIdDto dto, CancellationToken stoppingToken)
     {
-        logger.LogInformation("Processing freelancer account ID for user {UserId}", dto.UserId);
+        logger.LogInformation("Processing freelancer account ID '{AccountId}' for user {UserId}", dto.FreelancerAccountId, dto.UserId);
         
         using var scope = serviceScopeFactory.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();

@@ -44,6 +44,7 @@ public class UpdateAcceptanceRequestCommandHandler(
         logger.LogInformation("Setting acceptance requested for project {ProjectId}", request.ProjectId);
         
         project.Lifecycle.AcceptanceRequested = true;
+        project.Lifecycle.Status = ProjectStatus.PendingForReview;
         
         await unitOfWork.ProjectCommandsRepository.UpdateAsync(project, cancellationToken);
         await unitOfWork.SaveAllAsync(cancellationToken);

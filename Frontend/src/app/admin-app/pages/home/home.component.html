@@ -1,0 +1,108 @@
+<div nz-flex nzAlign="center" nzGap="10px">
+  <nz-icon nzType="heart" style="font-size: 30px; margin-bottom: 10px"/>
+  <h1>Services Health Checks</h1>
+</div>
+
+<h2>Projects Service</h2>
+<nz-table
+  #projectsTable
+  [nzData]="getEntryValues(projectsService.response)"
+  [nzShowPagination]="false"
+  [nzLoading]="loading">
+  <thead>
+  <tr>
+    <th>Component</th>
+    <th>Status</th>
+    <th>Duration</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let entry of projectsTable.data; let i = index">
+    <td>{{ getEntryKeys(projectsService.response)[i] }}</td>
+    <td>
+      <nz-tag [nzColor]="getStatusColor(entry.status)">
+        {{ entry.status }}
+      </nz-tag>
+    </td>
+    <td>{{ entry.duration }}</td>
+  </tr>
+  </tbody>
+</nz-table>
+
+<h2>Identity Service</h2>
+<nz-table
+  #identityTable
+  [nzData]="getEntryValues(identityService.response)"
+  [nzShowPagination]="false"
+  [nzLoading]="loading">
+  <thead>
+  <tr>
+    <th>Component</th>
+    <th>Status</th>
+    <th>Duration</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let entry of identityTable.data; let i = index">
+    <td>{{ getEntryKeys(identityService.response)[i] }}</td>
+    <td>
+      <nz-tag [nzColor]="getStatusColor(entry.status)">
+        {{ entry.status }}
+      </nz-tag>
+    </td>
+    <td>{{ entry.duration }}</td>
+  </tr>
+  </tbody>
+</nz-table>
+
+<h2>Payments Service</h2>
+<nz-table
+  #paymentsTable
+  [nzData]="getEntryValues(paymentsService.response)"
+  [nzShowPagination]="false"
+  [nzLoading]="loading">
+  <thead>
+  <tr>
+    <th>Component</th>
+    <th>Status</th>
+    <th>Duration</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let entry of paymentsTable.data; let i = index">
+    <td>{{ getEntryKeys(paymentsService.response)[i] }}</td>
+    <td>
+      <nz-tag [nzColor]="getStatusColor(entry.status)">
+        {{ entry.status }}
+      </nz-tag>
+    </td>
+    <td>{{ entry.duration }}</td>
+  </tr>
+  </tbody>
+</nz-table>
+
+<h2>Chat Service</h2>
+<nz-table
+  #chatTable
+  [nzData]="getEntryValues(chatService.response)"
+  [nzShowPagination]="false"
+  [nzLoading]="loading">
+  <thead>
+  <tr>
+    <th>Component</th>
+    <th>Status</th>
+    <th>Duration</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let entry of chatTable.data; let i = index">
+    <td>{{ getEntryKeys(chatService.response)[i] }}</td>
+    <td>
+      <nz-tag [nzColor]="getStatusColor(entry.status)">
+        {{ entry.status }}
+      </nz-tag>
+    </td>
+    <td>{{ entry.duration }}</td>
+  </tr>
+  </tbody>
+</nz-table>

@@ -22,7 +22,7 @@ public class ResetPasswordCommandHandler(
 
         logger.LogInformation("Retrieving reset code {Code} from cache", request.Code);
         
-        var token = await cachedService.GetAsync(request.Code);
+        var token = await cachedService.GetAsync(request.Code, cancellationToken);
         
         if (string.IsNullOrEmpty(token))
         {
@@ -44,7 +44,7 @@ public class ResetPasswordCommandHandler(
             throw new BadRequestException($"Password is not successfully changed. Errors: {errors}");
         }
         
-        await cachedService.DeleteAsync(request.Code);
+        await cachedService.DeleteAsync(request.Code, cancellationToken);
         
         logger.LogInformation("Password reset successfully for user {UserId}", user.Id);
     }

@@ -1,0 +1,257 @@
+<div nz-flex nzJustify="center" nzAlign="center">
+  <nz-card style="min-width: 355px; margin: 200px 0 0 0">
+    <div>
+      <h2>Register</h2>
+    </div>
+    <div>
+      <span style="font-size: 18px; color: var(--white-color)">
+        You are:
+      </span>
+      <nz-radio-group
+        [(ngModel)]="registerUserState"
+        nzButtonStyle="solid"
+        style="margin: 0 0 0 5px">
+        <label
+          nz-radio-button
+          nzValue="freelancer"
+          style="border-top-left-radius: 7px; border-bottom-left-radius: 7px">
+          Freelancer
+        </label>
+        <label
+          nz-radio-button
+          nzValue="employer"
+          style="border-top-right-radius: 7px; border-bottom-right-radius: 7px">
+          Employer
+        </label>
+      </nz-radio-group>
+    </div>
+    @if (registerUserState == 'freelancer') {
+      <form
+        [formGroup]="freelancerForm"
+        (ngSubmit)="onSubmitRegister()"
+        style="margin: 15px 0 0 0">
+        <nz-space nzSize="middle" nzDirection="vertical">
+
+          <div *nzSpaceItem>
+            <input
+              nz-input
+              formControlName="userName"
+              placeholder="Enter your nickname"
+              class="register-card__input">
+            <div *ngIf="freelancerForm.controls.userName.invalid && freelancerForm.controls.userName.touched" class="input-error-message">
+              <div *ngIf="freelancerForm.controls.userName.errors?.['required']">Username is required</div>
+              <div *ngIf="freelancerForm.controls.userName.errors?.['maxlength']">Username must be at most 200 characters</div>
+            </div>
+          </div>
+
+          <div *nzSpaceItem>
+            <input
+              nz-input
+              formControlName="firstName"
+              placeholder="Enter your first name"
+              class="register-card__input">
+            <div *ngIf="freelancerForm.controls.firstName.invalid && freelancerForm.controls.firstName.touched" class="input-error-message">
+              <div *ngIf="freelancerForm.controls.firstName.errors?.['required']">First name is required</div>
+              <div *ngIf="freelancerForm.controls.firstName.errors?.['maxlength']">First name must be at most 100 characters</div>
+            </div>
+          </div>
+
+          <div *nzSpaceItem>
+            <input
+              nz-input
+              formControlName="lastName"
+              placeholder="Enter your last name"
+              class="register-card__input">
+            <div *ngIf="freelancerForm.controls.lastName.invalid && freelancerForm.controls.lastName.touched" class="input-error-message">
+              <div *ngIf="freelancerForm.controls.lastName.errors?.['required']">Last name is required</div>
+              <div *ngIf="freelancerForm.controls.lastName.errors?.['maxlength']">Last name must be at most 100 characters</div>
+            </div>
+          </div>
+
+          <div *nzSpaceItem>
+            <input
+              nz-input
+              formControlName="email"
+              placeholder="Enter your email"
+              class="register-card__input">
+            <div *ngIf="freelancerForm.controls.email.invalid && freelancerForm.controls.email.touched" class="input-error-message">
+              <div *ngIf="freelancerForm.controls.email.errors?.['required']">Email is required</div>
+              <div *ngIf="freelancerForm.controls.email.errors?.['email']">Invalid email format</div>
+            </div>
+          </div>
+
+          <div *nzSpaceItem>
+            <nz-input-group
+              [nzSuffix]="suffixTemplatePassword"
+              class="register-card__input">
+              <input
+                nz-input
+                formControlName="password"
+                [type]="passwordVisible ? 'text' : 'password'"
+                placeholder="Enter your password"
+                style="background-color: inherit; color: inherit"/>
+            </nz-input-group>
+            <ng-template #suffixTemplatePassword>
+              <nz-icon
+                class="ant-input-password-icon"
+                [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                (click)="passwordVisible = !passwordVisible"
+                nzTheme="outline"
+                style="color: var(--white-color)"/>
+            </ng-template>
+            <div *ngIf="freelancerForm.controls.password.invalid && freelancerForm.controls.password.touched" class="input-error-message">
+              <div *ngIf="freelancerForm.controls.password.errors?.['required']" style="max-width: 300px">
+                Password is required
+              </div>
+              <div *ngIf="freelancerForm.controls.password.errors?.['minlength']" style="max-width: 300px">
+                Password must be at least 8 characters
+              </div>
+              <div *ngIf="freelancerForm.controls.password.errors?.['pattern']" style="max-width: 300px">
+                Password must contain uppercase, lowercase, digit, and special character
+              </div>
+            </div>
+          </div>
+
+          <div *nzSpaceItem>
+            <nz-input-group
+              [nzSuffix]="suffixTemplateConfirmPassword"
+              class="register-card__input">
+              <input
+                nz-input
+                formControlName="passwordConfirm"
+                [type]="passwordConfirmVisible ? 'text' : 'password'"
+                placeholder="Confirm your password"
+                style="background-color: inherit; color: inherit"/>
+            </nz-input-group>
+            <ng-template #suffixTemplateConfirmPassword>
+              <nz-icon
+                class="ant-input-password-icon"
+                [nzType]="passwordConfirmVisible ? 'eye-invisible' : 'eye'"
+                (click)="passwordConfirmVisible = !passwordConfirmVisible"
+                nzTheme="outline"
+                style="color: var(--white-color)"/>
+            </ng-template>
+            <div *ngIf="freelancerForm.controls.passwordConfirm.invalid && freelancerForm.controls.passwordConfirm.touched" class="input-error-message">
+              <div *ngIf="freelancerForm.errors?.['passwordsMismatch']">Passwords do not match</div>
+            </div>
+          </div>
+
+          <div *nzSpaceItem>
+            <button nz-button nzType="primary" type="submit" style="border-radius: 7px">Sign Up</button>
+          </div>
+
+        </nz-space>
+      </form>
+    } @else {
+      <form
+        [formGroup]="employerForm"
+        (ngSubmit)="onSubmitRegister()"
+        style="margin: 15px 0 0 0">
+        <nz-space nzSize="middle" nzDirection="vertical">
+
+          <div *nzSpaceItem>
+            <input
+              nz-input
+              formControlName="userName"
+              placeholder="Enter your nickname"
+              class="register-card__input">
+            <div *ngIf="employerForm.controls.userName.invalid && employerForm.controls.userName.touched" class="input-error-message">
+              <div *ngIf="employerForm.controls.userName.errors?.['required']">Username is required</div>
+              <div *ngIf="employerForm.controls.userName.errors?.['maxlength']">Username must be at most 200 characters</div>
+            </div>
+          </div>
+
+          <div *nzSpaceItem>
+            <input
+              nz-input
+              formControlName="companyName"
+              placeholder="Enter your company name"
+              class="register-card__input">
+            <div *ngIf="employerForm.controls.companyName.invalid && employerForm.controls.companyName.touched" class="input-error-message">
+              <div *ngIf="employerForm.controls.companyName.errors?.['required']">First name is required</div>
+              <div *ngIf="employerForm.controls.companyName.errors?.['maxlength']">First name must be at most 100 characters</div>
+            </div>
+          </div>
+
+          <div *nzSpaceItem>
+            <input
+              nz-input
+              formControlName="email"
+              placeholder="Enter your email"
+              class="register-card__input">
+            <div *ngIf="employerForm.controls.email.invalid && employerForm.controls.email.touched" class="input-error-message">
+              <div *ngIf="employerForm.controls.email.errors?.['required']">Email is required</div>
+              <div *ngIf="employerForm.controls.email.errors?.['email']">Invalid email format</div>
+            </div>
+          </div>
+
+          <div *nzSpaceItem>
+            <nz-input-group
+              [nzSuffix]="suffixTemplatePassword"
+              class="register-card__input">
+              <input
+                nz-input
+                formControlName="password"
+                [type]="passwordVisible ? 'text' : 'password'"
+                placeholder="Enter your password"
+                style="background-color: inherit; color: inherit"/>
+            </nz-input-group>
+            <ng-template #suffixTemplatePassword>
+              <nz-icon
+                class="ant-input-password-icon"
+                [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                (click)="passwordVisible = !passwordVisible"
+                nzTheme="outline"
+                style="color: var(--white-color)"/>
+            </ng-template>
+            <div *ngIf="employerForm.controls.password.invalid && employerForm.controls.password.touched" class="input-error-message">
+              <div *ngIf="employerForm.controls.password.errors?.['required']">Password is required</div>
+              <div *ngIf="employerForm.controls.password.errors?.['minlength']">Password must be at least 8 characters</div>
+              <div *ngIf="employerForm.controls.password.errors?.['pattern']">Password must contain uppercase, lowercase, digit, and special character</div>
+            </div>
+          </div>
+
+          <div *nzSpaceItem>
+            <nz-input-group
+              [nzSuffix]="suffixTemplateConfirmPassword"
+              class="register-card__input">
+              <input
+                nz-input
+                formControlName="passwordConfirm"
+                [type]="passwordConfirmVisible ? 'text' : 'password'"
+                placeholder="Confirm your password"
+                style="background-color: inherit; color: inherit"/>
+            </nz-input-group>
+            <ng-template #suffixTemplateConfirmPassword>
+              <nz-icon
+                class="ant-input-password-icon"
+                [nzType]="passwordConfirmVisible ? 'eye-invisible' : 'eye'"
+                (click)="passwordConfirmVisible = !passwordConfirmVisible"
+                nzTheme="outline"
+                style="color: var(--white-color)"/>
+            </ng-template>
+            <div *ngIf="employerForm.controls.passwordConfirm.invalid && employerForm.controls.passwordConfirm.touched" class="input-error-message">
+              <div *ngIf="employerForm.errors?.['passwordsMismatch']">Passwords do not match</div>
+            </div>
+          </div>
+
+          <div *nzSpaceItem>
+            <button nz-button nzType="primary" type="submit" style="border-radius: 7px">Sign Up</button>
+          </div>
+
+        </nz-space>
+      </form>
+    }
+    <div style="margin: 10px 0 0 0; color: var(--white-color)">
+      Already have an account?
+      <button
+        nz-button
+        nzType="link"
+        nzSize="small"
+        style="padding: 0 0 0 0"
+        [routerLink]="'/login'">
+        Login now!
+      </button>
+    </div>
+  </nz-card>
+</div>

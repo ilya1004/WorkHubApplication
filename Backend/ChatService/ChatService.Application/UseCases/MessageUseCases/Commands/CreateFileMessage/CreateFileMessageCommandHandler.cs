@@ -7,9 +7,9 @@ public class CreateFileMessageCommandHandler(
     IMapper mapper,
     IUserContext userContext,
     IBlobService blobService,
-    ILogger<CreateFileMessageCommandHandler> logger) : IRequestHandler<CreateFileMessageCommand, Guid>
+    ILogger<CreateFileMessageCommandHandler> logger) : IRequestHandler<CreateFileMessageCommand, Message>
 {
-    public async Task<Guid> Handle(CreateFileMessageCommand request, CancellationToken cancellationToken)
+    public async Task<Message> Handle(CreateFileMessageCommand request, CancellationToken cancellationToken)
     {
         logger.LogInformation("Creating file message in chat {ChatId} by user {UserId}", 
             request.ChatId, userContext.GetUserId());
@@ -43,6 +43,6 @@ public class CreateFileMessageCommandHandler(
         logger.LogInformation("File message created successfully. File ID: {FileId}, Message ID: {MessageId}", 
             fileId, message.Id);
 
-        return fileId;
+        return message;
     }
 }

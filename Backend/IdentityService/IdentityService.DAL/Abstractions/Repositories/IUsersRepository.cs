@@ -4,13 +4,14 @@ namespace IdentityService.DAL.Abstractions.Repositories;
 
 public interface IUsersRepository
 {
-    Task<AppUser?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default,
+    Task<AppUser?> GetByIdAsync(Guid id, bool withTracking = true, CancellationToken cancellationToken = default,
         params Expression<Func<AppUser, object>>[]? includesProperties);
 
     Task<AppUser?> FirstOrDefaultAsync(Expression<Func<AppUser, bool>> filter, CancellationToken cancellationToken = default,
         params Expression<Func<AppUser, object>>[]? includesProperties);
 
-    Task<IReadOnlyList<AppUser>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<AppUser>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default, 
+        params Expression<Func<AppUser, object>>[]? includesProperties);
 
     Task<IReadOnlyList<AppUser>> PaginatedListAsync(Expression<Func<AppUser, bool>>? filter, int offset, int limit,
         CancellationToken cancellationToken = default, params Expression<Func<AppUser, object>>[]? includesProperties);

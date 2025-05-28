@@ -13,9 +13,15 @@ public class CachedUsersRepository(
     IOptions<CacheOptions> options) : IUsersRepository
 {
     private readonly JsonSerializerOptions _jsonOptions = new() { ReferenceHandler = ReferenceHandler.IgnoreCycles };
-    public async Task<AppUser?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default, 
+    
+    public async Task<AppUser?> GetByIdAsync(Guid id, bool withTracking = true, CancellationToken cancellationToken = default,
         params Expression<Func<AppUser, object>>[]? includesProperties)
     {
+        if (includesProperties is not null && includesProperties.Length > 0)
+        {
+            return await usersRepository.GetByIdAsync(id, withTracking, cancellationToken, includesProperties);
+        }
+        
         var cacheKey = $"{nameof(AppUser)}:{id}";
         var cachedUser = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
 
@@ -24,7 +30,7 @@ public class CachedUsersRepository(
             return JsonSerializer.Deserialize<AppUser>(cachedUser, _jsonOptions);
         }
 
-        var user = await usersRepository.GetByIdAsync(id, cancellationToken, includesProperties);
+        var user = await usersRepository.GetByIdAsync(id, withTracking, cancellationToken, includesProperties);
 
         if (user != null)
         {
@@ -36,16 +42,17 @@ public class CachedUsersRepository(
 
         return user;
     }
-
+    
     public async Task<AppUser?> FirstOrDefaultAsync(Expression<Func<AppUser, bool>> filter, CancellationToken cancellationToken = default,
         params Expression<Func<AppUser, object>>[]? includesProperties)
     {
         return await usersRepository.FirstOrDefaultAsync(filter, cancellationToken, includesProperties);
     }
 
-    public async Task<IReadOnlyList<AppUser>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<AppUser>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default,
+        params Expression<Func<AppUser, object>>[]? includesProperties)
     {
-        return await usersRepository.PaginatedListAllAsync(offset, limit, cancellationToken);
+        return await usersRepository.PaginatedListAllAsync(offset, limit, cancellationToken, includesProperties);
     }
 
     public async Task<IReadOnlyList<AppUser>> PaginatedListAsync(Expression<Func<AppUser, bool>>? filter, int offset, int limit,
@@ -73,7 +80,6 @@ public class CachedUsersRepository(
 
     private async Task InvalidateCacheAsync(Guid userId)
     {
-        var cacheKey = $"{nameof(AppUser)}:{userId}";
-        await distributedCache.RemoveAsync(cacheKey);
+        await distributedCache.RemoveAsync($"{nameof(AppUser)}:{userId}");
     }
 }

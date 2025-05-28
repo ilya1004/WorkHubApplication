@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using ProjectsService.Infrastructure.Data;
-using ProjectsService.Infrastructure.Settings;
 
 namespace ProjectsService.Infrastructure.Repositories;
 

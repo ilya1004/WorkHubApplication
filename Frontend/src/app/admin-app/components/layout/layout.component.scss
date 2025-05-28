@@ -1,0 +1,40 @@
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.navbar-wrapper {
+  max-width: 1200px;
+  margin: 3px auto;
+  width: 100%;
+}
+
+.content-wrapper {
+  flex: 1 0 auto;
+  max-width: 1200px;
+  margin: 20px auto 20px auto;
+  width: 100%;
+}
+
+.footer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--light-gray-color);
+  padding: 15px 0;
+  text-align: center;
+  width: 100%;
+
+  .anticon {
+    margin: 0 5px 0 0;
+  }
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  color: #666;
+
+  p {
+    margin: 0 0 8px 0;
+  }
+}

@@ -1,0 +1,91 @@
+<div style="width: 100%;">
+  <nz-card [nzLoading]="loading" nzTitle="Freelancer Skills Management">
+    <nz-table
+      #skillTable
+      [nzData]="skills"
+      [nzLoading]="loading"
+      [nzFrontPagination]="false"
+      [nzTotal]="totalCount"
+      [nzPageSize]="pageSize"
+      [nzPageIndex]="pageNo"
+      (nzPageIndexChange)="onPageChange($event)"
+      (nzPageSizeChange)="onPageSizeChange($event)"
+    >
+      <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let skill of skillTable.data">
+        <td>{{ skill.id }}</td>
+        <td>{{ skill.name }}</td>
+        <td>
+          <button
+            nz-button
+            nzType="default"
+            (click)="editSkill(skill)"
+            style="margin-right: 8px"
+          >
+            Edit
+          </button>
+          <button
+            nz-button
+            nzType="default"
+            nzDanger
+            (click)="deleteSkill(skill.id)"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    
+    <div>
+      <button nz-button nzType="primary" (click)="toggleCreateForm()">
+        {{ showCreateForm ? 'Cancel' : 'Create New' }}
+      </button>
+    </div>
+    
+    <div *ngIf="showCreateForm" style="margin-top: 16px;">
+      <h4 style="margin-bottom: 12px;">Create Skill</h4>
+      <nz-form-item>
+        <nz-form-label>Name</nz-form-label>
+        <input
+          nz-input
+          [(ngModel)]="createForm.name"
+          placeholder="Enter skill name"
+          style="width: 250px"
+        />
+      </nz-form-item>
+      <div nz-flex nzGap="10px" style="margin-top: 15px">
+        <button nz-button nzType="primary" (click)="createSkill()">
+          Create
+        </button>
+        <button nz-button (click)="toggleCreateForm()">Cancel</button>
+      </div>
+    </div>
+    
+    <div *ngIf="showEditForm" style="margin-top: 16px;">
+      <h4 style="margin-bottom: 12px;">Edit Skill</h4>
+      <nz-form-item>
+        <nz-form-label>Name</nz-form-label>
+        <input
+          nz-input
+          [(ngModel)]="editForm.name"
+          placeholder="Enter skill name"
+          style="width: 250px"
+        />
+      </nz-form-item>
+      <div nz-flex nzGap="10px" style="margin-top: 15px">
+        <button nz-button nzType="primary" (click)="updateSkill()">
+          Save
+        </button>
+        <button nz-button (click)="cancelEdit()">Cancel</button>
+      </div>
+    </div>
+  </nz-card>
+</div>

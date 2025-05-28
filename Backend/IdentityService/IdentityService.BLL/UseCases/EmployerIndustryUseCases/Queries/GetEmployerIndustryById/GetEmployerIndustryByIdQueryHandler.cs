@@ -1,6 +1,4 @@
-﻿using IdentityService.DAL.Abstractions.Repositories;
-
-namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetEmployerIndustryById;
+﻿namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Queries.GetEmployerIndustryById;
 
 public class GetEmployerIndustryByIdQueryHandler(
     IUnitOfWork unitOfWork,

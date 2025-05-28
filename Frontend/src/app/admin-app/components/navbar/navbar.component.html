@@ -1,0 +1,52 @@
+<div
+    nz-flex
+    nzAlign="center"
+    nzJustify="center">
+  <ul nz-menu nzMode="horizontal">
+    <li
+        nz-menu-item
+        [routerLink]="'/admin/home'"
+        [nzMatchRouter]="'/admin/home'">
+      <nz-icon nzType="home" />
+      Home
+    </li>
+    <li
+      nz-menu-item
+      [routerLink]="'/admin/projects-service-tools'"
+      [nzMatchRouter]="'/admin/projects-service-tools'">
+      <nz-icon nzType="product"/>
+      Projects Service Tools
+    </li>
+    <li
+      nz-menu-item
+      [routerLink]="'/admin/identity-service-tools'"
+      [nzMatchRouter]="'/admin/identity-service-tools'">
+      <nz-icon nzType="user"/>
+      Identity Service Tools
+    </li>
+    <li
+      nz-menu-item
+      [routerLink]="'/admin/payments-service-tools'"
+      [nzMatchRouter]="'/admin/payments-service-tools'">
+      <nz-icon nzType="pay-circle"/>
+      Payments Service Tools
+    </li>
+    <li
+      nz-menu-item
+      [routerLink]="'/admin/chat-service-tools'"
+      [nzMatchRouter]="'/admin/chat-service-tools'">
+      <nz-icon nzType="message"/>
+      Chat Service Tools
+    </li>
+  </ul>
+
+  <div class="auth-buttons">
+    <button
+        nz-button
+        [nzType]="isAuthenticated() ? 'default' : 'primary'"
+        [routerLink]="isAuthenticated() ? null : '/login'"
+        (click)="isAuthenticated() ? logout() : null">
+      {{ isAuthenticated() ? 'Logout' : 'Login' }}
+    </button>
+  </div>
+</div>

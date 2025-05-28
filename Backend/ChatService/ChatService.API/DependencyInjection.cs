@@ -59,12 +59,34 @@ public static class DependencyInjection
                     OnMessageReceived = context =>
                     {
                         var accessToken = context.Request.Query["access_token"];
-                        var path = context.HttpContext.Request.Path;
-                        
-                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                        if (!string.IsNullOrEmpty(accessToken) && context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
                         {
+                            Console.WriteLine($"SignalR access_token: {accessToken}");
                             context.Token = accessToken;
+                            return Task.CompletedTask;
                         }
+
+                        if (context.Request.Headers.TryGetValue("Authorization", out var authHeader))
+                        {
+                            var rawHeader = authHeader.ToString();
+                            Console.WriteLine($"Raw Authorization header: {rawHeader}");
+                            if (rawHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var token = rawHeader.Substring("Bearer ".Length).Trim();
+                                Console.WriteLine($"Extracted token: {token}");
+                                context.Token = token;
+                            }
+                        }
+                        return Task.CompletedTask;
+                    },
+                    OnAuthenticationFailed = context =>
+                    {
+                        Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        Console.WriteLine("Token validated successfully");
                         return Task.CompletedTask;
                     }
                 };

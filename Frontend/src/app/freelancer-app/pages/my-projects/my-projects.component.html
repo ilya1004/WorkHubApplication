@@ -1,0 +1,81 @@
+<div nz-flex nzAlign="center" nzGap="40px">
+  <nz-form-item>
+    <nz-form-label>Employer ID</nz-form-label>
+    <nz-input-group>
+      <input
+        nz-input
+        [(ngModel)]="filterForm.employerId"
+        placeholder="Enter employer ID"
+        style="width: 280px"/>
+    </nz-input-group>
+  </nz-form-item>
+  
+  <nz-form-item style="width: 280px">
+    <nz-form-label>Status</nz-form-label>
+    <nz-select
+      [(ngModel)]="filterForm.projectStatus"
+      nzPlaceHolder="Select status"
+      style="width: 230px">
+      <nz-option
+        *ngFor="let status of projectStatuses"
+        [nzValue]="status.value"
+        [nzLabel]="status.label">
+      </nz-option>
+    </nz-select>
+  </nz-form-item>
+  
+  <div nz-flex nzGap="10px" nzJustify="center" style="min-width: 200px; margin: 8px 0 0 0" >
+    <button
+      nz-button
+      nzType="primary"
+      (click)="applyFilters()">
+      Apply Filters
+    </button>
+    <button
+      nz-button
+      (click)="resetFilters()">
+      Reset
+    </button>
+  </div>
+</div>
+
+<nz-table
+  #projectTable
+  [nzData]="projects"
+  [nzLoading]="loading"
+  [nzFrontPagination]="false"
+  [nzTotal]="totalCount"
+  [nzPageSize]="filterForm.pageSize"
+  [nzPageIndex]="filterForm.pageNo"
+  (nzPageIndexChange)="onPageChange($event)"
+  (nzPageSizeChange)="onPageSizeChange($event)">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Title</th>
+    <th>Budget</th>
+    <th>Category</th>
+    <th>Status</th>
+    <th>Created At</th>
+    <th>Action</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let project of projectTable.data">
+    <td>{{project.id}}</td>
+    <td>{{project.title}}</td>
+    <td>{{project.budget}}</td>
+    <td>{{project.category?.name || 'None'}}</td>
+    <td>{{getStatusLabel(project.lifecycle.status)}}</td>
+    <td>{{project.lifecycle.createdAt | date}}</td>
+    <td>
+      <button
+        nz-button
+        nzType="primary"
+        (click)="navigateToProject(project.id)">
+        Work on Project
+      </button>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>

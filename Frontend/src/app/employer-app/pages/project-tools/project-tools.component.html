@@ -1,0 +1,133 @@
+<div nz-flex nzGap="30px">
+  <div nz-flex nzVertical nzGap="middle" nzAlign="start">
+    <button nz-button nzType="primary" (click)="onCreateProject()">Create</button>
+    <nz-table
+      [nzData]="projects"
+      [nzFrontPagination]="false"
+      [nzTotal]="projectTotalCount"
+      [nzPageSize]="projectPageSize"
+      [nzPageIndex]="projectPageNo"
+      (nzPageIndexChange)="onProjectPageChange($event)"
+      (nzPageSizeChange)="onProjectPageSizeChange($event)"
+      style="min-width: 600px">
+      <thead>
+      <tr>
+        <th>Title</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let project of projects">
+        <td>{{ project.title }}</td>
+        <td>{{ getStatusLabel(project.lifecycle.status) }}</td>
+        <td>
+          <div nz-flex nzGap="10px">
+            <button [disabled]="project.lifecycle.status !== ProjectStatus.Published" nz-button (click)="onEditProject(project)">Edit</button>
+            <button nz-button (click)="onViewApplications(project)">Applications</button>
+            <ng-container *ngIf="project.lifecycle.status !== ProjectStatus.Cancelled">
+              <button nz-button nzDanger (click)="cancelProject(project.id)">Cancel</button>
+            </ng-container>
+            <ng-container *ngIf="project.lifecycle.status === ProjectStatus.Cancelled">
+              <button nz-button nzDanger nzType="primary" (click)="deleteProject(project.id)">Delete</button>
+            </ng-container>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+  </div>
+  
+  <div nz-flex nzVertical nzGap="large">
+    <app-create-project
+      *ngIf="isCreating"
+      [categories]="categories"
+      [disablePastDates]="disablePastDates"
+      (projectCreated)="onProjectCreated($event)"
+      (cancel)="isCreating = false">
+    </app-create-project>
+    
+    <app-edit-project
+      *ngIf="isEditing && selectedProject"
+      [project]="selectedProject"
+      [categories]="categories"
+      [disablePastDates]="disablePastDates"
+      (projectUpdated)="onProjectUpdated($event)"
+      (cancel)="isEditing = false">
+    </app-edit-project>
+    
+    
+    <div *ngIf="isViewingApplications">
+      <h2>Applications for: {{ selectedProject?.title }}</h2>
+      <nz-table
+        [nzData]="applications"
+        [nzFrontPagination]="false"
+        [nzTotal]="applicationTotalCount"
+        [nzPageSize]="applicationPageSize"
+        [nzPageIndex]="applicationPageNo"
+        (nzPageIndexChange)="applicationPageNo = $event; loadApplications(selectedProject!.id)"
+        style="width: 500px">
+        <thead>
+        <tr>
+          <th>Created At</th>
+          <th>Status</th>
+          <th style="width: 120px">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let app of applications">
+          <td>{{ app.createdAt | date }}</td>
+          <td>{{ getApplicationStatusLabel(app.status) }}</td>
+          <td>
+            <button nz-button nzType="default" (click)="showApplicationDetails(app)">Details</button>
+          </td>
+        </tr>
+        </tbody>
+      </nz-table>
+      
+      <nz-card *ngIf="selectedApplication && freelancerDetails && isViewingApplicationDetails">
+        <nz-descriptions
+          nzTitle="Freelancer Details"
+          nzBordered
+          nzSize="middle"
+          [nzColumn]="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }">
+          <nz-descriptions-item nzTitle="Name">
+            {{ freelancerDetails.firstName }} {{ freelancerDetails.lastName }}
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Email">
+            {{ freelancerDetails.email }}
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="About">
+            {{ freelancerDetails.about || 'Not provided' }}
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Skills">
+            @if (freelancerDetails.skills.length > 0) {
+              @for (skill of freelancerDetails.skills; track skill.id) {
+                <nz-tag nzColor="blue">{{ skill.name }}</nz-tag>
+              }
+            } @else {
+              <span>No skills added yet</span>
+            }
+          </nz-descriptions-item>
+        </nz-descriptions>
+        <nz-divider></nz-divider>
+        <div nz-flex nzGap="middle">
+          <button
+            nz-button
+            nzType="primary"
+            [disabled]="hasAcceptedApplication || selectedApplication.status !== 0"
+            (click)="acceptApplication(selectedApplication.id, selectedProject!.id)">
+            Accept
+          </button>
+          <button
+            nz-button
+            nzDanger
+            [disabled]="selectedApplication.status !== 1"
+            (click)="rejectApplication(selectedApplication.id, selectedProject!.id)">
+            Reject
+          </button>
+        </div>
+      </nz-card>
+    </div>
+  </div>
+</div>

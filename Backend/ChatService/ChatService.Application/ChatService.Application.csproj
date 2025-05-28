@@ -23,7 +23,6 @@
 
     <ItemGroup>
       <Folder Include="UseCases\MessageUseCases\Commands\" />
-      <Folder Include="UseCases\MessageUseCases\Queries\" />
     </ItemGroup>
 
 </Project>

@@ -14,6 +14,9 @@ public class DbStartupService(
     UserManager<AppUser> userManager,
     ILogger<DbStartupService> logger) : IDbStartupService
 {
+    private const string EmployerId = "e13341b4-6532-41f6-9595-202525c7ff34";
+    private const string FreelancerId = "52d78d21-8f4d-469d-a911-b094d6f9994b";
+    
     public async Task MakeMigrationsAsync()
     {
         logger.LogInformation("Starting database migrations...");
@@ -40,6 +43,7 @@ public class DbStartupService(
         logger.LogInformation("Starting database initialization...");
 
         var adminRole = await roleManager.FindByNameAsync(AppRoles.AdminRole);
+
         if (adminRole is null)
         {
             logger.LogInformation("Creating application roles...");
@@ -47,6 +51,8 @@ public class DbStartupService(
             await roleManager.CreateAsync(new IdentityRole<Guid>(AppRoles.AdminRole));
             await roleManager.CreateAsync(new IdentityRole<Guid>(AppRoles.EmployerRole));
             await roleManager.CreateAsync(new IdentityRole<Guid>(AppRoles.FreelancerRole));
+            
+            await unitOfWork.SaveAllAsync();
             
             logger.LogInformation("Application roles created successfully");
         }
@@ -56,10 +62,10 @@ public class DbStartupService(
             
             return;
         }
-
-        adminRole = await roleManager.FindByNameAsync(AppRoles.AdminRole);
         
         logger.LogInformation("Creating default admin user...");
+        
+        adminRole = await roleManager.FindByNameAsync(AppRoles.AdminRole);
 
         var admin = new AppUser
         {
@@ -73,18 +79,15 @@ public class DbStartupService(
             RoleId = adminRole!.Id
         };
 
-        var createResult = await userManager.CreateAsync(admin, "Admin_123");
-        if (!createResult.Succeeded)
+        var createResultAdmin = await userManager.CreateAsync(admin, "Admin_123");
+        
+        if (!createResultAdmin.Succeeded)
         {
-            var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+            logger.LogError("Failed to create admin user.");
             
-            logger.LogError("Failed to create admin user. Errors: {Errors}", errors);
-            
-            throw new Exception($"Failed to create admin user: {errors}");
+            throw new Exception("Failed to create admin user.");
         }
-
-        logger.LogInformation("Default admin user created successfully with ID: {AdminId}", admin.Id);
-
+        
         logger.LogInformation("Seeding freelancer skills...");
         
         var freelancerSkills = new List<FreelancerSkill>
@@ -102,8 +105,9 @@ public class DbStartupService(
         {
             await unitOfWork.FreelancerSkillsRepository.AddAsync(item);
         }
-
+        
         logger.LogInformation("Seeding employer industries...");
+        
         var employerIndustries = new List<EmployerIndustry>
         {
             new() { Id = Guid.NewGuid(), Name = "IT & Software", NormalizedName = "IT_SOFTWARE" },
@@ -114,13 +118,95 @@ public class DbStartupService(
             new() { Id = Guid.NewGuid(), Name = "Construction & Engineering", NormalizedName = "CONSTRUCTION_ENGINEERING" },
             new() { Id = Guid.NewGuid(), Name = "E-commerce & Retail", NormalizedName = "ECOMMERCE_RETAIL" }
         };
-
+        
         foreach (var item in employerIndustries) 
         {
             await unitOfWork.EmployerIndustriesRepository.AddAsync(item);
         }
-
+        
         await unitOfWork.SaveAllAsync();
+        
+        var freelancerRole = await roleManager.FindByNameAsync(AppRoles.FreelancerRole);
+        
+        logger.LogInformation("Creating freelancer user...");
+
+        var freelancerId = Guid.Parse(FreelancerId);
+        
+        var freelancer = new AppUser
+        {
+            Id = freelancerId,
+            RegisteredAt = DateTime.UtcNow,
+            UserName = "Moonlight",
+            NormalizedUserName = "MOONLIGHT",
+            Email = "ilya@gmail.com",
+            NormalizedEmail = "ILYA@GMAIL.COM",
+            EmailConfirmed = true,
+            RoleId = freelancerRole!.Id
+        };
+        
+        var createResultFreelancer = await userManager.CreateAsync(freelancer, "Ilya_123");
+        
+        if (!createResultFreelancer.Succeeded)
+        {
+            logger.LogError("Failed to create freelancer user.");
+            
+            throw new Exception($"Failed to create freelancer user.");
+        }
+        
+        var freelancerProfile = new FreelancerProfile
+        {
+            FirstName = "Ilya",
+            LastName = "Rabets",
+            About = "I'm Ilya Rabets!",
+            Skills = freelancerSkills.Take(4).ToList(),
+            UserId = freelancer.Id
+        };
+        
+        await unitOfWork.FreelancerProfilesRepository.AddAsync(freelancerProfile);
+        
+        logger.LogInformation("Freelancer user created successfully with ID: {FreelancerId}", freelancer.Id);
+        
+        var employerRole = await roleManager.FindByNameAsync(AppRoles.EmployerRole);
+        
+        logger.LogInformation("Creating employer user...");
+        
+        var employerId = Guid.Parse(EmployerId);
+        
+        var employer = new AppUser
+        {
+            Id = employerId,
+            RegisteredAt = DateTime.UtcNow,
+            UserName = "Pavlusha",
+            NormalizedUserName = "PAVLUSHA",
+            Email = "pavlusha@gmail.com",
+            NormalizedEmail = "PAVLUSHA@GMAIL.COM",
+            EmailConfirmed = true,
+            RoleId = employerRole!.Id
+        };
+        
+        var createResultEmployer = await userManager.CreateAsync(employer, "Pavlusha_123");
+        
+        if (!createResultEmployer.Succeeded)
+        {
+            logger.LogError("Failed to create employer user.");
+            
+            throw new Exception("Failed to create employer user.");
+        }
+        
+        var employerProfile = new EmployerProfile
+        {
+            CompanyName = "Sunrise Company",
+            About = "We are Sunrise Company!",
+            Industry = employerIndustries.First(),
+            UserId = employer.Id
+        };
+        
+        await unitOfWork.EmployerProfilesRepository.AddAsync(employerProfile);
+        
+        logger.LogInformation("Employer user created successfully with ID: {AdminId}", admin.Id);
+        
+        await unitOfWork.SaveAllAsync();
+        
         logger.LogInformation("Database initialization completed successfully");
     }
 }

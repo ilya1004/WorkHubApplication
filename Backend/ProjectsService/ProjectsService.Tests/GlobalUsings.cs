@@ -1,0 +1,9 @@
+﻿global using MediatR;
+global using AutoMapper;
+global using FluentAssertions;
+global using Moq;
+global using ProjectsService.Application.Models;
+global using ProjectsService.Domain.Enums;
+global using ProjectsService.Domain.Entities;
+global using ProjectsService.Application.DTOs;
+global using Microsoft.Extensions.Logging;

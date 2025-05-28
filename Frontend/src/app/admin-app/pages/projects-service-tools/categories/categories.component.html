@@ -1,0 +1,91 @@
+<div style="width: 100%;">
+  <nz-card [nzLoading]="loading" nzTitle="Categories Management">
+    <nz-table
+      #categoryTable
+      [nzData]="categories"
+      [nzLoading]="loading"
+      [nzFrontPagination]="false"
+      [nzTotal]="totalCount"
+      [nzPageSize]="pageSize"
+      [nzPageIndex]="pageNo"
+      (nzPageIndexChange)="onPageChange($event)"
+      (nzPageSizeChange)="onPageSizeChange($event)"
+    >
+      <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let category of categoryTable.data">
+        <td>{{ category.id }}</td>
+        <td>{{ category.name }}</td>
+        <td>
+          <button
+            nz-button
+            nzType="default"
+            (click)="editCategory(category)"
+            style="margin-right: 8px"
+          >
+            Edit
+          </button>
+          <button
+            nz-button
+            nzType="default"
+            nzDanger
+            (click)="deleteCategory(category.id)"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </nz-table>
+    
+    <div>
+      <button nz-button nzType="primary" (click)="toggleCreateForm()">
+        {{ showCreateForm ? 'Cancel' : 'Create New' }}
+      </button>
+    </div>
+    
+    <div *ngIf="showCreateForm" style="margin-top: 16px;">
+      <h4 style="margin-bottom: 12px;">Create Category</h4>
+      <nz-form-item>
+        <nz-form-label>Name</nz-form-label>
+        <input
+          nz-input
+          [(ngModel)]="createForm.name"
+          placeholder="Enter category name"
+          style="width: 250px"
+        />
+      </nz-form-item>
+      <div nz-flex nzGap="10px" style="margin-top: 15px">
+        <button nz-button nzType="primary" (click)="createCategory()">
+          Create
+        </button>
+        <button nz-button (click)="toggleCreateForm()">Cancel</button>
+      </div>
+    </div>
+    
+    <div *ngIf="showEditForm" style="margin-top: 16px;">
+      <h4 style="margin-bottom: 12px;">Edit Category</h4>
+      <nz-form-item>
+        <nz-form-label>Name</nz-form-label>
+        <input
+          nz-input
+          [(ngModel)]="editForm.name"
+          placeholder="Enter category name"
+          style="width: 250px"
+        />
+      </nz-form-item>
+      <div nz-flex nzGap="10px" style="margin-top: 15px">
+        <button nz-button nzType="primary" (click)="updateCategory()">
+          Save
+        </button>
+        <button nz-button (click)="cancelEdit()">Cancel</button>
+      </div>
+    </div>
+  </nz-card>
+</div>

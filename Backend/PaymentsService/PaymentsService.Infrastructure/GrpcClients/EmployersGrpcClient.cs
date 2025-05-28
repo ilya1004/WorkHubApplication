@@ -1,5 +1,4 @@
 using Employers;
-using Microsoft.Extensions.Logging;
 using PaymentsService.Infrastructure.Interfaces;
 
 namespace PaymentsService.Infrastructure.GrpcClients;
@@ -16,6 +15,13 @@ public class EmployersGrpcClient(
         var response = await client.GetEmployerByIdAsync(
             new GetEmployerByIdRequest { Id = id }, 
             cancellationToken: cancellationToken);
+        
+        if (response is null)
+        {
+            logger.LogWarning("Employer not found for user {UserId}", id);
+            
+            throw new NotFoundException($"Employer by user ID '{id}' not found.");
+        }
         
         logger.LogInformation("Successfully received employer with ID {EmployerId} from gRPC service", id);
 

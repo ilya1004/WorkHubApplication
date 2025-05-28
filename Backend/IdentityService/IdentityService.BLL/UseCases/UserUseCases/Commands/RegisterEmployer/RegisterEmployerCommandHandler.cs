@@ -1,7 +1,5 @@
 ﻿using IdentityService.BLL.Abstractions.EmailSender;
-using IdentityService.BLL.Services.EmailSender;
 using IdentityService.DAL.Abstractions.RedisService;
-using IdentityService.DAL.Abstractions.Repositories;
 using IdentityService.DAL.Constants;
 using Microsoft.Extensions.Configuration;
 
@@ -72,12 +70,12 @@ public class RegisterEmployerCommandHandler(
         {
             code = random.Next(100000, 999999).ToString();
         } 
-        while (await cachedService.ExistsAsync(code));
+        while (await cachedService.ExistsAsync(code, cancellationToken));
 
         logger.LogInformation("Storing confirmation code {Code} in cache", code);
         
         await cachedService.SetAsync(code, token, TimeSpan.FromHours(
-            int.Parse(configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Value!)));
+            int.Parse(configuration.GetRequiredSection("IdentityTokenExpirationTimeInHours").Value!)), cancellationToken);
 
         logger.LogInformation("Sending confirmation email to {Email}", user.Email);
         

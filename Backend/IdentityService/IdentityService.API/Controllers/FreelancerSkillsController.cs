@@ -14,9 +14,9 @@ public class FreelancerSkillsController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     [Authorize(Policy = AuthPolicies.AdminPolicy)]
-    public async Task<IActionResult> Create([FromBody] FreelancerSkillDto skillDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] FreelancerSkillDataDto skillDataDto, CancellationToken cancellationToken)
     {
-        await mediator.Send(new CreateFreelancerSkillCommand(skillDto.Name), cancellationToken);
+        await mediator.Send(new CreateFreelancerSkillCommand(skillDataDto.Name), cancellationToken);
 
         return Created();
     }
@@ -44,9 +44,9 @@ public class FreelancerSkillsController(IMediator mediator) : ControllerBase
     [HttpPut]
     [Route("{id:guid}")]
     [Authorize]
-    public async Task<IActionResult> Update(Guid id, [FromBody] FreelancerSkillDto skillDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(Guid id, [FromBody] FreelancerSkillDataDto skillDataDto, CancellationToken cancellationToken)
     {
-        await mediator.Send(new UpdateFreelancerSkillCommand(id, skillDto.Name), cancellationToken);
+        await mediator.Send(new UpdateFreelancerSkillCommand(id, skillDataDto.Name), cancellationToken);
 
         return NoContent();
     }

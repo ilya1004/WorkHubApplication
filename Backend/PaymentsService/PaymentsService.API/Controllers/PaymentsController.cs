@@ -1,9 +1,12 @@
+using PaymentsService.API.Contracts.CommonContracts;
 using PaymentsService.API.Contracts.PaymentContracts;
 using PaymentsService.Application.UseCases.PaymentsUseCases.Commands.ConfirmPaymentForProject;
-using PaymentsService.Application.UseCases.PaymentsUseCases.Commands.CreateSetupIntent;
 using PaymentsService.Application.UseCases.PaymentsUseCases.Commands.PayForProjectWithSavedMethod;
-using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetEmployerPaymentsQuery;
-using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetFreelancerTransfers;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetAllEmployerPayments;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetAllFreelancerTransfers;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetEmployerMyPaymentsQuery;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetEmployerPaymentIntents;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetFreelancerMyTransfers;
 
 namespace PaymentsService.API.Controllers;
 
@@ -13,16 +16,6 @@ public class PaymentsController(
     IMediator mediator,
     IMapper mapper) : ControllerBase
 {
-    [HttpPost]
-    [Route("setup-intent")]
-    [Authorize(Policy = AuthPolicies.EmployerPolicy)]
-    public async Task<IActionResult> CreateSetupIntent(CancellationToken cancellationToken = default)
-    {
-        var result = await mediator.Send(new CreateSetupIntentCommand(), cancellationToken);
-
-        return Ok(result);
-    }
-
     [HttpPost]
     [Route("pay-for-project/{projectId:guid}/with-method/{paymentMethodId}")]
     [Authorize(Policy = AuthPolicies.EmployerPolicy)]
@@ -47,10 +40,32 @@ public class PaymentsController(
     [HttpGet]
     [Route("employer/my-payments")]
     [Authorize(Policy = AuthPolicies.EmployerPolicy)]
-    public async Task<IActionResult> GetEmployerPayments([FromQuery] GetOperationsRequest request,
+    public async Task<IActionResult> GetEmployerMyPayments([FromQuery] GetOperationsRequest request,
         CancellationToken cancellationToken = default)
     {
-        var result = await mediator.Send(mapper.Map<GetEmployerPaymentsQuery>(request), cancellationToken);
+        var result = await mediator.Send(mapper.Map<GetEmployerMyPaymentsQuery>(request), cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    [Route("employer-payments")]
+    [Authorize(Policy = AuthPolicies.AdminPolicy)]
+    public async Task<IActionResult> GetAllEmployerPayments([FromQuery] GetPaginatedListRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await mediator.Send(new GetAllEmployerPaymentsQuery(request.PageNo, request.PageSize), cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    [Route("employer/my-payment-intents")]
+    [Authorize(Policy = AuthPolicies.EmployerPolicy)]
+    public async Task<IActionResult> GetEmployerMyPaymentIntents([FromQuery] GetOperationsRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await mediator.Send(mapper.Map<GetEmployerPaymentIntentsQuery>(request), cancellationToken);
 
         return Ok(result);
     }
@@ -58,10 +73,21 @@ public class PaymentsController(
     [HttpGet]
     [Route("freelancer/my-transfers")]
     [Authorize(Policy = AuthPolicies.FreelancerPolicy)]
-    public async Task<IActionResult> GetFreelancerTransfers([FromQuery] GetOperationsRequest request,
+    public async Task<IActionResult> GetFreelancerMyTransfers([FromQuery] GetOperationsRequest request,
         CancellationToken cancellationToken = default)
     {
-        var result = await mediator.Send(mapper.Map<GetFreelancerTransferQuery>(request), cancellationToken);
+        var result = await mediator.Send(mapper.Map<GetFreelancerMyTransfersQuery>(request), cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    [Route("freelancer-transfers")]
+    [Authorize(Policy = AuthPolicies.AdminPolicy)]
+    public async Task<IActionResult> GetAllFreelancerTransfers([FromQuery] GetPaginatedListRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await mediator.Send(new GetAllFreelancerTransfersQuery(request.PageNo, request.PageSize), cancellationToken);
 
         return Ok(result);
     }

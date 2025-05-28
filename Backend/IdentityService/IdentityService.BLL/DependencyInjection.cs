@@ -9,6 +9,7 @@ using Confluent.Kafka;
 using IdentityService.BLL.Abstractions.AzuriteStartupService;
 using IdentityService.BLL.Abstractions.BlobService;
 using IdentityService.BLL.Abstractions.EmailSender;
+using IdentityService.BLL.Abstractions.TokenProvider;
 using IdentityService.BLL.HealthChecks;
 using IdentityService.BLL.Services.AzuriteStartupService;
 using IdentityService.BLL.Services.KafkaConsumerServices;

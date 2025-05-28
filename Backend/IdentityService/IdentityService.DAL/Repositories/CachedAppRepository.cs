@@ -17,13 +17,13 @@ public class CachedAppRepository<TEntity>(
     public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         await repository.AddAsync(entity, cancellationToken);
-        await InvalidateCacheAsync(entity.Id);
+        await InvalidateCacheAsync(entity.Id.ToString());
     }
 
     public async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         await repository.DeleteAsync(entity, cancellationToken);
-        await InvalidateCacheAsync(entity.Id);
+        await InvalidateCacheAsync(entity.Id.ToString());
     }
 
     public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
@@ -34,6 +34,11 @@ public class CachedAppRepository<TEntity>(
     public async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default,
         params Expression<Func<TEntity, object>>[]? includesProperties)
     {
+        if (includesProperties is not null && includesProperties.Length > 0)
+        {
+            return await repository.GetByIdAsync(id, cancellationToken, includesProperties);    
+        }
+        
         var cacheKey = $"{typeof(TEntity).Name}:{id}";
         var cachedEntity = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
 
@@ -77,22 +82,7 @@ public class CachedAppRepository<TEntity>(
 
     public async Task<IReadOnlyList<TEntity>> PaginatedListAllAsync(int offset, int limit, CancellationToken cancellationToken = default)
     {
-        var cacheKey = $"{typeof(TEntity).Name}:PaginatedListAll:{offset}:{limit}";
-        var cachedEntities = await distributedCache.GetStringAsync(cacheKey, cancellationToken);
-
-        if (cachedEntities != null)
-        {
-            return JsonSerializer.Deserialize<IReadOnlyList<TEntity>>(cachedEntities, _jsonOptions) ?? [];
-        }
-
-        var entities = await repository.PaginatedListAllAsync(offset, limit, cancellationToken);
-
-        await distributedCache.SetStringAsync(cacheKey, JsonSerializer.Serialize(entities, _jsonOptions), new DistributedCacheEntryOptions
-        {
-            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(options.Value.RecordExpirationTimeInMinutes)
-        }, cancellationToken);
-
-        return entities;
+        return await repository.PaginatedListAllAsync(offset, limit, cancellationToken);
     }
 
     public async Task<IReadOnlyList<TEntity>> ListAsync(Expression<Func<TEntity, bool>>? filter,
@@ -110,7 +100,7 @@ public class CachedAppRepository<TEntity>(
     public async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         await repository.UpdateAsync(entity, cancellationToken);
-        await InvalidateCacheAsync(entity.Id);
+        await InvalidateCacheAsync(entity.Id.ToString());
     }
 
     public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
@@ -135,9 +125,10 @@ public class CachedAppRepository<TEntity>(
         return count;
     }
 
-    private async Task InvalidateCacheAsync(Guid id)
+    private async Task InvalidateCacheAsync(string id)
     {
-        var cacheKey = $"{typeof(TEntity).Name}:{id}";
-        await distributedCache.RemoveAsync(cacheKey);
+        await distributedCache.RemoveAsync($"{typeof(TEntity).Name}:{id}");
+        await distributedCache.RemoveAsync($"{typeof(TEntity).Name}:CountAll");
+        await distributedCache.RemoveAsync($"{typeof(TEntity).Name}:ListAll");
     }
 }

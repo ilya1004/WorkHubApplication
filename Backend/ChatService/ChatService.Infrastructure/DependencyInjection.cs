@@ -1,9 +1,11 @@
 using Azure.Storage.Blobs;
+using ChatService.Domain.Abstractions.AzuriteStartupService;
 using ChatService.Domain.Abstractions.BlobService;
 using ChatService.Domain.Abstractions.DbInitializer;
 using ChatService.Domain.Abstractions.Repositories;
 using ChatService.Infrastructure.Configurations;
 using ChatService.Infrastructure.Repositories;
+using ChatService.Infrastructure.Services.AzuriteStartupService;
 using ChatService.Infrastructure.Services.BlobService;
 using ChatService.Infrastructure.Services.DbInitializer;
 using ChatService.Infrastructure.Services.LogstashHelpers;
@@ -47,6 +49,7 @@ public static class DependencyInjection
         
         services.AddScoped<IUnitOfWork, AppUnitOfWork>();
         services.AddScoped<IDbInitializer, DbInitializer>();
+        services.AddScoped<IAzuriteStartupService, AzuriteStartupService>();
         
         services.AddHealthChecks()
             .AddMongoDb(_ => new MongoClient(mongoSettings.ConnectionString))

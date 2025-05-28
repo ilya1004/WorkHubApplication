@@ -58,8 +58,6 @@ public class RejectFreelancerApplicationCommandHandler(
             
             throw new BadRequestException("Freelancer application status is not accepted");
         }
-
-        logger.LogInformation("Rejecting application {ApplicationId}", request.ApplicationId);
         
         freelancerApplication.Status = ApplicationStatus.Pending;
 

@@ -17,10 +17,9 @@ public class HangfireJobsInitializer(
         recurringJobManager.AddOrUpdate(
             "update_project_statuses",
             () => mediator.Send(new UpdateProjectStatusesCommand(), CancellationToken.None),
-            Cron.Minutely()
+            Cron.Hourly()
         );
         
         logger.LogInformation("Recurring job 'update_project_statuses' scheduled to run every minute");
     }
 }
-

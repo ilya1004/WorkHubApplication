@@ -6,15 +6,14 @@ public class StripePaymentMethodToPaymentMethodModel : Profile
     {
         CreateMap<PaymentMethod, PaymentMethodModel>()
             .ForMember(dest => dest.Card, opt =>
-                opt.MapFrom(src => src.CardPresent != null
+                opt.MapFrom(src => src.Card != null
                     ? new CardModel
                     {
-                        Brand = src.CardPresent.Brand,
-                        CardholderName = src.CardPresent.CardholderName,
-                        Country = src.CardPresent.Country,
-                        ExpMonth = src.CardPresent.ExpMonth,
-                        ExpYear = src.CardPresent.ExpYear,
-                        Last4Digits = src.CardPresent.Last4
+                        Brand = src.Card.Brand,
+                        Country = src.Card.Country,
+                        ExpMonth = src.Card.ExpMonth,
+                        ExpYear = src.Card.ExpYear,
+                        Last4Digits = src.Card.Last4
                     }
                     : null))
             .ForMember(dest => dest.CreatedAt, opt =>

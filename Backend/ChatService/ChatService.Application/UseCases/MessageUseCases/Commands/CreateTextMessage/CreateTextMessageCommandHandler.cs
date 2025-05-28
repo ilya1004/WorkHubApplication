@@ -4,9 +4,9 @@ public class CreateTextMessageCommandHandler(
     IUnitOfWork unitOfWork,
     IUserContext userContext,
     IMapper mapper,
-    ILogger<CreateTextMessageCommandHandler> logger) : IRequestHandler<CreateTextMessageCommand>
+    ILogger<CreateTextMessageCommandHandler> logger) : IRequestHandler<CreateTextMessageCommand, Message>
 {
-    public async Task Handle(CreateTextMessageCommand request, CancellationToken cancellationToken)
+    public async Task<Message> Handle(CreateTextMessageCommand request, CancellationToken cancellationToken)
     {
         logger.LogInformation("Creating text message in chat {ChatId} by user {UserId}", request.ChatId, userContext.GetUserId());
 
@@ -34,5 +34,7 @@ public class CreateTextMessageCommandHandler(
         await unitOfWork.MessagesRepository.InsertAsync(message, cancellationToken);
 
         logger.LogInformation("Text message created successfully. Message ID: {MessageId}", message.Id);
+
+        return message;
     }
 }

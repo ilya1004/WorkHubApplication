@@ -34,7 +34,6 @@ public class AuthController(IMediator mediator, IMapper mapper) : ControllerBase
 
     [HttpPost]
     [Route("refresh-token")]
-    [Authorize]
     public async Task<IActionResult> RefreshToken(RefreshTokenRequest request, CancellationToken cancellationToken)
     {
         var authResponse = await mediator.Send(mapper.Map<RefreshTokenCommand>(request), cancellationToken);

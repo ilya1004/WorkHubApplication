@@ -1,0 +1,33 @@
+<div style="width: 100%;">
+  <h2>Freelancer Accounts View</h2>
+  <nz-table
+    #accountTable
+    [nzData]="accounts"
+    [nzLoading]="loading"
+    [nzFrontPagination]="false"
+    [nzTotal]="totalCount"
+    [nzPageSize]="pageSize"
+    [nzPageIndex]="pageNo"
+    (nzPageIndexChange)="onPageChange($event)"
+    (nzPageSizeChange)="onPageSizeChange($event)"
+  >
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Email</th>
+      <th>Account Type</th>
+      <th>Country</th>
+      <th>Balance</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let account of accountTable.data">
+      <td>{{ account.id }}</td>
+      <td>{{ account.ownerEmail || 'N/A' }}</td>
+      <td>{{ account.accountType || 'N/A' }}</td>
+      <td>{{ account.country || 'N/A' }}</td>
+      <td>{{ account.balance }}</td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>

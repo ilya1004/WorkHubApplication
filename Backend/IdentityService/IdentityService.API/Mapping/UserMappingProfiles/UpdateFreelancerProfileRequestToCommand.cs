@@ -8,11 +8,10 @@ public class UpdateFreelancerProfileRequestToCommand : Profile
     public UpdateFreelancerProfileRequestToCommand()
     {
         CreateMap<UpdateFreelancerProfileRequest, UpdateFreelancerProfileCommand>()
-            .ForMember(dest => dest.FreelancerProfile, opt =>
-                opt.MapFrom(src => src.FreelancerProfile))
-            .ForMember(dest => dest.FileStream, opt =>
-                opt.MapFrom(src => src.ImageFile == null ? null : src.ImageFile.OpenReadStream()))
-            .ForMember(dest => dest.ContentType, opt =>
-                opt.MapFrom(src => src.ImageFile == null ? null : src.ImageFile.ContentType));
+            .ConstructUsing(src =>
+                new UpdateFreelancerProfileCommand(
+                    src.FreelancerProfile,
+                    src.ImageFile == null ? null : src.ImageFile.OpenReadStream(), 
+                    src.ImageFile == null ? null : src.ImageFile.ContentType));
     }
 }

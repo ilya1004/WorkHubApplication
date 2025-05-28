@@ -28,7 +28,7 @@ public static class DependencyInjection
         services.AddOptionsWithValidateOnStart<StripeSettings>()
             .BindConfiguration("StripeSettings");
         
-        var stripeSettings = configuration.GetSection("StripeSettings").Get<StripeSettings>()!;
+        var stripeSettings = configuration.GetRequiredSection("StripeSettings").Get<StripeSettings>()!;
 
         StripeConfiguration.ApiKey = stripeSettings.SecretKey;
 
@@ -40,8 +40,10 @@ public static class DependencyInjection
         services.AddScoped<IPaymentMethodsService, StripePaymentMethodsService>();
         services.AddScoped<ITransfersService, StripeTransfersService>();
         
-        services.Configure<GrpcSettings>(configuration.GetSection("GrpcSettings"));
-        var grpcSettings = configuration.GetSection("GrpcSettings").Get<GrpcSettings>()!;
+        services.AddOptionsWithValidateOnStart<GrpcSettings>()
+            .BindConfiguration("GrpcSettings");
+        
+        var grpcSettings = configuration.GetRequiredSection("GrpcSettings").Get<GrpcSettings>()!;
 
         services.AddSingleton<GrpcLoggingInterceptor>();
         services.AddSingleton<AuthInterceptor>();

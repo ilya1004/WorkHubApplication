@@ -7,9 +7,11 @@ using IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateEmployerProfile;
 using IdentityService.BLL.UseCases.UserUseCases.Commands.UpdateFreelancerProfile;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetAllUsers;
 using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUserById;
-using IdentityService.BLL.UseCases.UserUseCases.Queries.GetUsersByRole;
 using IdentityService.API.Contracts.CommonContracts;
-using IdentityService.BLL.UseCases.UserUseCases.Queries.GetCurrentUserInfo;
+using IdentityService.BLL.UseCases.UserUseCases.Queries.GetCurrentEmployerUser;
+using IdentityService.BLL.UseCases.UserUseCases.Queries.GetCurrentFreelancerUser;
+using IdentityService.BLL.UseCases.UserUseCases.Queries.GetEmployerUserInfoById;
+using IdentityService.BLL.UseCases.UserUseCases.Queries.GetFreelancerUserInfoById;
 
 namespace IdentityService.API.Controllers;
 
@@ -23,7 +25,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     {
         await mediator.Send(mapper.Map<RegisterFreelancerCommand>(request), cancellationToken);
 
-        return Created();
+        return StatusCode(StatusCodes.Status201Created);
     }
 
     [HttpPost]
@@ -32,24 +34,14 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     {
         await mediator.Send(mapper.Map<RegisterEmployerCommand>(request), cancellationToken);
 
-        return Created();
+        return StatusCode(StatusCodes.Status201Created);
     }
 
     [HttpGet]
     [Authorize(Policy = AuthPolicies.AdminPolicy)]
-    public async Task<IActionResult> GetAllUsers([FromQuery] GetPaginatedListRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAllUsers([FromQuery] GetPaginatedListRequest request, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new GetAllUsersQuery(request.PageNo, request.PageSize), cancellationToken);
-
-        return Ok(result);
-    }
-
-    [HttpGet]
-    [Route("by-role")]
-    [Authorize(Policy = AuthPolicies.AdminPolicy)]
-    public async Task<IActionResult> GetUsersByRole([FromQuery] GetUsersByRoleRequest request, CancellationToken cancellationToken)
-    {
-        var result = await mediator.Send(mapper.Map<GetUsersByRoleQuery>(request), cancellationToken);
 
         return Ok(result);
     }
@@ -63,13 +55,43 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
 
         return Ok(result);
     }
+    
+    [HttpGet]
+    [Route("freelancer-info/{userId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> GetFreelancerUserInfoById([FromRoute] Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetFreelancerUserInfoByIdQuery(userId), cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    [Route("employer-info/{userId:guid}")]
+    [Authorize]
+    public async Task<IActionResult> GetEmployerUserInfoById([FromRoute] Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetEmployerUserInfoByIdQuery(userId), cancellationToken);
+
+        return Ok(result);
+    }
 
     [HttpGet]
-    [Route("my-info")]
-    [Authorize]
-    public async Task<IActionResult> GetCurrentUserInfo(CancellationToken cancellationToken)
+    [Route("my-freelancer-info")]
+    [Authorize(Policy = AuthPolicies.FreelancerPolicy)]
+    public async Task<IActionResult> GetCurrentFreelancerUserInfo(CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetCurrentUserInfoQuery(), cancellationToken);
+        var result = await mediator.Send(new GetCurrentFreelancerUserQuery(), cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    [Route("my-employer-info")]
+    [Authorize(Policy = AuthPolicies.EmployerPolicy)]
+    public async Task<IActionResult> GetCurrentEmployerUserInfo(CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetCurrentEmployerUserQuery(), cancellationToken);
 
         return Ok(result);
     }
@@ -80,10 +102,7 @@ public class UsersController(IMediator mediator, IMapper mapper) : ControllerBas
     public async Task<IActionResult> UpdateFreelancerProfile([FromForm] UpdateFreelancerProfileRequest request,
         CancellationToken cancellationToken)
     {
-        await mediator.Send(new UpdateFreelancerProfileCommand(
-            request.FreelancerProfile,
-            request.ImageFile?.OpenReadStream(),
-            request.ImageFile?.ContentType), cancellationToken);
+        await mediator.Send(mapper.Map<UpdateFreelancerProfileCommand>(request), cancellationToken);
 
         return NoContent();
     }

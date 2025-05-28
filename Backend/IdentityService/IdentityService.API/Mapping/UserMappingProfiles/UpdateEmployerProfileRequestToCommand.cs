@@ -8,11 +8,10 @@ public class UpdateEmployerProfileRequestToCommand : Profile
     public UpdateEmployerProfileRequestToCommand()
     {
         CreateMap<UpdateEmployerProfileRequest, UpdateEmployerProfileCommand>()
-            .ForMember(dest => dest.EmployerProfile, opt =>
-                opt.MapFrom(src => src.EmployerProfile))
-            .ForMember(dest => dest.FileStream, opt =>
-                opt.MapFrom(src => src.ImageFile == null ? null : src.ImageFile.OpenReadStream()))
-            .ForMember(dest => dest.ContentType, opt =>
-                opt.MapFrom(src => src.ImageFile == null ? null : src.ImageFile.ContentType));
+            .ConstructUsing(src =>
+                new UpdateEmployerProfileCommand(
+                    src.EmployerProfile,
+                    src.ImageFile == null ? null : src.ImageFile.OpenReadStream(), 
+                    src.ImageFile == null ? null : src.ImageFile.ContentType));
     }
 }

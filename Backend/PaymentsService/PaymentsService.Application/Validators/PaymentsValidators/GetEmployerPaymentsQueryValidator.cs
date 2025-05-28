@@ -1,9 +1,9 @@
 using FluentValidation;
-using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetEmployerPaymentsQuery;
+using PaymentsService.Application.UseCases.PaymentsUseCases.Queries.GetEmployerMyPaymentsQuery;
 
 namespace PaymentsService.Application.Validators.PaymentsValidators;
 
-public class GetEmployerPaymentsQueryValidator : AbstractValidator<GetEmployerPaymentsQuery>
+public class GetEmployerPaymentsQueryValidator : AbstractValidator<GetEmployerMyPaymentsQuery>
 {
     public GetEmployerPaymentsQueryValidator()
     {

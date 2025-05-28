@@ -1,10 +1,11 @@
 using System.Security.Claims;
 using System.Text;
 using System.Threading.RateLimiting;
+using ApiGateway.Services;
 using ApiGateway.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 namespace ApiGateway;
 
@@ -45,7 +46,7 @@ public static class DependencyInjection
 
     public static IServiceCollection AddYarpConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddReverseProxy().LoadFromConfig(configuration.GetSection("ReverseProxy"));
+        services.AddReverseProxy().LoadFromConfig(configuration.GetRequiredSection("ReverseProxy"));
 
         services.AddRateLimiter(options =>
         {
@@ -59,6 +60,42 @@ public static class DependencyInjection
                         Window = TimeSpan.FromSeconds(10),
                     }));
         });
+
+        return services;
+    }
+
+    public static IServiceCollection AddCorsConfiguration(this IServiceCollection services, IConfiguration configuration)
+    {
+        var allowedOrigin = configuration.GetRequiredSection("Cors:AllowedOrigin").Get<string>();
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AngularApplication", policy =>
+            {
+                policy.WithOrigins(allowedOrigin!)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+        });
+
+        return services;
+    }
+
+    public static IServiceCollection AddLogging(this IServiceCollection services, IConfiguration configuration)
+    {
+        Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
+            .WriteTo.Console(new LogstashTextFormatter())
+            .WriteTo.Http(
+                requestUri: configuration["Logstash:Url"]!, 
+                queueLimitBytes: null,
+                textFormatter: new LogstashTextFormatter(),
+                httpClient: new LogstashHttpClient()
+            )
+            .CreateLogger();
+
+        services.AddLogging(logging => logging.AddSerilog());
 
         return services;
     }

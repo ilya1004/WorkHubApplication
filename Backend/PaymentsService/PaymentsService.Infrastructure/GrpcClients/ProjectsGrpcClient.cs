@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using PaymentsService.Infrastructure.Interfaces;
 using Projects;
 
@@ -16,6 +15,13 @@ public class ProjectsGrpcClient(
         var response = await client.GetProjectByIdAsync(
             new GetProjectByIdRequest { Id = id }, 
             cancellationToken: cancellationToken);
+        
+        if (response is null)
+        {
+            logger.LogWarning("Project with ID '{ProjectId}' not found ", id);
+            
+            throw new NotFoundException($"Project with ID '{id}' not found.");
+        }
         
         logger.LogInformation("Successfully received project with ID {ProjectId} from gRPC service", id);
 

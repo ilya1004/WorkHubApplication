@@ -10,6 +10,7 @@ using ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases
 using ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationById;
 using ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationsByFilter;
 using ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetFreelancerApplicationsByProjectId;
+using ProjectsService.Application.UseCases.Queries.FreelancerApplicationUseCases.GetMyFreelancerApplicationsByFilter;
 
 namespace ProjectsService.API.Controllers;
 
@@ -63,12 +64,23 @@ public class FreelancerApplicationsController(IMediator mediator, IMapper mapper
     }
     
     [HttpGet]
-    [Route("my-applications-filter")]
-    [Authorize(Policy = AuthPolicies.FreelancerPolicy)]
+    [Route("by-filter")]
+    [Authorize(Policy = AuthPolicies.AdminPolicy)]
     public async Task<IActionResult> GetFreelancerApplications([FromQuery] GetFreelancerApplicationsByFilterRequest request,
         CancellationToken cancellationToken = default)
     {
         var result = await mediator.Send(mapper.Map<GetFreelancerApplicationsByFilterQuery>(request), cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    [Route("my-applications-filter")]
+    [Authorize(Policy = AuthPolicies.FreelancerPolicy)]
+    public async Task<IActionResult> GetMyFreelancerApplications([FromQuery] GetMyFreelancerApplicationsByFilterRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await mediator.Send(mapper.Map<GetMyFreelancerApplicationsByFilterQuery>(request), cancellationToken);
 
         return Ok(result);
     }

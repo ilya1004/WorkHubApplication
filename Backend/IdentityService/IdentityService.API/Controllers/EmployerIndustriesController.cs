@@ -14,9 +14,9 @@ public class EmployerIndustriesController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     [Authorize(Policy = AuthPolicies.AdminPolicy)]
-    public async Task<IActionResult> Create([FromBody] EmployerIndustryDto industryDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] EmployerIndustryDataDto industryDataDto, CancellationToken cancellationToken)
     {
-        await mediator.Send(new CreateEmployerIndustryCommand(industryDto.Name), cancellationToken);
+        await mediator.Send(new CreateEmployerIndustryCommand(industryDataDto.Name), cancellationToken);
 
         return Created();
     }
@@ -44,9 +44,9 @@ public class EmployerIndustriesController(IMediator mediator) : ControllerBase
     [HttpPut]
     [Route("{id:guid}")]
     [Authorize(Policy = AuthPolicies.AdminPolicy)]
-    public async Task<IActionResult> Update(Guid id, [FromBody] EmployerIndustryDto industryDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(Guid id, [FromBody] EmployerIndustryDataDto industryDataDto, CancellationToken cancellationToken)
     {
-        await mediator.Send(new UpdateEmployerIndustryCommand(id, industryDto.Name), cancellationToken);
+        await mediator.Send(new UpdateEmployerIndustryCommand(id, industryDataDto.Name), cancellationToken);
 
         return NoContent();
     }

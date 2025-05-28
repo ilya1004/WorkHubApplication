@@ -1,0 +1,61 @@
+<div nz-flex nzGap="40px">
+  <div nz-flex nzVertical nzGap="large">
+    <h2>My Account</h2>
+    <nz-card [nzLoading]="isLoadingAccount" style="min-width: 360px; min-height: 300px">
+      @if (account) {
+        <nz-descriptions nzBordered [nzColumn]="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }">
+          <nz-descriptions-item nzTitle="Account ID">{{ account.id }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Owner Email">{{ account.ownerEmail }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Account Type">{{ account.accountType }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Country">{{ account.country }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Balance">{{ account.balance / 100 | currency:'EUR' }}</nz-descriptions-item>
+        </nz-descriptions>
+      } @else {
+        <p>No account created yet.</p>
+        <button
+          nz-button
+          nzType="primary"
+          (click)="createAccount()"
+          [nzLoading]="isCreatingAccount">
+          Create Account
+        </button>
+      }
+    </nz-card>
+    
+    @if (account) {
+      <div nz-flex nzGap="middle">
+        <button nz-button nzType="default" (click)="refreshAccount()">Refresh Balance</button>
+      </div>
+    }
+  </div>
+  
+  <div nz-flex nzVertical nzGap="large">
+    <h2>My Transfers</h2>
+    <nz-card [nzLoading]="isLoadingTransfers">
+      @if (transfers.length > 0) {
+        <nz-table #transfersTable [nzData]="transfers" [nzPageSize]="10" [nzFrontPagination]="false">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Amount</th>
+            <th>Currency</th>
+            <th>Transfer Group</th>
+            <th>Metadata</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let transfer of transfersTable.data">
+            <td>{{ transfer.id }}</td>
+            <td>{{ transfer.amount / 100 | currency:'EUR' }}</td>
+            <td>{{ transfer.currency }}</td>
+            <td>{{ transfer.transferGroup }}</td>
+            <td>{{ formatMetadata(transfer.metadata) }}</td>
+          </tr>
+          </tbody>
+        </nz-table>
+      } @else {
+        <p>No transfers found.</p>
+      }
+    </nz-card>
+  </div>
+</div>

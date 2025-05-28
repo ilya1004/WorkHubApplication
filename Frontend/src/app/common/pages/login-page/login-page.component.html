@@ -1,0 +1,90 @@
+<div nz-flex nzJustify="center" nzAlign="center">
+  <nz-card style="min-width: 355px; margin: 200px 0 0 0">
+    <div>
+      <h2>Login</h2>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="onSubmitLogin()">
+      <nz-space nzSize="middle" nzDirection="vertical">
+        
+        <div *nzSpaceItem>
+          <input
+            nz-input
+            formControlName="email"
+            placeholder="Enter your email"
+            class="login-card__input">
+          <div *ngIf="form.controls.email.invalid && form.controls.email.touched" class="input-error-message">
+            <div *ngIf="form.controls.email.errors?.['required']">Email is required</div>
+            <div *ngIf="form.controls.email.errors?.['email']">Invalid email format</div>
+          </div>
+        </div>
+        
+        <div *nzSpaceItem>
+          <nz-input-group [nzSuffix]="suffixTemplate" class="login-card__input">
+            <input
+              nz-input
+              formControlName="password"
+              [type]="passwordVisible ? 'text' : 'password'"
+              placeholder="Enter your password"
+              style="background-color: inherit; color: inherit"/>
+          </nz-input-group>
+          <ng-template #suffixTemplate>
+            <nz-icon
+              class="ant-input-password-icon"
+              [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+              nzTheme="outline"
+              (click)="passwordVisible = !passwordVisible"
+              style="color: var(--white-color)"/>
+          </ng-template>
+          <div *ngIf="form.controls.password.invalid && form.controls.password.touched" class="input-error-message">
+            <div *ngIf="form.controls.password.errors?.['required']">Password is required</div>
+            <div *ngIf="form.controls.password.errors?.['minlength']">
+              Password must be at least {{ form.controls.password.errors?.['minlength'].length}} characters
+            </div>
+          </div>
+        </div>
+        
+        <div *nzSpaceItem>
+          <button
+            nz-button
+            nzType="link"
+            nzSize="small"
+            style="padding: 0 0 0 0"
+            [routerLink]="'/forgot-password'">
+            Forgot password
+          </button>
+        </div>
+        
+        <div *nzSpaceItem>
+          <button
+            nz-button
+            nzType="primary"
+            type="submit"
+            style="border-radius: 7px">Sign In</button>
+        </div>
+      
+      </nz-space>
+    </form>
+    <div style="margin: 10px 0 0 0; color: var(--white-color)">
+      Don't have an account?
+      <button
+        nz-button
+        nzType="link"
+        nzSize="small"
+        style="padding: 0 0 0 0"
+        [routerLink]="'/register'">
+        Register now!
+      </button>
+    </div>
+    <div style="color: var(--white-color)">
+      Need to confirm your email?
+      <button
+        nz-button
+        nzType="link"
+        nzSize="small"
+        style="padding: 0 0 0 0"
+        [routerLink]="'/confirm-email'">
+        Confirm now!
+      </button>
+    </div>
+  </nz-card>
+</div>

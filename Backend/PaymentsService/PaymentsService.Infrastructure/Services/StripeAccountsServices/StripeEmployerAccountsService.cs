@@ -106,7 +106,47 @@ public class StripeEmployerAccountsService(
         {
             logger.LogError(ex, "Error getting Stripe account {CustomerId}", employer.EmployerCustomerId);
             
-            throw new BadRequestException($"Stripe customer with ID '{employer.EmployerCustomerId}' not found.");
+            throw new BadRequestException($"Error getting Stripe account with ID '{employer.EmployerCustomerId}'.");
+        }
+    }
+    
+    public async Task<IEnumerable<EmployerAccountModel>> GetAllEmployerAccountsAsync(CancellationToken cancellationToken = default)
+    {
+        logger.LogInformation("Retrieving all Stripe employer accounts");
+
+        try
+        {
+            var options = new CustomerListOptions
+            {
+                Limit = 100
+            };
+            
+            var customers = await _customerService.ListAsync(options, cancellationToken: cancellationToken);
+
+            var accounts = customers.Select(customer => 
+                new EmployerAccountModel 
+                {
+                    Id = customer.Id,
+                    OwnerEmail = customer.Email,
+                    Currency = customer.Currency,
+                    Balance = customer.Balance
+                }).ToList();
+
+            logger.LogInformation("Successfully retrieved {Count} employer accounts", accounts.Count);
+
+            return accounts;
+        }
+        catch (StripeException ex)
+        {
+            logger.LogError(ex, "Stripe error while retrieving employer accounts: {ErrorMessage}", ex.Message);
+            
+            throw new BadRequestException($"Stripe error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error retrieving employer accounts");
+            
+            throw new BadRequestException("Could not retrieve employer accounts.");
         }
     }
 }

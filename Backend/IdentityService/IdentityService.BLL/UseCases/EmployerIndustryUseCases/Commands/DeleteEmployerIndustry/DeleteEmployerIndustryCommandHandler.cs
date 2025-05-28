@@ -1,6 +1,4 @@
-﻿using IdentityService.DAL.Abstractions.Repositories;
-
-namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.DeleteEmployerIndustry;
+﻿namespace IdentityService.BLL.UseCases.EmployerIndustryUseCases.Commands.DeleteEmployerIndustry;
 
 public class DeleteEmployerIndustryCommandHandler(
     IUnitOfWork unitOfWork,

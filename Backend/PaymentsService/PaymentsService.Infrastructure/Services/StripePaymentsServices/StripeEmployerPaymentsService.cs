@@ -1,8 +1,6 @@
 using PaymentsService.Domain.Abstractions.KafkaProducerServices;
 using PaymentsService.Domain.Abstractions.PaymentsServices;
 using PaymentsService.Domain.Abstractions.TransfersServices;
-using PaymentsService.Infrastructure.DTOs;
-using PaymentsService.Domain.Models;
 using PaymentsService.Infrastructure.Interfaces;
 
 namespace PaymentsService.Infrastructure.Services.StripePaymentsServices;
@@ -17,51 +15,8 @@ public class StripeEmployerPaymentsService(
     ILogger<StripeEmployerPaymentsService> logger) : IEmployerPaymentsService
 {
     private readonly CustomerPaymentMethodService _customerPaymentMethodService = new();
-    private readonly SetupIntentService _intentService = new();
     private readonly PaymentIntentService _paymentIntentService = new();
-
-    public async Task<string> CreateSetupIntent(Guid userId, CancellationToken cancellationToken)
-    {
-        logger.LogInformation("Creating setup intent for user {UserId}", userId);
-
-        var employer = await employersGrpcClient.GetEmployerByIdAsync(userId.ToString(), cancellationToken); 
-
-        if (string.IsNullOrEmpty(employer.EmployerCustomerId)) 
-        {
-            logger.LogWarning("Employer account not found for user {UserId}", userId);
-            
-            throw new NotFoundException($"Employer account by employer ID '{userId}' not found.");
-        }
-
-        try
-        {
-            var options = new SetupIntentCreateOptions
-            {
-                Customer = employer.EmployerCustomerId,
-                PaymentMethodTypes = ["card"]
-            };
-
-            logger.LogInformation("Creating setup intent with options: {@Options}", options);
-            
-            var setupIntent = await _intentService.CreateAsync(options, cancellationToken: cancellationToken);
-
-            logger.LogInformation("Setup intent created successfully for user {UserId}", userId);
-            
-            return setupIntent.ClientSecret;
-        }
-        catch (StripeException ex)
-        {
-            logger.LogError(ex, "Stripe error creating setup intent for user {UserId}: {ErrorMessage}", userId, ex.Message);
-            
-            throw new BadRequestException($"Stripe error: {ex.Message}");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error creating setup intent for user {UserId}", userId);
-            
-            throw new BadRequestException($"Could not create Setup intent for user with ID '{userId}'.");
-        }
-    }
+    private readonly AccountService _accountService = new();
 
     public async Task CreatePaymentIntentWithSavedMethodAsync(Guid userId, Guid projectId, string paymentMethodId,
         CancellationToken cancellationToken)
@@ -97,16 +52,20 @@ public class StripeEmployerPaymentsService(
             var options = new PaymentIntentCreateOptions
             {
                 Amount = project.BudgetInCents,
-                Currency = "usd",
+                Currency = "eur",
                 Customer = employer.EmployerCustomerId,
                 PaymentMethod = paymentMethod.Id,
                 Confirm = true,
                 CaptureMethod = "manual",
                 TransferGroup = projectId.ToString(),
+                AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
+                {
+                    Enabled = true,
+                    AllowRedirects = "never"
+                },
                 Metadata = new Dictionary<string, string>
                 {
                     { "project_id", projectId.ToString() },
-                    { "freelancer_id", project.FreelancerId.ToString() }
                 }
             };
             
@@ -133,9 +92,9 @@ public class StripeEmployerPaymentsService(
         }
     }
 
-    public async Task ConfirmPaymentForProjectAsync(Guid userId, Guid projectId, CancellationToken cancellationToken)
+    public async Task ConfirmPaymentForProjectAsync(Guid projectId, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Confirming payment for project {ProjectId} by user {UserId}", projectId, userId);
+        logger.LogInformation("Confirming payment for project {ProjectId}", projectId);
 
         var project = await projectsGrpcClient.GetProjectByIdAsync(projectId.ToString(), cancellationToken);
 
@@ -145,14 +104,30 @@ public class StripeEmployerPaymentsService(
             
             throw new NotFoundException("This project does not have an attached Payment Intent.");
         }
+        
+        if (project.FreelancerId is null) 
+        {
+            logger.LogWarning("Freelancer user not found for project {ProjectId}", projectId);
+            
+            throw new NotFoundException("This project does not have freelancer.");
+        }
 
-        var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(project.FreelancerId.ToString(), cancellationToken);
+        var freelancer = await freelancersGrpcClient.GetFreelancerByIdAsync(project.FreelancerId.ToString()!, cancellationToken);
 
         if (string.IsNullOrEmpty(freelancer.StripeAccountId))
         {
             logger.LogWarning("Freelancer account not found for project {ProjectId}", projectId);
             
             throw new NotFoundException($"Freelancer's Stripe Account to project with ID '{projectId}' not found.");
+        }
+        
+        var account = await _accountService.GetAsync(freelancer.StripeAccountId, cancellationToken: cancellationToken);
+        
+        if (!account.ChargesEnabled || !account.PayoutsEnabled)
+        {
+            logger.LogWarning("Freelancer account {AccountId} is not fully activated.", freelancer.StripeAccountId);
+            
+            throw new BadRequestException($"Freelancer account '{freelancer.StripeAccountId}' is not fully activated for transfers.");
         }
 
         try

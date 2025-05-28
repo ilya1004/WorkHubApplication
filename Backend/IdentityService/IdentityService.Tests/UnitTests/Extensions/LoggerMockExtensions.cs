@@ -1,0 +1,41 @@
+﻿using System.Reflection;
+
+namespace IdentityService.Tests.UnitTests.Extensions;
+
+public static class LoggerMockExtensions
+{
+    public static void VerifyLog<T>(this Mock<ILogger<T>> loggerMock, LogLevel logLevel, string message, Times times)
+    {
+        loggerMock.Verify(
+            x => x.Log(
+                It.Is<LogLevel>(l => l == logLevel),
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString() == message),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
+            times);
+    }
+    
+    public static void VerifyLog<T>(this Mock<ILogger<T>> loggerMock, LogLevel logLevel, Func<string, bool> messagePredicate, Times times)
+    {
+        loggerMock.Verify(
+            x => x.Log(
+                It.Is<LogLevel>(l => l == logLevel),
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => messagePredicate(v.ToString() ?? string.Empty)),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
+            times);
+    }
+    
+    public static void VerifyLog<T>(this Mock<ILogger<T>> loggerMock, Action<ILogger<T>> logAction, Times times)
+    {
+        loggerMock.Verify(l => l.Log(
+                It.IsAny<LogLevel>(),
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(logAction.GetMethodInfo().Name)),
+                It.IsAny<Exception>(),
+                It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
+            times);
+    }
+}

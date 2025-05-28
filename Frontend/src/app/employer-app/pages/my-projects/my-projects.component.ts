@@ -1,0 +1,145 @@
+import {Component, OnInit} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {NzFormItemComponent, NzFormLabelComponent} from "ng-zorro-antd/form";
+import {NzOptionComponent, NzSelectComponent} from "ng-zorro-antd/select";
+import {NzColDirective, NzRowDirective} from "ng-zorro-antd/grid";
+import {
+  NzTableCellDirective,
+  NzTableComponent,
+  NzTbodyComponent,
+  NzTheadComponent,
+  NzThMeasureDirective,
+  NzTrDirective
+} from "ng-zorro-antd/table";
+import {EmployerProjectsService} from "../../services/employer-projects.service";
+import {Project} from "../../../core/interfaces/project/project.interface";
+import {NzButtonComponent} from "ng-zorro-antd/button";
+import {DatePipe, NgForOf} from "@angular/common";
+import {PaginatedResult} from "../../../core/interfaces/common/paginated-result.interface";
+import {PROJECT_STATUSES} from "../../../core/data/constants";
+import {NzWaveDirective} from "ng-zorro-antd/core/wave";
+import {Router} from "@angular/router";
+import {NzFlexDirective} from "ng-zorro-antd/flex";
+import {NzCheckboxComponent} from "ng-zorro-antd/checkbox";
+import {NzDatePickerComponent} from "ng-zorro-antd/date-picker";
+
+@Component({
+  selector: 'app-my-projects',
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    NzFormItemComponent,
+    NzFormLabelComponent,
+    NzSelectComponent,
+    NzOptionComponent,
+    NzColDirective,
+    NzRowDirective,
+    NzTableComponent,
+    NzButtonComponent,
+    NgForOf,
+    DatePipe,
+    FormsModule,
+    NzWaveDirective,
+    NzTableCellDirective,
+    NzTbodyComponent,
+    NzThMeasureDirective,
+    NzTheadComponent,
+    NzTrDirective,
+    NzFlexDirective,
+    NzCheckboxComponent,
+    NzDatePickerComponent
+  ],
+  templateUrl: './my-projects.component.html',
+  styleUrl: './my-projects.component.scss'
+})
+export class MyProjectsComponent implements OnInit {
+  constructor(
+    private myProjectsService: EmployerProjectsService,
+    private router: Router
+  ) { }
+  
+  projectStatuses = PROJECT_STATUSES;
+  
+  filterForm = {
+    updatedAtStartDate: null as Date | null,
+    updatedAtEndDate: null as Date | null,
+    projectStatus: null as string | null,
+    acceptanceRequestedAndNotConfirmed: false as boolean,
+    pageNo: 1,
+    pageSize: 10
+  };
+  
+  projects: Project[] = [];
+  totalCount = 0;
+  loading = false;
+  
+  ngOnInit(): void {
+    this.loadProjects();
+  }
+  
+  loadProjects(): void {
+    this.loading = true;
+    this.myProjectsService.getMyEmployerProjects(this.filterForm).subscribe({
+      next: (result: PaginatedResult<Project>) => {
+        this.projects = result.items;
+        this.totalCount = result.totalCount;
+        this.loading = false;
+      },
+      error: (error: any) => {
+        console.error('Error loading employer projects:', error);
+        this.loading = false;
+      }
+    });
+  }
+  
+  onPageChange(page: number): void {
+    this.filterForm.pageNo = page;
+    this.loadProjects();
+  }
+  
+  onPageSizeChange(size: number): void {
+    this.filterForm.pageSize = size;
+    this.filterForm.pageNo = 1;
+    this.loadProjects();
+  }
+  
+  applyFilters(): void {
+    this.filterForm.pageNo = 1;
+    this.loadProjects();
+  }
+  
+  resetFilters(): void {
+    this.filterForm = {
+      updatedAtStartDate: null,
+      updatedAtEndDate: null,
+      projectStatus: null,
+      acceptanceRequestedAndNotConfirmed: false,
+      pageNo: 1,
+      pageSize: 10
+    };
+    this.loadProjects();
+  }
+  
+  onAcceptanceRequestedCheck(event: any) {
+    this.filterForm.acceptanceRequestedAndNotConfirmed = !this.filterForm.acceptanceRequestedAndNotConfirmed;
+  }
+  
+  getStatusLabel(status: number): string {
+    const statuses = [
+      'Published',
+      'AcceptingApplications',
+      'WaitingForWorkStart',
+      'InProgress',
+      'PendingForReview',
+      'Completed',
+      'Expired',
+      'Cancelled'
+    ];
+    return PROJECT_STATUSES.find(s =>
+      s.value === statuses[status])?.label || 'Unknown';
+  }
+  
+  navigateToProject(projectId: string): void {
+    this.router.navigate(['/employer/my-projects', projectId]);
+  }
+}

@@ -2,7 +2,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace PaymentsService.Infrastructure.HealthChecks;
 
-public class StripeHealthCheck() : IHealthCheck
+public class StripeHealthCheck : IHealthCheck
 {
     public async Task<HealthCheckResult> CheckHealthAsync(
         HealthCheckContext context,

@@ -1,9 +1,9 @@
-using ChatService.API.Constants;
 using ChatService.API.Contracts.ChatContracts;
 using ChatService.API.HubInterfaces;
 using ChatService.Application.UseCases.ChatUseCases.Commands.CreateChat;
 using ChatService.Application.UseCases.ChatUseCases.Commands.SetChatInactive;
-using ChatService.Application.UseCases.ChatUseCases.Queries.GetAllChats;
+using ChatService.Application.UseCases.ChatUseCases.Queries.GetChatById;
+using ChatService.Application.UseCases.ChatUseCases.Queries.GetChatByProjectId;
 using ChatService.Application.UseCases.MessageUseCases.Commands.CreateTextMessage;
 using ChatService.Application.UseCases.MessageUseCases.Commands.DeleteMessage;
 using ChatService.Application.UseCases.MessageUseCases.Queries.GetChatMessages;
@@ -42,22 +42,42 @@ public class ChatHub(
         
         logger.LogInformation("Chat created successfully");
     }
+    
+    [Authorize]
+    public async Task GetChatById(Guid chatId)
+    {
+        var result = await mediator.Send(mapper.Map<GetChatByIdQuery>(chatId));
+
+        await Clients.Caller.ReceiveChat(result);
+        
+        logger.LogInformation("Chat retrieved successfully");
+    }
+    
+    [Authorize]
+    public async Task GetChatByProjectId(Guid chatId)
+    {
+        var result = await mediator.Send(mapper.Map<GetChatByProjectIdQuery>(chatId));
+        
+        await Clients.Caller.ReceiveChat(result);
+        
+        logger.LogInformation("Chat retrieved successfully");
+    }
 
     [Authorize]
     public async Task SetChatInactive(SetChatInactiveRequest request)
     {
         await mediator.Send(mapper.Map<SetChatInactiveCommand>(request));
         
-        logger.LogInformation("Chat {ChatId} set inactive", request.ChatId);
+        logger.LogInformation("Chat by project with ID '{ProjectId}' set inactive", request.ProjectId);
     }
     
     [Authorize]
     public async Task SendTextMessage(CreateTextMessageRequest request)
     {
-        await mediator.Send(mapper.Map<CreateTextMessageCommand>(request));
+        var message = await mediator.Send(mapper.Map<CreateTextMessageCommand>(request));
 
-        await Clients.Caller.ReceiveTextMessage(request.Text);
-        await Clients.User(request.ReceiverId.ToString()).ReceiveTextMessage(request.Text);
+        await Clients.Caller.ReceiveTextMessage(message);
+        await Clients.User(request.ReceiverId.ToString()).ReceiveTextMessage(message);
         
         logger.LogInformation("Text message sent successfully");
     }
@@ -70,16 +90,6 @@ public class ChatHub(
         await Clients.Caller.ReceiveChatMessages(result);
         
         logger.LogInformation("Retrieved {MessageCount} messages", result.TotalCount);
-    }
-
-    [Authorize(Policy = AuthPolicies.AdminPolicy)]
-    public async Task GetAllChats(GetAllChatsRequest request)
-    {
-        var result = await mediator.Send(mapper.Map<GetAllChatsQuery>(request));
-
-        await Clients.Caller.ReceiveAllChats(result);
-        
-        logger.LogInformation("Retrieved {ChatCount} chats", result.TotalCount);
     }
     
     [Authorize]

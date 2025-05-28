@@ -1,0 +1,75 @@
+<div style="padding: 20px; max-width: 1200px; margin: 0 auto;">
+  <button
+    nz-button
+    style="margin-bottom: 20px"
+    (click)="navigateBack()"
+  >
+    Back
+  </button>
+  
+  <nz-card [nzLoading]="loading" nzTitle="Project Details">
+    <h3 style="margin-bottom: 16px;">Project Information</h3>
+    <nz-descriptions
+      nzBordered
+      *ngIf="project"
+      [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }"
+    >
+      <nz-descriptions-item nzTitle="ID">{{ project.id }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Title">{{ project.title }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Description" nzSpan="2">{{ project.description }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Budget">{{ project.budget }} EUR</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Category">{{ project.category?.name || 'None' }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Status">{{ getStatusLabel(project.lifecycle.status) }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Created At">{{ project.lifecycle.createdAt | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Applications Start">{{ project.lifecycle.applicationsStartDate | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Applications Deadline">{{ project.lifecycle.applicationsDeadline | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Work Start">{{ project.lifecycle.workStartDate | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Work Deadline">{{ project.lifecycle.workDeadline | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Acceptance Requested">{{ project.lifecycle.acceptanceRequested ? 'Yes' : 'No' }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Acceptance Confirmed">{{ project.lifecycle.acceptanceConfirmed ? 'Yes' : 'No' }}</nz-descriptions-item>
+    </nz-descriptions>
+    
+    <h3 style="margin: 20px 0 16px;">Employer Information</h3>
+    <nz-descriptions
+      nzBordered
+      *ngIf="employer"
+      [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }"
+    >
+      <nz-descriptions-item nzTitle="Company Name">{{ employer.companyName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Username">{{ employer.userName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Email">{{ employer.email }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Industry">{{ employer.industry?.name || 'None' }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="About" nzSpan="2">{{ employer.about || 'No information' }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Registered At">{{ employer.registeredAt | date }}</nz-descriptions-item>
+    </nz-descriptions>
+    
+    <div style="margin-top: 20px;">
+      <h3 style="margin-bottom: 16px;">Applications</h3>
+      <p *ngIf="project">Number of applications: {{ project.freelancerApplications.length }}</p>
+      
+      <h3 style="margin: 20px 0 16px;">Freelancer Information</h3>
+      <nz-descriptions
+        nzBordered
+        *ngIf="freelancer"
+        [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }"
+      >
+        <nz-descriptions-item nzTitle="Full Name">{{ freelancer.firstName }} {{ freelancer.lastName }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Username">{{ freelancer.userName }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Email">{{ freelancer.email }}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Skills" nzSpan="2">
+          <div>
+            @if (freelancer.skills.length > 0) {
+              @for (skill of freelancer.skills; track skill.id) {
+                <nz-tag nzColor="blue">{{ skill.name }}</nz-tag>
+              }
+            } @else {
+              <span>No skills added yet</span>
+            }
+          </div>
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="Registered At">{{ freelancer.registeredAt | date }}</nz-descriptions-item>
+      </nz-descriptions>
+      <p *ngIf="!freelancer" style="margin-top: 10px;">No freelancer assigned to this project yet.</p>
+    </div>
+  </nz-card>
+</div>

@@ -1,0 +1,94 @@
+<div>
+  <button
+    nz-button
+    style="margin: 0 0 20px 30px"
+    [routerLink]="'/freelancer/home'">
+    Back
+  </button>
+  
+  <nz-card [nzLoading]="loading" nzTitle="Project Details" style="margin: 0 20px">
+    <h3>Project Information</h3>
+    <nz-descriptions
+      nzBordered
+      *ngIf="project"
+      [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }">
+      <nz-descriptions-item nzTitle="Title">{{ project.title }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Description" nzSpan="2">{{ project.description }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Budget">{{ project.budget }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Category">{{project.category?.name || 'None'}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Status" nzSpan="2">{{ getStatusLabel(project.lifecycle.status) }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Applications Start">{{ project.lifecycle.applicationsStartDate | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Applications Deadline">{{ project.lifecycle.applicationsDeadline | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Work Start">{{ project.lifecycle.workStartDate | date }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Work Deadline">{{ project.lifecycle.workDeadline | date }}</nz-descriptions-item>
+    </nz-descriptions>
+    
+    <h3 style="margin-top: 20px">Employer Information</h3>
+    <nz-descriptions
+      nzBordered
+      *ngIf="employer"
+      [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }">
+      <nz-descriptions-item nzTitle="Company Name">{{ employer.companyName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Username">{{ employer.userName }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Email">{{ employer.email }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Industry">{{ employer.industry?.name || "None" }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="About" nzSpan="2">{{ employer.about }}</nz-descriptions-item>
+    </nz-descriptions>
+    
+    <div style="margin-top: 20px">
+      @if (project && project.lifecycle.status === 1) {
+        <h3>Applications</h3>
+        <p>Current number of applications: {{ project!.freelancerApplications.length }}</p>
+      }
+      
+      @if (project && project.lifecycle.status !== 0 && project.lifecycle.status !== 1) {
+        <h3>Freelancer Information</h3>
+        <nz-descriptions
+          nzBordered
+          *ngIf="freelancer"
+          [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }">
+          <nz-descriptions-item nzTitle="Full Name">{{ freelancer.firstName }} {{ freelancer.lastName }}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Username">{{ freelancer.userName }}</nz-descriptions-item>
+        </nz-descriptions>
+        <p *ngIf="!freelancer" style="margin-top: 10px">No freelancer assigned to this project yet.</p>
+      }
+    </div>
+    
+    @if (!hasFreelancerAccount && !isCheckingAccount && canApply()) {
+      <nz-alert
+        nzType="warning"
+        nzMessage="To apply for this project, you need to create a freelancer account."
+        nzShowIcon
+        style="margin-top: 20px">
+      </nz-alert>
+    }
+    
+    <div nz-flex nzGap="middle" style="margin-top: 20px">
+      @if (canApply()) {
+        <button
+          nz-button
+          nzType="primary"
+          (click)="applyForProject()"
+          [nzLoading]="isApplying">
+          Apply for Project
+        </button>
+      }
+      @if (hasApplication()) {
+        <button
+          nz-button
+          nzType="default"
+          nzDanger
+          (click)="cancelApplication()"
+          [nzLoading]="isCancelling">
+          Cancel Application
+        </button>
+      }
+      
+      @if (hasAcceptedApplication()) {
+        <nz-tag style="font-size: 16px; padding: 5px 7px" nzColor="green">
+          Accepted Application
+        </nz-tag>
+      }
+    </div>
+  </nz-card>
+</div>
